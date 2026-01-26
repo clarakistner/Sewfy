@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sewfy - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="w-full max-w-md mx-4">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <h1 class="text-6xl font-bold text-indigo-600" style="font-family: 'Times New Roman', serif;">Sewfy</h1>
+            </div>
+            
+            <!-- Login Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Login</h2>
+                
+                <form method="POST" action="home.php" class="space-y-5">
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                        </label>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="seu@email.com"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                            required
+                        />
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Senha
+                        </label>
+                        <div class="relative">
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                placeholder="••••••••"
+                                class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+                                required
+                            />
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+                            >
+                                <!-- Eye Icon (hidden by default) -->
+                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <!-- Eye Off Icon -->
+                                <svg id="eyeOffIcon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                                    <line x1="2" y1="2" x2="22" y2="22"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition duration-200 shadow-md hover:shadow-lg"
+                    >
+                        Entrar
+                    </button>
+                </form>
+                
+                <!-- Forgot Password Link -->
+                <div class="mt-4 text-center">
+                    <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800 transition">
+                        Esqueceu a senha?
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Sign Up Link -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-700">
+                    Não tem uma conta? 
+                    <a href="Cadastro_Usuario.html" class="text-indigo-600 hover:text-indigo-800 font-medium transition">
+                        Fazer cadastro
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+        togglePassword.addEventListener('click', function() {
+            // Toggle password input type
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle icon visibility
+            eyeIcon.classList.toggle('hidden');
+            eyeOffIcon.classList.toggle('hidden');
+        });
+    </script>
+
+    <?php
+    // Processar o login quando o formulário for enviado
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        
+        // Aqui você pode adicionar sua lógica de autenticação
+        // Por exemplo: validar contra um banco de dados
+        
+        // Exemplo básico (NÃO USE EM PRODUÇÃO):
+        /*
+        if ($email === 'usuario@exemplo.com' && $password === 'senha123') {
+            session_start();
+            $_SESSION['user_email'] = $email;
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            echo '<script>alert("Email ou senha incorretos!");</script>';
+        }
+        */
+    }
+    ?>
+</body>
+</html>
