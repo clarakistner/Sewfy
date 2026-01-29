@@ -1,33 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sewfy</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sewfy</title>
+
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="edicaoOrdemDeProducao.css">
 </head>
+
 <body>
-    <!-- ================= MODAL CRIAR ================= -->
-<div id="createModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-2xl max-w-xl w-full">
-    <div class="bg-gradient-to-r from-[#0e59fe] to-[#020066] p-4 flex justify-between rounded-t-2xl">
-      <h2 class="text-white font-bold">Nova Ordem</h2>
-      <button onclick="closeCreateModal()" class="text-white">✕</button>
+
+
+  <div id="createModal" class="modal hidden">
+    <div class="modal-container produto">
+
+      <div class="modal-header">
+        <h2>Nova Ordem - Produto</h2>
+        <button type="button" class="modal-close">✕</button>
+      </div>
+
+      <form class="modal-form">
+        <input required placeholder="Produto" class="col-2">
+        <input required type="number" placeholder="Quantidade">
+
+        <button type="submit" class="botao proximo" onclick="irParaInsumos()">Próximo <span
+            class="material-symbols-outlined icone-prox">
+            arrow_forward
+          </span></button>
+        <button type="button" class="botao cancelar">Cancelar</button>
+
+      </form>
+
     </div>
+    <div class="modal-container insumos">
 
-    <form class="p-6 grid grid-cols-2 gap-4" onsubmit="createOrder(event)">
-      <input required placeholder="Produto" id="product" class="border p-2 rounded col-span-2">
-      <input required type="number" placeholder="Quantidade" id="quantity" class="border p-2 rounded">
-      <input required placeholder="Serviço" id="service" class="border p-2 rounded">
-      <input required placeholder="Fornecedor" id="supplier" class="border p-2 rounded">
-      <input required type="date" id="openDate" class="border p-2 rounded">
-      <input required type="date" id="deliveryDate" class="border p-2 rounded">
-      <input required type="date" id="dueDate" class="border p-2 rounded">
-      <input required type="number" placeholder="Valor" id="value" class="border p-2 rounded">
+      <div class="modal-header">
+        <h2>Nova Ordem - Insumos</h2>
+        <button type="button" class="modal-close">✕</button>
+      </div>
 
-      <button type="button" onclick="closeCreateModal()" class="bg-gray-200 py-2 rounded">Cancelar</button>
-      <button class="bg-[#082DB2] text-white py-2 rounded">Criar</button>
-    </form>
+      <div class="box-tabela">
+        <table >
+          <thead>
+            <tr>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Insumo</th>
+              <th scope="col">Fornecedor</th>
+              <th scope="col">Unidade de Medida</th>
+            </tr>
+            </thead>
+          <tbody id="tabelaInsumos">
+            
+          </tbody>
+          
+        </table>
+      </div>
+
+
+      <form class="modal-form">
+
+        <div class="col-2">
+          <input required placeholder="Quantidade" class="campoQuant" type="number">
+          <input required placeholder="Insumo" class="campoInsumo">
+          <input required placeholder="Fornecedor" class="campoFornecedor">
+          <input required placeholder="Unidade de Medida" class="campoUniMed">
+          <button type="button" class="adicionar" onclick="adicionarInsumo()">Adicionar</button>
+        </div>
+
+        <button type="button" class="botao finalizar" onclick="irParaMostrarOrdem()">Finalizar</button>
+        <button type="button" class="botao cancelar">Cancelar</button>
+        
+      </form>
+
+    </div>
+    <div class="modal-container mostrarOrdem">
+
+      <div class="modal-header">
+        <h2>Nova Ordem - Dados</h2>
+        <button type="button" class="modal-close">✕</button>
+      </div>
+
+      <div style="width: 100%; height: 100%; background-color: aliceblue;">
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+
+      </div>
+      <button type="button" class="botao confirmar">Confirmar</button>
+        <button type="button" class="botao cancelar">Cancelar</button>
+        
+      </form>
+
+    </div>
   </div>
-</div>
+
+  <script>
+    var modalInsumos = document.querySelector(".insumos");
+    var modalProduto = document.querySelector(".produto");
+    var tabelaInsumos = document.getElementById("tabelaInsumos");
+    var campoInsumo = document.querySelector(".campoInsumo");
+    var campoQuant = document.querySelector(".campoQuant");
+    var modalMostrarOrdem = document.querySelector(".mostrarOrdem");
+   
+    var listaInsumos = [];
+
+
+    function adicionarInsumo() {
+
+      const insumo = campoInsumo.value.trim()
+      const quant = campoQuant.value.trim()
+      if (insumo !== "" && quant !== "") {
+
+
+        listaInsumos.push(insumo);
+        const tr = document.createElement("tr");
+        const th = document.createElement("th");
+        const td = document.createElement("td");
+        const tdF = document.createElement("td");
+        const tdUM = document.createElement("td");
+
+        th.textContent = quant;
+        td.textContent = insumo;
+        tdF.textContent = "Roberto";
+        tdUM.textContent = "UM";
+        
+        
+        tr.appendChild(th);
+        tr.appendChild(td);
+        tr.appendChild(tdF);
+        tr.appendChild(tdUM);
+        tabelaInsumos.appendChild(tr);
+        campoInsumo.value = "";
+        campoInsumo.Quant = "";
+
+      }
+    }
+
+    function irParaInsumos() {
+      modalProduto.style.display = "none";
+      modalInsumos.style.display = "block";
+    }
+    function irParaMostrarOrdem() {
+      modalInsumos.style.display = "none";
+      modalMostrarOrdem.style.display = "block";
+    }
+  </script>
 </body>
+
 </html>

@@ -1,10 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sewfy</title>
 
-<div id="detailsModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-2xl max-w-2xl w-full">
-    <div class="bg-gradient-to-r from-[#0e59fe] to-[#020066] p-4 flex justify-between rounded-t-2xl">
-      <h2 class="text-white font-bold">Detalhes da Ordem</h2>
-      <button onclick="closeDetailsModal()" class="text-white">✕</button>
+    <link rel="stylesheet" href="modalOrdemDeProducao.css">
+</head>
+
+<body>
+
+
+<div id="detailsModal" class="modal hidden">
+    <div class="modal-container modal-large">
+
+        <div class="modal-header">
+            <h2>Detalhes da Ordem</h2>
+            <button type="button" class="modal-close">✕</button>
+        </div>
+
+        <div id="detailsContent" class="modal-content">
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+          <p>Detalhes da Ordem</p>
+        </div>
+        <div class="box-botoes">
+          <button type="button" class="botao fechar"> Fechar</button>
+          <button type="button" class="botao cancelar"> Cancelar</button>
+        </div>
+
     </div>
-    <div id="detailsContent" class="p-6 grid grid-cols-2 gap-4"></div>
-  </div>
 </div>
+
+</body>
+</html>
