@@ -1,0 +1,136 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Container */
+.modal-container {
+  background: #fff;
+  width: 100%;
+  max-width: 700px;
+  border-radius: 16px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+}
+
+/* Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-height: 50px;
+  padding: 24px 28px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-titulo {
+  font-size: 28px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+/* Close button */
+.modal-fecha {
+  background: none;
+  border: none;
+  font-size: 34px;
+  cursor: pointer;
+  color: #9ca3af;
+}
+
+.modal-fecha:hover {
+  color: #4b5563;
+}
+
+/* Content */
+.modal-conteudo {
+  padding: 28px;
+}
+
+/* Grid */
+.grid-detalhes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px 40px;
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+/* detalhe */
+.detalhe {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 16px;
+  color: #64748b;
+}
+
+.value {
+  font-size: 20px;
+  color: #020617;
+}
+
+.value.strong {
+  font-weight: 700;
+}
+
+/* Badge = balão colorido ao redor do texto */
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Input */
+.input {
+  padding: 12px 14px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: 1px solid #cbd5f5;
+  outline: none;
+}
+
+.input:focus {
+  border: 2px solid #2563eb;
+}
+
+/* Submit button */
+.btn-submit {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #082db2, #1d4ed8);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+
+  box-shadow: 0 10px 20px rgba(8, 45, 178, 0.25);
+  transition: all 0.25s ease;
+}
+
+/* Hover */
+.btn-submit:hover {
+  box-shadow: 0 14px 28px rgba(8, 45, 178, 0.35);
+  background: linear-gradient(135deg, #00229c, #1e40af);
+}

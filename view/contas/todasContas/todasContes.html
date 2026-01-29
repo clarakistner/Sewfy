@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sewfy</title>
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <link rel="stylesheet" href="todasContas.css">
+</head>
+
+<body>
+    <!-- header = menu -->
+    <header class="header">
+        <div class="container-header">
+            <div class="menu-header">
+                <h1 class="logo">Sewfy</h1>
+
+                <nav class="nav">
+                    <a href="" >Produtos</a>
+                    <a href="">Fornecedores</a>
+                    <a href="" >Ordem de Produção</a>
+                    <a href="" class="active">Contas a Pagar</a>
+                </nav>
+            </div>
+
+            <button class="logout">Sair</button>
+        </div>
+    </header>
+    
+    <!-- Parte da lista/pesquisa/botão de criação dos produtos -->
+    <main class="principal">
+        <div class="cabecalho-principal">
+            <h1>Contas a Pagar</h1>
+        </div>
+
+        <div class="filtros">
+
+        <div class="input-pesquisa">
+        <svg class="icone-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+
+        <input type="text"
+            placeholder="Pesquisar por Fornecedor..."
+        >
+        </div>
+
+        <div class="box-filtro">
+            <span class="material-symbols-outlined icone-filtro">filter_alt</span>
+            <select id="tipos-filtro">
+            <option value="todas">Todos os Tipos</option>
+            <option value="Pendentes">Pendentes</option>
+            <option value="Pagas">Pagas</option>
+            </select>
+        </div>
+
+        </div>
+
+
+
+        <!-- Lista de Contas -->
+        <div id="listaContas" class="lista-contas">
+
+        <table class="tabela">
+            <!-- Cabeçalho da tabela -->
+            <thead class="table-head">
+            <tr class="table-head-row">
+                <th class="table-head-cell">Status</th>
+                <th class="table-head-cell">Código</th>
+                <th class="table-head-cell">Fornecedor</th>
+                <th class="table-head-cell">Vencimento</th>
+                <th class="table-head-cell table-head-cell--right">Pagamento</th>
+                <th class="table-head-cell">Ações</th>
+            </tr>
+            </thead>
+
+            <!-- Corpo da tabela -->
+            <tbody id="contas-table" class="table-body">
+
+            <tr class="table-row">
+                <td class="table-cell td-badge">
+                    <span class="badge badge-pa">Paga</span>
+                </td>
+                <td class="table-cell">001</td>
+                <td class="table-cell">Guabifios</td>
+                <td class="table-cell">19/02/2026</td>
+                <td class="table-cell table-cell--right">29/01/2026</td>
+                <td class="table-cell">
+                    <button id="botao-visualizar-conta">
+                        <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
+                    </button>
+                </td>
+            </tr>
+
+            <tr class="table-row">
+                <td class="table-cell td-badge">
+                    <span class="badge badge-pe">Pendente</span>
+                </td>
+                <td class="table-cell">002</td>
+                <td class="table-cell">Kohler</td>
+                <td class="table-cell">19/02/2026</td>
+                <td class="table-cell table-cell--right">-</td>
+                <td class="table-cell">
+                    <button id="botao-visualizar-conta">
+                        <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
+                    </button>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        </div>
+    </main>
+
+
+</body>
+</html>
