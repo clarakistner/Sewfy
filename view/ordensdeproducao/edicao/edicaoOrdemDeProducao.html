@@ -6,6 +6,28 @@
     <title>Sewfy</title>
 </head>
 <body>
-    
+    <!-- ================= MODAL CRIAR ================= -->
+<div id="createModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-2xl max-w-xl w-full">
+    <div class="bg-gradient-to-r from-[#0e59fe] to-[#020066] p-4 flex justify-between rounded-t-2xl">
+      <h2 class="text-white font-bold">Nova Ordem</h2>
+      <button onclick="closeCreateModal()" class="text-white">✕</button>
+    </div>
+
+    <form class="p-6 grid grid-cols-2 gap-4" onsubmit="createOrder(event)">
+      <input required placeholder="Produto" id="product" class="border p-2 rounded col-span-2">
+      <input required type="number" placeholder="Quantidade" id="quantity" class="border p-2 rounded">
+      <input required placeholder="Serviço" id="service" class="border p-2 rounded">
+      <input required placeholder="Fornecedor" id="supplier" class="border p-2 rounded">
+      <input required type="date" id="openDate" class="border p-2 rounded">
+      <input required type="date" id="deliveryDate" class="border p-2 rounded">
+      <input required type="date" id="dueDate" class="border p-2 rounded">
+      <input required type="number" placeholder="Valor" id="value" class="border p-2 rounded">
+
+      <button type="button" onclick="closeCreateModal()" class="bg-gray-200 py-2 rounded">Cancelar</button>
+      <button class="bg-[#082DB2] text-white py-2 rounded">Criar</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>
