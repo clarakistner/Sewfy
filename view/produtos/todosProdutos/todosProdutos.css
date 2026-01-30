@@ -58,7 +58,6 @@ body {
     font-size: 18px;
 }
 
-
 .logout {
     background: none;
     border: none;
@@ -91,7 +90,7 @@ body {
     justify-content: center;
     gap: 8px;
     padding: 12px 24px;
-    background-color: #082db2;
+    background: linear-gradient(90deg, #0e59fe, #020066);
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -102,7 +101,7 @@ body {
 }
 
 .botao-criar-produto:hover {
-    background-color: #061a8a;  
+    background: linear-gradient(90deg, #020066, #0e59fe); 
 }
 
 .icone-adicionar-produto {
@@ -147,12 +146,12 @@ body {
 }
 
 .filtros input:focus {
-    border: 2px solid #2563eb;   /* borda mais grossa e azul */
+    border: 2px solid  #0e59fe;  
     outline: none;
 }
 
 #tipos-filtro:focus{
-    border: 2px solid #2563eb;   /* borda mais grossa e azul */
+    border: 2px solid  #0e59fe;   
     outline: none;
 }
 
@@ -200,7 +199,6 @@ body {
 }
 
 /* Cabeçalho da tabela   */
-
 .table-head {
   background-color: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
@@ -276,18 +274,17 @@ body {
 
 /* Produto Acabado (PA) */
 .badge-pa {
-  background-color: #dcfce7; /* verde claro */
-  color: #166534;           /* verde escuro */
+  background-color: #dcfce7; 
+  color: #166534;          
 }
 
 /* Insumo (IN) */
 .badge-in {
-  background-color: #dbeafe; /* azul claro */
-  color: #1e40af;            /* azul escuro */
+  background-color: #dbeafe; 
+  color:  #0e59fe;            
 }
 
 /*botão de visualizar produto*/
-
 #botao-visualizar-produto {
     background: none;
     border: none;
@@ -297,11 +294,11 @@ body {
 
 .icone-visualizar-produto {
     font-size: 22px;
-    color: #2563eb; /* azul */
+    color: #0e59fe; 
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
 #botao-visualizar-produto:hover .icone-visualizar-produto {
-    color: #000000; /* preto no hover */
-    transform: scale(1.1); /* leve destaque (opcional, fica bonito) */
+    color: #000000; 
+    transform: scale(1.1); 
 }

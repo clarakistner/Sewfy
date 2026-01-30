@@ -16,7 +16,7 @@
   background: #ffffff;
   border-radius: 16px;
   width: 100%;
-  max-width: 768px;
+  max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
@@ -27,7 +27,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
+  padding: 10px 20px;
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
@@ -107,7 +107,7 @@ textarea {
 }
 .btn-submit {
   padding: 12px 24px;
-  background: #082db2;
+  background: linear-gradient(90deg, #020066, #0e59fe);
   color: #ffffff;
   border-radius: 8px;
   border: none;
@@ -115,7 +115,7 @@ textarea {
 }
 
 .btn-submit:hover {
-  background: #00229c;
+  background: linear-gradient(90deg, #0e59fe, #020066);
 }
 
 #pPrice, #pUnit, #pType, #pCode{

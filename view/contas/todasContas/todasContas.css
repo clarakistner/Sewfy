@@ -35,7 +35,7 @@ body {
 .logo {
     font-size: 48px;
     font-weight: bold;
-    color: #082db2;
+    color:      #0e59fe;
     font-family: "Times New Roman", serif;
 }
 
@@ -85,31 +85,6 @@ body {
     font-weight: 550;
 }
 
-.botao-criar-produto {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background-color: #082db2;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    min-width: 200px;
-    font-size: 16px;
-}
-
-.botao-criar-produto:hover {
-    background-color: #061a8a;  
-}
-
-.icone-adicionar-produto {
-    font-size: 24px;
-    align-items: center;
-    justify-content: center;
-}
 
 .filtros {
     background-color: #ffffff;
@@ -147,12 +122,13 @@ body {
 }
 
 .filtros input:focus {
-    border: 2px solid #2563eb;   
+    border: 2px solid #0e59fe;
+;   
     outline: none;
 }
 
 #tipos-filtro:focus{
-    border: 2px solid #2563eb;   
+    border: 2px solid #0e59fe;   
     outline: none;
 }
 
@@ -293,7 +269,7 @@ body {
 
 .icone-visualizar-conta {
     font-size: 22px;
-    color: #2563eb; 
+    color: #0e59fe; 
     transition: color 0.2s ease, transform 0.2s ease;
 }
 

@@ -63,7 +63,7 @@
   grid-column: span 2;
 }
 
-/* Detail block */
+/* Detalhes */
 .detail {
   display: flex;
   flex-direction: column;

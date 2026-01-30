@@ -91,7 +91,7 @@ body {
     justify-content: center;
     gap: 8px;
     padding: 12px 24px;
-    background-color: #082db2;
+    background: linear-gradient(90deg, #0e59fe, #020066);
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -102,7 +102,7 @@ body {
 }
 
 .botao-criar-fornecedor:hover {
-    background-color: #061a8a;  
+    background: linear-gradient(90deg, #020066, #0e59fe); 
 }
 
 .icone-adicionar-fornecedor {
@@ -147,12 +147,12 @@ body {
 }
 
 .filtros input:focus {
-    border: 2px solid #2563eb;   
+    border: 2px solid  #0e59fe;  
     outline: none;
 }
 
 #tipos-filtro:focus{
-    border: 2px solid #2563eb;   
+    border: 2px solid  #0e59fe;   
     outline: none;
 }
 
@@ -274,7 +274,7 @@ body {
 
 .icone-visualizar-fornecedor {
     font-size: 22px;
-    color: #2563eb; 
+    background: linear-gradient(90deg, #0e59fe, #020066);
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
