@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sewfy</title>
+
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="requisicao.css">
+</head>
+
+<body>
+
+
+  <div id="createModal" class="modal hidden">
+    <div class="modal-container produto">
+
+      <div class="modal-header">
+        <h2>Nova Ordem - Produto</h2>
+        <button type="button" class="modal-close">✕</button>
+      </div>
+
+      <form class="modal-form">
+        <input required placeholder="Produto" class="col-2">
+        <input required type="number" placeholder="Quantidade">
+
+        <button type="submit" class="botao proximo" onclick="irParaInsumos()">Próximo <span
+            class="material-symbols-outlined icone-prox">
+            arrow_forward
+          </span></button>
+        <button type="button" class="botao cancelar">Cancelar</button>
+
+      </form>
+
+    </div>
+    <div class="modal-container insumos">
+
+      <div class="modal-header">
+        <h2>Nova Ordem - Insumos</h2>
+        <button type="button" class="modal-close">✕</button>
+      </div>
+
+      <div class="box-tabela">
+        <table >
+          <thead>
+            <tr>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Insumo</th>
+              <th scope="col">Fornecedor</th>
+              <th scope="col">Unidade de Medida</th>
+            </tr>
+            </thead>
+          <tbody id="tabelaInsumos">
+            
+          </tbody>
+          
+        </table>
+      </div>
+
+
+      <form class="modal-form">
+
+        <div class="col-2">
+          <input required placeholder="Quantidade" class="campoQuant" type="number">
+          <input required placeholder="Insumo" class="campoInsumo">
+          <input required placeholder="Fornecedor" class="campoFornecedor">
+          <input required placeholder="Unidade de Medida" class="campoUniMed">
+          <button type="button" class="adicionar" onclick="adicionarInsumo()">Adicionar</button>
+        </div>
+
+        <button type="button" class="botao finalizar" onclick="irParaMostrarOrdem()">Finalizar</button>
+        <button type="button" class="botao cancelar">Cancelar</button>
+        
+      </form>
+
+    </div>
+    <div class="modal-container mostrarOrdem">
+
+      <div class="modal-header">
+        <h2>Nova Ordem - Dados</h2>
+        <button type="button" class="modal-close">✕</button>
+      </div>
+
+      <div style="width: 100%; height: 100%; background-color: aliceblue;">
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+        <p>Aqui ficarão os dados</p>
+
+      </div>
+      <button type="button" class="botao confirmar">Confirmar</button>
+        <button type="button" class="botao cancelar">Cancelar</button>
+        
+      </form>
+
+    </div>
+  </div>
+
+  <script src="requisicao.js"></script>
+</body>
+
+</html>

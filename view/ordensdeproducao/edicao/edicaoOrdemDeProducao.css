@@ -1,4 +1,3 @@
-
 * {
     margin: 0;
     padding: 0;
@@ -7,152 +6,192 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    
-    
+    background: #f3f4f6;
 }
 
-/*Sombra*/
+/* MODAL */
 .modal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, .5);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     padding: 16px;
-    z-index: 50;
 }
 
-.hidden {
-   
-}
-
-/* MODAL BOX */
 .modal-container {
-    background: #ffffff;
-    border-radius: 16px;
+    background: #fff;
     width: 100%;
-    max-width: 640px;
-    overflow: hidden;
-    box-shadow: black;
+    max-width: 1100px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
 }
 
-
+/* HEADER */
 .modal-header {
-    background: linear-gradient(90deg, #0e59fe, #020066);
-    padding: 16px;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 24px 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .modal-header h2 {
-    color: #ffffff;
-    font-size: 18px;
+    font-size: 22px;
 }
 
-.modal-close {
+.modal-header p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.close-btn {
     background: none;
     border: none;
-    color: #ffffff;
     font-size: 18px;
     cursor: pointer;
 }
 
+/* BODY */
+.modal-body {
+    padding: 32px;
+}
 
-.modal-form {
-    padding: 24px;
+section {
+    margin-bottom: 32px;
+}
+
+h3 {
+    margin-bottom: 16px;
+}
+
+.field label,
+.insumo label,
+.novo-insumo label {
+    font-size: 12px;
+    color: #374151;
+}
+
+input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+}
+
+/* GRIDS */
+.grid-2 {
     display: grid;
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.grid-12 {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
     gap: 16px;
 }
 
-.modal-form input {
-    border: 1px solid #d1d5db;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 14px;
+.col-1 {
+    grid-column: span 1;
 }
 
 .col-2 {
-    grid-row: span 2;
-    width: 100%;
+    grid-column: span 2;
+}
+
+.col-3 {
+    grid-column: span 3;
+}
+
+.col-4 {
+    grid-column: span 4;
+}
+
+.align-end {
+    display: flex;
+    align-items: flex-end;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    
+}
+
+/* INSUMOS */
+.insumo {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+}
+
+.insumo > .checkbox {
+    width: 10%;
+    margin-top: 12px;
     display: flex;
     flex-direction: row;
-    gap: 1%;
+    justify-content: end;
+    gap: 1rem;
+    font-size: 14px;
 }
 
-/* BOTÕES */
-.cancelar {
-    background: #e5e7eb;
+
+
+.delete {
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+/* NOVO INSUMO */
+.novo-insumo {
+    background: #eff6ff;
+    border: 2px dashed #1d4ed8;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.add {
+    width: 100%;
+    background: #1d4ed8;
+    color: #fff;
     border: none;
     padding: 10px;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
 }
 
-.proximo, .adicionar, .finalizar, .confirmar {
-    background: #082db2;
+/* AÇÕES */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 24px;
+}
+
+.cancel {
+    background: none;
+    border: 1px solid #d1d5db;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.save {
+    background: #1d4ed8;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
-    
-}
-.icone-prox{
-    display: none;
-    
-}
-.proximo:hover{
-    
-    .icone-prox{
-        display: inline-flex;
-        align-self: end;
-        font-weight: bold;
-        font-size: 15px;
-    }
-}
-.botao{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-.botao:hover {
-    opacity: 0.9;
-}
-/*Modal Insumos*/
-.insumos{
-    display: none;
-     max-width: 960px;
-}
-
-.box-tabela{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-table{
-    border-collapse: collapse;
-    width: 100%;
-}
-.tbody{
-    display: flex;
-    justify-content: center;
-}
-th, td{
-    
-    border: 1px solid #000000;
-    padding: 8px;
-    text-align: center;
-}
-
-
-/*Mostrar Ordem*/
-
-.mostrarOrdem{
-    display: none;
 }
