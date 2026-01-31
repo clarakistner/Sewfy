@@ -4,15 +4,6 @@ import { edicaoEstaAberta, fecharEdicao, abrirEdicao } from "../edicao/edicaoOrd
 
 
 var main = document.querySelector(".principal");
-
-// CHAMA O MENU
-fetch('../../menu/menu.html')
-    .then(response => response.text())
-    .then(data => {
-        document.body.insertAdjacentHTML("afterbegin", data)
-    });
-
-
 // ABRE O MODAL DE EDIÇÃO E FECHA O DE DETALHES DA OP
 document.body.addEventListener("click", (e) => {
     if (e.target.closest(".editar")) {

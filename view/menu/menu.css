@@ -20,6 +20,7 @@ html, body {
 
 /* Header */
 .header {
+    
     background-color: #ffffff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
@@ -40,11 +41,12 @@ html, body {
 /* Logo */
 .logo {
   font-family: "Times New Roman", serif;
-  font-size: 30px;
+  font-size: 48px;
   font-weight: bold;
   background: linear-gradient(90deg, #0e59fe, #020066);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  cursor: pointer;
 }
 
 /* Navegação */
@@ -88,3 +90,5 @@ html, body {
 .logout:hover {
     color: #1f2937;
 }
+
+
