@@ -226,7 +226,7 @@ body.loaded {
 
 .icone-visualizar-fornecedor {
   font-size: 22px;
-  background: linear-gradient(90deg, #0e59fe, #020066);
+  color: #0e59fe;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 

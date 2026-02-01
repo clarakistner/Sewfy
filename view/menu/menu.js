@@ -34,6 +34,7 @@ document.addEventListener("click", (e) => {
     if (e.target.id === botoesNAV[4]) {
         irParaPagina(4)
     }
+    
 
 });
 
@@ -57,6 +58,7 @@ function irParaPagina(botao) {
         case 4:
             window.location.href = "/view/home/home.html"
             break
+        
     }
 }
 

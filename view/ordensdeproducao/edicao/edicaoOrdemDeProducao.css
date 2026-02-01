@@ -43,11 +43,12 @@ body {
 
 .modal-header h2 {
     font-size: 22px;
+    color: #ffffff;
 }
 
 .modal-header p {
     font-size: 14px;
-    color: #6b7280;
+    color: #ffffff;
 }
 
 .close-btn {
@@ -55,6 +56,7 @@ body {
     border: none;
     font-size: 18px;
     cursor: pointer;
+    color: #ffffff;
 }
 
 /* BODY */
