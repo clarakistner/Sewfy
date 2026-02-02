@@ -5,11 +5,6 @@ var main = document.querySelector(".principal");
 document.querySelector(".btn-verop").addEventListener("click", verOP);
 function verOP() {
 
-    
-
-
-
-
     main.style.filter = "blur(25px)";
     document.querySelector(".header").style.filter = "blur(25px)";
     fetch('/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
@@ -17,6 +12,7 @@ function verOP() {
         .then(data => {
             document.body.insertAdjacentHTML("afterbegin", data)
             const modal = document.querySelector("#detailsModal");
+            modal.classList.add("load");
             
         });
 

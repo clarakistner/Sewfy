@@ -57,6 +57,7 @@ function irParaPagina(botao) {
             break
         case 4:
             window.location.href = "/view/home/home.html"
+            
             break
         
     }
