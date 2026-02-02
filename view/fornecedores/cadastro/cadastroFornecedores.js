@@ -1,4 +1,4 @@
-import { mostrarToast } from "/view/toast/toast.js";
+import { mostrarToast } from "../../toast/toast.js";
 
 var main = document.querySelector(".principal");
 // CHAMA O MODAL DE CADASTRO
@@ -6,9 +6,7 @@ var main = document.querySelector(".principal");
 document.addEventListener("click", (e) => {
 
     if (e.target.closest(".botao-criar-fornecedor")) {
-        main.style.filter = "blur(25px)";
-        document.querySelector(".header").style.filter = "blur(25px)";
-        fetch('/view/fornecedores/cadastro/cadastroFornecedores.html')
+        fetch('/Sewfy/view/fornecedores/cadastro/cadastroFornecedores.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)

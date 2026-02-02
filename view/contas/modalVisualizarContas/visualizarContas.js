@@ -1,13 +1,10 @@
-import { mostrarToast } from '/view/toast/toast.js'
-var main = document.querySelector(".principal");
+import {mostrarToast} from '../../toast/toast.js'
 // CHAMA O MODAL DE DETALHES DE CONTAS
 
 document.addEventListener("click", (e) => {
 
     if (e.target.closest(".icone-visualizar-conta")) {
-        main.style.filter = "blur(25px)";
-        document.querySelector(".header").style.filter = "blur(25px)";
-        fetch('/view/contas/modalVisualizarContas/visualizarContas.html')
+        fetch('/Sewfy/view/contas/modalVisualizarContas/visualizarContas.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)

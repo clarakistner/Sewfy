@@ -1,5 +1,5 @@
 // CHAMA O MENU 
-fetch('/view/menu/menu.html')
+fetch('/Sewfy/view/menu/menu.html')
     .then(response => response.text())
     .then(data => {
         document.body.insertAdjacentHTML("afterbegin", data)
@@ -14,7 +14,8 @@ const botoesNAV = [
     "btn-fornecedores",
     "btn-ordem-producao",
     "btn-contas-pagar",
-    "logo"
+    "logo",
+    "logout"
 ];
 
 // ADICIONA FUNÇÃO AOS BOTÕES DO MENU
@@ -34,7 +35,9 @@ document.addEventListener("click", (e) => {
     if (e.target.id === botoesNAV[4]) {
         irParaPagina(4)
     }
-    
+    if (e.target.id === botoesNAV[5]) {
+        irParaPagina(5)
+    }
 
 });
 
@@ -44,22 +47,23 @@ function irParaPagina(botao) {
 
     switch (botao) {
         case 0:
-            window.location.href = "/view/produtos/todosProdutos/todosProdutos.html"
+            window.location.href = "/Sewfy/view/produtos/todosProdutos/todosProdutos.html"
             break
         case 1:
-            window.location.href = "/view/fornecedores/todosFornecedores/todosFornecedores.html"
+            window.location.href = "/Sewfy/view/fornecedores/todosFornecedores/todosFornecedores.html"
             break
         case 2:
-            window.location.href = "/view/ordensdeproducao/gerenciar/gerenciarOrdensDeProducao.html"
+            window.location.href = "/Sewfy/view/ordensdeproducao/gerenciar/gerenciarOrdensDeProducao.html"
             break
         case 3:
-            window.location.href = "/view/contas/todasContas/todasContas.html"
+            window.location.href = "/Sewfy/view/contas/todasContas/todasContas.html"
             break
         case 4:
-            window.location.href = "/view/home/home.html"
-            
+            window.location.href = "/Sewfy/view/home/home.html"
             break
-        
+        case 5:
+            window.location.replace("/Sewfy/view/login/login.html")
+            break
     }
 }
 

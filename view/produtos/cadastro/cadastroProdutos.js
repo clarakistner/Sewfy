@@ -1,4 +1,4 @@
-import { mostrarToast } from "/view/toast/toast.js";
+import { mostrarToast } from "../../toast/toast.js";
 
 var main = document.querySelector(".principal");
 
@@ -7,10 +7,7 @@ var main = document.querySelector(".principal");
 document.addEventListener("click", (e) => {
 
     if (e.target.closest(".botao-criar-produto")) {
-
-        main.style.filter = "blur(25px)";
-        document.querySelector(".header").style.filter = "blur(25px)";
-        fetch('/view/produtos/cadastro/cadastroProdutos.html')
+        fetch('/Sewfy/view/produtos/cadastro/cadastroProdutos.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)

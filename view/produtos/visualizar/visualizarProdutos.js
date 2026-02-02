@@ -4,9 +4,8 @@ var main = document.querySelector(".principal");
 document.addEventListener("click", (e) => {
 
     if (e.target.closest(".icone-visualizar-produto")) {
-        main.style.filter = "blur(25px)";
-        document.querySelector(".header").style.filter = "blur(25px)";
-        fetch('/view/produtos/visualizar/visualizarProdutos.html')
+        fetch('/Sewfy/view/produtos/visualizar/visualizarProdutos.html')
+
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)

@@ -7,7 +7,7 @@ function verOP() {
 
     main.style.filter = "blur(25px)";
     document.querySelector(".header").style.filter = "blur(25px)";
-    fetch('/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
+    fetch('/Sewfy/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
         .then(response => response.text())
         .then(data => {
             document.body.insertAdjacentHTML("afterbegin", data)
