@@ -1,4 +1,4 @@
-import { mostrarToast } from "/view/toast/toast.js";
+import { mostrarToast } from "../../toast/toast.js";
 
 
 // CHAMA O MODAL DE CADASTRO
@@ -6,7 +6,7 @@ import { mostrarToast } from "/view/toast/toast.js";
 document.addEventListener("click", (e) => {
 
     if (e.target.closest(".botao-criar-produto")) {
-        fetch('/view/produtos/cadastro/cadastroProdutos.html')
+        fetch('/Sewfy/view/produtos/cadastro/cadastroProdutos.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)

@@ -41,6 +41,9 @@ body {
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
+    background: linear-gradient(90deg, #0e59fe, #020066);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 

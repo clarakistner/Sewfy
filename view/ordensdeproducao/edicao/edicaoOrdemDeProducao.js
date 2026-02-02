@@ -1,4 +1,4 @@
-import {mostrarToast} from '/view/toast/toast.js';
+import {mostrarToast} from '../../toast/toast.js';
 
 var main = document.querySelector(".principal");
 // ABRE O MODAL DE EDIÇÃO E FECHA O DE DETALHES DA OP
@@ -8,7 +8,7 @@ document.body.addEventListener("click", (e) => {
         document.querySelector("#detailsModal")?.remove();
         main.style.filter = "blur(25px)";
         document.querySelector(".header").style.filter = "blur(25px)";
-        fetch('/view/ordensdeproducao/edicao/edicaoOrdemDeProducao.html')
+        fetch('/Sewfy/view/ordensdeproducao/edicao/edicaoOrdemDeProducao.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)
@@ -33,7 +33,7 @@ document.body.addEventListener("click", (e) => {
 
     if (e.target.closest(".cancel")) {
         document.querySelector(".modal")?.remove();
-        fetch('/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
+        fetch('/Sewfy/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)

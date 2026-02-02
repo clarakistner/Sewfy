@@ -1,4 +1,4 @@
-import {mostrarToast} from '/view/toast/toast.js';
+import {mostrarToast} from '../../toast/toast.js';
 
 
 // ABRE MODAL
@@ -6,7 +6,7 @@ import {mostrarToast} from '/view/toast/toast.js';
 document.addEventListener("click", (e) => {
   if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
     if (document.querySelector("#createModal")) return;
-    fetch('/view/ordensdeproducao/requisicao/requisicao.html')
+    fetch('/Sewfy/view/ordensdeproducao/requisicao/requisicao.html')
       .then(response => response.text())
       .then(data => {
         document.body.insertAdjacentHTML("afterbegin", data)
@@ -83,7 +83,6 @@ function adicionarInsumo() {
     td.textContent = insumo;
     tdF.textContent = "Roberto";
     tdUM.textContent = "UM";
-
 
     tr.appendChild(th);
     tr.appendChild(td);

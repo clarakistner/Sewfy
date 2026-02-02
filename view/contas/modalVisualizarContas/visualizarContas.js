@@ -1,10 +1,10 @@
-import {mostrarToast} from '/view/toast/toast.js'
+import {mostrarToast} from '../../toast/toast.js'
 // CHAMA O MODAL DE DETALHES DE CONTAS
 
 document.addEventListener("click", (e) => {
 
     if (e.target.closest(".icone-visualizar-conta")) {
-        fetch('/view/contas/modalVisualizarContas/visualizarContas.html')
+        fetch('/Sewfy/view/contas/modalVisualizarContas/visualizarContas.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)

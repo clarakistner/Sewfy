@@ -4,7 +4,7 @@
 document.addEventListener("click", (e) => {
 
     if (e.target.closest(".icone-visualizar-fornecedor")) {
-        fetch('/view/fornecedores/visualizar/visualizarFornecedores.html')
+        fetch('/Sewfy/view/fornecedores/visualizar/visualizarFornecedores.html')
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)
