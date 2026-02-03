@@ -42,6 +42,9 @@
     cursor: pointer;
 }
 
+.input-produto{
+    width: 100%;
+}
 
 .modal-form {
     padding: 24px;
@@ -56,15 +59,37 @@
     border-radius: 8px;
     font-size: 14px;
 }
-
-.col-2 {
+.modal-form button {
+    grid-row: span 1;
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+.col-2{
     grid-row: span 2;
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: row !important;
     gap: 1%;
 }
-
+.col-2 input {
+   
+    width: 20%;
+    
+}
+.col-2 button {
+   
+    width: 40%;
+    
+}
+.modal-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 1%;
+    gap: 1%;
+}
 /* BOTÕES */
 .cancelar {
     background: #e5e7eb;
@@ -89,20 +114,7 @@
 
 }
 
-.icone-prox {
-    display: none;
 
-}
-
-.proximo:hover {
-
-    .icone-prox {
-        display: inline-flex;
-        align-self: end;
-        font-weight: bold;
-        font-size: 15px;
-    }
-}
 
 .botao {
     display: flex;

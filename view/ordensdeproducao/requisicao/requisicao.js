@@ -1,15 +1,18 @@
 import {mostrarToast} from '../../toast/toast.js';
 
-var main = document.querySelector(".principal");
+
 // ABRE MODAL
 
 document.addEventListener("click", (e) => {
   if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
     if (document.querySelector("#createModal")) return;
+    
     fetch('/Sewfy/view/ordensdeproducao/requisicao/requisicao.html')
       .then(response => response.text())
       .then(data => {
         document.body.insertAdjacentHTML("afterbegin", data)
+       const modal = document.querySelector("#createModal")
+       modal.style.opacity = "1"
       })
   }
 })
@@ -19,9 +22,7 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("click", (e) => {
   if (e.target.closest(".modal-close") || e.target.closest(".cancelar")) {
-    document.querySelector("#createModal")?.remove()
-    main.style.filter = "blur(0)";
-    document.querySelector(".header").style.filter = "blur(0)";
+    document.querySelector("#createModal").remove()
   }
 })
 
@@ -46,10 +47,8 @@ function irOutraTela(atual, proxima) {
 
 document.addEventListener("click", (e) => {
 
-  if (e.target.closest(".confirmar")) {
-    document.querySelector("#createModal")?.remove()
-    main.style.filter = "blur(0)";
-    document.querySelector(".header").style.filter = "blur(0)";
+  if(e.target.closest(".confirmar")){
+    document.querySelector("#createModal").remove()
     mostrarToast("Ordem de Produção criada!")
   }
 })
@@ -58,12 +57,13 @@ document.addEventListener("click", (e) => {
 
 // ADICIONA INSUMO NA TABLE
 
-document.addEventListener("click", (e) => {
-  if (e.target.closest(".adicionar")) {
+document.addEventListener("click", (e) =>{
+  if(e.target.closest(".adicionar")){
     e.preventDefault();
     adicionarInsumo()
   }
 })
+
 
 function adicionarInsumo() {
 
@@ -98,4 +98,3 @@ function adicionarInsumo() {
 
   }
 }
-

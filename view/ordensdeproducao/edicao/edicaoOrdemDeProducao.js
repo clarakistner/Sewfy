@@ -1,4 +1,3 @@
-import { mostrarToast } from '/view/toast/toast.js';
 import {mostrarToast} from '../../toast/toast.js';
 
 var main = document.querySelector(".principal");
@@ -36,7 +35,7 @@ document.body.addEventListener("click", (e) => {
 
     if (e.target.closest(".cancel")) {
 
-        fetch('/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
+        fetch('Sewfy/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
         document.querySelector(".modal")?.remove();
         fetch('/Sewfy/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
             .then(response => response.text())

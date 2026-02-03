@@ -103,15 +103,30 @@ input {
     grid-template-columns: repeat(12, 2fr);
     height: 50%;
     gap: 1rem;
-    background-color: greenyellow;
-    border: #1d4ed8;
+    
 }
 .grid-12>div{
-    grid-column: span  2;
     width: auto;
     height: 50%;
 }
-
+.col-1{
+    grid-column: span 1;
+}
+.col-2{
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+}
+.col-3{
+    grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+}
+.col-4{
+    grid-column: span 4;
+    display: flex;
+    flex-direction: column;
+}
 
 .align-end {
     display: flex;
@@ -133,15 +148,14 @@ input {
     margin-bottom: 16px;
 }
 
-.grid-12 > .checkbox {
+ .checkbox {
     width: auto;
     margin-top: 12px;
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-self: end;
     gap: 1rem;
     font-size: 14px;
-    border: 2px solid black;
   
 }
 
