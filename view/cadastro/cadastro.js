@@ -1,3 +1,5 @@
+import { mostrarToast } from "../toast/toast.js";
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[INIT] DOM carregado');
 
@@ -34,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Verificação de campos preenchidos
         if (!email || !senha || !confirmaSenha || !numero) {
-            alert('Preencha todos os campos');
+            mostrarToast('Preencha todos os campos', 'erro');
             return;
         }
         console.log('[VALIDAÇÃO] Campos preenchidos');
@@ -44,21 +46,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const senhaRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{10,}$/;
 
         if (!senhaRegex.test(senha)) {
-            alert(
+            mostrarToast(
                 'A senha deve ter no mínimo 10 caracteres, ' +
-                '1 letra maiúscula e 1 caractere especial.'
+                '1 letra maiúscula e 1 caractere especial.',
+                'erro'
             );
             return;
         }
         console.log('[VALIDAÇÃO] Senha válida');
 
+        //Verificação de email válido
+        if (email.length > 35){
+            mostrarToast('O email deve ter no máximo 35 caracteres', 'erro');
+            return;
+        }
+        console.log('[VALIDAÇÃO] Email válido');
         
+
         // Verificação de senhas coincidentes
         if (senha !== confirmaSenha) {
-            alert('As senhas não coincidem');
+            mostrarToast('As senhas não coincidem', 'erro');
             return;
         }
         console.log('[VALIDAÇÃO] Senhas coincidem');
+
+
+        // Verificação do número de telefone (deve ter exatamente 11 dígitos)
+        if (numero.length !== 11) {
+            mostrarToast('O número deve ter exatamente 11 dígitos', 'erro');
+            return;
+        }
+        console.log('[VALIDAÇÃO] Número de telefone válido');
 
 
         // Envio dos dados para o backend
@@ -84,16 +102,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 console.log('[SUCESSO] Usuário cadastrado');
-                alert(resultado);
+                mostrarToast('Usuário cadastrado com sucesso!', 'sucesso');
+                // Redireciomamento do usuário para a página de login após 1.5 segundos
+                setTimeout(() => {
+                    window.location.href = '../../view/login/login.html';
+                }, 1500);
                 form.reset();
             } else {
                 console.log('[ERRO BACKEND] Falha ao cadastrar usuário:', resultado);
-                alert(resultado);
+                mostrarToast(resultado, 'erro');
             }
 
         } catch (erro) {
             console.error('[ERRO FETCH] ', erro);
-            alert('Erro ao conectar com o servidor');
+            mostrarToast('Erro ao conectar com o servidor', 'erro');
         }
     });
 });
