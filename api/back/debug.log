@@ -1,0 +1,9 @@
+2026-02-03 22:41:37 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /api.php/produtos
+Nenhuma rota encontrada
+Fim da execução
+

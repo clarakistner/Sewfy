@@ -1,4 +1,9 @@
 <?php
+file_put_contents('debug.log', date('Y-m-d H:i:s') . " - Requisição recebida\n", FILE_APPEND);
+file_put_contents('debug.log', "URI: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
+file_put_contents('debug.log', "Method: " . $_SERVER['REQUEST_METHOD'] . "\n", FILE_APPEND);
+
+
 header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
@@ -18,5 +23,9 @@ $metodo = $_SERVER['REQUEST_METHOD'];
 
 $uri = strtok($uri, '?');
 
+file_put_contents('debug.log', "Chamando gerenciadorRotas\n", FILE_APPEND);
+
 gerenciadorRotas($metodo, $uri);
+
+file_put_contents('debug.log', "Fim da execução\n\n", FILE_APPEND);
 ?>
