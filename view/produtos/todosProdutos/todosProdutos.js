@@ -2,12 +2,36 @@
 async function pegaProdutos() {
     try {
         const listaProds = await window.api.get('/produtos/lista')
-        console.log(`Lista de Produtos: ${listaProds.produtos[1].PROD_NOME}`)
         const verProds = document.querySelector(".table-body")
-        listaProds.produtos.forEach(produto => {
-            const tr = document.createElement('tr')
-            tr.classList.add("table-row")
-            tr.innerHTML = `
+
+        if (!listaProds.produtos || listaProds.produtos.length == 0) {
+
+            console.log("Entrou no if - sem produtos");
+            const tabela = document.querySelector(".table")
+            tabela.style.display = "none"
+            if (!document.querySelector(".lista-produtos h2")) {
+                const h2 = document.createElement("h2")
+                h2.innerText = "Não há produtos cadastrados!";
+                h2.style.display = "flex"
+                h2.style.justifyContent = "center"
+                document.querySelector(".lista-produtos").appendChild(h2)
+            }
+            else {
+                const mensagem = document.querySelector(".lista-produtos h2")
+                mensagem.style.display = ""
+            }
+
+        } else {
+            const tabela = document.querySelector(".table")
+            tabela.style.display = ""
+            if (document.querySelector(".lista-produtos h2")) {
+                const mensagem = document.querySelector(".lista-produtos h2")
+                mensagem.style.display = "none"
+            }
+            listaProds.produtos.forEach(produto => {
+                const tr = document.createElement('tr')
+                tr.classList.add("table-row")
+                tr.innerHTML = `
                         <td class="table-cell">${produto.PROD_COD}</td>
                         <td class="table-cell">${produto.PROD_NOME}</td>
                         <td class="table-cell td-badge">
@@ -17,13 +41,16 @@ async function pegaProdutos() {
                         <td class="table-cell table-cell--right">R$ ${parseFloat(produto.PROD_PRECO).toFixed(2)}</td>
                         <td class="table-cell">
                             <button id="botao-visualizar-produto">
-                                <span class="material-symbols-outlined icone-visualizar-produto">visibility</span>
+                                <span class="material-symbols-outlined icone-visualizar-produto" id="${produto.PROD_ID}">visibility</span>
                             </button>
                         </td>
         `
-            verProds.appendChild(tr)
+                verProds.appendChild(tr)
 
-        });
+            });
+
+        }
+        
     } catch (error) {
         console.log(`Erro ao buscar produtos: ${error}`)
     }
@@ -56,6 +83,11 @@ function tipoSpan(tipo) {
     }
 }
 
+export async function atualizarListaProdutos() {
+    const verProds = document.querySelector(".table-body");
+    verProds.innerHTML = "";
+    await pegaProdutos();
+}
 
 // CHAMA A FUNÇÃO
 pegaProdutos()

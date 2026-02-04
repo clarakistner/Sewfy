@@ -1,5 +1,7 @@
 import {mostrarToast} from "/Sewfy/view/toast/toast.js"
 
+import { atualizarListaProdutos } from "../todosProdutos/todosProdutos.js";
+
 var main = document.querySelector(".principal");
 
 
@@ -42,13 +44,7 @@ document.addEventListener("click", async (e) => {
         e.stopPropagation();
         e.stopImmediatePropagation();
         cadastrarProduto();
-        await new Promise(resolve => setTimeout(resolve, 50));
-        const modal = document.querySelector("#productModal");
-        if (!modal) {
-            console.error("Modal não encontrado!");
-            return;
-        }
-
+        
     }
 })
 
@@ -88,6 +84,7 @@ async function cadastrarProduto() {
         document.querySelector("#productModal").remove()
         main.style.filter = "blur(0)";
         document.querySelector(".header").style.filter = "blur(0)";
+        await atualizarListaProdutos()
 
     } catch (error) {
         console.log(`Erro ao cadastrar produto: ${error}`)

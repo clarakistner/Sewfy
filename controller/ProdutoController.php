@@ -48,14 +48,16 @@ class ProdutoController
                 exit();
             }
             foreach ($listaProdutos as $produto) {
-                if ($produto->getCodProd() === $prodCod || $produto->getNomeProd() === $prodNome) {
-                    $response = [
-                        "status" => "erro",
-                        "resposta" => "Já existe um produto com esse nome ou código!",
-                        "erro" => "true"
-                    ];
-                    echo json_encode($response);
-                    exit();
+                if ($produto->getIdUsuProd() === $_SESSION['usuario_id']) {
+                    if ($produto->getCodProd() === $prodCod || $produto->getNomeProd() === $prodNome) {
+                        $response = [
+                            "status" => "erro",
+                            "resposta" => "Já existe um produto com esse nome ou código!",
+                            "erro" => "true"
+                        ];
+                        echo json_encode($response);
+                        exit();
+                    }
                 }
             }
 
@@ -103,7 +105,7 @@ class ProdutoController
                 "erro" => "false"
             ];
             echo json_encode($response);
-            
+
 
         } catch (Exception $e) {
             http_response_code(500);
