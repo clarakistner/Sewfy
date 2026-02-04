@@ -1,10 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Sewfy</title>
 
-    
+
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -13,11 +15,12 @@
     <link rel="stylesheet" href="../cadastro/cadastroProdutos.css?v=1.0.2">
     <link rel="stylesheet" href="../visualizar/visualizarProdutos.css?v=1.0.2">
 
+
 </head>
 
 <body>
-    
-    
+
+
     <!-- Parte da lista/pesquisa/botão de criação dos produtos -->
     <main class="principal">
         <div class="cabecalho-principal">
@@ -32,85 +35,84 @@
 
         <div class="filtros">
 
-        <div class="input-pesquisa">
-        <svg class="icone-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor"         stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
+            <div class="input-pesquisa">
+                <svg class="icone-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
 
-        <input type="text"
-            placeholder="Pesquisar por nome ou código..."
-        >
-        </div>
+                <input type="text" placeholder="Pesquisar por nome ou código...">
+            </div>
 
-        <div class="box-filtro">
-            <span class="material-symbols-outlined icone-filtro">filter_alt</span>
-            <select id="tipos-filtro">
-            <option value="todas">Todos os Tipos</option>
-            <option value="abertas">Insumos</option>
-            <option value="fechadas">Produtos Acabados</option>
-            </select>
-        </div>
+            <div class="box-filtro">
+                <span class="material-symbols-outlined icone-filtro">filter_alt</span>
+                <select id="tipos-filtro">
+                    <option value="todas">Todos os Tipos</option>
+                    <option value="abertas">Insumos</option>
+                    <option value="fechadas">Produtos Acabados</option>
+                </select>
+            </div>
 
         </div>
 
         <!-- Lista de Produtos -->
         <div id="listaProdutos" class="lista-produtos">
 
-        <table class="table">
+            <table class="table">
 
-            <thead class="table-head">
-            <tr class="table-head-row">
-                <th class="table-head-cell">Código</th>
-                <th class="table-head-cell">Nome</th>
-                <th class="table-head-cell">Tipo</th>
-                <th class="table-head-cell">Unidade de Medida</th>
-                <th class="table-head-cell table-head-cell--right">Preço</th>
-                <th class="table-head-cell">Ações</th>
-            </tr>
-            </thead>
+                <thead class="table-head">
+                    <tr class="table-head-row">
+                        <th class="table-head-cell">Código</th>
+                        <th class="table-head-cell">Nome</th>
+                        <th class="table-head-cell">Tipo</th>
+                        <th class="table-head-cell">Unidade de Medida</th>
+                        <th class="table-head-cell table-head-cell--right">Preço</th>
+                        <th class="table-head-cell">Ações</th>
+                    </tr>
+                </thead>
 
-            <tbody id="products-table" class="table-body">
+                <tbody id="products-table" class="table-body">
 
-            <tr class="table-row">
-                <td class="table-cell">001</td>
-                <td class="table-cell">Camisa</td>
-                 <td class="table-cell td-badge">
-                    <span class="badge badge-pa">Produto Acabado</span>
-                </td>
-                <td class="table-cell">UN</td>
-                <td class="table-cell table-cell--right">R$ 9,90</td>
-                <td class="table-cell">
-                    <button id="botao-visualizar-produto">
-                        <span class="material-symbols-outlined icone-visualizar-produto">visibility</span>
-                    </button>
-                </td>
+                    <tr class="table-row">
+                        <td class="table-cell">001</td>
+                        <td class="table-cell">Camisa</td>
+                        <td class="table-cell td-badge">
+                            <span class="badge badge-pa">Produto Acabado</span>
+                        </td>
+                        <td class="table-cell">UN</td>
+                        <td class="table-cell table-cell--right">R$ 9,90</td>
+                        <td class="table-cell">
+                            <button id="botao-visualizar-produto">
+                                <span class="material-symbols-outlined icone-visualizar-produto">visibility</span>
+                            </button>
+                        </td>
 
-            </tr>
+                    </tr>
 
-            <tr class="table-row">
-                <td class="table-cell">Ma001</td>
-                <td class="table-cell">Malha</td>
-                 <td class="table-cell td-badge">
-                    <span class="badge badge-in">Insumo</span>
-                </td>
-                <td class="table-cell">KG</td>
-                <td class="table-cell table-cell--right">R$ 19,90</td>
-                <td class="table-cell">
-                    <button id="botao-visualizar-produto">
-                        <span class="material-symbols-outlined icone-visualizar-produto">visibility</span>
-                    </button>
-                </td>
-            </tr>
+                    <tr class="table-row">
+                        <td class="table-cell">Ma001</td>
+                        <td class="table-cell">Malha</td>
+                        <td class="table-cell td-badge">
+                            <span class="badge badge-in">Insumo</span>
+                        </td>
+                        <td class="table-cell">KG</td>
+                        <td class="table-cell table-cell--right">R$ 19,90</td>
+                        <td class="table-cell">
+                            <button id="botao-visualizar-produto">
+                                <span class="material-symbols-outlined icone-visualizar-produto">visibility</span>
+                            </button>
+                        </td>
+                    </tr>
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
         </div>
     </main>
     <script type="module" src="../../../api/front/api.js" defer></script>
-<script type="module" src="../../menu/menu.js" defer></script>
-<script type="module" src="../cadastro/cadastroProdutos.js" defer></script>
-<script type="module" src="../visualizar/visualizarProdutos.js" defer></script>
+    <script type="module" src="../../menu/menu.js" defer></script>
+    <script type="module" src="../cadastro/cadastroProdutos.js" defer></script>
+    <script type="module" src="../visualizar/visualizarProdutos.js" defer></script>
 
 </body>
+
 </html>

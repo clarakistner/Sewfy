@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../model/DAOs/ProdutoDAO.php';
 require_once __DIR__ . '/../model/entidades/Produto.php';
+session_start();
 class ProdutoController
 {
     private ProdutoDAO $produtoDAO;
@@ -33,17 +34,23 @@ class ProdutoController
             $prodAtiv = $dados['PROD_ATIV'] ?? null;
             $prodPreco = $dados['PROD_PRECO'] ?? null;
             $prodTipo = $dados['PROD_TIPO'] ?? null;
-            $idUsuario = $dados['USUARIO_ID'] ?? null;
+            $idUsuario = $_SESSION['usuario_id'] ?? null;
 
 
             $produto = new Produto($prodCod, $prodNome, $prodDesc, $prodTipo, $prodUm, $prodPreco, $prodAtiv, $idUsuario);
 
             $this->produtoDAO->criarProduto($produto);
+        $response = [
+            "status"=> "sucesso",
+            "resposta" => "Produto criado!",
+            "erro" => "false"
+        ];
+        echo json_encode($response);
 
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
-                'sucesso' => false,
+                'status' => "erro",
                 'erro' => $e->getMessage()
             ]);
         }

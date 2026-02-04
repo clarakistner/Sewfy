@@ -118,12 +118,12 @@ textarea {
   background: linear-gradient(90deg, #0e59fe, #020066);
 }
 
-#pPrice, #pUnit, #pType, #pCode{
+#pPrice, #pUm, #pType, #pCode{
     padding: 12px 6px;
     text-indent: 6px;
 }
 
-#pType, #pUnit {
+#pType, #pUm {
     height: 7vh;
     font-size: 14px;
 }
@@ -148,7 +148,7 @@ input::placeholder {
   box-sizing: border-box;
 }
 
-#pUnit:focus, #pType:focus {
+#pUm:focus, #pType:focus {
     border: 2px solid #082db2;
 }
 

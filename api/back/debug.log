@@ -7,3 +7,114 @@ URI depois do replace: /api.php/produtos
 Nenhuma rota encontrada
 Fim da execução
 
+2026-02-04 16:14:14 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /api.php/produtos
+Nenhuma rota encontrada
+Fim da execução
+
+2026-02-04 16:19:32 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /api.php/produtos
+Nenhuma rota encontrada
+Fim da execução
+
+2026-02-04 16:20:12 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /api.php/produtos
+Nenhuma rota encontrada
+Fim da execução
+
+2026-02-04 16:24:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /produtos
+Entrou no if de criar produto
+Fim da execução
+
+2026-02-04 16:35:32 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /produtos
+Entrou no if de criar produto
+Fim da execução
+
+2026-02-04 16:38:37 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /produtos
+Entrou no if de criar produto
+Fim da execução
+
+2026-02-04 16:38:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+gerenciadorRotas - URI: /Sewfy/api/back/api.php/produtos | Método: POST
+URI depois do replace: /produtos
+Entrou no if de criar produto
+Fim da execução
+
+2026-02-04 16:46:54 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-04 16:55:15 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-04 16:59:00 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-04 17:04:57 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-04 17:07:58 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-04 17:17:05 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-04 17:23:02 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-04 17:26:25 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+

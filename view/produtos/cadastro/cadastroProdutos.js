@@ -39,32 +39,44 @@ document.addEventListener("click", (e) => {
 // CADASTRO DO PRODUTO
 
 document.addEventListener("click", async (e) => {
-    console.log("Clique detectado em:", e.target);
+   
     if (e.target.classList.contains("btn-submit")) {
          e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        console.log("Entrou no if do btn-submit");
-
+        cadastrarProduto();
         await new Promise(resolve => setTimeout(resolve, 50));
         const modal = document.querySelector("#productModal");
         if (!modal) {
             console.error("Modal não encontrado!");
             return;
         }
-        const prodNome = document.querySelector("#pName").value
+        
+    }
+})
+
+async function cadastrarProduto(){
+    const prodNome = document.querySelector("#pName").value
         const prodCod = document.querySelector("#pCode").value
         const prodDesc = document.querySelector("#pDesc").value
         const prodPreco = document.querySelector("#pPrice").value
         const prodUm = document.querySelector("#pUm").value
         const prodTipo = document.querySelector("#pType").value
 
+        const listaTipo = {
+            "insumo": 1,
+            "final": 2,
+            "conjunto": 3
+        }
+
+        const prodTipoNumero = listaTipo[prodTipo]
+
         try {
             const dadosProduto = {
                 PROD_COD: prodCod,
                 PROD_NOME: prodNome,
                 PROD_DESC: prodDesc,
-                PROD_TIPO: prodTipo,
+                PROD_TIPO: prodTipoNumero,
                 PROD_UM: prodUm,
                 PROD_PRECO: prodPreco,
                 PROD_ATIV: 1,
@@ -84,6 +96,5 @@ document.addEventListener("click", async (e) => {
         } catch (error) {
             console.log(`Erro ao cadastrar produto: ${error}`)
         }
-    }
-})
+}
 

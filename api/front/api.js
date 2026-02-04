@@ -18,7 +18,24 @@ export class API {
         }
         try {
             const response = await fetch(url, config)
-            const dados = await response.json()
+            const text = await response.text()
+            console.log('Status da resposta:', response.status);
+            console.log('Resposta do servidor:', text);
+            
+            
+            if (!text || text.trim() === '') {
+                throw new Error('Resposta vazia do servidor')
+            }
+            
+           
+            let dados;
+            try {
+                dados = JSON.parse(text)
+            } catch (parseError) {
+                console.error('Erro ao fazer parse do JSON:', parseError);
+                console.error('Texto recebido:', text);
+                throw new Error('Resposta do servidor não é um JSON válido')
+            }
             if (!response.ok) {
                 throw new Error(dados.erro || 'Erro na requisição')
             }
