@@ -11,6 +11,11 @@ function gerenciadorRotas($metodo, $uri)
         $controller->criarProduto();
         return;
     }
+    if($uri === '/produtos/lista' && $metodo === 'GET'){
+        $controller = new ProdutoController();
+        $produtos = $controller->buscarProdutos();
+        return $produtos;
+    }
      
 }
 

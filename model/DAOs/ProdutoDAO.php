@@ -40,9 +40,10 @@ class ProdutoDAO
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $produto = new Produto($row['PROD_COD'],$row['PROD_NOME'], $row['PROD_DESC'], $row['PROD_TIPO'], $row['PROD_UM'], $row['PROD_PRECO'], $row['PROD_ATIV'], $row['USUARIOS_USU_ID']);
+            $produto->setIdProd($row['PROD_ID']);
             
 
-            $produtos[] = $produtos;
+            $produtos[] = $produto;
         }
        
         return $produtos;

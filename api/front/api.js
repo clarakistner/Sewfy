@@ -1,3 +1,5 @@
+import { mostrarToast } from "/Sewfy/view/toast/toast.js"
+
 export class API {
     constructor(url = '/Sewfy/api/back/api.php') {
         this.url = url
@@ -5,10 +7,7 @@ export class API {
 
     async request(caminho, opcoes = {}) {
         const url = `${this.url}${caminho}`
-        console.log('=== REQUISIÇÃO ===');
-        console.log('URL:', url);
-        console.log('Método:', opcoes.method || 'GET');
-        console.log('Body:', opcoes.body);
+
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -18,26 +17,15 @@ export class API {
         }
         try {
             const response = await fetch(url, config)
-            const text = await response.text()
+            const dados = await response.json()
+            if (!!dados.resposta) {
+                mostrarToast(`${dados.resposta}`)
+            }
             console.log('Status da resposta:', response.status);
-            console.log('Resposta do servidor:', text);
-            
-            
-            if (!text || text.trim() === '') {
-                throw new Error('Resposta vazia do servidor')
-            }
-            
-           
-            let dados;
-            try {
-                dados = JSON.parse(text)
-            } catch (parseError) {
-                console.error('Erro ao fazer parse do JSON:', parseError);
-                console.error('Texto recebido:', text);
-                throw new Error('Resposta do servidor não é um JSON válido')
-            }
-            if (!response.ok) {
-                throw new Error(dados.erro || 'Erro na requisição')
+            console.log('Resposta do servidor:', dados);
+
+            if (!response.ok || dados.status === 'erro') {
+                throw new Error(dados.resposta || dados.erro || 'Erro na requisição')
             }
             return dados;
         } catch (error) {
@@ -52,6 +40,12 @@ export class API {
             body: JSON.stringify(dados)
         })
     }
-    
+
+    async get(caminho) {
+        return this.request(caminho, {
+            method: 'GET'
+        })
+    }
+
 }
 window.api = new API();

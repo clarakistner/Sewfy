@@ -98,6 +98,7 @@ textarea {
   background: #e5e7eb;
   color: #374151;
   border-radius: 8px;
+  width: 50%;
   border: none;
   cursor: pointer;
 }
@@ -109,6 +110,7 @@ textarea {
   padding: 12px 24px;
   background: linear-gradient(90deg, #020066, #0e59fe);
   color: #ffffff;
+  width: 50%;
   border-radius: 8px;
   border: none;
   cursor: pointer;

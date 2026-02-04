@@ -31,13 +31,13 @@
 
                 <div class="col-span-2">
                     <label for="pDesc">Descrição</label>
-                    <textarea id="pDesc" placeholder="Descreva as características do produto..." rows="3"></textarea>
+                    <textarea id="pDesc" placeholder="Descreva as características do produto..." rows="3" required></textarea>
                 </div>
 
 
                 <div>
                     <label>Preço</label>
-                    <input type="number" step="0.01" id="pPrice" placeholder="0.00">
+                    <input type="number" step="0.01" id="pPrice" placeholder="0.00" required>
                 </div>
 
                 <div>
@@ -53,7 +53,7 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-cancel">Cancelar</button>
-                <button type="submit" class="btn-submit">Cadastrar</button>
+                <input type="submit" class="btn-submit" value="Cadastrar">
             </div>
         </form>
 
