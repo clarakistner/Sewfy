@@ -3,13 +3,11 @@
 require_once __DIR__ . '/../config/BancoDeDados.php';
 require_once __DIR__ . '/../entidades/Usuario.php';
 
-$conn = conecta_bd();
-
 class UsuarioDAO {
 
-    private $conn;
+    private PDO $conn;
 
-    public function __construct($conn) {
+    public function __construct(PDO $conn) {
         $this->conn = $conn;
     }
 

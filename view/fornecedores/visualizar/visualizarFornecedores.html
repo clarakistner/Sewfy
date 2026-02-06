@@ -13,24 +13,35 @@
 
       <div class="details-grid">
 
-        <div class="detail col-span-2">
+        <div class="detail">
           <span class="label">Nome</span>
-          <span class="value">Clara Costura</span>
+          <span class="value" id="modal-nome" data-field="nome"></span>
+        </div>
+
+        <div class="detail">
+          <span class="label">Cadastro</span>
+          <span class="value" id="modal-ativo" data-field="ativo"></span>
         </div>
 
         <div class="detail">
           <span class="label">CPF/CNPJ</span>
-          <span class="value">999.999.999-99</span>
+          <span class="value" id="modal-cpfcnpj" data-field="cpfCnpj"></span>
         </div>
 
         <div class="detail">
           <span class="label">Número de telefone</span>
-          <span class="value">(99) 99999-9999</span>
+          <span class="value" id="modal-telefone" data-field="telefone"></span>
         </div>
 
-        <div class="detail">
+        <div class="detail col-span-2">
           <span class="label">Endereço</span>
-          <span class="value">Rua Geral Poço Grande, 1380</span>
+          <span class="value" id="modal-endereco" data-field="endereco"></span>
+        </div>
+
+        <div class="detail col-span-2">
+          <button class="btn-editar-fornecedor">
+            Editar Fornecedor
+          </button>
         </div>
 
       </div>
@@ -39,3 +50,4 @@
   </div>
 </div>
 
+<script type="module" src="visualizarFornecedor.js"></script>
