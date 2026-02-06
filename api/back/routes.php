@@ -16,6 +16,11 @@ function gerenciadorRotas($metodo, $uri)
         $produtos = $controller->buscarProdutos();
         return $produtos;
     }
+    if($uri === '/produtos/editar' && $metodo === 'PUT'){
+        $controller = new ProdutoController();
+        $controller->atualizarProduto();
+        return;
+    }
      
 }
 

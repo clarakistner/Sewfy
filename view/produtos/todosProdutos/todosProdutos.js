@@ -152,7 +152,13 @@ function organizaLista(listaProds) {
                                 <span class="material-symbols-outlined icone-visualizar-produto" id="${produto.PROD_ID}">visibility</span>
                             </button>
                         </td>
+                        
         `
+        if(produto.PROD_ATIV == 1){
+            tr.classList.add("disable")
+        }else{
+            tr.classList.remove("disable")
+        }
             verProds.appendChild(tr)
 
         });

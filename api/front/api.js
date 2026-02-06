@@ -40,6 +40,13 @@ export class API {
             body: JSON.stringify(dados)
         })
     }
+     async put(caminho, dados) {
+        return this.request(caminho, {
+            method: 'PUT',
+            body: JSON.stringify(dados)
+        })
+    }
+    
 
     async get(caminho) {
         return this.request(caminho, {

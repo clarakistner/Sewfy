@@ -115,5 +115,67 @@ class ProdutoController
             ]);
         }
     }
+    public function atualizarProduto()
+    {
+        try {
+            $json = file_get_contents('php://input');
+            $dados = json_decode($json, true);
+
+            if (!$dados) {
+                http_response_code(400);
+                echo json_encode([
+                    'sucesso' => false,
+                    'erro' => "Dados inválidos ou ausentes"
+                ]);
+                return;
+            }
+            $listaProdutos = $this->produtoDAO->buscarProdutos();
+            $produto = new Produto(null, null, null, null, null, null, null, null);
+            foreach ($listaProdutos as $prod) {
+                if ($prod->getIdUsuProd() === $_SESSION['usuario_id']) {
+                    if ($prod->getIdProd() === $dados['PROD_ID']) {
+                        $produto = $prod;
+                    } else if ($prod->getCodProd() === $dados['PROD_COD'] || $prod->getNomeProd() === $dados['PROD_NOME']) {
+                        if ($prod->getIdProd() !== $dados['PROD_ID']) {
+                            $response = [
+                                "status" => "erro",
+                                "resposta" => "Já existe um produto com esse nome ou código!",
+                                "erro" => "true"
+                            ];
+                            echo json_encode($response);
+                            exit();
+                        }
+
+                    }
+                }
+            }
+
+            $prodCod = $dados['PROD_COD'] ?? $produto->getCodProd();
+            $prodNome = $dados['PROD_NOME'] ?? $produto->getNomeProd();
+            $prodDesc = $dados['PROD_DESC'] ?? $produto->getDescProd();
+            $prodUm = $dados['PROD_UM'] ?? $produto->getUmProd();
+            $prodAtiv = $dados['PROD_ATIV'] ?? $produto->getAtivProd();
+            $prodPreco = $dados['PROD_PRECO'] ?? $produto->getPrecoProd();
+            $prodTipo = $dados['PROD_TIPO'] ?? $produto->getTipoProd();
+            $prodId = $produto->getIdProd() ?? $dados['PROD_ID'];
+
+            $this->produtoDAO->atualizaProduto($prodId, $prodCod, $prodNome, $prodDesc, $prodTipo, $prodUm, $prodAtiv, $prodPreco);
+
+
+            $response = [
+                "status" => "sucesso",
+                "resposta" => "Produto Atualizado!",
+                "erro" => "false"
+            ];
+            echo json_encode($response);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => "erro",
+                'erro' => $e->getMessage()
+            ]);
+        }
+    }
 }
 ?>

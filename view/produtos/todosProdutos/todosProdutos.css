@@ -16,6 +16,9 @@ body.loaded {
   opacity: 1;
 }
 
+tr.disable{
+  color: gray
+}
 
 .principal {
   max-width: 1280px;
