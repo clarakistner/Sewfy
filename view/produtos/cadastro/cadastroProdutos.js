@@ -1,4 +1,4 @@
-import {mostrarToast} from "/Sewfy/view/toast/toast.js"
+import { mostrarToast } from "/Sewfy/view/toast/toast.js"
 
 import { atualizarListaProdutos } from "../todosProdutos/todosProdutos.js";
 
@@ -44,7 +44,7 @@ document.addEventListener("click", async (e) => {
         e.stopPropagation();
         e.stopImmediatePropagation();
         cadastrarProduto();
-        
+
     }
 })
 
@@ -56,7 +56,16 @@ async function cadastrarProduto() {
     const prodPreco = document.querySelector("#pPrice").value
     const prodUm = document.querySelector("#pUm").value
     const prodTipo = document.querySelector("#pType").value
+    const regex = /^[A-Z]{3}-\d{2}$/
 
+    if (!regex.test(prodCod)) {
+        mostrarToast("O código não está no formato XXX-00", "erro")
+        return
+    }
+    if (!prodPreco || parseFloat(prodPreco) <= 0) {
+        mostrarToast("O preço deve ser maior que zero!", "erro");
+        return;
+    }
     const listaTipo = {
         "insumo": 1,
         "final": 2,
@@ -73,8 +82,7 @@ async function cadastrarProduto() {
             PROD_TIPO: prodTipoNumero,
             PROD_UM: prodUm,
             PROD_PRECO: prodPreco,
-            PROD_ATIV: 1,
-            USUARIO_ID: 1
+            PROD_ATIV: 1
         }
 
         const resposta = await window.api.post("/produtos", dadosProduto);
@@ -88,7 +96,7 @@ async function cadastrarProduto() {
 
     } catch (error) {
         console.log(`Erro ao cadastrar produto: ${error}`)
-        
+
     }
 }
 

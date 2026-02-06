@@ -1,3 +1,30 @@
+// FILTRA OS PRODUTOS
+
+document.addEventListener("change", async (e) => {
+    if (e.target.id === "tipos-filtro") {
+        const filtro = document.querySelector("#tipos-filtro")
+        const listaProds = await window.api.get('/produtos/lista')
+        if (filtro.value == 1) {
+            const prodsIn = listaProds.produtos.filter(produto => {
+                return produto.PROD_TIPO == 1
+            })
+            organizaLista(prodsIn)
+        } else if (filtro.value == 2) {
+            const prodsPa = listaProds.produtos.filter(produto => {
+                return produto.PROD_TIPO == 2
+            })
+            organizaLista(prodsPa)
+        } else if (filtro.value == 3) {
+            const prodsCo = listaProds.produtos.filter(produto => {
+                return produto.PROD_TIPO == 3
+            })
+            organizaLista(prodsCo)
+        }else{
+            organizaLista(listaProds.produtos)
+        }
+    }
+})
+
 
 // CHAMA FUNÇÃO NO CAMPO DE PESQUISA
 
@@ -5,7 +32,7 @@ document.addEventListener("input", async (e) => {
     if (e.target.closest(".input-pesquisa input")) {
         try {
             const listaProds = await window.api.get('/produtos/lista')
-            pesquisaProdutos(listaProds.produtos,removerAcentos( e.target.value))
+            pesquisaProdutos(listaProds.produtos, removerAcentos(e.target.value))
         } catch (error) {
             console.log(`Erro ao pesquisar produtos: ${error}`)
         }
