@@ -8,14 +8,14 @@
     </div>
 
     <form class="modal-form">
-      <input required placeholder="Produto" class="col-2">
-      <input required type="number" placeholder="Quantidade">
+      <input required placeholder="Produto" class="input-produto">
+      <input required type="number" placeholder="Quantidade" class="input-produto">
 
-      <button type="submit" class="botao proximo proxinsumos">Próximo <span
-          class="material-symbols-outlined icone-prox">
-          arrow_forward
-        </span></button>
-      <button type="button" class="botao cancelar">Cancelar</button>
+      <div class="modal-box">
+        <button type="button" class="botao cancelar">Cancelar</button>
+        <button type="button" class="botao proximo proxinsumos">Próximo </button>
+      </div>
+
 
     </form>
 
@@ -53,11 +53,12 @@
         <input required placeholder="Insumo" class="campoInsumo">
         <input required placeholder="Fornecedor" class="campoFornecedor">
         <input required placeholder="Unidade de Medida" class="campoUniMed">
-        <button type="button" class="adicionar" >Adicionar</button>
+        <button type="button" class="adicionar">Adicionar</button>
       </div>
 
-      <button type="button" class="botao finalizar" >Finalizar</button>
+
       <button type="button" class="botao cancelar">Cancelar</button>
+      <button type="button" class="botao finalizar">Finalizar</button>
 
     </form>
 
@@ -82,10 +83,12 @@
       <p>Aqui ficarão os dados</p>
 
     </div>
-    <button type="button" class="botao confirmar">Confirmar</button>
-    <button type="button" class="botao cancelar">Cancelar</button>
 
-    </form>
+    <div class="modal-box">
+      <button type="button" class="botao cancelar">Cancelar</button>
+      <button type="button" class="botao confirmar">Confirmar</button>
+    </div>
+
 
   </div>
 </div>

@@ -8,7 +8,7 @@ document.addEventListener("click", (e) => {
             .then(response => response.text())
             .then(data => {
                 document.body.insertAdjacentHTML("afterbegin", data)
-                
+
             });
     }
 })
@@ -17,7 +17,9 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
 
     if (e.target.classList.contains("modal-fecha")) {
-        document.querySelector("#conta-modal").remove()
+        document.querySelector("#conta-modal")?.remove()
+        main.style.filter = "blur(0)";
+        document.querySelector(".header").style.filter = "blur(0)";
     }
 })
 
@@ -25,7 +27,9 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
 
     if (e.target.classList.contains("btn-submit")) {
-        document.querySelector("#conta-modal").remove()
+        document.querySelector("#conta-modal")?.remove()
+        main.style.filter = "blur(0)";
+        document.querySelector(".header").style.filter = "blur(0)";
         mostrarToast("Alterações na conta salvas!")
     }
 })

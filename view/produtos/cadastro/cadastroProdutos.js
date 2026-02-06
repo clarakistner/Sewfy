@@ -1,6 +1,14 @@
 import { mostrarToast } from "../../toast/toast.js";
 
 
+var main = document.querySelector(".principal");
+
+
+document.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log("Form submit bloqueado");
+});
+
 // CHAMA O MODAL DE CADASTRO
 
 document.addEventListener("click", (e) => {
@@ -9,8 +17,10 @@ document.addEventListener("click", (e) => {
         fetch('/Sewfy/view/produtos/cadastro/cadastroProdutos.html')
             .then(response => response.text())
             .then(data => {
+                console.log("HTML carregado:", data);  
+                console.log("Tem pUm?", data.includes('id="pUm"'));
                 document.body.insertAdjacentHTML("afterbegin", data)
-                
+
             });
     }
 })
@@ -20,18 +30,60 @@ document.addEventListener("click", (e) => {
 
     if (e.target.classList.contains("icone-fechar-modal") || e.target.closest(".btn-cancel")) {
         document.querySelector("#productModal").remove()
+        main.style.filter = "blur(0)";
+        document.querySelector(".header").style.filter = "blur(0)";
     }
 })
 
 
 // CADASTRO DO PRODUTO
 
-document.addEventListener("click", (e) => {
-
+document.addEventListener("click", async (e) => {
+    console.log("Clique detectado em:", e.target);
     if (e.target.classList.contains("btn-submit")) {
-        document.querySelector("#productModal").remove()
-        mostrarToast("Produto cadastrado!")
+         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        console.log("Entrou no if do btn-submit");
 
+        await new Promise(resolve => setTimeout(resolve, 50));
+        const modal = document.querySelector("#productModal");
+        if (!modal) {
+            console.error("Modal não encontrado!");
+            return;
+        }
+        const prodNome = document.querySelector("#pName").value
+        const prodCod = document.querySelector("#pCode").value
+        const prodDesc = document.querySelector("#pDesc").value
+        const prodPreco = document.querySelector("#pPrice").value
+        const prodUm = document.querySelector("#pUm").value
+        const prodTipo = document.querySelector("#pType").value
+
+        try {
+            const dadosProduto = {
+                PROD_COD: prodCod,
+                PROD_NOME: prodNome,
+                PROD_DESC: prodDesc,
+                PROD_TIPO: prodTipo,
+                PROD_UM: prodUm,
+                PROD_PRECO: prodPreco,
+                PROD_ATIV: 1,
+                USUARIO_ID: 1
+            }
+
+
+            const resposta = await window.api.post("/produtos", dadosProduto);
+
+
+            console.log(`Resposta: ${resposta}`)
+
+            document.querySelector("#productModal").remove()
+            main.style.filter = "blur(0)";
+            document.querySelector(".header").style.filter = "blur(0)";
+            mostrarToast("Produto cadastrado!")
+        } catch (error) {
+            console.log(`Erro ao cadastrar produto: ${error}`)
+        }
     }
 })
 

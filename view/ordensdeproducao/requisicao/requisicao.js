@@ -6,10 +6,13 @@ import {mostrarToast} from '../../toast/toast.js';
 document.addEventListener("click", (e) => {
   if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
     if (document.querySelector("#createModal")) return;
+    
     fetch('/Sewfy/view/ordensdeproducao/requisicao/requisicao.html')
       .then(response => response.text())
       .then(data => {
         document.body.insertAdjacentHTML("afterbegin", data)
+       const modal = document.querySelector("#createModal")
+       modal.style.opacity = "1"
       })
   }
 })
@@ -61,6 +64,7 @@ document.addEventListener("click", (e) =>{
   }
 })
 
+
 function adicionarInsumo() {
 
   var tabelaInsumos = document.getElementById("tabelaInsumos");
@@ -94,4 +98,3 @@ function adicionarInsumo() {
 
   }
 }
-
