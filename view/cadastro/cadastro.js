@@ -1,4 +1,5 @@
 import { mostrarToast } from "../toast/toast.js";
+import { aplicarMascaraTelefone } from "../assets/mascaras.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[INIT] DOM carregado');
@@ -8,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const senhaInput = document.getElementById('senha');
     const confirmaSenhaInput = document.getElementById('confirma-senha');
     const numeroInput = document.getElementById('numero');
+
+    // Máscara para o campo de número de telefone
+    aplicarMascaraTelefone(numeroInput);
+
 
     // Toggle visibilidade da senha
     document.querySelectorAll('.botao-senha').forEach(botao => {
@@ -25,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = emailInput.value.trim();
         const senha = senhaInput.value.trim();
         const confirmaSenha = confirmaSenhaInput.value.trim();
-        const numero = numeroInput.value.trim();
+        const numero = numeroInput.value.replace(/\D/g, ''); // remove a mascara e deixa só os números
 
         console.log('[DADOS] Valores capturados:', {
             email,
@@ -83,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('[FETCH] Enviando dados para o servidor');
 
-            const response = await fetch('/Sewfy/controller/CadastroController.php', {
+            const response = await fetch('/Sewfy/controller/usuarios/CadastroController.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -103,10 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 console.log('[SUCESSO] Usuário cadastrado');
                 mostrarToast('Usuário cadastrado com sucesso!', 'sucesso');
-                // Redireciomamento do usuário para a página de login após 1.5 segundos
+                // Redireciomamento do usuário para a página de login após 1 segundo
                 setTimeout(() => {
                     window.location.href = '../../view/login/login.html';
-                }, 1500);
+                }, 1000);
                 form.reset();
             } else {
                 console.log('[ERRO BACKEND] Falha ao cadastrar usuário:', resultado);

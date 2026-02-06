@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('[FETCH] Enviando dados para o servidor');
 
-            const response = await fetch('/Sewfy/controller/LoginController.php', {
+            const response = await fetch('/Sewfy/controller/usuarios/LoginController.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const msg = await response.text();
 
+            // se o login for bem-sucedido, redireciona para a home
             if (response.ok) {
                 mostrarToast(msg, 'sucesso');
                 setTimeout(() => {

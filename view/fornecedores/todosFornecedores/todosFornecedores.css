@@ -196,41 +196,60 @@ body.loaded {
   text-align: center;
 }
 
-/* TD da badge */
-.td-badge {
-  display: flex;
-  justify-content: left;
-  /* horizontal */
-  align-items: center;
-  /* vertical */
-}
-
-/* Badge */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 999px;
-  white-space: nowrap;
-}
 
 /*botão de visualizar fornecedor*/
-#botao-visualizar-fornecedor {
+.botao-visualizar-fornecedor {
   background: none;
   border: none;
   padding: 6px;
   cursor: pointer;
+  outline: none;
 }
 
 .icone-visualizar-fornecedor {
-  font-size: 22px;
+  font-size: 26px;
   color: #0e59fe;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-#botao-visualizar-fornecedor:hover .icone-visualizar-fornecedor {
-  color: #000000;
+.icone-visualizar-fornecedor:hover {
+  color: #020066;
   transform: scale(1.1);
 }
+
+/* remove o focus visual padrão */
+.botao-visualizar-fornecedor:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* remove o efeito ao clicar */
+.botao-visualizar-fornecedor:active {
+  outline: none;
+}
+
+/*Estilo para a linha vazia*/
+.linha-vazia {
+    background-color: #f8f9fc;
+}
+
+.mensagem-vazia {
+    text-align: center;
+    padding: 24px 12px;
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.fornecedor-inativo {
+    opacity: 0.45;
+    filter: grayscale(100%);
+}
+
+.fornecedor-inativo:hover {
+    opacity: 0.65;
+}
+
+
+
