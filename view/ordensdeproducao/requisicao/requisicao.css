@@ -143,6 +143,9 @@ table {
     border-collapse: collapse;
     width: 100%;
 }
+.campoInsumo{
+    width: 100% !important;
+}
 
 .tbody {
     display: flex;

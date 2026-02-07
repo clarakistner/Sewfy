@@ -16,8 +16,8 @@ body.loaded {
   opacity: 1;
 }
 
-tr.disable{
-  color: gray
+.disable{
+  opacity: 0.5;
 }
 
 .principal {

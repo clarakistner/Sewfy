@@ -86,6 +86,8 @@ function abreEdicao() {
     const btnEdicao = document.querySelector("#edicao")
     const btnSalvar = document.querySelector("#salvar")
 
+
+
     titulo.innerHTML = "Editar Produto"
     todosInputs.forEach(input => { input.readOnly = false; input.style.border = "" })
     spansOp.forEach(span => span.style.display = "none")

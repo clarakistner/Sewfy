@@ -19,7 +19,7 @@ document.addEventListener("change", async (e) => {
                 return produto.PROD_TIPO == 3
             })
             organizaLista(prodsCo)
-        }else{
+        } else {
             organizaLista(listaProds.produtos)
         }
     }
@@ -151,14 +151,12 @@ function organizaLista(listaProds) {
                             <button id="botao-visualizar-produto">
                                 <span class="material-symbols-outlined icone-visualizar-produto" id="${produto.PROD_ID}">visibility</span>
                             </button>
-                        </td>
-                        
-        `
-        if(produto.PROD_ATIV == 1){
-            tr.classList.add("disable")
-        }else{
-            tr.classList.remove("disable")
-        }
+                        </td>`
+            if (produto.PROD_ATIV == 0) {
+                tr.classList.add("disable")
+            } else {
+                tr.classList.remove("disable")
+            }
             verProds.appendChild(tr)
 
         });

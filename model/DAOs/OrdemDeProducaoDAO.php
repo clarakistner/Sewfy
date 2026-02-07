@@ -60,7 +60,7 @@ class OrdemDeProducaoDAO
     {
         $sql = "UPDATE ORDEM_PRODUCAO SET OP_DATAE = :datae WHERE OP_ID = :idop";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":datae", $op->getOP_DATAE);
+        $stmt->bindValue(":datae", $op->getOP_DATAE());
         $stmt->bindValue(":idop", $op->getOP_ID());
         $stmt->execute();
         return $this->conn->lastInsertId();
