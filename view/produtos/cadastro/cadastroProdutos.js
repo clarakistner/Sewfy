@@ -1,5 +1,6 @@
-import { mostrarToast } from "../../toast/toast.js";
+import { mostrarToast } from "/Sewfy/view/toast/toast.js"
 
+import { atualizarListaProdutos } from "../todosProdutos/todosProdutos.js";
 
 var main = document.querySelector(".principal");
 
@@ -17,8 +18,6 @@ document.addEventListener("click", (e) => {
         fetch('/Sewfy/view/produtos/cadastro/cadastroProdutos.html')
             .then(response => response.text())
             .then(data => {
-                console.log("HTML carregado:", data);  
-                console.log("Tem pUm?", data.includes('id="pUm"'));
                 document.body.insertAdjacentHTML("afterbegin", data)
 
             });
@@ -39,51 +38,65 @@ document.addEventListener("click", (e) => {
 // CADASTRO DO PRODUTO
 
 document.addEventListener("click", async (e) => {
-    console.log("Clique detectado em:", e.target);
+
     if (e.target.classList.contains("btn-submit")) {
-         e.preventDefault();
+        e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        console.log("Entrou no if do btn-submit");
+        cadastrarProduto();
 
-        await new Promise(resolve => setTimeout(resolve, 50));
-        const modal = document.querySelector("#productModal");
-        if (!modal) {
-            console.error("Modal não encontrado!");
-            return;
-        }
-        const prodNome = document.querySelector("#pName").value
-        const prodCod = document.querySelector("#pCode").value
-        const prodDesc = document.querySelector("#pDesc").value
-        const prodPreco = document.querySelector("#pPrice").value
-        const prodUm = document.querySelector("#pUm").value
-        const prodTipo = document.querySelector("#pType").value
-
-        try {
-            const dadosProduto = {
-                PROD_COD: prodCod,
-                PROD_NOME: prodNome,
-                PROD_DESC: prodDesc,
-                PROD_TIPO: prodTipo,
-                PROD_UM: prodUm,
-                PROD_PRECO: prodPreco,
-                PROD_ATIV: 1,
-                USUARIO_ID: 1
-            }
-
-
-            const resposta = await window.api.post("/produtos", dadosProduto);
-
-
-            console.log(`Resposta: ${resposta}`)
-
-            document.querySelector("#productModal").remove()
-            main.style.filter = "blur(0)";
-            document.querySelector(".header").style.filter = "blur(0)";
-            mostrarToast("Produto cadastrado!")
-        } catch (error) {
-            console.log(`Erro ao cadastrar produto: ${error}`)
-        }
     }
 })
+
+// FUNÇÃO DE CADASTRO DE PRODUTO
+async function cadastrarProduto() {
+    const prodNome = document.querySelector("#pName").value
+    const prodCod = document.querySelector("#pCode").value
+    const prodDesc = document.querySelector("#pDesc").value
+    const prodPreco = document.querySelector("#pPrice").value
+    const prodUm = document.querySelector("#pUm").value
+    const prodTipo = document.querySelector("#pType").value
+    const regex = /^[A-Z]{3}-\d{2}$/
+
+    if (!regex.test(prodCod)) {
+        mostrarToast("O código não está no formato XXX-00", "erro")
+        return
+    }
+    if (!prodPreco || parseFloat(prodPreco) <= 0) {
+        mostrarToast("O preço deve ser maior que zero!", "erro");
+        return;
+    }
+    const listaTipo = {
+        "insumo": 1,
+        "final": 2,
+        "conjunto": 3
+    }
+
+    const prodTipoNumero = listaTipo[prodTipo]
+
+    try {
+        const dadosProduto = {
+            PROD_COD: prodCod,
+            PROD_NOME: prodNome,
+            PROD_DESC: prodDesc,
+            PROD_TIPO: prodTipoNumero,
+            PROD_UM: prodUm,
+            PROD_PRECO: prodPreco,
+            PROD_ATIV: 1
+        }
+
+        const resposta = await window.api.post("/produtos", dadosProduto);
+
+        console.log(`Resposta: ${resposta}`)
+
+        document.querySelector("#productModal").remove()
+        main.style.filter = "blur(0)";
+        document.querySelector(".header").style.filter = "blur(0)";
+        await atualizarListaProdutos()
+
+    } catch (error) {
+        console.log(`Erro ao cadastrar produto: ${error}`)
+
+    }
+}
 

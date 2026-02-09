@@ -1,3 +1,5 @@
+import { mostrarToast } from "/Sewfy/view/toast/toast.js"
+
 export class API {
     constructor(url = '/Sewfy/api/back/api.php') {
         this.url = url
@@ -5,10 +7,7 @@ export class API {
 
     async request(caminho, opcoes = {}) {
         const url = `${this.url}${caminho}`
-        console.log('=== REQUISIÇÃO ===');
-        console.log('URL:', url);
-        console.log('Método:', opcoes.method || 'GET');
-        console.log('Body:', opcoes.body);
+
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -19,8 +18,14 @@ export class API {
         try {
             const response = await fetch(url, config)
             const dados = await response.json()
-            if (!response.ok) {
-                throw new Error(dados.erro || 'Erro na requisição')
+            if (!!dados.resposta) {
+                mostrarToast(`${dados.resposta}`)
+            }
+            console.log('Status da resposta:', response.status);
+            console.log('Resposta do servidor:', dados);
+
+            if (!response.ok || dados.status === 'erro') {
+                throw new Error(dados.resposta || dados.erro || 'Erro na requisição')
             }
             return dados;
         } catch (error) {
@@ -35,6 +40,19 @@ export class API {
             body: JSON.stringify(dados)
         })
     }
+     async put(caminho, dados) {
+        return this.request(caminho, {
+            method: 'PUT',
+            body: JSON.stringify(dados)
+        })
+    }
     
+
+    async get(caminho) {
+        return this.request(caminho, {
+            method: 'GET'
+        })
+    }
+
 }
 window.api = new API();

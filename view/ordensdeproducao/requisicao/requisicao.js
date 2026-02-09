@@ -1,18 +1,27 @@
-import {mostrarToast} from '../../toast/toast.js';
+import { mostrarToast } from '../../toast/toast.js';
 
+const op = {
+  PROD_ID: null,
+  OP_DATAA: null,
+  OP_QTD: null
+}
 
 // ABRE MODAL
 
 document.addEventListener("click", (e) => {
   if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
     if (document.querySelector("#createModal")) return;
-    
+
     fetch('/Sewfy/view/ordensdeproducao/requisicao/requisicao.html')
       .then(response => response.text())
       .then(data => {
         document.body.insertAdjacentHTML("afterbegin", data)
-       const modal = document.querySelector("#createModal")
-       modal.style.opacity = "1"
+        const modal = document.querySelector("#createModal")
+        modal.style.opacity = "1"
+        if (document.querySelector(" select.input-produto")) {
+          console.log("Select existe")
+          carregarProdutosEmSelect("final")
+        }
       })
   }
 })
@@ -30,7 +39,19 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   if (e.target.closest(".proxinsumos")) {
     e.preventDefault();
-    irOutraTela(".produto", ".insumos")
+    const selectProduto = document.querySelector("select.input-produto")
+    const opcao = selectProduto.options[selectProduto.selectedIndex]
+    const campoQuant = document.querySelector("input.input-produto")
+    const quantidade = parseInt(campoQuant.value)
+    if (opcao.value == "Produto" || quantidade == 0 || !quantidade) {
+      mostrarToast("Todos os campos devem ser preenchidos!", "erro")
+      return;
+    } else {
+      op.PROD_ID = parseInt(opcao.id)
+      op.OP_QTD = quantidade
+      irOutraTela(".produto", ".insumos")
+      carregarProdutosEmSelect("insumos")
+    }
   }
   else if (e.target.closest(".finalizar")) {
     e.preventDefault();
@@ -47,7 +68,7 @@ function irOutraTela(atual, proxima) {
 
 document.addEventListener("click", (e) => {
 
-  if(e.target.closest(".confirmar")){
+  if (e.target.closest(".confirmar")) {
     document.querySelector("#createModal").remove()
     mostrarToast("Ordem de Produção criada!")
   }
@@ -57,8 +78,8 @@ document.addEventListener("click", (e) => {
 
 // ADICIONA INSUMO NA TABLE
 
-document.addEventListener("click", (e) =>{
-  if(e.target.closest(".adicionar")){
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".adicionar")) {
     e.preventDefault();
     adicionarInsumo()
   }
@@ -93,8 +114,46 @@ function adicionarInsumo() {
     tr.appendChild(tdF);
     tr.appendChild(tdUM);
     tabelaInsumos.appendChild(tr);
-    campoInsumo.value = "";
+    campoInsumo.value = "Insumo";
     campoQuant.value = "";
 
   }
+}
+
+// CARREGA OS PRODUTOS DO BANCO
+
+async function carregarProdutosEmSelect(tipo) {
+  try {
+    const selectProduto = document.querySelector("select.input-produto")
+    const selectInsumo = document.querySelector(".campoInsumo")
+    const listaProdutosBanco = await window.api.get('/produtos/lista')
+    const listaProdutos = listaProdutosBanco.produtos
+
+    if (tipo == 'final') {
+      listaProdutos.forEach(p => {
+        if (p.PROD_TIPO == 2 || p.PROD_TIPO == 3) {
+
+          const option = document.createElement('option')
+          option.id = `${p.PROD_ID}`
+          option.innerHTML = `${p.PROD_NOME}`
+          selectProduto.appendChild(option)
+        }
+
+      });
+    }
+    else {
+      listaProdutos.forEach(p => {
+        if (p.PROD_TIPO == 1) {
+
+          const option = document.createElement('option')
+          option.id = `${p.PROD_ID}`
+          option.innerHTML = `${p.PROD_NOME}`
+          selectInsumo.appendChild(option)
+        }
+      })
+    }
+  } catch (error) {
+    console.log(`Erro ao buscar produtos: ${error}`)
+  }
+
 }

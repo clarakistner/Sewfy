@@ -16,6 +16,9 @@ body.loaded {
   opacity: 1;
 }
 
+.disable{
+  opacity: 0.5;
+}
 
 .principal {
   max-width: 1280px;

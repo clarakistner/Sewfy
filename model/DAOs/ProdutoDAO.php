@@ -40,12 +40,29 @@ class ProdutoDAO
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $produto = new Produto($row['PROD_COD'],$row['PROD_NOME'], $row['PROD_DESC'], $row['PROD_TIPO'], $row['PROD_UM'], $row['PROD_PRECO'], $row['PROD_ATIV'], $row['USUARIOS_USU_ID']);
+            $produto->setIdProd($row['PROD_ID']);
             
 
-            $produtos[] = $produtos;
+            $produtos[] = $produto;
         }
        
         return $produtos;
+    }
+    public function atualizaProduto($idProd,$prodCod,$prodNome,$prodDesc,$prodTipo,$prodUm,$prodAtiv,$prodPreco)
+    {
+        $sql = "UPDATE PRODUTOS SET PROD_COD = :prodCod, PROD_NOME = :prodNome, PROD_DESC= :prodDesc, PROD_TIPO = :prodTipo, PROD_UM= :prodUm, PROD_ATIV = :prodAtiv, PROD_PRECO = :prodPreco WHERE PROD_ID = :idProd";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":prodCod", $prodCod);
+        $stmt->bindValue(":prodNome", $prodNome);
+        $stmt->bindValue(":prodDesc", $prodDesc);
+        $stmt->bindValue(":prodTipo", $prodTipo);
+        $stmt->bindValue(":prodUm", $prodUm);
+        $stmt->bindValue(":prodAtiv", $prodAtiv);
+        $stmt->bindValue(":prodPreco", $prodPreco);
+        $stmt->bindValue(":idProd", $idProd);
+        
+        $stmt->execute();
+        return $this->conn->lastInsertId();
     }
 }
 

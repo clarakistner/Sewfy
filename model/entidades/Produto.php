@@ -13,6 +13,7 @@ class Produto
     private $USUARIOS_USU_ID;
 
     //CONSTRUTOR
+    
     public function __construct($cod, $nome, $desc, $tipo, $um, $preco, $ativ, $idUsuario){
 
         
