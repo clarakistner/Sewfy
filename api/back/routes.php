@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../controller/ProdutoController.php';
-require_once __DIR__ . '../../controller/OPs/CriacaoOrdemDeProducao.php';
+require_once __DIR__ . '/../../controller/OPs/CriacaoOrdemDeProducao.php';
 
 function gerenciadorRotas($metodo, $uri)
 {
@@ -17,12 +17,21 @@ function gerenciadorRotas($metodo, $uri)
         $controller->buscarProdutos();
         return;
     }
+    $padrao = '#^/produtos/buscaProduto/(\d+)$#';
+    if (preg_match($padrao, $uri, $matches) && $metodo === 'GET') {
+        $id = (int)$matches[1];
+        $controller = new ProdutoController();
+        $controller->buscaprodutoPorId($id);
+        return;
+    }
+
     if ($uri === '/produtos/editar' && $metodo === 'PUT') {
         $controller = new ProdutoController();
         $controller->atualizarProduto();
         return;
     }
-    if ($uri === '/ordemdeproducao/criar' && $metodo === 'POST') {
+
+    if ($uri === "/ordemdeproducao/criar" && $metodo === 'POST') {
         $controller = new CriacaoOrdemDeProducao();
         $controller->criarOP_OPIs();
         return;

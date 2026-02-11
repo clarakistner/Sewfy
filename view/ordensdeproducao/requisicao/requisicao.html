@@ -13,10 +13,11 @@
       </select>
       <input required type="number" placeholder="Quantidade" class="input-produto">
 
-      <div class="modal-box">
-        <button type="button" class="botao cancelar">Cancelar</button>
-        <button type="button" class="botao proximo proxinsumos">Próximo </button>
-      </div>
+
+      <button type="button" class="botao proximo proxinsumos">Próximo </button>
+      <button type="button" class="botao cancelar">Cancelar</button>
+
+
 
 
     </form>
@@ -29,42 +30,47 @@
       <h2>Nova Ordem - Insumos</h2>
       <button type="button" class="modal-close">✕</button>
     </div>
+    <div class="modalBoxInsumos">
+      <div class="box-tabela">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Insumo</th>
+              <th scope="col">Fornecedor</th>
+              <th scope="col">Unidade de Medida</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaInsumos">
 
-    <div class="box-tabela">
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Quantidade</th>
-            <th scope="col">Insumo</th>
-            <th scope="col">Fornecedor</th>
-            <th scope="col">Unidade de Medida</th>
-          </tr>
-        </thead>
-        <tbody id="tabelaInsumos">
+          </tbody>
 
-        </tbody>
-
-      </table>
-    </div>
-
-
-    <form class="modal-form">
-
-      <div class="col-2">
-        <input required placeholder="Quantidade" class="campoQuant" type="number">
-        <select name="" class="campoInsumo">
-          <option value="Insumo">Insumo</option>
-        </select>
-        <input required placeholder="Fornecedor" class="campoFornecedor">
-        <input required placeholder="Unidade de Medida" class="campoUniMed">
-        <button type="button" class="adicionar">Adicionar</button>
+        </table>
       </div>
 
 
-      <button type="button" class="botao cancelar">Cancelar</button>
-      <button type="button" class="botao finalizar">Finalizar</button>
+      <form class="modal-form">
 
-    </form>
+        <div class="col-2">
+          <input required min="1" step="1" placeholder="Quantidade" class="campoQuant" type="number">
+          <select name="" class="campoInsumo">
+            <option value="">Insumo</option>
+          </select>
+          <select name="" class="campoFornecedor">
+            <option value="">Fornecedor</option>
+          </select>
+          <select name="" class="campoUniMed">
+            <option value="">Medida</option>
+            <option value="UN">UN</option>
+            <option value="KG">KG</option>
+            <option value="MT">MT</option>
+          </select>
+          <button type="button" class="adicionar">Adicionar</button>
+        </div>
+      </form>
+      <button type="button" class="botao finalizar">Finalizar</button>
+      <button type="button" class="botao cancelar">Cancelar</button>
+    </div>
 
   </div>
   <!-- Modal de Detalhes da ordem -->

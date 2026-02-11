@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__."../entidades/OPInsumo.php";
-require_once __DIR__."../config/BancoDeDados.php";
+require_once __DIR__."/../entidades/OPInsumo.php";
+require_once __DIR__."/../config/BancoDeDados.php";
 class OPInsumoDAO{
 
 private $conn;

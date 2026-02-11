@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/BancoDeDados.php';
-require_once __DIR__ . "/Sewfy/model/entidades/OrdemDeProducao.php";
+require_once __DIR__ . "/../entidades/OrdemDeProducao.php";
 
 class OrdemDeProducaoDAO
 {
@@ -13,8 +13,9 @@ class OrdemDeProducaoDAO
     // CRIA A ORDEM DE PRODUÇÃO
     public function criarOP(OrdemDeProducao $op): int
     {
-        $sql = "INSERT INTO ORDEM_PRODUCAO(OP_QTD, OP_DATAA, USUARIOS_USU_ID, PRODUTOS_PROD_ID) VALUES (:qtd, :dataa, :idusuario, :idprod) ";
+        $sql = "INSERT INTO ORDEM_PRODUCAO(OP_ID, OP_QTD, OP_DATAA, USUARIOS_USU_ID, PRODUTOS_PROD_ID) VALUES (:idop, :qtd, :dataa, :idusuario, :idprod) ";
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':idop', $op->getOP_ID());
         $stmt->bindValue(':qtd', $op->getOP_QTD());
         $stmt->bindValue(':dataa', $op->getOP_DATAA());
         $stmt->bindValue(':idusuario', $op->getUSUARIOS_USU_ID());
@@ -64,6 +65,22 @@ class OrdemDeProducaoDAO
         $stmt->bindValue(":idop", $op->getOP_ID());
         $stmt->execute();
         return $this->conn->lastInsertId();
+    }
+
+    public function contaOPs()
+    {
+        $sql = "SELECT COUNT(*) AS QUANTIDADE FROM ORDEM_PRODUCAO";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+        $quantidade = (int) $row['QUANTIDADE'];
+
+        return $quantidade;
     }
 }
 

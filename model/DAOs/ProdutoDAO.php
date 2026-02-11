@@ -64,6 +64,32 @@ class ProdutoDAO
         $stmt->execute();
         return $this->conn->lastInsertId();
     }
+
+    public function buscarProdutoPorId($id) {
+        $sql = "SELECT * FROM PRODUTOS WHERE PROD_ID = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":id", $id);
+        $stmt->execute();
+
+         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$row) {
+        return null;
+    }
+    
+    $produto = new Produto(
+        $row['PROD_COD'],
+        $row['PROD_NOME'], 
+        $row['PROD_DESC'], 
+        $row['PROD_TIPO'], 
+        $row['PROD_UM'], 
+        $row['PROD_PRECO'], 
+        $row['PROD_ATIV'], 
+        $row['USUARIOS_USU_ID']
+    );
+    $produto->setIdProd($row['PROD_ID']);
+    return $produto;
+    }
 }
 
 ?>

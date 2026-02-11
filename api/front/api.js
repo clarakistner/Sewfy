@@ -17,7 +17,10 @@ export class API {
         }
         try {
             const response = await fetch(url, config)
-            const dados = await response.json()
+
+            const text = await response.text()
+            console.log(`Texto: ${text}`)
+            const dados = JSON.parse(text)
             if (!!dados.resposta) {
                 mostrarToast(`${dados.resposta}`)
             }
@@ -29,7 +32,7 @@ export class API {
             }
             return dados;
         } catch (error) {
-            console.error('Erro na API:', error);
+            console.error(`Erro na API: ${error}`);
             throw error;
         }
     }
@@ -47,6 +50,11 @@ export class API {
         })
     }
     
+    async buscaId(caminho, id) {
+        return this.request(`${caminho}/${id}`, {
+            method: 'GET'
+        })
+    }
 
     async get(caminho) {
         return this.request(caminho, {

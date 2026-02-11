@@ -44,13 +44,7 @@ document.addEventListener("input", async (e) => {
 async function pegaProdutos() {
     try {
         const listaProds = await window.api.get('/produtos/lista')
-
-
-
         organizaLista(listaProds.produtos)
-
-
-
     } catch (error) {
         console.log(`Erro ao buscar produtos: ${error}`)
     }

@@ -2,7 +2,9 @@
 require_once __DIR__ . '/../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../model/DAOs/ProdutoDAO.php';
 require_once __DIR__ . '/../model/entidades/Produto.php';
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 class ProdutoController
 {
     private ProdutoDAO $produtoDAO;
@@ -165,6 +167,40 @@ class ProdutoController
             $response = [
                 "status" => "sucesso",
                 "resposta" => "Produto Atualizado!",
+                "erro" => "false"
+            ];
+            echo json_encode($response);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => "erro",
+                'erro' => $e->getMessage()
+            ]);
+        }
+    }
+    public function buscaprodutoPorId($prodId){
+        try {
+            
+            
+            $prodId = $prodId ?? null;
+
+            $produto = $this->produtoDAO->buscarProdutoPorId($prodId);
+
+            $produtoResposta = [
+                        'PROD_ID' => $produto->getIdProd(),
+                        'PROD_COD' => $produto->getCodProd(),
+                        'PROD_NOME' => $produto->getNomeProd(),
+                        'PROD_DESC' => $produto->getDescProd(),
+                        'PROD_TIPO' => $produto->getTipoProd(),
+                        'PROD_UM' => $produto->getUmProd(),
+                        'PROD_PRECO' => $produto->getPrecoProd(),
+                        'PROD_ATIV' => $produto->getAtivProd()
+                    ];
+
+            $response = [
+                "status" => "sucesso",
+                "produto"=> $produtoResposta,
                 "erro" => "false"
             ];
             echo json_encode($response);

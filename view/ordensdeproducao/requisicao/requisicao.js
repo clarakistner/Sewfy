@@ -1,159 +1,340 @@
 import { mostrarToast } from '../../toast/toast.js';
 
+const listaProdutosBanco = await window.api.get('/produtos/lista')
+let listaProdutos = listaProdutosBanco.produtos
+
+const PROD_TIPO = {
+  INSUMO: 1,
+  FINAL: 2,
+  CONJUNTO: 3
+}
+
+
+
 const op = {
   PROD_ID: null,
-  OP_DATAA: null,
-  OP_QTD: null
+  OP_QTD: null,
+  OP_CUSTOU: null,
+  OP_CUSTOT: null
 }
+const OPINs = []
 
 // ABRE MODAL
 
-document.addEventListener("click", (e) => {
+document.addEventListener("click", handleGlobalClick)
+document.addEventListener("change", defineUM)
+
+function handleGlobalClick(e) {
   if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
-    if (document.querySelector("#createModal")) return;
-
-    fetch('/Sewfy/view/ordensdeproducao/requisicao/requisicao.html')
-      .then(response => response.text())
-      .then(data => {
-        document.body.insertAdjacentHTML("afterbegin", data)
-        const modal = document.querySelector("#createModal")
-        modal.style.opacity = "1"
-        if (document.querySelector(" select.input-produto")) {
-          console.log("Select existe")
-          carregarProdutosEmSelect("final")
-        }
-      })
+    abrirModal()
   }
-})
 
+  if (e.target.closest(".modal-close") || e.target.closest(".cancelar")) {
+    fecharModal()
+  }
+
+  if (e.target.closest(".proxinsumos")) {
+    navegarParaInsumos(e)
+  }
+
+  if (e.target.closest(".finalizar")) {
+    navegarParaMostrarOrdem(e)
+  }
+
+  if (e.target.closest(".confirmar")) {
+    confirmarOrdem()
+  }
+
+  if (e.target.closest(".adicionar")) {
+    e.preventDefault()
+    adicionarInsumo()
+  }
+}
+
+function abrirModal() {
+  if (document.querySelector("#createModal")) return
+
+  fetch('/Sewfy/view/ordensdeproducao/requisicao/requisicao.html')
+    .then(response => response.text())
+    .then(data => {
+      document.body.insertAdjacentHTML("afterbegin", data)
+      const modal = document.querySelector("#createModal")
+      modal.style.opacity = "1"
+
+      if (document.querySelector("select.input-produto")) {
+        console.log("Select existe")
+        carregarProdutosEmSelect("final")
+      }
+    })
+}
 
 // FECHA MODAL
 
-document.addEventListener("click", (e) => {
-  if (e.target.closest(".modal-close") || e.target.closest(".cancelar")) {
-    document.querySelector("#createModal").remove()
-  }
-})
+function fecharModal() {
+  OPINs.length = 0
+  listaProdutos = listaProdutosBanco.produtos
+  document.querySelector("#createModal").remove()
+}
 
 // IR PARA OUTRAS TELAS
-document.addEventListener("click", (e) => {
-  if (e.target.closest(".proxinsumos")) {
-    e.preventDefault();
-    const selectProduto = document.querySelector("select.input-produto")
-    const opcao = selectProduto.options[selectProduto.selectedIndex]
-    const campoQuant = document.querySelector("input.input-produto")
-    const quantidade = parseInt(campoQuant.value)
-    if (opcao.value == "Produto" || quantidade == 0 || !quantidade) {
-      mostrarToast("Todos os campos devem ser preenchidos!", "erro")
-      return;
-    } else {
-      op.PROD_ID = parseInt(opcao.id)
-      op.OP_QTD = quantidade
-      irOutraTela(".produto", ".insumos")
-      carregarProdutosEmSelect("insumos")
-    }
+
+function navegarParaInsumos(e) {
+  e.preventDefault()
+
+  const selectProduto = document.querySelector("select.input-produto")
+  const opcao = selectProduto.options[selectProduto.selectedIndex]
+  const campoQuant = document.querySelector("input.input-produto")
+  const quantidade = parseInt(campoQuant.value)
+  const campoFor = document.querySelector(".campoFornecedor")
+
+  if (opcao.value == "Produto" || !quantidade) {
+    mostrarToast("Todos os campos devem ser preenchidos corretamente!", "erro")
+    return
   }
-  else if (e.target.closest(".finalizar")) {
-    e.preventDefault();
-    irOutraTela(".insumos", ".mostrarOrdem")
+
+  if (quantidade <= 0) {
+    mostrarToast("A quantidade deve ser maior que 0!", "erro")
+    return
   }
-})
+
+  op.PROD_ID = parseInt(opcao.id)
+  op.OP_QTD = quantidade
+  irOutraTela(".produto", ".insumos")
+  carregarProdutosEmSelect("insumos")
+  carregaFornecedores(campoFor)
+}
+
+function navegarParaMostrarOrdem(e) {
+  e.preventDefault()
+  if (OPINs.length <= 0) {
+    mostrarToast("Insira ao menos um insumo na ordem de produção!", "erro")
+    return
+  }
+  irOutraTela(".insumos", ".mostrarOrdem")
+}
 
 function irOutraTela(atual, proxima) {
-  document.querySelector(atual).style.display = "none";
-  document.querySelector(proxima).style.display = "block";
+  document.querySelector(atual).style.display = "none"
+  document.querySelector(proxima).style.display = "block"
+}
+
+// FUNÇÃO DA DATA FORMATADA
+
+function dataFormatada() {
+  const data = new Date()
+  const min = data.getMinutes()
+  const seg = data.getSeconds()
+  const h = data.getHours()
+  const dia = String(data.getDate()).padStart(2, '0')
+  const mes = String(data.getMonth() + 1).padStart(2, '0')
+  const ano = data.getFullYear()
+
+  return `${ano}-${mes}-${dia} ${h}:${min}:${seg}`
 }
 
 // CONFIRMA A OP
 
-document.addEventListener("click", (e) => {
+async function confirmarOrdem() {
+  document.querySelector("#createModal").remove()
 
-  if (e.target.closest(".confirmar")) {
-    document.querySelector("#createModal").remove()
-    mostrarToast("Ordem de Produção criada!")
+  const dados = {
+    OP_QTD: op.OP_QTD,
+    OP_DATAA: dataFormatada(),
+    PROD_ID: op.PROD_ID,
+    INSUMOS: OPINs
   }
-})
+  listaProdutos = listaProdutosBanco.produtos
 
-
+  await window.api.post('/ordemdeproducao/criar', dados)
+  mostrarToast("Ordem de Produção criada!")
+}
 
 // ADICIONA INSUMO NA TABLE
 
-document.addEventListener("click", (e) => {
-  if (e.target.closest(".adicionar")) {
-    e.preventDefault();
-    adicionarInsumo()
+function obterValorSelect(selectElement) {
+  const selectedOption = selectElement.options[selectElement.selectedIndex]
+  return selectedOption.value === "" ? null : selectedOption
+}
+
+function validarCamposInsumo(opInsumo, quant) {
+  if (!opInsumo) {
+    mostrarToast("Preencha todos os campos!", "erro")
+    return false
   }
-})
+
+  if (quant === 0) {
+    mostrarToast("A quantidade deve ser maior que 0!", "erro")
+    return false
+  }
+
+  return true
+}
+
+function criarLinhaTabela(idInsumo, quant, nomeInsumo, nomeFornecedor, unidadeMedida) {
+  const tr = document.createElement("tr")
+  const th = document.createElement("th")
+  const td = document.createElement("td")
+  const tdF = document.createElement("td")
+  const tdUM = document.createElement("td")
+  tr.id = `tr${idInsumo}`
+
+  tr.innerHTML = `
+  <td id="quantidade${idInsumo}">${quant}</td>
+  <td>${nomeInsumo}</td>
+  <td>${nomeFornecedor}</td>
+  <td>${unidadeMedida}</td>
+  `
+  return tr
+}
+
+function limparCamposInsumo(campoInsumo, campoQuant, campoUm, campoFor) {
+  campoInsumo.value = ""
+  campoQuant.value = ""
+  campoUm.value = ""
+  campoFor.value = ""
+}
+async function defineUM(e) {
+  if (e.target.closest(".campoInsumo")) {
+    const select = document.querySelector(".campoInsumo")
+    const insumo = obterValorSelect(select)
+    const busca = await window.api.buscaId(`/produtos/buscaProduto`, parseInt(insumo.id))
+    console.log("Mudando a propriedade do campo de unidade")
+    const campoUm = document.querySelector(".campoUniMed")
+    campoUm.value = busca.produto.PROD_UM
+    campoUm.disabled = true;
+  }
+}
+async function adicionarInsumo() {
+  try {
+    const tabelaInsumos = document.getElementById("tabelaInsumos")
+    const campoInsumo = document.querySelector(".campoInsumo")
+    const campoQuant = document.querySelector(".campoQuant")
+    const campoFor = document.querySelector(".campoFornecedor")
+    const campoUm = document.querySelector(".campoUniMed")
+
+    const opInsumo = obterValorSelect(campoInsumo)
+    const quant = parseInt(campoQuant.value) <= 0 ? 0 : parseInt(campoQuant.value)
+
+    const fornecedor = obterValorSelect(campoFor)
+
+    if (!validarCamposInsumo(opInsumo, quant)) {
+      return
+    }
+
+    console.log(`ID do Insumo: ${parseInt(opInsumo.id)}`)
+
+    const busca = await window.api.buscaId(`/produtos/buscaProduto`, parseInt(opInsumo.id))
+
+    console.log(`Resultado da Busca: ${Object.keys(busca).map(prod => `${prod}: ${busca[prod]}`).join('\n')}`)
+    console.log(`PRODUTO: ${busca.produto.PROD_PRECO}`)
 
 
-function adicionarInsumo() {
 
-  var tabelaInsumos = document.getElementById("tabelaInsumos");
-  var campoInsumo = document.querySelector(".campoInsumo");
-  var campoQuant = document.querySelector(".campoQuant");
-  var listaInsumos = [];
-  const insumo = campoInsumo.value.trim()
-  const quant = campoQuant.value.trim()
-  if (insumo !== "" && quant !== "") {
+    const um = obterValorSelect(campoUm)
+    const custou = parseFloat(busca.produto.PROD_PRECO)
+    const custot = custou * quant
+    const insumo = {
+      IDFORNECEDOR: valorIdFornecedor("id", fornecedor),
+      QTDIN: quant,
+      CUSTOT: custot,
+      CUSTOU: custou,
+      UM: um.value,
+      INSUID: parseInt(opInsumo.id)
+    }
+    const tr = criarLinhaTabela(parseInt(opInsumo.id), quant, opInsumo.value, valorIdFornecedor("valor", fornecedor), um.value)
+    tabelaInsumos.appendChild(tr)
+    OPINs.push(insumo)
+    listaProdutos = listaProdutos.filter(produto =>parseInt(produto.PROD_ID) !== parseInt(opInsumo.id))
 
+    carregarProdutosInsumo(listaProdutos, campoInsumo)
+    limparCamposInsumo(campoInsumo, campoQuant, campoUm, campoFor)
+    campoUm.disabled = false;
+  } catch (error) {
+    console.log(`Erro ao adicionar insumo na ordem de produção: ${error}`)
+  }
+}
+function valorIdFornecedor(atributo, fornecedor) {
+  if (atributo == "valor") {
+    return !fornecedor ? "Sem fornecedor" : fornecedor.value
+  }
+  else {
 
-    listaInsumos.push(insumo);
-    const tr = document.createElement("tr");
-    const th = document.createElement("th");
-    const td = document.createElement("td");
-    const tdF = document.createElement("td");
-    const tdUM = document.createElement("td");
-
-    th.textContent = quant;
-    td.textContent = insumo;
-    tdF.textContent = "Roberto";
-    tdUM.textContent = "UM";
-
-    tr.appendChild(th);
-    tr.appendChild(td);
-    tr.appendChild(tdF);
-    tr.appendChild(tdUM);
-    tabelaInsumos.appendChild(tr);
-    campoInsumo.value = "Insumo";
-    campoQuant.value = "";
-
+    console.log(`Este é o id do fornecedor `)
+    return !fornecedor ? null : parseInt(fornecedor.id)
   }
 }
 
 // CARREGA OS PRODUTOS DO BANCO
 
-async function carregarProdutosEmSelect(tipo) {
+function criarOptionProduto(produto) {
+  const option = document.createElement('option')
+  option.id = `${produto.PROD_ID}`
+  option.innerHTML = `${produto.PROD_NOME}`
+  return option
+}
+
+function carregarProdutosFinal(listaProd, selectProduto) {
+  selectProduto.innerHTML = `
+    <option value="">Produto</option>
+    `
+  listaProd.forEach(p => {
+    if ((p.PROD_TIPO == PROD_TIPO.FINAL || p.PROD_TIPO == PROD_TIPO.CONJUNTO) && p.PROD_ATIV == 1) {
+      const option = criarOptionProduto(p)
+      selectProduto.appendChild(option)
+    }
+  })
+}
+
+function carregarProdutosInsumo(listaProd, selectInsumo) {
+  selectInsumo.innerHTML = `
+    <option value="">Insumo</option>
+    `
+  listaProd.forEach(p => {
+    if (p.PROD_TIPO == PROD_TIPO.INSUMO && p.PROD_ATIV == 1) {
+      const option = criarOptionProduto(p)
+      selectInsumo.appendChild(option)
+    }
+  })
+}
+
+function carregarProdutosEmSelect(tipo) {
   try {
     const selectProduto = document.querySelector("select.input-produto")
     const selectInsumo = document.querySelector(".campoInsumo")
-    const listaProdutosBanco = await window.api.get('/produtos/lista')
-    const listaProdutos = listaProdutosBanco.produtos
+
 
     if (tipo == 'final') {
-      listaProdutos.forEach(p => {
-        if (p.PROD_TIPO == 2 || p.PROD_TIPO == 3) {
-
-          const option = document.createElement('option')
-          option.id = `${p.PROD_ID}`
-          option.innerHTML = `${p.PROD_NOME}`
-          selectProduto.appendChild(option)
-        }
-
-      });
-    }
-    else {
-      listaProdutos.forEach(p => {
-        if (p.PROD_TIPO == 1) {
-
-          const option = document.createElement('option')
-          option.id = `${p.PROD_ID}`
-          option.innerHTML = `${p.PROD_NOME}`
-          selectInsumo.appendChild(option)
-        }
-      })
+      carregarProdutosFinal(listaProdutos, selectProduto)
+    } else {
+      carregarProdutosInsumo(listaProdutos, selectInsumo)
     }
   } catch (error) {
     console.log(`Erro ao buscar produtos: ${error}`)
+  }
+}
+
+async function carregaFornecedores(campo) {
+  try {
+    const response = await fetch("/Sewfy/controller/fornecedores/ListarFornecedoresController.php")
+    const fornecedores = await response.json()
+    if (!response.ok) {
+      console.log(`Falha no banco de dados: ${response}`)
+      return
+    }
+    if (!fornecedores) {
+      console.log("Erro ao buscar fornecedores")
+      return
+    }
+
+    fornecedores.forEach(fornecedor => {
+      const option = document.createElement("option")
+      option.id = `${fornecedor.id}`
+      option.innerHTML = `${fornecedor.nome}`
+      campo.appendChild(option)
+
+    })
+  } catch (error) {
+    console.log(`Erro ao carregar fornecedores: ${error}`)
   }
 
 }

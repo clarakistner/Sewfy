@@ -1,11 +1,13 @@
 <?php
 
-session_start();
-require_once __DIR__ . "../../model/DAOs/OrdemDeProducaoDAO.php";
-require_once __DIR__ . "../../model/DAOs/OPInsumoDAO.php";
-require_once __DIR__ . "../../model/entidades/OrdemDeProducao.php";
-require_once __DIR__ . "../../model/DAOs/OPInsumoDAO.php";
-require_once __DIR__ . "../../model/config/BancoDeDados.php";
+require_once __DIR__ . "/../../model/DAOs/OrdemDeProducaoDAO.php";
+require_once __DIR__ . "/../../model/DAOs/OPInsumoDAO.php";
+require_once __DIR__ . "/../../model/entidades/OrdemDeProducao.php";
+require_once __DIR__ . "/../../model/entidades/OPInsumo.php";
+require_once __DIR__ . "/../../model/config/BancoDeDados.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 class CriacaoOrdemDeProducao
 {
     private $opDAO;
@@ -39,12 +41,15 @@ class CriacaoOrdemDeProducao
             $op->setOP_QTD($qtdProd);
             $op->setUSUARIOS_USU_ID($usuarioId);
             $op->setPRODUTOS_PROD_ID($produtoId);
-            $idOp = $this->opDAO->criarOP($op);
+            $numero = $this->opDAO->contaOPs() + 1;
+            $idOp = 'OP0'.$usuarioId.'00'.$numero;
+            $op->setOP_ID($idOp);
+            $this->opDAO->criarOP($op);
             $insumos = $dados['INSUMOS'] ?? null;
 
             foreach ($insumos as $i) {
                 $insumo = new OPInsumo();
-                $insumo->setFORNECEDORES_CLIFOR_ID($i['FORNECEDOR']);
+                $insumo->setFORNECEDORES_CLIFOR_ID($i['IDFORNECEDOR']);
                 $insumo->setOPIN_CUSTOT($i['CUSTOT']);
                 $insumo->setOPIN_CUSTOU($i['CUSTOU']);
                 $insumo->setOPIN_QTD($i['QTDIN']);
