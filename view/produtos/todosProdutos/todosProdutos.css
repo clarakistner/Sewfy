@@ -9,15 +9,12 @@ body {
   background-color: #f9fafb;
   font-family: Arial, Helvetica, sans-serif;
   color: #111827;
-  opacity: 0;
+   opacity: 0;
 }
 
 body.loaded {
   opacity: 1;
-}
-
-.disable{
-  opacity: 0.5;
+  
 }
 
 .principal {
@@ -159,11 +156,10 @@ body.loaded {
 }
 
 .table-head-cell {
-  padding: 18px 18px;
+  padding: 12px 16px;
   font-size: 14px;
   font-weight: 600;
   color: #374151;
-  text-align: left;
 }
 
 .table-body {
@@ -180,81 +176,104 @@ body.loaded {
 }
 
 .table-cell {
-  padding: 18px 18px;
+  padding: 8px 16px;;
   font-size: 14px;
   color: #374151;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/*colunas 1 e 4 centralizadas nas células*/
+.table td:nth-child(1),
+.table th:nth-child(1),
+.table td:nth-child(4),
+.table th:nth-child(4),
+.table td:nth-child(5),
+.table th:nth-child(5) {
+  text-align: center;
+}
+
+.table td:nth-child(2),
+.table th:nth-child(2),
+.table td:nth-child(3),
+.table th:nth-child(3) {
   text-align: left;
 }
 
-/*linha da unidade de medida centralizada na célula*/
-.table td:nth-child(4),
-.table th:nth-child(4) {
-  text-align: center;
-}
-
-/* linha do preço alinhada à direita na célula*/
-.table td:nth-child(5),
-.table th:nth-child(5) {
-  text-align: right;
-}
-
-/* linha de ações centralizada na célula*/
-.table td:nth-child(6),
-.table th:nth-child(6) {
-  text-align: center;
-}
-
-/* TD da badge */
-.td-badge {
-  display: flex;
-  justify-content: left;
-  /* horizontal */
-  align-items: center;
-  /* vertical */
-}
-
-/* Badge */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 999px;
-  white-space: nowrap;
-}
 
 
-/* Produto Acabado (PA) */
-.badge-pa {
-  background-color: #dcfce7;
-  color: #166534;
-}
-
-/* Insumo (IN) */
-.badge-in {
-  background-color: #dbeafe;
-  color: #0e59fe;
-}
-
-/*botão de visualizar produto*/
-#botao-visualizar-produto {
+/*botão de visualizar fornecedor*/
+.botao-visualizar-produto {
   background: none;
   border: none;
   padding: 6px;
   cursor: pointer;
+  outline: none;
 }
 
 .icone-visualizar-produto {
-  font-size: 22px;
+  font-size: 26px;
   color: #0e59fe;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-#botao-visualizar-produto:hover .icone-visualizar-produto {
-  color: #000000;
+.icone-visualizar-produto:hover {
+  color: #020066;
   transform: scale(1.1);
+}
+
+/* remove o focus visual padrão */
+.botao-visualizar-produto:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* remove o efeito ao clicar */
+.botao-visualizar-produto:active {
+  outline: none;
+}
+
+/*Estilo para a linha vazia*/
+.linha-vazia {
+    background-color: #f8f9fc;
+}
+
+.mensagem-vazia {
+    text-align: center;
+    padding: 24px 12px;
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.produto-inativo {
+    opacity: 0.45;
+    filter: grayscale(100%);
+}
+
+.produto-inativo:hover {
+    opacity: 0.65;
+}
+
+.badge-insumo {
+  background-color: #dbeafe; /* blue-100 */
+  color: #1e40af;           /* blue-800 */
+  border-radius: 10px;
+  padding: 2px 9px;
+  font-weight: 500;
+}
+
+.badge-produto {
+  background-color: #dcfce7; /* green-100 */
+  color: #166534;           /* green-800 */
+  border-radius: 10px;
+  padding: 2px 10px;
+  font-weight: 500;
+}
+
+.cod {
+  font-weight: 600;
+  color: #111827;
 }

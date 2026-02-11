@@ -1,11 +1,11 @@
 <?php
 
-session_start();
-require_once __DIR__ . "../../model/DAOs/OrdemDeProducaoDAO.php";
-require_once __DIR__ . "../../model/DAOs/OPInsumoDAO.php";
-require_once __DIR__ . "../../model/entidades/OrdemDeProducao.php";
-require_once __DIR__ . "../../model/DAOs/OPInsumoDAO.php";
-require_once __DIR__ . "../../model/config/BancoDeDados.php";
+//session_start();
+require_once __DIR__ . "/../../model/DAOs/OrdemDeProducaoDAO.php";
+require_once __DIR__ . "/../../model/DAOs/OPInsumoDAO.php";
+require_once __DIR__ . "/../../model/entidades/OrdemDeProducao.php";
+require_once __DIR__ . "/../../model/DAOs/OPInsumoDAO.php";
+require_once __DIR__ . "/../../model/config/BancoDeDados.php";
 class CriacaoOrdemDeProducao
 {
     private $opDAO;

@@ -1,4 +1,4 @@
-<div id="productModal" class="modal">
+<div id="produtoModal" class="modal">
     <div class="modal-container">
 
         <div class="modal-header">
@@ -8,39 +8,28 @@
             </button>
         </div>
 
-        <form id="productForm" class="modal-form">
+        <form id="Produto" class="modal-form">
             <div class="form-grid">
 
-                <div class="col-span-2">
-                    <label>Nome *</label>
-                    <input type="text" id="pName" required placeholder="Ex: Malha Canelada">
-                </div>
-
-                <div>
+                <div class="area-cod">
                     <label>Código *</label>
-                    <input type="text" id="pCode" required placeholder="MAL-00">
+                    <input type="text" id="pCode" required placeholder="EX: MAL-00">
                 </div>
 
-                <div>
+                <div class="area-tipo">
                     <label>Tipo *</label>
-                    <select id="pType">
-                        <option value="insumo">Insumo</option>
-                        <option value="final">Produto Acabado</option>
+                    <select id="pTipo">
+                        <option value="IN">Insumo</option>
+                        <option value="PA">Produto Acabado</option>
                     </select>
                 </div>
 
-                <div class="col-span-2">
-                    <label for="pDesc">Descrição</label>
-                    <textarea id="pDesc" placeholder="Descreva as características do produto..." rows="3" required></textarea>
+                <div class="area-nome">
+                    <label>Nome *</label>
+                    <input type="text" id="pNome" required placeholder="Nome do produto">
                 </div>
 
-
-                <div>
-                    <label>Preço</label>
-                    <input type="number" step="0.01" id="pPrice" placeholder="0.00" required>
-                </div>
-
-                <div>
+                <div class="area-um">
                     <label>Unidade de Medida *</label>
                     <select id="pUm">
                         <option value="UN">UN</option>
@@ -49,12 +38,27 @@
                     </select>
                 </div>
 
+                <div class="area-descricao">
+                    <label for="pDesc">Descrição </label>
+                    <input id="pDesc" placeholder="Descreva o produto...">
+                </div>
+
+                <div class="area-preco">
+                    <label>Preço Unitário </label>
+                    <input type="text" id="pPreco" placeholder=" R$ 0.00">
+                </div>
+
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="btn-cancel">Cancelar</button>
-                <input type="submit" class="btn-submit" value="Cadastrar">
+                <button type="button" class="btn-cancel">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-submit">
+                    Cadastrar
+                </button>
             </div>
+
         </form>
 
     </div>

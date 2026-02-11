@@ -57,14 +57,40 @@
   padding: 24px;
 }
 
+.area-nome {
+  grid-area: nome;
+}
+
+.area-cod {
+  grid-area: cod;
+}
+
+.area-tipo {
+  grid-area: tipo;
+}
+
+.area-um {
+  grid-area: um;
+}
+
+.area-descricao {
+  grid-area: descricao;
+}
+
+.area-preco {
+  grid-area: preco;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
-}
 
-.col-span-2 {
-  grid-column: span 2;
+  grid-template-areas:
+    "cod tipo"
+    "nome um"
+    "descricao descricao"
+    "preco .";
 }
 
 label {
@@ -76,8 +102,7 @@ label {
 }
 
 input,
-select,
-textarea {
+select {
   width: 100%;
   border-radius: 8px;
   border: 1px solid #d1d5db;
@@ -98,7 +123,6 @@ textarea {
   background: #e5e7eb;
   color: #374151;
   border-radius: 8px;
-  width: 50%;
   border: none;
   cursor: pointer;
 }
@@ -108,53 +132,32 @@ textarea {
 }
 .btn-submit {
   padding: 12px 24px;
-  background: linear-gradient(90deg, #020066, #0e59fe);
+  background: linear-gradient(90deg, #0e59fe, #020066);
   color: #ffffff;
-  width: 50%;
   border-radius: 8px;
   border: none;
   cursor: pointer;
 }
 
 .btn-submit:hover {
-  background: linear-gradient(90deg, #0e59fe, #020066);
+  background: linear-gradient(90deg, #020066, #0e59fe);
 }
 
-#pPrice, #pUm, #pType, #pCode{
+#pNome, #pCode, #pTipo, #pPreco, #pUm {
     padding: 12px 6px;
-    text-indent: 6px;
-}
-
-#pType, #pUm {
-    height: 7vh;
-    font-size: 14px;
-}
-
-input::placeholder {
-  text-indent: 6px;
-}
-
-#pName{
-    padding: 12px 1px;
-    text-indent: 6px;
 }
 
 #pDesc {
-  width: 100%;
-  min-height: 90px;          
+  width: 100%;         
   padding: 14px 16px;         
   font-size: 15px;
-  font-family: inherit;      
+  font-family: inherit;       
   line-height: 1.4;
   resize: vertical;
   box-sizing: border-box;
 }
 
-#pUm:focus, #pType:focus {
-    border: 2px solid #082db2;
-}
-
-input:focus, select:focus, textarea:focus {
+input:focus, select:focus {
     outline: none;
     border: 2px solid #082db2;
 }

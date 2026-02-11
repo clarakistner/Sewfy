@@ -3,6 +3,25 @@ export function apenasNumeros(valor = "") {
     return valor.replace(/\D/g, "");
 }
 
+// valores R$
+export function formatarMoeda(valor) {
+    return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    }).format(valor);
+}
+
+// retira a máscara de valores
+export function converterMoedaParaNumero(valorFormatado) {
+    return parseFloat(
+        valorFormatado
+            .replace("R$", "")      // remove símbolo
+            .replace(/\s/g, "")     // remove espaços
+            .replace(/\./g, "")     // remove separador de milhar
+            .replace(",", ".")      // troca vírgula por ponto
+    );
+}
+
 // CPF / CNPJ
 export function mascaraCpfCnpj(valor = "") {
     valor = apenasNumeros(valor);

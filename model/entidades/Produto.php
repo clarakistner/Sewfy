@@ -1,7 +1,6 @@
 <?php
 
-class Produto
-{
+class Produto implements JsonSerializable {
     private $PROD_ID;
     private $PROD_UM;
     private $PROD_COD;
@@ -12,20 +11,21 @@ class Produto
     private $PROD_ATIV;
     private $USUARIOS_USU_ID;
 
-    //CONSTRUTOR
-    
-    public function __construct($cod, $nome, $desc, $tipo, $um, $preco, $ativ, $idUsuario){
-
-        
-        $this->PROD_COD = $cod;
-        $this->PROD_NOME = $nome;
-        $this->PROD_DESC = $desc;
-        $this->PROD_TIPO = $tipo;
-        $this->PROD_PRECO = $preco;
-        $this->USUARIOS_USU_ID = $idUsuario;
-        $this->PROD_UM = $um;
-        $this->PROD_ATIV = $ativ;
-
+    public function jsonSerialize(): mixed {
+        return [
+            'id'       => $this->getIdProd(),
+            'cod'       => $this->getCodProd(),
+            'nome'       => $this->getNomeProd(),
+            'tipo'       => $tipoTexto = match ((int) $this->getTipoProd()) {
+                                1 => 'Insumo',
+                                2 => 'Produto Acabado',
+                                3 => 'Conjunto',
+                                default => 'Desconhecido',
+                            },
+            'um'       => $this->getUmProd(),
+            'preco'       => $this->getPrecoProd(),
+            'ativo'       => $this->getAtivProd(),
+        ];
     }
 
     // GETTERS E SETTERS

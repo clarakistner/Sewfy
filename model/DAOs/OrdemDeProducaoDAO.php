@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/BancoDeDados.php';
-require_once __DIR__ . "/Sewfy/model/entidades/OrdemDeProducao.php";
+require_once __DIR__ . "/../entidades/OrdemDeProducao.php";
 
 class OrdemDeProducaoDAO
 {
