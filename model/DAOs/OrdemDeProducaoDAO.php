@@ -13,12 +13,14 @@ class OrdemDeProducaoDAO
     // CRIA A ORDEM DE PRODUÇÃO
     public function criarOP(OrdemDeProducao $op): int
     {
-        $sql = "INSERT INTO ORDEM_PRODUCAO(OP_ID, OP_QTD, OP_DATAA, USUARIOS_USU_ID, PRODUTOS_PROD_ID) VALUES (:idop, :qtd, :dataa, :idusuario, :idprod) ";
+        $sql = "INSERT INTO ORDEM_PRODUCAO(OP_ID, OP_QTD, OP_CUSTOU, OP_CUSTOT, OP_DATAA, USUARIOS_USU_ID, PRODUTOS_PROD_ID) VALUES (:idop, :qtd, :custou, :custot, :dataa, :idusuario, :idprod) ";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':idop', $op->getOP_ID());
         $stmt->bindValue(':qtd', $op->getOP_QTD());
         $stmt->bindValue(':dataa', $op->getOP_DATAA());
         $stmt->bindValue(':idusuario', $op->getUSUARIOS_USU_ID());
+        $stmt->bindValue(':custou', $op->getOP_CUSTOU());
+        $stmt->bindValue(':custot', $op->getOP_CUSTOT());
         $stmt->bindValue(':idprod', $op->getPRODUTOS_PROD_ID());
         $stmt->execute();
         return $this->conn->lastInsertId();
@@ -83,5 +85,6 @@ class OrdemDeProducaoDAO
         return $quantidade;
     }
 }
+
 
 ?>

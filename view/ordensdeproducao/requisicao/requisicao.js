@@ -12,10 +12,9 @@ const PROD_TIPO = {
 
 
 const op = {
+  PROD_NOME: null,
   PROD_ID: null,
   OP_QTD: null,
-  OP_CUSTOU: null,
-  OP_CUSTOT: null
 }
 const OPINs = []
 
@@ -97,6 +96,7 @@ function navegarParaInsumos(e) {
     return
   }
 
+  op.PROD_NOME = opcao.value
   op.PROD_ID = parseInt(opcao.id)
   op.OP_QTD = quantidade
   irOutraTela(".produto", ".insumos")
@@ -111,6 +111,7 @@ function navegarParaMostrarOrdem(e) {
     return
   }
   irOutraTela(".insumos", ".mostrarOrdem")
+  organizaDados()
 }
 
 function irOutraTela(atual, proxima) {
@@ -134,19 +135,23 @@ function dataFormatada() {
 
 // CONFIRMA A OP
 
-async function confirmarOrdem() {
-  document.querySelector("#createModal").remove()
 
+async function confirmarOrdem() {
+  try{document.querySelector("#createModal").remove()
   const dados = {
     OP_QTD: op.OP_QTD,
     OP_DATAA: dataFormatada(),
+    OP_CUSTOU: calculaCustoU(),
+    OP_CUSTOT: calculaCustoT(),
     PROD_ID: op.PROD_ID,
     INSUMOS: OPINs
   }
+  OPINs.length = 0
   listaProdutos = listaProdutosBanco.produtos
-
   await window.api.post('/ordemdeproducao/criar', dados)
-  mostrarToast("Ordem de Produção criada!")
+  mostrarToast("Ordem de Produção criada!")}catch(error){
+    console.log(`Erro ao confirmar ordem: ${error}`)
+  }
 }
 
 // ADICIONA INSUMO NA TABLE
@@ -239,12 +244,13 @@ async function adicionarInsumo() {
       CUSTOT: custot,
       CUSTOU: custou,
       UM: um.value,
+      INSUNOME: opInsumo.value,
       INSUID: parseInt(opInsumo.id)
     }
     const tr = criarLinhaTabela(parseInt(opInsumo.id), quant, opInsumo.value, valorIdFornecedor("valor", fornecedor), um.value)
     tabelaInsumos.appendChild(tr)
     OPINs.push(insumo)
-    listaProdutos = listaProdutos.filter(produto =>parseInt(produto.PROD_ID) !== parseInt(opInsumo.id))
+    listaProdutos = listaProdutos.filter(produto => parseInt(produto.PROD_ID) !== parseInt(opInsumo.id))
 
     carregarProdutosInsumo(listaProdutos, campoInsumo)
     limparCamposInsumo(campoInsumo, campoQuant, campoUm, campoFor)
@@ -337,4 +343,37 @@ async function carregaFornecedores(campo) {
     console.log(`Erro ao carregar fornecedores: ${error}`)
   }
 
+}
+function carregaDadosInsumos() {
+  const tabela = document.querySelector("#tabelaIN")
+  OPINs.forEach(insumo => {
+    const tr = document.createElement("tr")
+    tr.innerHTML = `
+  <td> ${insumo.QTDIN} ${insumo.UM} de ${insumo.INSUNOME}</td>`
+    tabela.appendChild(tr)
+  })
+}
+function calculaCustoT() {
+  let custot = 0
+  OPINs.forEach(insumo => {
+    custot += parseFloat(insumo.CUSTOT)
+  })
+  return custot
+}
+function calculaCustoU() {
+
+  const custou = (calculaCustoT() / parseFloat(op.OP_QTD)).toFixed(2)
+  console.log(`Custot: ${calculaCustoT()}\nQTD: ${parseFloat(op.OP_QTD)}\nCustou: ${parseFloat(custou)}`)
+  return parseFloat(custou)
+}
+function organizaDados() {
+  const campoProduto = document.querySelector("#nomeProduto")
+  const campoQtd = document.querySelector("#quantidadeProduto")
+  const campoCustou = document.querySelector("#custou")
+  const campoCustot = document.querySelector("#custot")
+  campoProduto.innerHTML = `${op.PROD_NOME}`
+  campoQtd.innerHTML = `${op.OP_QTD}`
+  campoCustot.innerHTML = `${calculaCustoT().toFixed(2)}`
+  campoCustou.innerHTML = `${calculaCustoU().toFixed(2)}`
+  carregaDadosInsumos()
 }

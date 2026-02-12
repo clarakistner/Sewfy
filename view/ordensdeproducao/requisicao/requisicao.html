@@ -8,21 +8,19 @@
     </div>
 
     <form class="modal-form">
-      <select name="" class="input-produto">
-        <option value="Produto">Produto</option>
+      <select class="input-produto">
+        <option value="">Produto</option>
       </select>
+
       <input required type="number" placeholder="Quantidade" class="input-produto">
 
 
-      <button type="button" class="botao proximo proxinsumos">Próximo </button>
       <button type="button" class="botao cancelar">Cancelar</button>
-
-
-
-
+      <button type="button" class="botao proximo proxinsumos">Próximo</button>
     </form>
 
   </div>
+
   <!-- Modal de insumos -->
   <div class="modal-container insumos">
 
@@ -76,30 +74,32 @@
   <!-- Modal de Detalhes da ordem -->
   <div class="modal-container mostrarOrdem">
 
+
     <div class="modal-header">
       <h2>Nova Ordem - Dados</h2>
       <button type="button" class="modal-close">✕</button>
     </div>
 
+
     <div class="dadosOP">
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
-      <p>Aqui ficarão os dados</p>
+      <label for="" id="labelNomeProduto">Produto:</label>
+      <h3 id="nomeProduto">O nome será aqui</h3>
+      <label for="" id="labelQuantidade">Quantidade:</label>
+      <h3 id="quantidadeProduto">Quantidade será aqui</h3>
+      <label for="" id="labelCustou">Custo unitário:</label>
+      <h3 id="custou">O custou será aqui</h3>
+      <label for="" id="labelCustot">Custo total:</label>
+      <h3 id="custot">O custot será aqui</h3>
+      <p>Insumos</p>
+      <div id="dadosTabela">
+        <table id="tabelaIN">
+        </table>
+      </div>
 
-    </div>
 
-    <div class="modal-box">
       <button type="button" class="botao cancelar">Cancelar</button>
       <button type="button" class="botao confirmar">Confirmar</button>
     </div>
-
-
   </div>
 </div>
 

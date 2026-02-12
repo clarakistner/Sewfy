@@ -36,7 +36,11 @@ class CriacaoOrdemDeProducao
             $dataa = $dados['OP_DATAA'] ?? null;
             $usuarioId = $_SESSION['usuario_id'] ?? null;
             $produtoId = $dados['PROD_ID'] ?? null;
+            $custouOP = $dados['OP_CUSTOU'] ?? null;
+            $custotOP = $dados['OP_CUSTOT'] ?? null;
             $op = new OrdemDeProducao();
+            $op->setOP_CUSTOT($custotOP);
+            $op->setOP_CUSTOU($custouOP);
             $op->setOP_DATAA($dataa);
             $op->setOP_QTD($qtdProd);
             $op->setUSUARIOS_USU_ID($usuarioId);
