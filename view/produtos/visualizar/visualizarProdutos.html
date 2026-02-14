@@ -1,57 +1,68 @@
-<div id="produtoModal" class="modal">
-  <div class="modal-container">
+
+   <div class="produtomodal">
+    <div class="modal-container">
+        
+    <!-- Header -->
     <div class="modal-header">
       <h2 class="modal-title">Detalhes do Produto</h2>
       <button class="material-symbols-outlined modal-close">close</button>
     </div>
+
+    <!-- Content -->
     <div class="modal-content">
+
       <div class="details-grid">
+
         <div class="detail">
-          <span class="label">Código</span>
-          <input class="value" id="cod" />
+          <span class="label">Código *</span>
+          <span class="value" id="modal-cod" data-field="codigo"></span>
         </div>
+
         <div class="detail">
-          <span class="label">Tipo</span>
-          <input class="badge badge-warning" id="tipo" />
-          <select id="tipoSelect">
-            <option value="1">Insumo</option>
-            <option value="2">Produto Acabado</option>
-            <option value="3">Conjunto</option>
-          </select>
+          <span class="label">Tipo *</span>
+          <span class="value" id="modal-tipo" data-field="tipo"></span>
         </div>
+
         <div class="detail">
-          <span class="label">Nome</span>
-          <input class="value" id="nome" />
+          <span class="label">Nome *</span>
+          <span class="value" id="modal-nome" data-field="nome"></span>
         </div>
+
         <div class="detail">
-          <span class="label">Descrição</span>
-          <input class="value" id="desc" />
+          <span class="label">Unidade de Medida *</span>
+          <span class="value" id="modal-um" data-field="um"></span>
         </div>
+
         <div class="detail">
           <span class="label">Preço</span>
-          <input class="value strong" id="preco" />
+          <span class="value" id="modal-preco" data-field="preco"></span>
         </div>
+
         <div class="detail">
-          <span class="label">Unidade de Medida</span>
-          <input class="value" id="um" />
-          <select id="umSelect">
-            <option value="KG">KG</option>
-            <option value="UN">UN</option>
-            <option value="MT">MT</option>
-          </select>
+          <span class="label">Cadastro *</span>
+          <span class="value" id="modal-cadastro" data-field="ativo"></span>
         </div>
+
         <div class="detail col-span-2">
-          <span class="label ativ">Produto</span>
-          <select name="ativ" id="ativ">
-            <option value="1">Ativo</option>
-            <option value="0">Inativo</option>
-          </select>
-          <span class="label op">Ordens de Produção:</span>
-          <span class="value op">OP-002, OP-009, OP-014, OP-312</span>
+          <span class="label">Descrição</span>
+          <span class="value" id="modal-desc" data-field="descricao"></span>
         </div>
-        <button id="edicao">Editar Produto</button>
-        <button id="salvar">Salvar Alterações</button>
+
+        <!--vai exibir as ordens de produção que utilizam este produto-->
+        <div class="detail col-span-2">
+          <span class="label">Ordens de Produção</span>
+        </div>
+
+        <div class="detail col-span-2">
+          <button class="btn-editar-produto">
+            Editar Produto
+          </button>
+        </div>
+
       </div>
+
     </div>
   </div>
 </div>
+
+<script type="module" src="visualizarProdutos.js"></script>

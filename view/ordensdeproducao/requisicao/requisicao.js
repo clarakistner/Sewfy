@@ -1,55 +1,69 @@
-import { mostrarToast } from '../../toast/toast.js';
+// Importa funções auxiliares
+import { mostrarToast } from '../../toast/toast.js'
+import { listarOrdensProducao, limparLista } from '../gerenciar/gerenciarOrdensDeProducao.js'
 
-const listaProdutosBanco = await window.api.get('/produtos/lista')
-let listaProdutos = listaProdutosBanco.produtos
+// Busca lista inicial de produtos
+const response = await fetch(
+  "/Sewfy/controller/produtos/ListarProdutosController.php"
+)
+let listaProdutos = await response.json()
 
+// Constantes para tipos de produtos
 const PROD_TIPO = {
-  INSUMO: 1,
-  FINAL: 2,
-  CONJUNTO: 3
+  INSUMO: "Insumo",
+  FINAL: "Produto Acabado",
+  CONJUNTO: "Desconhecido"
 }
 
-
-
+// Objeto para armazenar dados da ordem de produção
 const op = {
   PROD_NOME: null,
   PROD_ID: null,
   OP_QTD: null,
 }
+
+// Array para armazenar insumos da ordem
 const OPINs = []
 
-// ABRE MODAL
-
+// Registra event listeners globais
 document.addEventListener("click", handleGlobalClick)
 document.addEventListener("change", defineUM)
 
-function handleGlobalClick(e) {
+// Handler central para todos os cliques da página
+async function handleGlobalClick(e) {
+  // Abre modal de criação de ordem
   if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
     abrirModal()
   }
 
+  // Fecha modal
   if (e.target.closest(".modal-close") || e.target.closest(".cancelar")) {
-    fecharModal()
+    await fecharModal()
   }
 
+  // Navega para tela de insumos
   if (e.target.closest(".proxinsumos")) {
     navegarParaInsumos(e)
   }
 
+  // Navega para tela de confirmação
   if (e.target.closest(".finalizar")) {
     navegarParaMostrarOrdem(e)
   }
 
+  // Confirma criação da ordem
   if (e.target.closest(".confirmar")) {
-    confirmarOrdem()
+    await confirmarOrdem()
   }
 
+  // Adiciona insumo à lista
   if (e.target.closest(".adicionar")) {
     e.preventDefault()
     adicionarInsumo()
   }
 }
 
+// Abre o modal de criação de ordem
 function abrirModal() {
   if (document.querySelector("#createModal")) return
 
@@ -67,16 +81,17 @@ function abrirModal() {
     })
 }
 
-// FECHA MODAL
-
-function fecharModal() {
+// Fecha o modal e reseta os dados
+async function fecharModal() {
   OPINs.length = 0
-  listaProdutos = listaProdutosBanco.produtos
+  const res = await fetch(
+    "/Sewfy/controller/produtos/ListarProdutosController.php"
+  )
+  listaProdutos = await res.json()
   document.querySelector("#createModal").remove()
 }
 
-// IR PARA OUTRAS TELAS
-
+// Navega da tela de produto para tela de insumos
 function navegarParaInsumos(e) {
   e.preventDefault()
 
@@ -86,41 +101,52 @@ function navegarParaInsumos(e) {
   const quantidade = parseInt(campoQuant.value)
   const campoFor = document.querySelector(".campoFornecedor")
 
+  // Valida se produto foi selecionado e quantidade foi preenchida
   if (opcao.value == "Produto" || !quantidade) {
     mostrarToast("Todos os campos devem ser preenchidos corretamente!", "erro")
     return
   }
 
+  // Valida se quantidade é positiva
   if (quantidade <= 0) {
     mostrarToast("A quantidade deve ser maior que 0!", "erro")
     return
   }
 
+  // Armazena dados do produto selecionado
   op.PROD_NOME = opcao.value
   op.PROD_ID = parseInt(opcao.id)
   op.OP_QTD = quantidade
+  
+  // Remove produto selecionado da lista disponível
+  listaProdutos = listaProdutos.filter(p => p.id !== op.PROD_ID)
+  
   irOutraTela(".produto", ".insumos")
   carregarProdutosEmSelect("insumos")
   carregaFornecedores(campoFor)
 }
 
+// Navega da tela de insumos para tela de confirmação
 function navegarParaMostrarOrdem(e) {
   e.preventDefault()
+  
+  // Valida se ao menos um insumo foi adicionado
   if (OPINs.length <= 0) {
     mostrarToast("Insira ao menos um insumo na ordem de produção!", "erro")
     return
   }
+  
   irOutraTela(".insumos", ".mostrarOrdem")
   organizaDados()
 }
 
+// Alterna entre telas do modal
 function irOutraTela(atual, proxima) {
   document.querySelector(atual).style.display = "none"
   document.querySelector(proxima).style.display = "block"
 }
 
-// FUNÇÃO DA DATA FORMATADA
-
+// Retorna data e hora no formato SQL
 function dataFormatada() {
   const data = new Date()
   const min = data.getMinutes()
@@ -133,41 +159,54 @@ function dataFormatada() {
   return `${ano}-${mes}-${dia} ${h}:${min}:${seg}`
 }
 
-// CONFIRMA A OP
-
-
+// Confirma e envia ordem de produção para o servidor
 async function confirmarOrdem() {
-  try{document.querySelector("#createModal").remove()
-  const dados = {
-    OP_QTD: op.OP_QTD,
-    OP_DATAA: dataFormatada(),
-    OP_CUSTOU: calculaCustoU(),
-    OP_CUSTOT: calculaCustoT(),
-    PROD_ID: op.PROD_ID,
-    INSUMOS: OPINs
-  }
-  OPINs.length = 0
-  listaProdutos = listaProdutosBanco.produtos
-  await window.api.post('/ordemdeproducao/criar', dados)
-  mostrarToast("Ordem de Produção criada!")}catch(error){
+  try {
+    // Monta objeto com dados da ordem
+    const dados = {
+      OP_QTD: op.OP_QTD,
+      OP_DATAA: dataFormatada(),
+      OP_CUSTOU: calculaCustoU(),
+      OP_CUSTOT: calculaCustoT(),
+      PROD_ID: op.PROD_ID,
+      INSUMOS: OPINs
+    }
+    
+    // Limpa array de insumos
+    OPINs.length = 0
+    
+    // Envia ordem para API
+    await window.api.post('/ordemdeproducao/criar', dados)
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    // Fecha modal
+    document.querySelector("#createModal")?.remove()
+    
+    // Atualiza lista de ordens
+    await limparLista()
+    await new Promise(resolve => setTimeout(resolve, 300))
+    await listarOrdensProducao()
+    
+    mostrarToast("Ordem de Produção criada!")
+  } catch (error) {
     console.log(`Erro ao confirmar ordem: ${error}`)
   }
 }
 
-// ADICIONA INSUMO NA TABLE
-
+// Obtém o valor da opção selecionada em um select
 function obterValorSelect(selectElement) {
   const selectedOption = selectElement.options[selectElement.selectedIndex]
   return selectedOption.value === "" ? null : selectedOption
 }
 
+// Valida campos obrigatórios do insumo
 function validarCamposInsumo(opInsumo, quant) {
-  if (!opInsumo) {
+  if (!opInsumo || !quant) {
     mostrarToast("Preencha todos os campos!", "erro")
     return false
   }
 
-  if (quant === 0) {
+  if (quant == 0) {
     mostrarToast("A quantidade deve ser maior que 0!", "erro")
     return false
   }
@@ -175,6 +214,7 @@ function validarCamposInsumo(opInsumo, quant) {
   return true
 }
 
+// Cria linha na tabela de insumos
 function criarLinhaTabela(idInsumo, quant, nomeInsumo, nomeFornecedor, unidadeMedida) {
   const tr = document.createElement("tr")
   const th = document.createElement("th")
@@ -192,23 +232,36 @@ function criarLinhaTabela(idInsumo, quant, nomeInsumo, nomeFornecedor, unidadeMe
   return tr
 }
 
+// Limpa os campos do formulário de insumo
 function limparCamposInsumo(campoInsumo, campoQuant, campoUm, campoFor) {
   campoInsumo.value = ""
   campoQuant.value = ""
   campoUm.value = ""
   campoFor.value = ""
 }
+
+// Define unidade de medida automaticamente ao selecionar insumo
 async function defineUM(e) {
   if (e.target.closest(".campoInsumo")) {
     const select = document.querySelector(".campoInsumo")
     const insumo = obterValorSelect(select)
-    const busca = await window.api.buscaId(`/produtos/buscaProduto`, parseInt(insumo.id))
+    
+    // Busca dados do produto selecionado
+    const response = await fetch(
+      `/Sewfy/controller/produtos/VisualizarProdutoController.php?id=${parseInt(insumo.id)}`
+    )
+    const produto = await response.json()
+    
     console.log("Mudando a propriedade do campo de unidade")
+    
+    // Preenche campo de unidade de medida
     const campoUm = document.querySelector(".campoUniMed")
-    campoUm.value = busca.produto.PROD_UM
-    campoUm.disabled = true;
+    campoUm.value = produto.um
+    campoUm.disabled = true
   }
 }
+
+// Adiciona insumo à ordem de produção
 async function adicionarInsumo() {
   try {
     const tabelaInsumos = document.getElementById("tabelaInsumos")
@@ -218,26 +271,28 @@ async function adicionarInsumo() {
     const campoUm = document.querySelector(".campoUniMed")
 
     const opInsumo = obterValorSelect(campoInsumo)
-    const quant = parseInt(campoQuant.value) <= 0 ? 0 : parseInt(campoQuant.value)
-
+    const quant = parseInt(campoQuant.value) <= 0 || isNaN(campoQuant.value) ? 0 : parseInt(campoQuant.value)
     const fornecedor = obterValorSelect(campoFor)
 
+    // Valida campos
     if (!validarCamposInsumo(opInsumo, quant)) {
       return
     }
 
     console.log(`ID do Insumo: ${parseInt(opInsumo.id)}`)
 
-    const busca = await window.api.buscaId(`/produtos/buscaProduto`, parseInt(opInsumo.id))
-
-    console.log(`Resultado da Busca: ${Object.keys(busca).map(prod => `${prod}: ${busca[prod]}`).join('\n')}`)
-    console.log(`PRODUTO: ${busca.produto.PROD_PRECO}`)
-
-
+    // Busca preço do insumo
+    const response = await fetch(
+      `/Sewfy/controller/produtos/VisualizarProdutoController.php?id=${parseInt(opInsumo.id)}`
+    )
+    const produto = await response.json()
+    console.log(`PRODUTO: ${produto.preco}`)
 
     const um = obterValorSelect(campoUm)
-    const custou = parseFloat(busca.produto.PROD_PRECO)
+    const custou = parseFloat(produto.preco)
     const custot = custou * quant
+    
+    // Cria objeto do insumo
     const insumo = {
       IDFORNECEDOR: valorIdFornecedor("id", fornecedor),
       QTDIN: quant,
@@ -247,67 +302,74 @@ async function adicionarInsumo() {
       INSUNOME: opInsumo.value,
       INSUID: parseInt(opInsumo.id)
     }
+    
+    // Adiciona linha na tabela
     const tr = criarLinhaTabela(parseInt(opInsumo.id), quant, opInsumo.value, valorIdFornecedor("valor", fornecedor), um.value)
     tabelaInsumos.appendChild(tr)
+    
+    // Adiciona insumo ao array
     OPINs.push(insumo)
-    listaProdutos = listaProdutos.filter(produto => parseInt(produto.PROD_ID) !== parseInt(opInsumo.id))
+    
+    // Remove insumo da lista de produtos disponíveis
+    listaProdutos = listaProdutos.filter(produto => parseInt(produto.id) !== parseInt(opInsumo.id))
 
     carregarProdutosInsumo(listaProdutos, campoInsumo)
     limparCamposInsumo(campoInsumo, campoQuant, campoUm, campoFor)
-    campoUm.disabled = false;
+    campoUm.disabled = false
   } catch (error) {
     console.log(`Erro ao adicionar insumo na ordem de produção: ${error}`)
   }
 }
+
+// Retorna valor ou id do fornecedor
 function valorIdFornecedor(atributo, fornecedor) {
   if (atributo == "valor") {
     return !fornecedor ? "Sem fornecedor" : fornecedor.value
-  }
-  else {
-
+  } else {
     console.log(`Este é o id do fornecedor `)
     return !fornecedor ? null : parseInt(fornecedor.id)
   }
 }
 
-// CARREGA OS PRODUTOS DO BANCO
-
+// Cria elemento option para produto
 function criarOptionProduto(produto) {
   const option = document.createElement('option')
-  option.id = `${produto.PROD_ID}`
-  option.innerHTML = `${produto.PROD_NOME}`
+  option.id = `${produto.id}`
+  option.innerHTML = `${produto.nome}`
   return option
 }
 
+// Carrega produtos finais no select
 function carregarProdutosFinal(listaProd, selectProduto) {
   selectProduto.innerHTML = `
     <option value="">Produto</option>
     `
   listaProd.forEach(p => {
-    if ((p.PROD_TIPO == PROD_TIPO.FINAL || p.PROD_TIPO == PROD_TIPO.CONJUNTO) && p.PROD_ATIV == 1) {
+    if ((p.tipo == PROD_TIPO.FINAL || p.tipo == PROD_TIPO.CONJUNTO) && p.ativo == 1) {
       const option = criarOptionProduto(p)
       selectProduto.appendChild(option)
     }
   })
 }
 
+// Carrega insumos no select
 function carregarProdutosInsumo(listaProd, selectInsumo) {
   selectInsumo.innerHTML = `
     <option value="">Insumo</option>
     `
   listaProd.forEach(p => {
-    if (p.PROD_TIPO == PROD_TIPO.INSUMO && p.PROD_ATIV == 1) {
+    if (p.tipo == PROD_TIPO.INSUMO && p.ativo == 1) {
       const option = criarOptionProduto(p)
       selectInsumo.appendChild(option)
     }
   })
 }
 
+// Carrega produtos em select conforme tipo
 function carregarProdutosEmSelect(tipo) {
   try {
     const selectProduto = document.querySelector("select.input-produto")
     const selectInsumo = document.querySelector(".campoInsumo")
-
 
     if (tipo == 'final') {
       carregarProdutosFinal(listaProdutos, selectProduto)
@@ -319,14 +381,17 @@ function carregarProdutosEmSelect(tipo) {
   }
 }
 
+// Carrega fornecedores no select
 async function carregaFornecedores(campo) {
   try {
     const response = await fetch("/Sewfy/controller/fornecedores/ListarFornecedoresController.php")
     const fornecedores = await response.json()
+    
     if (!response.ok) {
       console.log(`Falha no banco de dados: ${response}`)
       return
     }
+    
     if (!fornecedores) {
       console.log("Erro ao buscar fornecedores")
       return
@@ -337,13 +402,13 @@ async function carregaFornecedores(campo) {
       option.id = `${fornecedor.id}`
       option.innerHTML = `${fornecedor.nome}`
       campo.appendChild(option)
-
     })
   } catch (error) {
     console.log(`Erro ao carregar fornecedores: ${error}`)
   }
-
 }
+
+// Carrega insumos na tabela de confirmação
 function carregaDadosInsumos() {
   const tabela = document.querySelector("#tabelaIN")
   OPINs.forEach(insumo => {
@@ -353,6 +418,8 @@ function carregaDadosInsumos() {
     tabela.appendChild(tr)
   })
 }
+
+// Calcula custo total da ordem
 function calculaCustoT() {
   let custot = 0
   OPINs.forEach(insumo => {
@@ -360,20 +427,25 @@ function calculaCustoT() {
   })
   return custot
 }
-function calculaCustoU() {
 
+// Calcula custo unitário da ordem
+function calculaCustoU() {
   const custou = (calculaCustoT() / parseFloat(op.OP_QTD)).toFixed(2)
   console.log(`Custot: ${calculaCustoT()}\nQTD: ${parseFloat(op.OP_QTD)}\nCustou: ${parseFloat(custou)}`)
   return parseFloat(custou)
 }
+
+// Organiza e exibe dados na tela de confirmação
 function organizaDados() {
   const campoProduto = document.querySelector("#nomeProduto")
   const campoQtd = document.querySelector("#quantidadeProduto")
   const campoCustou = document.querySelector("#custou")
   const campoCustot = document.querySelector("#custot")
+  
   campoProduto.innerHTML = `${op.PROD_NOME}`
   campoQtd.innerHTML = `${op.OP_QTD}`
   campoCustot.innerHTML = `${calculaCustoT().toFixed(2)}`
   campoCustou.innerHTML = `${calculaCustoU().toFixed(2)}`
+  
   carregaDadosInsumos()
 }

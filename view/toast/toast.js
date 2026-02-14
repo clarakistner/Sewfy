@@ -23,5 +23,5 @@ export function mostrarToast(message, tipo = 'sucesso') { // por padrÃ£o, tipo Ã
         toast.style.color = '#000';
     }
 
-    setTimeout(() => toast.remove(), 3000);
+    setTimeout(() => toast.remove(), 10000);
 }

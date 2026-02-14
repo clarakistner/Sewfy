@@ -1,102 +1,216 @@
-import { mostrarToast } from "/Sewfy/view/toast/toast.js"
+import { mostrarToast } from "../../toast/toast.js";
+import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js"
 
-import { atualizarListaProdutos } from "../todosProdutos/todosProdutos.js";
+console.log("[DEBUG] Script cadastroProdutos.js carregado!");
 
-var main = document.querySelector(".principal");
-
-
-document.addEventListener("submit", (e) => {
-    e.preventDefault();
-    console.log("Form submit bloqueado");
-});
-
-// CHAMA O MODAL DE CADASTRO
-
+// ABRIR MODAL
 document.addEventListener("click", (e) => {
-
     if (e.target.closest(".botao-criar-produto")) {
-        fetch('/Sewfy/view/produtos/cadastro/cadastroProdutos.html')
-            .then(response => response.text())
-            .then(data => {
-                document.body.insertAdjacentHTML("afterbegin", data)
+        console.log('[MODAL] Clique em "Novo Produto"');
 
+        fetch("/Sewfy/view/produtos/cadastro/cadastroProdutos.html")
+            .then(res => {
+                console.log("[MODAL] Fetch HTML status:", res.status);
+                return res.text();
+            })
+            .then(html => {
+                console.log("[MODAL] HTML carregado");
+                document.body.insertAdjacentHTML("afterbegin", html);
+
+                setTimeout(() => {
+                    console.log("[MODAL] Inicializando eventos");
+                    inicializarEventosModal();
+                }, 50);
+            })
+            .catch(err => {
+                console.error("[MODAL] Erro ao carregar modal:", err);
+                mostrarToast("Erro ao abrir formulário", "erro");
             });
     }
-})
+});
 
-// FECHA O MODAL DE CADASTRO
+
+// FECHAR MODAL
 document.addEventListener("click", (e) => {
+    if (e.target.closest(".btn-submit")) return;
 
-    if (e.target.classList.contains("icone-fechar-modal") || e.target.closest(".btn-cancel")) {
-        document.querySelector("#productModal").remove()
-        main.style.filter = "blur(0)";
-        document.querySelector(".header").style.filter = "blur(0)";
+    if (
+        e.target.classList.contains("icone-fechar-modal") ||
+        e.target.closest(".btn-cancel")
+    ) {
+        console.log("[MODAL] Fechando modal");
+        document.querySelector("#produtoModal")?.remove();
     }
-})
+});
 
 
-// CADASTRO DO PRODUTO
+// INICIALIZAR EVENTOS
+function inicializarEventosModal() {
+    const form = document.querySelector("#Produto");
+    console.log("[INIT] Form encontrado?", !!form);
+    if (!form) return;
 
-document.addEventListener("click", async (e) => {
+    // linka as variaveis com os inputs pelo id
+    const codInput = document.getElementById("pCode");
+    const tipoInput = document.getElementById("pTipo");
+    const nomeInput = document.getElementById("pNome");
+    const umInput = document.getElementById("pUm");
+    const descInput = document.getElementById("pDesc");
+    const precoInput = document.getElementById("pPreco");
 
-    if (e.target.classList.contains("btn-submit")) {
+    // MÁSCARA DE MOEDA
+    precoInput.addEventListener("input", (e) => {
+        let valor = e.target.value;
+
+        // remove tudo que não é número
+        valor = valor.replace(/\D/g, "");
+
+        // transforma em centavos
+        valor = (Number(valor) / 100).toFixed(2);
+
+        // formata para BRL
+        e.target.value = formatarMoeda(valor);
+    });
+
+    console.log("[INIT] Inputs:", {
+        codInput,
+        tipoInput,
+        nomeInput,
+        umInput,
+        descInput,
+        precoInput
+    });
+
+    form.addEventListener("submit", async (e) => {
+        console.log("[SUBMIT] Evento submit disparado");
         e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation();
-        cadastrarProduto();
 
-    }
-})
-
-// FUNÇÃO DE CADASTRO DE PRODUTO
-async function cadastrarProduto() {
-    const prodNome = document.querySelector("#pName").value
-    const prodCod = document.querySelector("#pCode").value
-    const prodDesc = document.querySelector("#pDesc").value
-    const prodPreco = document.querySelector("#pPrice").value
-    const prodUm = document.querySelector("#pUm").value
-    const prodTipo = document.querySelector("#pType").value
-    const regex = /^[A-Z]{3}-\d{2}$/
-
-    if (!regex.test(prodCod)) {
-        mostrarToast("O código não está no formato XXX-00", "erro")
-        return
-    }
-    if (!prodPreco || parseFloat(prodPreco) <= 0) {
-        mostrarToast("O preço deve ser maior que zero!", "erro");
-        return;
-    }
-    const listaTipo = {
-        "insumo": 1,
-        "final": 2,
-        "conjunto": 3
-    }
-
-    const prodTipoNumero = listaTipo[prodTipo]
-
-    try {
-        const dadosProduto = {
-            PROD_COD: prodCod,
-            PROD_NOME: prodNome,
-            PROD_DESC: prodDesc,
-            PROD_TIPO: prodTipoNumero,
-            PROD_UM: prodUm,
-            PROD_PRECO: prodPreco,
-            PROD_ATIV: 1
-        }
-
-        const resposta = await window.api.post("/produtos", dadosProduto);
-
-        console.log(`Resposta: ${resposta}`)
-
-        document.querySelector("#productModal").remove()
-        main.style.filter = "blur(0)";
-        document.querySelector(".header").style.filter = "blur(0)";
-        await atualizarListaProdutos()
-
-    } catch (error) {
-        console.log(`Erro ao cadastrar produto: ${error}`)
-
-    }
+        // manda pra função cadastrarProduto os dados que estão nas variaveis 
+        await cadastrarProduto(
+            codInput,
+            tipoInput,
+            nomeInput,
+            umInput,
+            descInput,
+            precoInput
+        );
+    });
 }
 
+
+// função de cadastro
+async function cadastrarProduto( // recebe os dados enviados no inicializarEventosModal
+    codInput,
+    tipoInput,
+    nomeInput,
+    umInput,
+    descInput,
+    precoInput
+) {
+    console.log("[CADASTRO] Iniciando");
+
+    const cod = codInput.value.trim();
+    const nome = nomeInput.value.trim();
+    const desc = descInput.value.trim();
+    const precoFormatado = precoInput.value.trim();
+    console.log("preço antes de formatado: " , precoFormatado);
+    const preco = converterMoedaParaNumero(precoFormatado); // remove a máscara
+    console.log("preço depois de formatado: " , preco);
+    const tipoValor = tipoInput.value.trim();
+    const um   = umInput.value.trim();
+
+    const tipo =
+        tipoValor === 'IN' ? 1 :
+        tipoValor === 'PA' ? 2 :
+        (() => { throw new Error('Tipo inválido'); })();
+
+    // exibe no console os dados armazenados 
+    console.log("[CADASTRO] Dados capturados:", {
+        cod,
+        tipo,
+        nome,
+        um,
+        desc,
+        preco
+    });
+
+    //  validações de campos preenchidos
+    if (!cod || !tipo || !nome || !um) {
+        console.warn("[VALIDAÇÃO] Campos vazios");
+        mostrarToast("Preencha todos os campos obrigatórios", "erro");
+        return;
+    }
+
+    // validação de cod entre 4 e 10 caracteres
+    if (cod.length < 4 || cod.length > 10) {
+        console.warn("[VALIDAÇÃO] código inválido");
+        mostrarToast("Código inválido, deve ter entre 4 e 10 caracteres", "erro");
+        return;
+    }
+
+    // nome entre 5 e 30 caracteres
+    if (nome.length < 5 || nome.length > 30) {
+        console.warn("[VALIDAÇÃO] nome inválido");
+        mostrarToast("Nome inválido, deve ter entre 5 e 30 caracteres", "erro");
+        return;
+    }
+
+    // descrição > 60
+    if (desc.length > 60) {
+        console.warn("[VALIDAÇÃO] Descrição inválida");
+        mostrarToast("Descrição deve ter menos de 60 caracteres", "erro");
+        return;
+    }
+
+    // ENVIO BACKEND 
+    try {
+        const payload = new URLSearchParams({
+            cod,
+            tipo,
+            nome,
+            um,
+            desc,
+            preco
+        });
+
+        console.log("[FETCH] Enviando para backend:", payload.toString());
+
+        // espera a resposta do fetch
+        const response = await fetch(
+            "/Sewfy/controller/produtos/CadastroProdutoController.php",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: payload
+            }
+        );
+
+
+        //trata a resposta do fetch abaixo
+        console.log("[FETCH] Status HTTP:", response.status);
+
+        const retorno = await response.text();
+        console.log("[FETCH] Resposta do servidor:", retorno);
+
+        if (response.ok) {
+            console.log("[SUCESSO] Backend retornou OK");
+            mostrarToast("Produto cadastrado com sucesso!", "sucesso");
+
+            document.querySelector("#produtoModal")?.remove();
+
+            if (typeof atualizarListaProdutos === "function") {
+                console.log("[UI] Atualizando lista de produtos");
+                atualizarListaProdutos();
+            }
+        } else {
+            console.error("[BACKEND ERRO]", retorno);
+            mostrarToast(retorno, "erro");
+        }
+    } catch (erro) {
+        console.error("[FETCH ERRO CRÍTICO]", erro);
+        mostrarToast("Erro ao conectar com o servidor", "erro");
+    }
+}
