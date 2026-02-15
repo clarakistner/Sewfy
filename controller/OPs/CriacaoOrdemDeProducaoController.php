@@ -62,7 +62,7 @@ class CriacaoOrdemDeProducaoController
             $op->setPRODUTOS_PROD_ID($produtoId);
 
             // Gera ID único para a Ordem de Produção
-            $numero = $this->opDAO->contaOPs() + 1;
+            $numero = $this->opDAO->contaOPs($usuarioId) + 1;
             $idOp = 'OP0'.$usuarioId.'00'.$numero;
             $op->setOP_ID($idOp);
 

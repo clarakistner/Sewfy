@@ -27,10 +27,11 @@ class OrdemDeProducaoDAO
     }
 
     // TRAZ TODAS AS OPS
-    public function buscarOPs(): array
+    public function buscarOPs($idUsuario): array
     {
-        $sql = "SELECT * FROM ORDEM_PRODUCAO";
+        $sql = "SELECT * FROM ORDEM_PRODUCAO WHERE USUARIOS_USU_ID = :idUsuario";
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":idUsuario", $idUsuario);
         $stmt->execute();
 
         $ops = [];
@@ -69,10 +70,12 @@ class OrdemDeProducaoDAO
         return $this->conn->lastInsertId();
     }
 
-    public function contaOPs()
+    // Conta a quantidade de OPs do usuário
+    public function contaOPs($idUsuario)
     {
-        $sql = "SELECT COUNT(*) AS QUANTIDADE FROM ORDEM_PRODUCAO";
+        $sql = "SELECT COUNT(*) AS QUANTIDADE FROM ORDEM_PRODUCAO WHERE USUARIOS_USU_ID = :idUsuario";
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":idUsuario", $idUsuario);
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -83,6 +86,37 @@ class OrdemDeProducaoDAO
         $quantidade = (int) $row['QUANTIDADE'];
 
         return $quantidade;
+    }
+
+    // Busca uma OP pelo id e o id do usuário
+    public function buscarOPPorID($idOP, $idUsuario)
+    {
+        $sql = 'SELECT * FROM ORDEM_PRODUCAO WHERE OP_ID = :idop AND USUARIOS_USU_ID = :idUsuario';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":idop", $idOP);
+        $stmt->bindValue(":idUsuario", $idUsuario);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        $op = new OrdemDeProducao();
+
+        $op->setOP_ID($row['OP_ID']);
+        $op->setOP_DATAA($row['OP_DATAA']);
+        $op->setOP_DATAE($row['OP_DATAE']);
+        $op->setOP_CUSTOT($row['OP_CUSTOT']);
+        $op->setOP_CUSTOU($row['OP_CUSTOU']);
+        $op->setOP_CUSTOUR($row['OP_CUSTOUR']);
+        $op->setOP_QTD($row['OP_QTD']);
+        $op->setOP_QTDE($row['OP_QTDE']);
+        $op->setPRODUTOS_PROD_ID($row['PRODUTOS_PROD_ID']);
+        $op->setUSUARIOS_USU_ID($row['USUARIOS_USU_ID']);
+        $op->setOP_QUEBRA($row['OP_QUEBRA']);
+
+        return $op;
     }
 }
 

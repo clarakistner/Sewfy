@@ -4,10 +4,10 @@ export async function listarOrdensProducao() {
         // Busca a lista de ordens de produção do banco de dados
         const listaOPsBanco = await window.api.get("/ordemdeproducao/listar")
         const listaOPs = listaOPsBanco.ordensProducao
-        
+
         // Seleciona o elemento DOM onde as ordens serão exibidas
         const listaOrdensDOM = document.querySelector(".lista-ordens")
-        
+
         // Itera sobre cada ordem de produção retornada
         for (const op of listaOPs) {
             // Cria o container principal do card
@@ -61,7 +61,7 @@ export async function listarOrdensProducao() {
             // Formata as datas de abertura e fechamento
             const dataAbertura = new Date(op.OP_DATAA).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
             const dataFechamento = op.OP_DATAE ? new Date(op.OP_DATAE).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '------'
-            
+
             // Cria os elementos de informação da ordem
             const infoProduto = criarInfoOrdem('package_2', 'Produto', nomeProduto || 'Sem Nome')
             const infoQuantidade = criarInfoOrdem('package_2', 'Quantidade', op.OP_QTD)
@@ -71,9 +71,11 @@ export async function listarOrdensProducao() {
             // Cria a seção do botão de visualização
             const verop = document.createElement('div')
             verop.className = 'verop'
+            verop.id = op.OP_ID
 
             const btnVerop = document.createElement('button')
-            btnVerop.className = 'btn-verop'
+            btnVerop.classList.add("btn-verop")
+            btnVerop.id = op.OP_ID
             btnVerop.textContent = '\nVer Ordem de Produção\n'
 
             verop.appendChild(btnVerop)
@@ -87,7 +89,7 @@ export async function listarOrdensProducao() {
             contentOrdem.appendChild(verop)
 
             cardsOrdens.appendChild(contentOrdem)
-            
+
             // Adiciona o card ao DOM
             listaOrdensDOM.appendChild(cardsOrdens)
         }
@@ -104,7 +106,7 @@ async function retornaNomeProduto(id) {
             `/Sewfy/controller/produtos/VisualizarProdutoController.php?id=${id}`
         )
         const produto = await response.json()
-        
+
         // Log de debug
         console.log(` DENTRO DA FUNÇÃO retornaNomeProduto() -> PROD_NOME:${produto.nome}`)
 

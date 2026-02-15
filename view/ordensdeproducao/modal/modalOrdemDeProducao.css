@@ -98,3 +98,33 @@ body {
 #detailsModal{
     z-index: 9999;
 }
+#detailsContent{
+    display: grid;
+    grid-template-areas:
+    "nomeProd titulo" 
+    "quant tabela" 
+    "custou tabela" 
+    "custot tabela" 
+    ". botao";
+}
+#nomeProd{
+    grid-area: nomeProd;
+}
+#quantProd{
+    grid-area: quant;
+}
+#custou{
+    grid-area: custou;
+}
+#custot{
+    grid-area: custot;
+}
+#tituloTabela{
+    grid-area: titulo;
+}
+.boxTabela{
+    grid-area: tabela;
+}
+.box-botoes{
+    grid-area: botao;
+}

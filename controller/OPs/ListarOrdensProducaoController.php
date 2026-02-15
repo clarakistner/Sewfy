@@ -29,30 +29,27 @@ class ListarOrdensProducaoController
     {
         try {
             // Busca todas as Ordens de Produção do banco
-            $OPs = $this->opDAO->buscarOPs();
+            $idUsuario = (int) $_SESSION['usuario_id'];
+            $OPs = $this->opDAO->buscarOPs($idUsuario);
             $listaResposta = [];
 
             // Itera sobre as ordens encontradas
             foreach ($OPs as $op) {
-                // Filtra apenas as ordens do usuário logado
-                if ($op->getUSUARIOS_USU_ID() === $_SESSION['usuario_id']) {
-                    // Monta array com os dados da ordem
-                    $respostaOP = [
-                        'OP_ID' => $op->getOP_ID(),
-                        'OP_DATAA' => $op->getOP_DATAA(),
-                        'OP_DATAE' => $op->getOP_DATAE(),
-                        'OP_CUSTOT' => $op->getOP_CUSTOT(),
-                        'OP_CUSTOU' => $op->getOP_CUSTOU(),
-                        'OP_CUSTOUR' => $op->getOP_CUSTOUR(),
-                        'OP_QTD' => $op->getOP_QTD(),
-                        'OP_QTDE' => $op->getOP_QTDE(),
-                        'PRODUTO_ID' => $op->getPRODUTOS_PROD_ID(),
-                        'OP_QUEBRA' => $op->getOP_QUEBRA()
-                    ];
-
-                    // Adiciona ordem à lista de resposta
-                    $listaResposta[] = $respostaOP;
-                }
+                // Monta array com os dados da ordem
+                $respostaOP = [
+                    'OP_ID' => $op->getOP_ID(),
+                    'OP_DATAA' => $op->getOP_DATAA(),
+                    'OP_DATAE' => $op->getOP_DATAE(),
+                    'OP_CUSTOT' => $op->getOP_CUSTOT(),
+                    'OP_CUSTOU' => $op->getOP_CUSTOU(),
+                    'OP_CUSTOUR' => $op->getOP_CUSTOUR(),
+                    'OP_QTD' => $op->getOP_QTD(),
+                    'OP_QTDE' => $op->getOP_QTDE(),
+                    'PRODUTO_ID' => $op->getPRODUTOS_PROD_ID(),
+                    'OP_QUEBRA' => $op->getOP_QUEBRA()
+                ];
+                // Adiciona ordem à lista de resposta
+                $listaResposta[] = $respostaOP;
             }
 
             // Monta resposta de sucesso
