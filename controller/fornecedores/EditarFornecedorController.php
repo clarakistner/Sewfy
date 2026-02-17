@@ -1,6 +1,8 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+}
 
 require_once __DIR__ . '/../../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../../model/DAOs/FornecedorDAO.php';
@@ -16,90 +18,94 @@ class EditarFornecedorController
         $this->fornecedorDAO = new FornecedorDAO($conn);
     }
 
-    public function editarFornecedor(): void
+    public function editarFornecedor(int $id): void
     {
-        header('Content-Type: text/plain; charset=utf-8');
+        header('Content-Type: application/json; charset=utf-8');
 
-        // Só aceita POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo "Método não permitido";
-            return;
-        }
+        try {
 
-        // Autenticação
-        if (empty($_SESSION['usuario_id'])) {
-            http_response_code(401);
-            echo "Usuário não autenticado";
-            return;
-        }
-
-        // Campos obrigatórios
-        if (
-            empty($_POST['id']) ||
-            empty($_POST['nome']) ||
-            empty($_POST['cpfCnpj']) ||
-            empty($_POST['telefone']) ||
-            empty($_POST['endereco']) ||
-            !isset($_POST['ativo'])
-        ) {
-            http_response_code(400);
-            echo "Dados obrigatórios não enviados";
-            return;
-        }
-
-        $id        = (int) $_POST['id'];
-        $usuarioId = (int) $_SESSION['usuario_id'];
-
-        // Normalização dos dados
-        $nome               = trim($_POST['nome']);
-        $cpfCnpjNumerico    = preg_replace('/\D/', '', $_POST['cpfCnpj']);
-        $telefoneNumerico   = preg_replace('/\D/', '', $_POST['telefone']);
-        $endereco           = trim($_POST['endereco']);
-        $ativo              = ($_POST['ativo'] == 1) ? 1 : 0;
-
-        // Validação de CPF/CNPJ (existente no banco, mas diferente do atual)
-       $fornecedorAtual = $this->fornecedorDAO
-            ->buscarFornecedorPorId($id, $usuarioId);
-
-        $cpfAntigo = preg_replace('/\D/', '', $fornecedorAtual->getCpfCnpj());
-
-        if ($cpfAntigo !== $cpfCnpjNumerico) {
-            if ($this->fornecedorDAO->cpfCnpjJaExisteParaOutroFornecedor(
-                $cpfCnpjNumerico,
-                $usuarioId,
-                $id
-            )) {
-                http_response_code(409);
-                echo "CPF/CNPJ já cadastrado para outro fornecedor";
+            if (empty($_SESSION['usuario_id'])) {
+                http_response_code(401);
+                echo json_encode(['erro' => 'Usuário não autenticado']);
                 return;
             }
-        }
 
+            $id = (int) $id;
 
-        // Entidade
-        $fornecedor = new Fornecedor();
-        $fornecedor->setId($id);
-        $fornecedor->setUsuarioId($usuarioId);
-        $fornecedor->setNome($nome);
-        $fornecedor->setCpfCnpj($cpfCnpjNumerico); // só números
-        $fornecedor->setTelefone($telefoneNumerico);
-        $fornecedor->setEndereco($endereco);
-        $fornecedor->setAtivo($ativo);
+            if ($id <= 0) {
+                http_response_code(400);
+                echo json_encode(['erro' => 'ID inválido']);
+                return;
+            }
 
-        // Persistência
-        if ($this->fornecedorDAO->atualizarFornecedor($fornecedor)) {
-            http_response_code(200);
-            echo "Fornecedor atualizado com sucesso";
-        } else {
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            if (
+                empty($data['nome']) ||
+                empty($data['cpfCnpj']) ||
+                empty($data['telefone']) ||
+                empty($data['endereco']) ||
+                !isset($data['ativo'])
+            ) {
+                http_response_code(400);
+                echo json_encode(['erro' => 'Dados obrigatórios não enviados']);
+                return;
+            }
+
+            $usuarioId = (int) $_SESSION['usuario_id'];
+
+            $nome = trim($data['nome']);
+            $cpfCnpjNumerico = preg_replace('/\D/', '', $data['cpfCnpj']);
+            $telefoneNumerico = preg_replace('/\D/', '', $data['telefone']);
+            $endereco = trim($data['endereco']);
+            $ativo = $data['ativo'] ? 1 : 0;
+
+            $fornecedorAtual = $this->fornecedorDAO
+                ->buscarFornecedorPorId($id, $usuarioId);
+
+            if (!$fornecedorAtual) {
+                http_response_code(404);
+                echo json_encode(['erro' => 'Fornecedor não encontrado']);
+                return;
+            }
+
+            $cpfAntigo = preg_replace('/\D/', '', $fornecedorAtual->getCpfCnpj());
+
+            if ($cpfAntigo !== $cpfCnpjNumerico) {
+                if ($this->fornecedorDAO->cpfCnpjJaExisteParaOutroFornecedor(
+                    $cpfCnpjNumerico,
+                    $usuarioId,
+                    $id
+                )) {
+                    http_response_code(409);
+                    echo json_encode(['erro' => 'CPF/CNPJ já cadastrado para outro fornecedor']);
+                    return;
+                }
+            }
+
+            $fornecedor = new Fornecedor();
+            $fornecedor->setId($id);
+            $fornecedor->setUsuarioId($usuarioId);
+            $fornecedor->setNome($nome);
+            $fornecedor->setCpfCnpj($cpfCnpjNumerico);
+            $fornecedor->setTelefone($telefoneNumerico);
+            $fornecedor->setEndereco($endereco);
+            $fornecedor->setAtivo($ativo);
+
+            if ($this->fornecedorDAO->atualizarFornecedor($fornecedor)) {
+                http_response_code(200);
+                echo json_encode([
+                    'mensagem' => 'Fornecedor atualizado com sucesso'
+                ]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['erro' => 'Erro ao atualizar fornecedor']);
+            }
+
+        } catch (Throwable $e) {
+            error_log('Erro ao editar fornecedor: ' . $e->getMessage());
             http_response_code(500);
-            echo "Erro ao atualizar fornecedor";
+            echo json_encode(['erro' => 'Erro interno']);
         }
     }
 }
-
-// Execução
-$controller = new EditarFornecedorController();
-$controller->editarFornecedor();
-
-?>

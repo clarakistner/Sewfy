@@ -38,17 +38,16 @@ class ProdutoDAO
         $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
-            'prodCod'   => $produto->getCodProd(),
-            'prodNome'  => $produto->getNomeProd(),
-            'prodDesc'  => $produto->getDescProd(),
-            'prodTipo'  => $produto->getTipoProd(),   // número
-            'prodUm'    => $produto->getUmProd(),     // número
-            'prodAtiv'  => $produto->getAtivProd(),
-            'prodPreco' => $produto->getPrecoProd(),
-            'idProd'    => $produto->getIdProd(),
-            'usuario'   => $produto->getIdUsuProd()
+            ':prodCod'   => $produto->getCodProd(),
+            ':prodNome'  => $produto->getNomeProd(),
+            ':prodDesc'  => $produto->getDescProd(),
+            ':prodTipo'  => $produto->getTipoProd(),
+            ':prodUm'    => $produto->getUmProd(),
+            ':prodAtiv'  => $produto->getAtivProd(),
+            ':prodPreco' => $produto->getPrecoProd(),
+            ':idProd'    => $produto->getIdProd(),
+            ':usuario'   => $produto->getIdUsuProd()
         ]);
-        
     }
 
 
@@ -101,7 +100,7 @@ class ProdutoDAO
 
     }
 
-    //busca 1 fornecedor por id
+    //busca 1 produto por id
     public function buscarProdutoPorId(int $id, int $usuarioId): ?Produto{
         $sql = "SELECT * FROM PRODUTOS WHERE PROD_ID = :id  AND USUARIOS_USU_ID = :usuarioId";
 
@@ -144,6 +143,35 @@ class ProdutoDAO
         ]);
 
         return $stmt->fetchColumn() !== false;
+    }
+
+    //barra de filtros
+    public function listarComFiltro(int $usuarioId, ?string $termo = null, ?int $tipo = null): array
+    {
+        $sql = "SELECT * FROM PRODUTOS WHERE USUARIOS_USU_ID = :usuarioId";
+
+        $params = [
+            ':usuarioId' => $usuarioId
+        ];
+
+        // Filtro por termo
+        if ($termo !== null && $termo !== '') {
+            $sql .= " AND (PROD_NOME LIKE :termo OR PROD_COD LIKE :termo)";
+            $params[':termo'] = "%{$termo}%";
+        }
+
+        // Filtro por tipo
+        if ($tipo !== null) {
+            $sql .= " AND PROD_TIPO = :tipo";
+            $params[':tipo'] = (int) $tipo;
+        }
+
+        $sql .= " ORDER BY PROD_ATIV DESC, PROD_NOME ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_CLASS, Produto::class);
     }
 
 }

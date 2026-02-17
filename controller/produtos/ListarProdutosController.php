@@ -1,63 +1,67 @@
 <?php
 
-session_start();
-
 require_once __DIR__ . '/../../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../../model/DAOs/ProdutoDAO.php';
 
-// Só aceita GET
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    http_response_code(405);
-    echo 'Método não permitido';
-    exit;
-}
+class ListarProdutosController
+{
+    public function listar(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-// Verifica autenticação
-if (!isset($_SESSION['usuario_id'])) {
-    http_response_code(401);
-    echo 'Usuário não autenticado';
-    exit;
-}
+        if (empty($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode(["erro" => "Usuário não autenticado"]);
+            return;
+        }
 
-try {
-    $conn = conecta_bd();
-    $produtoDAO = new ProdutoDAO($conn);
+        try {
 
-    $usuarioId = $_SESSION['usuario_id'];
+            $conn = conecta_bd();
+            $produtoDAO = new ProdutoDAO($conn);
 
-    $produtos = $produtoDAO->buscarProdutos($usuarioId);
+            $usuarioId = (int) $_SESSION['usuario_id'];
 
-    // Converte objetos para array simples (JSON)
-    $resultado = [];
+            $termo = isset($_GET['termo']) ? trim($_GET['termo']) : null;
+            $tipo  = isset($_GET['tipo']) ? (int) $_GET['tipo'] : null;
 
-    // pra cada produto ele vai pegar as informações e colocar dentro de um vetor
-    foreach ($produtos as $produto) {
-        $resultado[] = [
-            'id'       => $produto->getIdProd(),
-            'cod'       => $produto->getCodProd(),
-            'nome'       => $produto->getNomeProd(),
-            'tipo'       => $tipoTexto = match ((int) $produto->getTipoProd()) {
-                                1 => 'Insumo',
-                                2 => 'Produto Acabado',
-                                default => 'Desconhecido',
-                            },
-            'um'       =>  $produto->getUmProd(),
-            'preco'       => $produto->getPrecoProd(),
-            'ativo'       => $produto->getAtivProd(),
-        ];
+            // Decide aqui se filtra ou lista tudo
+            if (!empty($termo) || !empty($tipo)) {
+                $produtos = $produtoDAO->listarComFiltro($usuarioId, $termo, $tipo);
+            } else {
+                $produtos = $produtoDAO->buscarProdutos($usuarioId);
+            }
+
+            $resultado = [];
+
+            foreach ($produtos as $produto) {
+                $resultado[] = [
+                    'id'    => $produto->getIdProd(),
+                    'cod'   => $produto->getCodProd(),
+                    'nome'  => $produto->getNomeProd(),
+                    'tipo'  => match ((int) $produto->getTipoProd()) {
+                        1 => 'Insumo',
+                        2 => 'Produto Acabado',
+                        default => 'Desconhecido',
+                    },
+                    'um'    => $produto->getUmProd(),
+                    'preco' => $produto->getPrecoProd(),
+                    'ativo' => $produto->getAtivProd(),
+                ];
+            }
+
+            echo json_encode($resultado);
+
+        } catch (Throwable $e) {
+
+            http_response_code(500);
+            echo json_encode([
+                "erro" => $e->getMessage(),
+                "linha" => $e->getLine(),
+                "arquivo" => $e->getFile()
+            ]);
+            }
     }
-
-    header('Content-Type: application/json');
-    http_response_code(200);
-    //manda para o front o vetor com os produtos e seus respectivos detalhes
-    echo json_encode($resultado);
-
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        "erro" => true,
-        "mensagem" => "Erro ao buscar produtos"
-    ]);
 }
-
-?>

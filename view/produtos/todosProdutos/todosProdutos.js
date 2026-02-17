@@ -76,7 +76,7 @@ async function carregarProdutos() {
 
         //faz o fetch com a listagem 
         const response = await fetch(
-            "/Sewfy/controller/produtos/ListarProdutosController.php"
+            "/Sewfy/api/produtos"
         );
 
         if (!response.ok) {
@@ -109,26 +109,24 @@ async function carregarProdutos() {
 
 
 // PESQUISAR
-function pesquisarProdutos() {
-    // linka as variaveis com os inputs pelo id
-    const inputPesquisa = document.querySelector(".input-pesquisa input");
-    const selectTipo = document.querySelector(".box-filtro select");
-    const termo = inputPesquisa.value.trim();
-    const tipo  = selectTipo.value;
+function pesquisarProdutos(termo, tipo) {
 
-    // exibe no console as pesquisas
-    console.log("[BUSCA] Pesquisando:", { termo, tipo });
+    const params = new URLSearchParams();
 
-    // fetch para TODAS as outras possibilidades de pesquisa
-    fetch(`/Sewfy/controller/produtos/PesquisarProdutosController.php?termo=${encodeURIComponent(termo)}&tipo=${tipo}`)
-        .then(res => res.json())
+    if (termo) params.append("termo", termo);
+    if (tipo && tipo !== "0") params.append("tipo", tipo);
+
+    fetch(`/Sewfy/api/produtos?${params.toString()}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Erro na pesquisa");
+            return res.json();
+        })
         .then(dados => {
-            // exibe no console o resultado da pesquisa e renderiza na tabela os resultados
-            console.log("[FETCH] Resultado da pesquisa:", dados);
             renderizarTabela(dados);
         })
         .catch(err => {
             console.error("Erro ao pesquisar produtos:", err);
+            mostrarToast("Erro ao pesquisar produtos", "erro");
         });
 }
 
@@ -157,7 +155,7 @@ function renderizarTabela(produtos) {
         tr.classList.add("table-row");
 
         // só isso
-        if (!produto.ativo) {
+        if (Number(produto.ativo) === 0) {
             tr.classList.add("produto-inativo");
         }
 

@@ -21,14 +21,15 @@ if($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
 }
 
 // Importa o arquivo de rotas
-require_once __DIR__ . '/routes.php';
+require_once 'routes.php';
 
 // Captura a URI e o método HTTP da requisição
-$uri = $_SERVER['REQUEST_URI'];
 $metodo = $_SERVER['REQUEST_METHOD'];
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Remove query strings da URI (tudo após o ?)
-$uri = strtok($uri, '?');
+$base = '/Sewfy/api';
+$uri = str_replace($base, '', $uri);
 
 // Registra log antes de chamar o gerenciador
 file_put_contents('debug.log', "Chamando gerenciadorRotas\n", FILE_APPEND);

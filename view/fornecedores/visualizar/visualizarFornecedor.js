@@ -9,7 +9,7 @@ import { validarCpfCnpj } from "../../assets/validacoes.js";
 
 console.log("[DEBUG] Script visualizarFornecedor.js carregado!");
 
-// Abrir modal
+// ABRIR MODAL
 document.addEventListener("click", async (e) => {
     const botao = e.target.closest(".botao-visualizar-fornecedor");
     if (!botao) return;
@@ -24,10 +24,13 @@ document.addEventListener("click", async (e) => {
         document.body.insertAdjacentHTML("afterbegin", modalHTML);
 
         const response = await fetch(
-            `/Sewfy/controller/fornecedores/VisualizarFornecedorController.php?id=${window.fornecedorAtualId}`
+            `/Sewfy/api/fornecedores/${window.fornecedorAtualId}`
         );
 
-        if (!response.ok) throw new Error();
+        if (!response.ok) {
+            const erro = await response.json();
+            throw new Error(erro.erro || "Erro ao buscar fornecedor");
+        }
 
         const fornecedor = await response.json();
 
@@ -37,12 +40,13 @@ document.addEventListener("click", async (e) => {
         document.getElementById("modal-endereco").textContent = fornecedor.endereco;
         document.getElementById("modal-ativo").textContent = fornecedor.ativo ? "Ativo" : "Inativo";
 
-    } catch {
-        mostrarToast("Erro ao carregar fornecedor", "erro");
+    } catch (erro) {
+        console.error(erro);
+        mostrarToast(erro.message, "erro");
     }
 });
 
-// Ativar edição
+// ATIVAR EDIÇÃO
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn-editar-fornecedor")) {
         ativarModoEdicao();
@@ -81,33 +85,14 @@ function ativarModoEdicao() {
     trocarBotaoParaSalvar();
 }
 
-function trocarBotaoParaSalvar() {
-    const btn = document.querySelector(".btn-editar-fornecedor");
-    btn.textContent = "Salvar alterações";
-    btn.classList.add("modo-salvar");
-    btn.replaceWith(btn.cloneNode(true));
-    document.querySelector(".btn-editar-fornecedor")
-        .addEventListener("click", salvarFornecedor);
-}
-
+// SALVAR 
 async function salvarFornecedor() {
 
-    const nomeInput = document.querySelector('[data-field="nome"]');
-    const cpfInput = document.querySelector('[data-field="cpfCnpj"]');
-    const telInput = document.querySelector('[data-field="telefone"]');
-    const endInput = document.querySelector('[data-field="endereco"]');
-    const ativoInput = document.querySelector('[data-field="ativo"]');
-
-    if (!nomeInput || !cpfInput || !telInput || !endInput || !ativoInput) {
-        mostrarToast("Erro interno no formulário", "erro");
-        return;
-    }
-
-    const nome = nomeInput.value.trim();
-    const cpf = cpfInput.value.trim().replace(/\D/g, "");
-    const telefone = telInput.value.trim().replace(/\D/g, "");
-    const endereco = endInput.value.trim();
-    const ativo = ativoInput.value === "1" ? 1 : 0;
+    const nome = document.querySelector('[data-field="nome"]').value.trim();
+    const cpf = document.querySelector('[data-field="cpfCnpj"]').value.trim().replace(/\D/g, "");
+    const telefone = document.querySelector('[data-field="telefone"]').value.trim().replace(/\D/g, "");
+    const endereco = document.querySelector('[data-field="endereco"]').value.trim();
+    const ativo = document.querySelector('[data-field="ativo"]').value === "1" ? 1 : 0;
 
     if (!nome || !cpf || !telefone || !endereco) {
         mostrarToast("Preencha todos os campos", "erro");
@@ -115,7 +100,7 @@ async function salvarFornecedor() {
     }
 
     if (nome.length < 4 || nome.length > 45) {
-        mostrarToast("Nome inválido, deve ter entre 4 e 45 caracteres", "erro");
+        mostrarToast("Nome inválido", "erro");
         return;
     }
 
@@ -129,39 +114,42 @@ async function salvarFornecedor() {
         return;
     }
 
-    if (endereco.length < 10 || endereco.length > 45) {
-        mostrarToast("Endereço deve ter entre 10 e 45 caracteres", "erro");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("id", window.fornecedorAtualId);
-    formData.append("nome", nome);
-    formData.append("cpfCnpj", cpf);
-    formData.append("telefone", telefone);
-    formData.append("endereco", endereco);
-    formData.append("ativo", ativo);
-
     try {
         const response = await fetch(
-            "/Sewfy/controller/fornecedores/EditarFornecedorController.php",
-            { method: "POST", body: formData }
+            `/Sewfy/api/fornecedores/${window.fornecedorAtualId}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nome,
+                    cpfCnpj: cpf,
+                    telefone,
+                    endereco,
+                    ativo
+                })
+            }
         );
 
-        const resultado = await response.text();
+        const resultado = await response.json();
 
-        if (!response.ok) throw new Error(resultado);
+        if (!response.ok) {
+            throw new Error(resultado.erro || "Erro ao atualizar fornecedor");
+        }
 
         atualizarModalComDados({ nome, cpf, telefone, endereco, ativo });
         trocarBotaoParaEditar();
         window.atualizarListaFornecedores?.();
-        mostrarToast(resultado, "sucesso");
 
-    } catch (e) {
-        mostrarToast(e.message, "erro");
+        mostrarToast(resultado.mensagem || "Fornecedor atualizado", "sucesso");
+
+    } catch (erro) {
+        mostrarToast(erro.message, "erro");
     }
 }
 
+// ATUALIZA MODAL
 function atualizarModalComDados(dados) {
     document.querySelectorAll(".detail").forEach(detail => {
         const input = detail.querySelector(".input-edicao");
@@ -174,6 +162,10 @@ function atualizarModalComDados(dados) {
 
         if (input.dataset.field === "ativo") {
             span.textContent = dados.ativo ? "Ativo" : "Inativo";
+        } else if (input.dataset.field === "cpfCnpj") {
+            span.textContent = mascaraCpfCnpj(dados.cpf);
+        } else if (input.dataset.field === "telefone") {
+            span.textContent = mascaraTelefone(dados.telefone);
         } else {
             span.textContent = input.value;
         }
@@ -182,16 +174,23 @@ function atualizarModalComDados(dados) {
     });
 }
 
+function trocarBotaoParaSalvar() {
+    const btn = document.querySelector(".btn-editar-fornecedor");
+    btn.textContent = "Salvar alterações";
+    btn.replaceWith(btn.cloneNode(true));
+    document.querySelector(".btn-editar-fornecedor")
+        .addEventListener("click", salvarFornecedor);
+}
+
 function trocarBotaoParaEditar() {
     const btn = document.querySelector(".btn-editar-fornecedor");
     btn.textContent = "Editar fornecedor";
-    btn.classList.remove("modo-salvar");
     btn.replaceWith(btn.cloneNode(true));
     document.querySelector(".btn-editar-fornecedor")
         .addEventListener("click", ativarModoEdicao);
 }
 
-// Fechar modal
+// FECHAR MODAL
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("modal-close")) {
         document.querySelector(".fornecedormodal")?.remove();

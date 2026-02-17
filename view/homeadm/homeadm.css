@@ -1,0 +1,60 @@
+.page-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+    color: #020066;
+}
+
+/* Cards topo */
+.cards {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    flex: 1;
+}
+
+.card h3 {
+    font-size: 14px;
+    color: gray;
+    margin-bottom: 10px;
+}
+
+.card-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0e59fe;
+}
+
+/* Grid inferior */
+.grid-home {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.card.large {
+    min-height: 250px;
+}
+
+.placeholder-chart {
+    background: #eef2ff;
+    height: 180px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #020066;
+    font-weight: 500;
+}
+
+/* Lista atividades */
+.atividades {
+    list-style: none;
+    display: flex;
+}

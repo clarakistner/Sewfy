@@ -1,51 +1,66 @@
 <?php
 
-session_start();
-
 require_once __DIR__ . '/../../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../../model/DAOs/FornecedorDAO.php';
 
-// Só aceita GET
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    http_response_code(405);
-    echo 'Método não permitido';
-    exit;
+if (session_status() === PHP_SESSION_NONE) {
+            session_start();
 }
 
-// Verifica autenticação
-if (!isset($_SESSION['usuario_id'])) {
-    http_response_code(401);
-    echo 'Usuário não autenticado';
-    exit;
-}
+class ListarFornecedoresController
+{
+    private FornecedorDAO $fornecedorDAO;
 
-try {
-    $conn = conecta_bd();
-    $fornecedorDAO = new FornecedorDAO($conn);
-
-    $usuarioId = $_SESSION['usuario_id'];
-
-    $fornecedores = $fornecedorDAO->buscarFornecedores($usuarioId);
-
-    // Converte objetos para array simples (JSON)
-    $resultado = [];
-
-    foreach ($fornecedores as $fornecedor) {
-        $resultado[] = [
-            'id'       => $fornecedor->getId(),
-            'nome'     => $fornecedor->getNome(),
-            'telefone' => $fornecedor->getTelefone(),
-            'ativo'    => $fornecedor->getAtivo()
-        ];
+    public function __construct()
+    {
+        $conn = conecta_bd();
+        $this->fornecedorDAO = new FornecedorDAO($conn);
     }
 
-    header('Content-Type: application/json');
-    http_response_code(200);
-    echo json_encode($resultado);
+    public function listar(): void
+    {
+       
+        header('Content-Type: application/json; charset=utf-8');
 
-} catch (Exception $e) {
-    http_response_code(500);
-    echo 'Erro ao listar fornecedores';
+        try {
+
+            if (empty($_SESSION['usuario_id'])) {
+                http_response_code(401);
+                echo json_encode(['erro' => 'Usuário não autenticado']);
+                return;
+            }
+
+            $usuarioId = (int) $_SESSION['usuario_id'];
+            $termo = trim($_GET['search'] ?? '');
+
+            if ($termo !== '') {
+                $fornecedores = $this->fornecedorDAO
+                    ->buscarFornecedoresPorNomeOuCpfCnpj($termo, $usuarioId);
+            } else {
+                $fornecedores = $this->fornecedorDAO
+                    ->buscarFornecedores($usuarioId);
+            }
+
+            $resultado = [];
+
+            foreach ($fornecedores ?? [] as $fornecedor) {
+                $resultado[] = [
+                    'id'       => $fornecedor->getId(),
+                    'nome'     => $fornecedor->getNome(),
+                    'cpfCnpj'  => $fornecedor->getCpfCnpj(),
+                    'telefone' => $fornecedor->getTelefone(),
+                    'endereco' => $fornecedor->getEndereco(),
+                    'ativo'    => $fornecedor->isAtivo()
+                ];
+            }
+
+            http_response_code(200);
+            echo json_encode($resultado);
+
+        } catch (Throwable $e) {
+            error_log('Erro ao buscar fornecedores: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['erro' => 'Erro interno ao buscar fornecedores']);
+        }
+    }
 }
-
-?>

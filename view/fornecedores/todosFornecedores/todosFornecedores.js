@@ -8,8 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarPesquisa();
 });
 
-
-// BUSCA / PESQUISA
+// PESQUISA
 function inicializarPesquisa() {
     const inputPesquisa = document.querySelector(".input-pesquisa input");
 
@@ -35,8 +34,6 @@ function inicializarPesquisa() {
     });
 }
 
-
-
 // LISTAR TODOS
 async function carregarFornecedores() {
     console.log("[FETCH] Buscando todos os fornecedores");
@@ -55,13 +52,11 @@ async function carregarFornecedores() {
     `;
 
     try {
-        const response = await fetch(
-            "/Sewfy/controller/fornecedores/ListarFornecedoresController.php"
-        );
+        const response = await fetch("/Sewfy/api/fornecedores");
 
         if (!response.ok) {
-            const msg = await response.text();
-            throw new Error(msg);
+            const erro = await response.json();
+            throw new Error(erro.erro || "Erro ao carregar fornecedores");
         }
 
         const fornecedores = await response.json();
@@ -74,19 +69,17 @@ async function carregarFornecedores() {
 
         tbody.innerHTML = `
             <tr>
-                <td class="mensagem-vazia" colspan="3" style="text-align:center;">
+                <td colspan="3" style="text-align:center;">
                     Erro ao carregar fornecedores
                 </td>
             </tr>
         `;
 
-        mostrarToast("Erro ao carregar fornecedores", "erro");
+        mostrarToast(erro.message, "erro");
     }
 }
 
-
-
-// PESQUISAR
+// PESQUISAR 
 async function pesquisarFornecedores(termo) {
     console.log("[BUSCA] Pesquisando por:", termo);
 
@@ -94,30 +87,30 @@ async function pesquisarFornecedores(termo) {
 
     try {
         const response = await fetch(
-            `/Sewfy/controller/fornecedores/PesquisarFornecedoresController.php?termo=${encodeURIComponent(termo)}`
+            `/Sewfy/api/fornecedores?search=${encodeURIComponent(termo)}`
         );
 
         if (!response.ok) {
-            const msg = await response.text();
-            throw new Error(msg);
+            const erro = await response.json();
+            throw new Error(erro.erro || "Erro na pesquisa");
         }
 
         const fornecedores = await response.json();
+
         renderizarTabela(fornecedores);
 
     } catch (erro) {
         console.error("[ERRO BUSCA]", erro);
-        mostrarToast("Erro ao pesquisar fornecedores", "erro");
+        mostrarToast(erro.message, "erro");
     }
 }
 
-
-// RENDERIZAÇÃO
+// RENDERIZAÇÃO DA TABELA
 function renderizarTabela(fornecedores) {
     const tbody = document.getElementById("fornecedores-table");
     tbody.innerHTML = "";
 
-    if (!fornecedores.length) {
+    if (!Array.isArray(fornecedores) || fornecedores.length === 0) {
         tbody.innerHTML = `
             <tr class="linha-vazia">
                 <td colspan="3" class="mensagem-vazia">
@@ -132,7 +125,6 @@ function renderizarTabela(fornecedores) {
         const tr = document.createElement("tr");
         tr.classList.add("table-row");
 
-        // só isso
         if (!fornecedor.ativo) {
             tr.classList.add("fornecedor-inativo");
         }
@@ -156,9 +148,7 @@ function renderizarTabela(fornecedores) {
     });
 }
 
-
-
-// FUNÇÃO GLOBAL
+// FUNÇÃO GLOBAL DE UPDATE
 window.atualizarListaFornecedores = () => {
     console.log("[UI] Atualizando lista de fornecedores");
     carregarFornecedores();

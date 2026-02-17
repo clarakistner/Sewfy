@@ -3,15 +3,15 @@ import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.j
 
 console.log("[DEBUG] Script visualizarProdutos.js carregado!");
 
-// Abrir modal
+// ABRIR MODAL
 document.addEventListener("click", async (e) => {
     const botao = e.target.closest(".botao-visualizar-produto");
     if (!botao) return;
 
-    // recebe o id do produto em que foi pressionado
     window.produtoAtualId = botao.dataset.id;
 
     try {
+        console.log(window.produtoAtualId);
         const modalHTML = await fetch(
             "/Sewfy/view/produtos/visualizar/visualizarProdutos.html"
         ).then(res => res.text());
@@ -19,46 +19,44 @@ document.addEventListener("click", async (e) => {
         document.body.insertAdjacentHTML("afterbegin", modalHTML);
 
         const response = await fetch(
-            `/Sewfy/controller/produtos/VisualizarProdutoController.php?id=${window.produtoAtualId}`
+            `/Sewfy/api/produtos/${window.produtoAtualId}`
         );
-
-        if (!response.ok) throw new Error();
 
         const produto = await response.json();
 
-        // exibe os dados mandados pelo fetch 
+        if (!response.ok) {
+            throw new Error(produto.erro || "Erro ao buscar produto");
+        }
+
         document.getElementById("modal-cod").textContent = produto.cod;
         document.getElementById("modal-tipo").textContent = produto.tipo;
         document.getElementById("modal-nome").textContent = produto.nome;
         document.getElementById("modal-um").textContent = produto.um;
         document.getElementById("modal-preco").textContent = formatarMoeda(produto.preco);
         document.getElementById("modal-cadastro").textContent = produto.ativo ? "Ativo" : "Inativo";
-        document.getElementById("modal-desc").textContent = produto.desc;
-        
-        
-    } catch {
-        mostrarToast("Erro ao carregar produto", "erro");
+        document.getElementById("modal-desc").textContent = produto.desc ?? "";
+
+    } catch (erro) {
+        mostrarToast(erro.message || "Erro ao carregar produto", "erro");
     }
 });
 
-// Ativar edição
+
+// ATIVAR EDIÇÃO
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn-editar-produto")) {
-        // ao pressionar o botão de edição, o modo edição abre
         ativarModoEdicao();
     }
 });
 
 
-// modo edição
 function ativarModoEdicao() {
-    // para cada span que exibe a informação ele vai criar uma variavel field e valor e vai trocar por input
+
     document.querySelectorAll(".value").forEach(span => {
         const field = span.dataset.field;
         const valor = span.textContent.trim();
         let el;
 
-        // se for ativo ele faz um select ao inves de input e faz essas verificações para outros campos também
         if (field === "ativo") {
             el = document.createElement("select");
             el.innerHTML = `
@@ -89,19 +87,13 @@ function ativarModoEdicao() {
             el.type = "text";
             el.value = valor;
 
-            // aplica máscara enquanto digita
             el.addEventListener("input", (e) => {
                 let valor = e.target.value;
-
-                // remove tudo que não é número
                 valor = valor.replace(/\D/g, "");
-
-                // transforma em centavos
                 valor = (Number(valor) / 100).toFixed(2);
-
-                // formata para BRL
                 e.target.value = formatarMoeda(valor);
             });
+
         } else {
             el = document.createElement("input");
             el.type = "text";
@@ -115,11 +107,11 @@ function ativarModoEdicao() {
         span.replaceWith(el);
     });
 
-    // chama a função que troca o conteúdo do botão
     trocarBotaoParaSalvar();
 }
 
-// função do botão
+
+// TROCAR BOTÃO
 function trocarBotaoParaSalvar() {
     const btn = document.querySelector(".btn-editar-produto");
     btn.textContent = "Salvar alterações";
@@ -129,7 +121,8 @@ function trocarBotaoParaSalvar() {
         .addEventListener("click", salvarProduto);
 }
 
-// manda os dados novos para o back
+
+// SALVAR PRODUTO
 async function salvarProduto() {
 
     const codInput = document.querySelector('[data-field="codigo"]');
@@ -146,7 +139,7 @@ async function salvarProduto() {
     }
 
     const cod = codInput.value.trim();
-    const tipo = tipoInput.value.trim();
+    const tipo = Number(tipoInput.value.trim());
     const ativo = ativoInput.value === "1" ? 1 : 0;
     const nome = nomeInput.value.trim();
     const um = umInput.value.trim();
@@ -158,57 +151,71 @@ async function salvarProduto() {
         return;
     }
 
-    // mesmas validações do cadastro
+    if (cod.length < 4 || cod.length > 10) {
+        mostrarToast("Código inválido, deve ter entre 4 e 10 caracteres", "erro");
+        return;
+    }
 
-        // validação de cod entre 4 e 10 caracteres
-        if (cod.length < 4 || cod.length > 10) {
-            console.warn("[VALIDAÇÃO] código inválido");
-            mostrarToast("Código inválido, deve ter entre 4 e 10 caracteres", "erro");
-            return;
-        }
-    
-        // nome entre 5 e 30 caracteres
-        if (nome.length < 5 || nome.length > 30) {
-            console.warn("[VALIDAÇÃO] nome inválido");
-            mostrarToast("Nome inválido, deve ter entre 5 e 30 caracteres", "erro");
-            return;
-        }
-    
-        // descrição > 60
-        if (desc.length > 60) {
-            console.warn("[VALIDAÇÃO] Descrição inválida");
-            mostrarToast("Descrição deve ter menos de 60 caracteres", "erro");
-            return;
-        }
+    if (nome.length < 5 || nome.length > 30) {
+        mostrarToast("Nome inválido, deve ter entre 5 e 30 caracteres", "erro");
+        return;
+    }
 
-    // joga todos os dados dentro de formData
-    const formData = new FormData();
-    formData.append("id", window.produtoAtualId);
-    formData.append("cod", cod);
-    formData.append("tipo", tipo);
-    formData.append("nome", nome);
-    formData.append("um", um);
-    formData.append("desc", desc);
-    formData.append("preco", preco);
-    formData.append("ativo", ativo);
+    if (desc.length > 60) {
+        mostrarToast("Descrição deve ter menos de 60 caracteres", "erro");
+        return;
+    }
+
+    const payload = {
+        id: window.produtoAtualId,
+        cod,
+        tipo,
+        nome,
+        um,
+        desc,
+        preco,
+        ativo
+    };
 
     try {
         const response = await fetch(
-            "/Sewfy/controller/produtos/EditarProdutoController.php",
-            { method: "POST", body: formData } // faz o fecht com o controller da edição e envia os dados de formData
+            `/Sewfy/api/produtos/${window.produtoAtualId}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    cod,
+                    tipo,
+                    nome,
+                    um,
+                    desc,
+                    preco,
+                    ativo
+                })
+            }
         );
 
-        const resultado = await response.text();
+        const texto = await response.text();
+        console.log("Resposta bruta:", texto);
 
-        if (!response.ok) throw new Error(resultado);
+        let resultado;
 
-        // atualiza o modal de visualização com os novos dados
-        atualizarModalComDados({ cod, tipo, nome, um, desc, preco, ativo });
-        // muda o conteúdo do botão para original
+        try {
+            resultado = JSON.parse(texto);
+        } catch (e) {
+            throw new Error("Resposta inválida do servidor");
+        }
+
+        if (!response.ok) {
+            throw new Error(resultado.erro || "Erro ao editar produto");
+        }
+
+        atualizarModalComDados(payload);
         trocarBotaoParaEditar();
-        // atualiza a lista de produtos
-        window.atualizarListaProdutos?.();
-        mostrarToast(resultado, "sucesso");
+        window.atualizarListaProdutos();
+        mostrarToast("Produto atualizado com sucesso", "sucesso");
 
     } catch (e) {
         mostrarToast(e.message, "erro");
@@ -216,9 +223,9 @@ async function salvarProduto() {
 }
 
 
-// modal após o salvamento das edições
+// ATUALIZAR MODAL
 function atualizarModalComDados(dados) {
-    // para cada input ele vai criar um span
+
     document.querySelectorAll(".detail").forEach(detail => {
         const input = detail.querySelector(".input-edicao");
         if (!input) return;
@@ -228,7 +235,6 @@ function atualizarModalComDados(dados) {
         span.dataset.field = input.dataset.field;
         span.id = input.id;
 
-        // trata os dados especiais como ativo, tipo e a máscara de preço R$ 00,00
         if (input.dataset.field === "ativo") {
             span.textContent = input.value === "1" ? "Ativo" : "Inativo";
 
@@ -249,7 +255,8 @@ function atualizarModalComDados(dados) {
     });
 }
 
-// função para o conteúdo do botão ser de edição
+
+// VOLTAR BOTÃO
 function trocarBotaoParaEditar() {
     const btn = document.querySelector(".btn-editar-produto");
     btn.textContent = "Editar Produto";
@@ -259,7 +266,8 @@ function trocarBotaoParaEditar() {
         .addEventListener("click", ativarModoEdicao);
 }
 
-// Fechar modal
+
+// FECHAR MODAL
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("modal-close")) {
         document.querySelector(".produtomodal")?.remove();

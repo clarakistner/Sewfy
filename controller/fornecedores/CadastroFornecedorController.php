@@ -1,6 +1,8 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+}
 
 require_once __DIR__ . '/../../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../../model/DAOs/FornecedorDAO.php';
@@ -16,75 +18,63 @@ class CadastroFornecedorController {
     }
 
     public function cadastrarFornecedor(): void {
+        header('Content-Type: application/json; charset=utf-8');
 
-        header('Content-Type: text/plain; charset=utf-8');
-
-        // Só aceita POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo "Método não permitido";
-            return;
-        }
-
-        // Verifica autenticação
         if (empty($_SESSION['usuario_id'])) {
             http_response_code(401);
-            echo "Usuário não autenticado";
+            echo json_encode(['erro' => 'Usuário não autenticado']);
             return;
         }
 
-        // Validação básica
+        $data = json_decode(file_get_contents("php://input"), true);
+
         if (
-            empty($_POST['nome']) ||
-            empty($_POST['cpfCnpj']) ||
-            empty($_POST['telefone']) ||
-            empty($_POST['endereco'])
+            empty($data['nome']) ||
+            empty($data['cpfCnpj']) ||
+            empty($data['telefone']) ||
+            empty($data['endereco'])
         ) {
             http_response_code(400);
-            echo "Dados obrigatórios não enviados";
+            echo json_encode(['erro' => 'Dados obrigatórios não enviados']);
             return;
         }
 
         $usuarioId = (int) $_SESSION['usuario_id'];
 
-        // Normalização dos dados
-        $cpfCnpjNumerico    = preg_replace('/\D/', '', $_POST['cpfCnpj']);
-        $telefoneNumerico   = preg_replace('/\D/', '', $_POST['telefone']);
+        $cpfCnpjNumerico  = preg_replace('/\D/', '', $data['cpfCnpj']);
+        $telefoneNumerico = preg_replace('/\D/', '', $data['telefone']);
 
-        // Evita duplicidade
         if ($this->fornecedorDAO->buscarFornecedoresPorNomeOuCpfCnpj(
             $cpfCnpjNumerico,
             $usuarioId
         )) {
             http_response_code(409);
-            echo "CPF/CNPJ já cadastrado";
+            echo json_encode(['erro' => 'CPF/CNPJ já cadastrado']);
             return;
         }
 
-        // Criação do objeto
         $fornecedor = new Fornecedor();
         $fornecedor->setUsuarioId($usuarioId);
-        $fornecedor->setNome(trim($_POST['nome']));
-        error_log("CPF/CNPJ recebido: " . $cpfCnpjNumerico);
+        $fornecedor->setNome(trim($data['nome']));
         $fornecedor->setCpfCnpj($cpfCnpjNumerico);
         $fornecedor->setTelefone($telefoneNumerico);
-        $fornecedor->setEndereco(trim($_POST['endereco']));
-        $fornecedor->setAtivo(1); // SEMPRE int
+        $fornecedor->setEndereco(trim($data['endereco']));
+        $fornecedor->setAtivo(1);
 
-        // Persistência
         $id = $this->fornecedorDAO->criarFornecedor($fornecedor);
 
         if ($id > 0) {
             http_response_code(201);
-            echo "Fornecedor cadastrado com sucesso";
+            echo json_encode([
+                'mensagem' => 'Fornecedor cadastrado com sucesso',
+                'id' => $id
+            ]);
         } else {
             http_response_code(500);
-            echo "Erro ao cadastrar fornecedor";
+            echo json_encode(['erro' => 'Erro ao cadastrar fornecedor']);
         }
     }
 }
 
-$controller = new CadastroFornecedorController();
-$controller->cadastrarFornecedor();
 
 ?>

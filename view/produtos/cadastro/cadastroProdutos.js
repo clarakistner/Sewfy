@@ -165,34 +165,31 @@ async function cadastrarProduto( // recebe os dados enviados no inicializarEvent
 
     // ENVIO BACKEND 
     try {
-        const payload = new URLSearchParams({
+        const payload = {
             cod,
             tipo,
             nome,
             um,
             desc,
             preco
-        });
+        };
 
-        console.log("[FETCH] Enviando para backend:", payload.toString());
+        console.log("[FETCH] Enviando para backend:", payload);
 
         // espera a resposta do fetch
-        const response = await fetch(
-            "/Sewfy/controller/produtos/CadastroProdutoController.php",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: payload
-            }
-        );
+        const response = await fetch("/Sewfy/api/produtos", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
 
 
         //trata a resposta do fetch abaixo
         console.log("[FETCH] Status HTTP:", response.status);
 
-        const retorno = await response.text();
+        const retorno = await response.json();
         console.log("[FETCH] Resposta do servidor:", retorno);
 
         if (response.ok) {
@@ -207,7 +204,7 @@ async function cadastrarProduto( // recebe os dados enviados no inicializarEvent
             }
         } else {
             console.error("[BACKEND ERRO]", retorno);
-            mostrarToast(retorno, "erro");
+             mostrarToast(retorno.erro || "Erro ao cadastrar produto", "erro");
         }
     } catch (erro) {
         console.error("[FETCH ERRO CRÍTICO]", erro);

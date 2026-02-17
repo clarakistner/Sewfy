@@ -1,6 +1,5 @@
 <?php
 
-session_start();
 
 require_once __DIR__ . '/../../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../../model/DAOs/ProdutoDAO.php';
@@ -16,51 +15,43 @@ class EditarProdutoController
         $this->produtoDAO = new ProdutoDAO($conn);
     }
 
-    public function editarProduto(): void
+    public function editarProduto(int $id): void
     {
-        header('Content-Type: text/plain; charset=utf-8');
-
-        // Só aceita POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo "Método não permitido";
-            return;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        header('Content-Type: application/json');
 
-        // Autenticação
         if (empty($_SESSION['usuario_id'])) {
             http_response_code(401);
-            echo "Usuário não autenticado";
+            echo json_encode(['erro' => 'Usuário não autenticado']);
             return;
         }
 
-        // Campos obrigatórios
+        $data = json_decode(file_get_contents("php://input"), true);
+
         if (
-            empty($_POST['id']) ||
-            empty($_POST['cod']) ||
-            empty($_POST['nome']) ||
-            empty($_POST['um']) ||
-            empty($_POST['tipo']) ||
-            !isset($_POST['ativo'])
+            empty($data['cod']) ||
+            empty($data['nome']) ||
+            empty($data['tipo']) ||
+            empty($data['um']) ||
+            !isset($data['ativo'])
         ) {
             http_response_code(400);
-            echo "Dados obrigatórios não enviados";
+            echo json_encode(['erro' => 'Dados obrigatórios não enviados']);
             return;
         }
 
-        $id        = (int) $_POST['id'];
         $usuarioId = (int) $_SESSION['usuario_id'];
 
-        // Normalização
-        $cod   = trim($_POST['cod']);
-        $nome  = trim($_POST['nome']);
-        $tipo  = trim($_POST['tipo']);
-        $um    = trim($_POST['um']);
-        $desc  = isset($_POST['desc']) ? trim($_POST['desc']) : '';
-        $ativo = ($_POST['ativo'] == 1) ? 1 : 0;
-        $preco = isset($_POST['preco']) ? floatval($_POST['preco']) : 0;
+        $cod   = trim($data['cod']);
+        $nome  = trim($data['nome']);
+        $tipo  = trim($data['tipo']);
+        $um    = trim($data['um']);
+        $desc  = isset($data['desc']) ? trim($data['desc']) : '';
+        $ativo = ($data['ativo'] == 1) ? 1 : 0;
+        $preco = isset($data['preco']) ? floatval($data['preco']) : 0;
 
-        // Verifica duplicidade (exceto o próprio produto)
         if ($this->produtoDAO->existeCodigoOuNomeOutroProduto(
             $cod,
             $nome,
@@ -68,11 +59,10 @@ class EditarProdutoController
             $id
         )) {
             http_response_code(409);
-            echo "Já existe outro produto com esse código ou nome";
+            echo json_encode(['erro' => 'Já existe outro produto com esse código ou nome']);
             return;
         }
 
-        // Entidade
         $produto = new Produto();
         $produto->setIdProd($id);
         $produto->setIdUsuProd($usuarioId);
@@ -84,17 +74,11 @@ class EditarProdutoController
         $produto->setDescProd($desc);
         $produto->setAtivProd($ativo);
 
-        // Persistência
         if ($this->produtoDAO->atualizaProduto($produto)) {
-            http_response_code(200);
-            echo "Produto atualizado com sucesso";
+            echo json_encode(['mensagem' => 'Produto atualizado com sucesso']);
         } else {
             http_response_code(500);
-            echo "Erro ao atualizar produto";
+            echo json_encode(['erro' => 'Erro ao atualizar produto']);
         }
     }
 }
-
-// Execução correta
-$controller = new EditarProdutoController();
-$controller->editarProduto();

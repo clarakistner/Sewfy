@@ -1,0 +1,117 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.pagina {
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+}
+
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 16px;
+}
+
+.box-login {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 20px;
+}
+
+.box-login h2 {
+    text-align: center;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.box-login p {
+    color: #6b7280;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.campo-formulario {
+    margin-bottom: 20px;
+}
+
+.campo-formulario label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.campo-formulario input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+.campo-formulario input:focus {
+    outline: none;
+    border: 2px solid #082db2;
+}
+
+.campo-senha {
+    position: relative;
+}
+
+.campo-senha input {
+    width: 100%;
+    padding: 12px 40px 12px 14px; 
+}
+
+
+.botao-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6b7280;
+    user-select: none;
+}
+
+.botao-senha:hover {
+    color: #082db2;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #0e59fe, #020066);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    background: linear-gradient(45deg,  #020066, #0e59fe);
+}
+
+.copyright {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280; 
+}

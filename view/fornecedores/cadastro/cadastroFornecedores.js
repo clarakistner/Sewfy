@@ -137,36 +137,41 @@ async function cadastrarFornecedor(
 
     // ENVIO BACKEND 
     try {
-        const payload = new URLSearchParams({
+        const payload = {
             nome,
             cpfCnpj,
             telefone,
             endereco,
             ativo: 1
-        });
+        };
 
         console.log("[FETCH] Enviando para backend:", payload.toString());
 
         const response = await fetch(
-            "/Sewfy/controller/fornecedores/CadastroFornecedorController.php",
+            "/Sewfy/api/fornecedores",
             {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/json"
                 },
-                body: payload
+                body: JSON.stringify({
+                    nome,
+                    cpfCnpj,
+                    telefone,
+                    endereco,
+                    ativo: 1
+                })          
             }
         );
 
         console.log("[FETCH] Status HTTP:", response.status);
 
-        const retorno = await response.text();
+        const retorno = await response.json();
         console.log("[FETCH] Resposta do servidor:", retorno);
 
         if (response.ok) {
             console.log("[SUCESSO] Backend retornou OK");
-            mostrarToast("Fornecedor cadastrado com sucesso!", "sucesso");
-
+            mostrarToast(retorno.mensagem ?? "Fornecedor cadastrado!", "sucesso");
             document.querySelector("#fornecedorModal")?.remove();
 
             if (typeof atualizarListaFornecedores === "function") {
@@ -175,10 +180,10 @@ async function cadastrarFornecedor(
             }
         } else {
             console.error("[BACKEND ERRO]", retorno);
-            mostrarToast(retorno, "erro");
+            mostrarToast(retorno.erro ?? "Erro ao cadastrar fornecedor", "erro");
         }
     } catch (erro) {
         console.error("[FETCH ERRO CRÍTICO]", erro);
-        mostrarToast("Erro ao conectar com o servidor", "erro");
+        mostrarToast(retorno.erro ?? "Erro ao cadastrar", "erro");
     }
 }
