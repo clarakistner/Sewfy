@@ -1,68 +1,149 @@
-import {mostrarToast} from '../../toast/toast.js';
+import { mostrarToast } from '../../toast/toast.js'
+import { abrirModal as abreModalDetalhes } from '../modal/modalOrdemDeProducao.js';
 
 var main = document.querySelector(".principal");
-// ABRE O MODAL DE EDIÇÃO E FECHA O DE DETALHES DA OP
-document.body.addEventListener("click", (e) => {
+
+document.addEventListener("click", handleClick)
+
+
+async function handleClick(e) {
     if (e.target.closest(".editar")) {
-
-
-        main.style.filter = "blur(25px)";
-        document.querySelector(".header").style.filter = "blur(25px)";
-        fetch('/Sewfy/view/ordensdeproducao/edicao/edicaoOrdemDeProducao.html')
-            .then(response => response.text())
-            .then(data => {
-                document.querySelector("#detailsModal")?.classList.remove("load")
-                document.querySelector("#detailsModal")?.remove();
-                document.body.insertAdjacentHTML("afterbegin", data)
-                document.querySelector(".modal-edicao").classList.add("load")
-            })
+        colocaBlur()
+        await fechaModalDetalhes()
+        setTimeout(() => {
+            abreModal()
+        }, 50)
     }
-})
-// ADICIONA AÇÃO PARA O BOTÃO QUE FECHA O MODAL DE EDIÇÃO DA OP
-document.body.addEventListener("click", (e) => {
-
     if (e.target.closest(".close-btn")) {
-        document.querySelector(".modal-edicao")?.remove();
-        main.style.filter = "blur(0)";
-        document.querySelector(".header").style.filter = "blur(0)";
+        fechaModal()
+        removeBlur()
     }
-
-});
-
-//CANCELA A EDIÇÃO
-
-document.body.addEventListener("click", (e) => {
-
     if (e.target.closest(".cancel")) {
+        await fechaModal()
+        setTimeout(() => {
+            abreModalDetalhes()
 
-        fetch('Sewfy/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
-        document.querySelector(".modal")?.remove();
-        fetch('/Sewfy/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
-            .then(response => response.text())
-            .then(data => {
-                document.querySelector(".modal-edicao")?.classList.remove("load")
-                document.querySelector(".modal-edicao")?.remove();
-                document.body.insertAdjacentHTML("afterbegin", data)
-                const modal = document.querySelector("#detailsModal");
-                setTimeout(() => {
-                    modal.classList.add("load")
-                })
-
-
-            });
+        }, 50)
     }
-
-});
-
-// SALVA ALTERAÇÕES
-
-document.body.addEventListener("click", (e) => {
-
     if (e.target.closest(".save")) {
-        document.querySelector(".modal-edicao")?.remove();
-        main.style.filter = "blur(0)";
-        document.querySelector(".header").style.filter = "blur(0)";
-        mostrarToast("Alterações salvas!")
+        fechaModal()
+        removeBlur()
+        salvaAlteracoes()
     }
+}
 
-});
+function abreModal() {
+    fetch('/Sewfy/view/ordensdeproducao/edicao/edicaoOrdemDeProducao.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML("afterbegin", data)
+            document.querySelector(".modal-edicao").classList.add("load")
+        })
+}
+
+function fechaModal() {
+    document.querySelector(".modal-edicao")?.classList.remove("load")
+    document.querySelector(".modal-edicao")?.remove();
+}
+
+function fechaModalDetalhes() {
+
+    document.querySelector("#detailsModal")?.classList.remove("load")
+    document.querySelector("#detailsModal")?.remove();
+
+}
+
+function colocaBlur() {
+    main.style.filter = "blur(25px)";
+    document.querySelector(".header").style.filter = "blur(25px)";
+}
+function removeBlur() {
+    main.style.filter = "blur(0)";
+    document.querySelector(".header").style.filter = "blur(0)";
+}
+
+function salvaAlteracoes() {
+    mostrarToast("Alterações salvas!")
+}
+
+function resgataListaProdutos(){
+
+}
+
+function resgataListaFornecedores(){
+
+}
+
+function criaSelectInsumos(){
+
+}
+
+function defineUnidade(){
+    
+}
+
+function criaBoxFornecedores(){
+    
+}
+
+function formataData(){
+
+}
+
+function criarInsumo( nome, quantidade, unidade, fornecedor, entrega, requerFornecedor) {
+  const div = document.createElement('div');
+  div.className = 'insumo';
+
+  div.innerHTML = `
+    <div class="grid-12">
+      <div class="col-3">
+        <label>Nome</label>
+        <select>
+          <option value="">${nome}</option>
+        </select>
+      </div>
+      <div class="col-2">
+        <label>Quantidade</label>
+        <input type="number" value="${quantidade}">
+      </div>
+      <div class="col-2">
+        <label>Unidade</label>
+        <input value="${unidade}">
+      </div>
+      <div class="col-2 boxFornecedor">
+        <label>Fornecedor</label>
+        <input value="${fornecedor}">
+      </div>
+      <div class="col-2 boxEntrega">
+        <label>Entrega</label>
+        <input type="date" value="${entrega}">
+      </div>
+      <div class="col-1 align-end">
+        <button class="delete">
+          <span class="material-symbols-outlined icone-remover">delete</span>
+        </button>
+      </div>
+      <label class="checkbox">
+        <input type="checkbox" ${requerFornecedor ? 'checked' : ''}>
+        Requer fornecedor
+      </label>
+    </div>
+  `;
+
+  const checkbox = div.querySelector('input[type="checkbox"]');
+  const boxFornecedor = div.querySelector('.boxFornecedor');
+  const boxEntrega = div.querySelector('.boxEntrega');
+
+  const toggleFornecedor = () => {
+    const visivel = checkbox.checked;
+    boxFornecedor.style.display = visivel ? '' : 'none';
+    boxEntrega.style.display = visivel ? '' : 'none';
+  };
+
+  checkbox.addEventListener('change', toggleFornecedor);
+  toggleFornecedor(); 
+
+  div.querySelector('.delete').addEventListener('click', () => div.remove());
+
+  return div;
+}

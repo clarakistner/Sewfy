@@ -73,14 +73,14 @@ class CriacaoOrdemDeProducaoController
             $insumos = $dados['INSUMOS'] ?? null;
 
             // Itera sobre cada insumo e persiste no banco
-            foreach ($insumos as $i) {
+            foreach ($insumos as $ins) {
                 $insumo = new OPInsumo();
-                $insumo->setFORNECEDORES_CLIFOR_ID($i['IDFORNECEDOR']);
-                $insumo->setOPIN_CUSTOT($i['CUSTOT']);
-                $insumo->setOPIN_CUSTOU($i['CUSTOU']);
-                $insumo->setOPIN_QTD($i['QTDIN']);
-                $insumo->setOPIN_UM($i["UM"]);
-                $insumo->setPRODUTOS_PROD_ID($i['INSUID']);
+                $insumo->setFORNECEDORES_CLIFOR_ID($ins['IDFORNECEDOR']);
+                $insumo->setOPIN_CUSTOT($ins['CUSTOT']);
+                $insumo->setOPIN_CUSTOU($ins['CUSTOU']);
+                $insumo->setOPIN_QTD($ins['QTDIN']);
+                $insumo->setOPIN_UM($ins["UM"]);
+                $insumo->setPRODUTOS_PROD_ID($ins['INSUID']);
                 $insumo->setORDEM_PRODUCAO_OP_ID($idOp);
                 $this->opinDAO->criarOpInsumo($insumo);
             }

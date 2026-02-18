@@ -24,7 +24,7 @@ function gerenciadorRotas($metodo, $uri)
     //die();
 
     // Retira a parte comum da url e define o restante como uri
-    $uri = str_replace('/Sewfy/api/back/api.php', '', $uri);
+    $uri = str_replace('/back/api.php', '', $uri);
 
     // Verifica as rotas e os metodos
     if ($uri === "/ordemdeproducao/criar" && $metodo === 'POST') {

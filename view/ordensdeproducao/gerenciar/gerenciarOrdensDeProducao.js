@@ -5,6 +5,12 @@ export async function listarOrdensProducao() {
         const listaOPsBanco = await window.api.get("/ordemdeproducao/listar")
         const listaOPs = listaOPsBanco.ordensProducao
 
+        // Organiza a lista
+        listaOPs.sort((a, b) => {
+            const getNum = (str) => parseInt(str.match(/(\d+)$/)[1], 10);
+            return getNum(a.OP_ID) - getNum(b.OP_ID);
+        });
+
         // Seleciona o elemento DOM onde as ordens serão exibidas
         const listaOrdensDOM = document.querySelector(".lista-ordens")
 
@@ -12,7 +18,7 @@ export async function listarOrdensProducao() {
         for (const op of listaOPs) {
             // Cria o container principal do card
             const cardsOrdens = document.createElement('div')
-            cardsOrdens.classList = 'card-ordem'
+            cardsOrdens.className = 'card-ordem'
             const contentOrdem = document.createElement('div')
             contentOrdem.className = 'content-ordem'
 
@@ -64,7 +70,7 @@ export async function listarOrdensProducao() {
 
             // Cria os elementos de informação da ordem
             const infoProduto = criarInfoOrdem('package_2', 'Produto', nomeProduto || 'Sem Nome')
-            const infoQuantidade = criarInfoOrdem('package_2', 'Quantidade', op.OP_QTD)
+            const infoQuantidade = criarInfoOrdem('package_2', 'Quantidade', parseInt(op.OP_QTD).toLocaleString('pt-BR'))
             const infoDataAbertura = criarInfoOrdem('calendar_month', 'Data de Abertura', dataAbertura || '01/01/2026')
             const infoDataFechamento = criarInfoOrdem('calendar_month', 'Data de Fechamento', dataFechamento)
 
@@ -102,10 +108,8 @@ export async function listarOrdensProducao() {
 async function retornaNomeProduto(id) {
     try {
         // Faz requisição para buscar dados do produto
-        const response = await fetch(
-            `/Sewfy/controller/produtos/VisualizarProdutoController.php?id=${id}`
-        )
-        const produto = await response.json()
+
+        const produto = await window.api.get(`/produtos/${id}`)
 
         // Log de debug
         console.log(` DENTRO DA FUNÇÃO retornaNomeProduto() -> PROD_NOME:${produto.nome}`)

@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../model/DAOs/ProdutoDAO.php';
 
 class ListarProdutosController
 {
+
     public function listar(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
