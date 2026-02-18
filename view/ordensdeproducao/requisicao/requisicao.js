@@ -3,10 +3,8 @@ import { mostrarToast } from '../../toast/toast.js'
 import { listarOrdensProducao, limparLista } from '../gerenciar/gerenciarOrdensDeProducao.js'
 
 // Busca lista inicial de produtos
-const response = await fetch(
-  "/Sewfy/controller/produtos/ListarProdutosController.php"
-)
-let listaProdutos = await response.json()
+
+let listaProdutos = await window.api.get("/produtos")
 
 // Constantes para tipos de produtos
 const PROD_TIPO = {
@@ -84,10 +82,7 @@ function abrirModal() {
 // Fecha o modal e reseta os dados
 async function fecharModal() {
   OPINs.length = 0
-  const res = await fetch(
-    "/Sewfy/controller/produtos/ListarProdutosController.php"
-  )
-  listaProdutos = await res.json()
+  listaProdutos = await window.api.get("/produtos")
   document.querySelector("#createModal").remove()
 }
 
@@ -162,6 +157,7 @@ function dataFormatada() {
 // Confirma e envia ordem de produção para o servidor
 async function confirmarOrdem() {
   try {
+    console.log(`OPINs: ${OPINs}`)
     // Monta objeto com dados da ordem
     const dados = {
       OP_QTD: op.OP_QTD,
@@ -169,7 +165,7 @@ async function confirmarOrdem() {
       OP_CUSTOU: calculaCustoU(),
       OP_CUSTOT: calculaCustoT(),
       PROD_ID: op.PROD_ID,
-      INSUMOS: OPINs
+      INSUMOS: [...OPINs]
     }
     
     // Limpa array de insumos
@@ -247,10 +243,8 @@ async function defineUM(e) {
     const insumo = obterValorSelect(select)
     
     // Busca dados do produto selecionado
-    const response = await fetch(
-      `/Sewfy/controller/produtos/VisualizarProdutoController.php?id=${parseInt(insumo.id)}`
-    )
-    const produto = await response.json()
+   
+    const produto = await window.api.get(`/produtos/${parseInt(insumo.id)}`)
     
     console.log("Mudando a propriedade do campo de unidade")
     
@@ -282,10 +276,8 @@ async function adicionarInsumo() {
     console.log(`ID do Insumo: ${parseInt(opInsumo.id)}`)
 
     // Busca preço do insumo
-    const response = await fetch(
-      `/Sewfy/controller/produtos/VisualizarProdutoController.php?id=${parseInt(opInsumo.id)}`
-    )
-    const produto = await response.json()
+    
+    const produto = await window.api.get(`/produtos/${parseInt(opInsumo.id)}`)
     console.log(`PRODUTO: ${produto.preco}`)
 
     const um = obterValorSelect(campoUm)
@@ -384,19 +376,8 @@ function carregarProdutosEmSelect(tipo) {
 // Carrega fornecedores no select
 async function carregaFornecedores(campo) {
   try {
-    const response = await fetch("/Sewfy/controller/fornecedores/ListarFornecedoresController.php")
-    const fornecedores = await response.json()
+    const fornecedores = await window.api.get("/fornecedores")
     
-    if (!response.ok) {
-      console.log(`Falha no banco de dados: ${response}`)
-      return
-    }
-    
-    if (!fornecedores) {
-      console.log("Erro ao buscar fornecedores")
-      return
-    }
-
     fornecedores.forEach(fornecedor => {
       const option = document.createElement("option")
       option.id = `${fornecedor.id}`

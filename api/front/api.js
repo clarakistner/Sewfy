@@ -28,6 +28,7 @@ export class API {
             // Lê a resposta como texto
             const text = await response.text()
             console.log(`Texto: ${text}`)
+            console.log(`Status HTTP: ${response.status}`)
 
             // Converte o texto para JSON
             const dados = JSON.parse(text)
