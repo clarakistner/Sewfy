@@ -1,9 +1,25 @@
-// Elemento principal que será desfocado ao abrir o modal
-let main = document.querySelector(".principal")
+import { mostrarToast } from "../../toast/toast.js"
 
-// Dados globais da Ordem de Produção e seus insumos
-let OP = null
-let OPINs = []
+// Elemento principal que será desfocado ao abrir o modal
+const getMain = () => document.querySelector(".principal")
+
+// Cria módulos para guardar a OP e seus insumos
+let ordemProducao = null
+let insumosBanco = []
+
+const setOrdemProducao = (op) => {
+    ordemProducao = op
+}
+export const getOrdemProducao = () => {
+    return ordemProducao
+}
+
+export const setInsumosBanco = (insumos) => {
+    insumosBanco = insumos
+}
+export const getInsumosBanco = () => {
+    return insumosBanco
+}
 
 // Listener global usando event delegation
 document.addEventListener("click", handleClick)
@@ -13,8 +29,10 @@ document.addEventListener("click", handleClick)
 async function handleClick(e) {
 
     // Abre modal ao clicar em visualizar OP
-    if (e.target.closest(".btn-verop")) {
-        const idOP = e.target.id
+    const botao = e.target.closest(".btn-verop, .verop")
+    if (botao) {
+        console.log("O botão foi clicado!")
+        const idOP = botao.id
         await resgataOPCompletaBanco(idOP)
         await abrirModal()
     }
@@ -29,7 +47,7 @@ async function handleClick(e) {
 // Abre o modal e injeta o HTML no DOM
 export async function abrirModal() {
 
-    main.style.filter = "blur(25px)"
+    getMain().style.filter = "blur(25px)"
     document.querySelector(".header").style.filter = "blur(25px)"
 
     try {
@@ -45,14 +63,17 @@ export async function abrirModal() {
 
     } catch (error) {
         console.error('Erro ao abrir modal:', error)
+        mostrarToast("Erro ao abrir modal", "erro")
+        throw error
     }
 }
 
 
 // Remove o modal e restaura o layout
 function fecharModal() {
+    document.querySelector("#detailsModal")?.classList.remove("load")
     document.querySelector("#detailsModal")?.remove()
-    main.style.filter = "blur(0)"
+    getMain().style.filter = "blur(0)"
     document.querySelector(".header").style.filter = "blur(0)"
 }
 
@@ -61,21 +82,25 @@ function fecharModal() {
 async function resgataOPCompletaBanco(id) {
     try {
         const busca = await window.api.get(`/ordemdeproducao/detalhes/${id}`)
-        OPINs = busca.opinS
-        OP = busca.op
+        setInsumosBanco(busca.opinS)
+        setOrdemProducao(busca.op)
     } catch (error) {
         console.log(`Erro ao buscar OP: ${error}`)
+        mostrarToast("Erro ao buscar OP", "erro")
+        throw error
     }
 }
 
 
 // Retorna o nome do produto pelo ID
-async function retornaNomeProduto(id) {
+export async function retornaNomeProduto(id) {
     try {
         const produto = await window.api.get(`/produtos/${id}`)
         return produto.nome
     } catch (error) {
         console.log(`Erro ao buscar produto: ${error}`)
+        mostrarToast("Erro ao buscar produto", "erro")
+        throw error
     }
 }
 
@@ -83,37 +108,37 @@ async function retornaNomeProduto(id) {
 // Insere os insumos na tabela do modal
 async function insereInsumosTabela() {
 
-    const tabelaDOM = document.querySelector(".tabelaInsumos")
+    try {
+        const tabelaDOM = document.querySelector(".tabelaInsumos")
 
-    
-    const promessas = OPINs.map(insumo =>
-        retornaNomeProduto(insumo.prodIdOPIN)
-    )
+        const promessas = getInsumosBanco().map(insumo =>
+            retornaNomeProduto(insumo.prodIdOPIN)
+        )
+        const nomes = await Promise.all(promessas)
 
-    
-    const nomes = await Promise.all(promessas)
+        getInsumosBanco().forEach((insumo, index) => {
+            const tr = document.createElement("tr")
+            const tdQtd = document.createElement("td")
+            tdQtd.textContent = `${insumo.qtdOPIN} ${insumo.umOPIN}`
 
-    
-    OPINs.forEach((insumo, index) => {
+            const tdNome = document.createElement("td")
+            tdNome.textContent = nomes[index]
 
-        const tr = document.createElement("tr")
+            const tdCusto = document.createElement("td")
+            tdCusto.textContent = parseFloat(insumo.custotOPIN)
+                .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
-        const tdQtd = document.createElement("td")
-        tdQtd.textContent = `${insumo.qtdOPIN} ${insumo.umOPIN}`
+            tr.appendChild(tdQtd)
+            tr.appendChild(tdNome)
+            tr.appendChild(tdCusto)
 
-        const tdNome = document.createElement("td")
-        tdNome.textContent = nomes[index]
-
-        const tdCusto = document.createElement("td")
-        tdCusto.textContent = parseFloat(insumo.custotOPIN)
-            .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-
-        tr.appendChild(tdQtd)
-        tr.appendChild(tdNome)
-        tr.appendChild(tdCusto)
-
-        tabelaDOM.appendChild(tr)
-    })
+            tabelaDOM.appendChild(tr)
+        })
+    } catch (error) {
+        console.log(`Erro ao inserir insumos na tabela: ${error}`)
+        mostrarToast("Erro ao inserir insumos na tabela", "erro")
+        throw error
+    }
 }
 
 
@@ -125,15 +150,17 @@ async function insereDetalhesNaTela() {
     const campoCustou = document.querySelector("#custou")
     const campoCustot = document.querySelector("#custot")
 
-    if (!OP || !campoNome || !campoQuant) return
+    if (!getOrdemProducao() || !campoNome || !campoQuant) return
 
-    const nomeProd = await retornaNomeProduto(parseInt(OP.prodIDOP))
-    await insereInsumosTabela()
+    const [nomeProd] = await Promise.all([
+        retornaNomeProduto(parseInt(getOrdemProducao().prodIDOP)),
+        insereInsumosTabela()
+    ])
 
-    campoNome.innerHTML = nomeProd
-    campoQuant.innerHTML = parseInt(OP.qtdOP).toLocaleString('pt-BR')
-    campoCustou.innerHTML = parseFloat(OP.custou)
+    campoNome.textContent = nomeProd
+    campoQuant.textContent = parseInt(getOrdemProducao().qtdOP).toLocaleString('pt-BR')
+    campoCustou.textContent = parseFloat(getOrdemProducao().custou)
         .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-    campoCustot.innerHTML = parseFloat(OP.custot)
+    campoCustot.textContent = parseFloat(getOrdemProducao().custot)
         .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }

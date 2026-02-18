@@ -118,6 +118,28 @@ class OrdemDeProducaoDAO
 
         return $op;
     }
+
+    public function editarOP($custot, $custou, $quebra, $qtd, $idOP){
+        
+        $sql = 'UPDATE ORDEM_PRODUCAO
+         SET OP_QTD = :qtd,
+          OP_CUSTOU = :custou,
+          OP_CUSTOT = :custot,
+          OP_QUEBRA = :quebra
+         WHERE OP_ID = :idOP;';
+
+         $stmt = $this->conn->prepare($sql);
+         $stmt->bindValue(":qtd", $qtd);
+         $stmt->bindValue(":custou", $custou);
+         $stmt->bindValue(":custot", $custot);
+         $stmt->bindValue(":quebra", $quebra);
+         $stmt->bindValue(":idOP", $idOP);
+
+         $stmt->execute();
+
+         return $stmt->rowCount() > 0;
+
+    }
 }
 
 

@@ -51,4 +51,33 @@ class OPInsumoDAO
 
         return $opins;
     }
+
+    public function editarInsumo($qtd, $custot, $idFor, $idOPIN)
+    {
+        $sql = 'UPDATE OP_INSUMOS
+        SET OPIN_QTD = :qtd
+        OPIN_CUSTOT = :custot
+        FORNECEDORES_CLIFOR_ID = :idFornecedor
+        WHERE OPIN_ID = :idOPIN;';
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":qtd", $qtd);
+        $stmt->bindValue(":custot", $custot);
+        $stmt->bindValue(":idFornecedor", $idFor);
+        $stmt->bindValue(":idOPIN", $idOPIN);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
+
+    public function deletarInsumo($idOPIN)
+    {
+        $sql = 'DELETE FROM OP_INSUMOS WHERE OPIN_ID = :idOPIN';
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":idOPIN", $idOPIN);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
 }
