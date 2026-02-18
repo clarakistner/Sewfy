@@ -1,0 +1,88 @@
+/* Reset */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Layout principal */
+.layout {
+    min-height: 100vh;
+}
+
+/* Sidebar fixa */
+.sidebar {
+    position: fixed;
+
+    width: 250px;
+    height: 100vh;
+
+    background: linear-gradient(180deg, #020066, #0e59fe);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
+
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Conteúdo deslocado */
+.content {
+    margin-left: 250px;   /* ESSENCIAL */
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* Cabeçalho da sidebar */
+.sidebar-header {
+    margin-bottom: 40px;
+}
+
+.sidebar-header h1 {
+    color: #ffffff;
+    font-size: 26px;
+    margin: 0 0 6px 0;
+}
+
+.sidebar-header p {
+    color: rgb(143, 151, 190);
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Navegação vertical */
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Botões */
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: none;
+
+    background: transparent;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+
+    color: rgb(143, 151, 190);
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* Botão ativo */
+.nav-btn.active {
+    background: #0e59fe;
+    color: #ffffff;
+}
