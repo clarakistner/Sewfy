@@ -51,7 +51,7 @@ async function handleClick(e) {
     }, 50)
   }
   if (e.target.closest(".save")) {
-    insereDadosOPAtualizados() 
+    insereDadosOPAtualizados()
     salvaAlteracoes()
   }
   if (e.target.closest(".icone-remover, .delete")) {
@@ -100,15 +100,17 @@ function removeBlur() {
 }
 
 async function salvaAlteracoes() {
-  try{if (!verificaQuantidadesOPOPIN()) {
-    mostrarToast("Os campos de quantidade da Ordem e dos insumos\nnão podem ser vazios ou iguais a 0", "erro")
-    return
-  } else {
-    await atualizaOPBanco()
-    mostrarToast("Alterações salvas!")
-    fechaModal()
-    removeBlur()
-  }}catch(error){
+  try {
+    if (!verificaQuantidadesOPOPIN()) {
+      mostrarToast("Os campos de quantidade da Ordem e dos insumos\nnão podem ser vazios ou iguais a 0", "erro")
+      return
+    } else {
+      await atualizaOPBanco()
+      mostrarToast("Alterações salvas!")
+      fechaModal()
+      removeBlur()
+    }
+  } catch (error) {
     console.log(`Erro ao tentar salvar alterações: ${error}`)
     mostrarToast("Erro ao tentar salvar alterações", "erro")
     throw error
@@ -142,9 +144,12 @@ async function defineNomeIdDOM() {
 async function resgataListaProdutos() {
   try {
     const listaBanco = await window.api.get("/produtos")
-    setListaInsumos(listaBanco.filter(insumo => {
-      insumo.tipo == "Insumo" && insumo.ativo == 1
-    }))
+    console.log(`É um array? ${Array.isArray(listaBanco)}`)
+    console.log(`Array[0] =>  ${JSON.stringify(listaBanco[0])}`)
+    const lista = Array.from(listaBanco).filter(insumo => {
+      return insumo.tipo === "Insumo" && insumo.ativo === "1"
+    })
+    setListaInsumos(lista)
   } catch (error) {
     console.log(`Erro ao tentar resgatar produtos: ${error}`)
     mostrarToast("Erro ao tentar resgatar produtos", 'erro')
@@ -155,7 +160,7 @@ async function resgataListaProdutos() {
 async function resgataListaFornecedores() {
   try {
     const listaBanco = await window.api.get("/fornecedores")
-    setListaFornecedores(listaBanco)
+    setListaFornecedores(Array.from(listaBanco))
   } catch (error) {
     console.log(`Erro ao tentar resgatar fornecedores: ${error}`)
     mostrarToast("Erro ao tentar resgatar fornecedores", 'erro')
@@ -163,8 +168,11 @@ async function resgataListaFornecedores() {
   }
 }
 
-function criaSelectInsumos() {
-
+function criaOptionInsumo(insumo) {
+  const option = document.createElement("option")
+  option.textContent = `${insumo.nome}`
+  option.id = `${insumo.id}`
+  return option
 }
 
 function defineUnidade() {
@@ -177,6 +185,18 @@ function criaBoxFornecedores() {
 
 function formataDataSQL() {
 
+}
+
+function organizaDivNovoInsumo() {
+  const selectInsumo = document.querySelector("#novoInsumo")
+
+  const listaDeInsumos = getListaInsumos()
+
+  console.log(`Lista de Insumos: ${listaDeInsumos}`)
+  listaDeInsumos.forEach(insumo => {
+    const option = criaOptionInsumo(insumo)
+    selectInsumo.appendChild(option)
+  })
 }
 
 function criarInsumo(id, nome, quantidade, unidade, fornecedor, entrega, requerFornecedor) {
@@ -328,7 +348,7 @@ function insereDadosOPAtualizados() {
 
 async function atualizaOPBanco() {
   try {
-    console.log(`NovaQTD: ${atualizaOP.NovaQtdOP} NovaQuebra:${ atualizaOP.NovaQuebra}`)
+    console.log(`NovaQTD: ${atualizaOP.NovaQtdOP} NovaQuebra:${atualizaOP.NovaQuebra}`)
     const op = getOrdemProducao()
     const dados = {
       NovaQtdOP: atualizaOP.NovaQtdOP,
@@ -350,4 +370,5 @@ async function organizaDadosTela() {
     colocaQuatidadeQuebraOP(),
     definiDivsInsumos()
   ])
+  organizaDivNovoInsumo()
 }

@@ -33,10 +33,11 @@ class EditarOrdemProducaoController
             ///////////////////////////////////
             //Atualizar
             $custot = (float) $op['custot'];
-            //Atualizar
-            $custou = (float) $op['custou'];
-            /////////////////////////////////
+           
             $qtd = $dados['NovaQtdOP'] ?: (int)$op['qtdOP'];
+             //Atualizar
+            $custou = $custot / $qtd;
+            /////////////////////////////////
             $quebra = $dados['NovaQuebra'] ?: (float) $op['quebra'];
             $idOP = $op['idOP'];
             $this->opDAO->editarOP($custot, $custou, $quebra, $qtd, $idOP);
