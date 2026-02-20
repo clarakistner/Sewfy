@@ -1,0 +1,256 @@
+/* Cabeçalho da página */
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #03008a;
+    margin: 0 0 6px 0;
+}
+
+.page-header p {
+    font-size: 15px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Lista de empresas */
+.empresas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Card */
+.empresa-card {
+    position: relative;
+    background: #ffffff;
+    border: 2px solid  #e5e7eb;
+    border-radius: 16px;
+    padding: 28px 32px 24px;
+    transition: box-shadow 0.2s ease;
+}
+
+.empresa-card:hover {
+    box-shadow: 0 8px 24px rgba(14, 89, 254, 0.12);
+    border: 2px solid #0e59fe
+}
+
+/* Botão acessar — canto superior direito */
+.btn-acessar {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: #eef2ff;
+    color: #0e59fe;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-acessar:hover {
+    background: #0e59fe;
+    color: #ffffff;
+}
+
+.btn-acessar .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* Header do card */
+.empresa-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+    padding-right: 48px;
+}
+
+.empresa-nome {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+/* Status */
+.empresa-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.empresa-status .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.empresa-status.ativa {
+    color: #16a34a;
+}
+
+.empresa-status.inativa {
+    color: #dc2626;
+}
+
+/* Razão social */
+.empresa-razao {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 20px 0;
+}
+
+/* Grid de informações */
+.empresa-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 32px;
+    margin-bottom: 20px;
+}
+
+.info-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.info-label {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.info-valor {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Módulos */
+.empresa-modulos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modulos-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.modulo-tag {
+    background: #0e59fe;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 999px;
+}
+
+/* Botão editar — canto inferior direito */
+.btn-editar {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-editar:hover {
+    background: #374151;
+    color: #ffffff;
+}
+
+.btn-editar .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* ─── Barra de filtros ─────────────────────────── */
+.barra-filtros {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.campo-busca {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.icone-busca {
+    position: absolute;
+    left: 14px;
+    font-size: 20px;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.campo-busca input {
+    width: 100%;
+    padding: 11px 14px 11px 44px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo-busca input::placeholder {
+    color: #9ca3af;
+}
+
+.campo-busca input:focus {
+    border-color: #0e59fe;
+}
+
+#select-status {
+    padding: 11px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 140px;
+}
+
+#select-status:focus {
+    border-color: #0e59fe;
+}
+
+/* Mensagem sem resultados */
+.sem-resultados {
+    display: none;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 15px;
+    padding: 40px 0;
+}

@@ -102676,3 +102676,177 @@ Method: GET
 Chamando gerenciadorRotas
 Fim da execução
 
+2026-02-20 19:25:30 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:32 - Requisição recebida
+URI: /Sewfy/api/produtos/10
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:36 - Requisição recebida
+URI: /Sewfy/api/produtos/10
+Method: PUT
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:36 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:39 - Requisição recebida
+URI: /Sewfy/api/produtos/3
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:44 - Requisição recebida
+URI: /Sewfy/api/produtos/3
+Method: PUT
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:44 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:55 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:25:59 - Requisição recebida
+URI: /Sewfy/api/fornecedores/1
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:04 - Requisição recebida
+2026-02-20 19:26:04 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:13 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:19 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/3
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:38 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/3
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/criar
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:53 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:53 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:58 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/detalhes/OP01001
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:26:58 - Requisição recebida
+2026-02-20 19:26:58 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+URI: /Sewfy/api/back/api.php/produtos/3
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 19:27:09 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 20:44:53 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 20:44:54 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 20:44:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-20 20:44:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 20:44:58 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 21:05:49 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-20 21:05:53 - Requisição recebida
+2026-02-20 21:05:53 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
