@@ -38,9 +38,7 @@ export class API {
                 mostrarToast(`${dados.resposta}`)
             }
 
-            // Logs de debug
-            console.log('Status da resposta:', response.status)
-            console.log('Resposta do servidor:', dados)
+           
 
             // Verifica se a requisição falhou
             if (!response.ok || dados.status === 'erro') {
@@ -81,6 +79,13 @@ export class API {
     async get(caminho) {
         return this.request(caminho, {
             method: 'GET'
+        })
+    }
+
+    //Método para requisições DELETE
+    async delete(caminho){
+        return this.request(caminho, {
+            method: 'DELETE'
         })
     }
 }

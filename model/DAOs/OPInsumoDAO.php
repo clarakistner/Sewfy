@@ -52,6 +52,35 @@ class OPInsumoDAO
         return $opins;
     }
 
+    public function buscarInsumo($idOPIN)
+    {
+        $sql = 'SELECT * FROM OP_INSUMOS WHERE OPIN_ID = :idopin';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":idopin", $idOPIN);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        $opin = new OPInsumo();
+        $opin->setFORNECEDORES_CLIFOR_ID($row['FORNECEDORES_CLIFOR_ID']);
+        $opin->setOPIN_CUSTOT($row['OPIN_CUSTOT']);
+        $opin->setOPIN_CUSTOU($row['OPIN_CUSTOU']);
+        $opin->setOPIN_ID($row['OPIN_ID']);
+        $opin->setOPIN_QTD($row['OPIN_QTD']);
+        $opin->setOPIN_UM($row['OPIN_UM']);
+        $opin->setORDEM_PRODUCAO_OP_ID($row['ORDEM_PRODUCAO_OP_ID']);
+        $opin->setPRODUTOS_PROD_ID($row['PRODUTOS_PROD_ID']);
+
+
+
+
+        return $opin;
+    }
+
     public function editarInsumo($qtd, $custot, $idFor, $idOPIN)
     {
         $sql = 'UPDATE OP_INSUMOS

@@ -21,7 +21,8 @@ body {
     opacity: 0;
     z-index: 50;
 }
-.modal-edicao.load{
+
+.modal-edicao.load {
     opacity: 1;
 }
 
@@ -90,7 +91,8 @@ input {
     border: 1px solid #d1d5db;
     border-radius: 8px;
 }
-select{
+
+select {
     width: 100%;
     padding: 8px 10px;
     border: 1px solid #d1d5db;
@@ -109,26 +111,31 @@ select{
     grid-template-columns: repeat(12, 2fr);
     height: 50%;
     gap: 1rem;
-    
+
 }
-.grid-12>div{
+
+.grid-12>div {
     width: auto;
     height: 50%;
 }
-.col-1{
+
+.col-1 {
     grid-column: span 1;
 }
-.col-2{
+
+.col-2 {
     grid-column: span 2;
     display: flex;
     flex-direction: column;
 }
-.col-3{
+
+.col-3 {
     grid-column: span 3;
     display: flex;
     flex-direction: column;
 }
-.col-4{
+
+.col-4 {
     grid-column: span 4;
     display: flex;
     flex-direction: column;
@@ -142,7 +149,7 @@ select{
 .center {
     display: flex;
     align-items: center;
-    
+
 }
 
 /* INSUMOS */
@@ -154,7 +161,14 @@ select{
     margin-bottom: 16px;
 }
 
- .checkbox {
+#nome :disabled,
+#unidade :disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.checkbox {
     width: auto;
     margin-top: 12px;
     display: flex;
@@ -162,7 +176,7 @@ select{
     justify-self: end;
     gap: 1rem;
     font-size: 14px;
-  
+
 }
 
 
@@ -172,7 +186,7 @@ select{
     border: none;
     color: #dc2626;
     cursor: pointer;
-    
+
 }
 
 /* NOVO INSUMO */
