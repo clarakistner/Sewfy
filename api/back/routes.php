@@ -4,6 +4,8 @@
 require_once __DIR__ . '/../../controller/OPs/CriacaoOrdemDeProducaoController.php';
 require_once __DIR__ . '/../../controller/OPs/ListarOrdensProducaoController.php';
 require_once __DIR__ . '/../../controller/OPs/VisualizarOrdemProducaoController.php';
+require_once __DIR__ . '/../../controller/OPs/DeletarInsumoOrdemProducaoController.php';
+require_once __DIR__ . '/../../controller/OPs/EditarOrdemProducaoController.php';
 
 //produtos
 require_once __DIR__ . '/../../controller/produtos/CadastroProdutoController.php';
@@ -96,5 +98,17 @@ function gerenciadorRotas($metodo, $uri)
         $controller->editarFornecedor((int) $matches[1]);
         return;
     }
-    
+
+    // Deletar insumo
+    if (preg_match('#^/insumos/deletar/(\d+)$#', $uri, $matches) && $metodo === 'DELETE') {
+        $idOPIN = (int) $matches[1];
+        $controller = new DeletarInsumoOrdemProducaoController();
+        $controller->deletaInsumo($idOPIN);
+        return;
+    }
+    if($uri === '/ordemdeproducao/editar' && $metodo === 'PUT'){
+        $controller = new EditarOrdemProducaoController();
+        $controller->editarOP();
+        return;
+    }
 }

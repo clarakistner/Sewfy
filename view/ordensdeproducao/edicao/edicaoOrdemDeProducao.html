@@ -5,7 +5,7 @@
         <div class="modal-header">
             <div>
                 <h2>Editar Ordem de Produção</h2>
-                <p>OP-001 — Camiseta Básica</p>
+                <p id="idNome">OP-001 — Camiseta Básica</p>
             </div>
             <button class="close-btn">✕</button>
         </div>
@@ -19,85 +19,21 @@
                 <div class="grid-2">
                     <div class="field">
                         <label>Quantidade de Produção</label>
-                        <input type="number" value="1000">
+                        <input type="number" value="" id="qtdOP" class="qtd">
                     </div>
 
                     <div class="field">
                         <label>Quantidade de Quebra</label>
-                        <input type="number" value="0">
+                        <input type="number" value="0" id="quebraOP">
                     </div>
                 </div>
             </section>
 
             <!-- INSUMOS -->
-            <section>
-                <h3>Insumos</h3>
-
-                <div class="insumo">
-                    <div class="grid-12">
-                        <div class="col-3">
-                            <label>Nome</label>
-                            <input type="" value="Insumo">
-                        </div>
-                        <div class="col-2">
-                            <label>Quantidade</label>
-                            <input type="number" value="500">
-                        </div>
-                        <div class="col-2">
-                            <label>Unidade</label>
-                            <input value="metros">
-                        </div>
-                        <div class="col-4"></div>
-                        <div class="col-1 align-end">
-                            <button class="delete"><span class="material-symbols-outlined icone-remover">
-                                    delete
-                                </span></button>
-                        </div>
-                        <label class="checkbox">
-                            <input type="checkbox">
-                            Requer fornecedor
-                        </label>
-                    </div>
-
-
+            <section >
+                <div class="divInsumos">
+                    <h3>Insumos</h3>
                 </div>
-
-                <div class="insumo">
-                    <div class="grid-12">
-                        <div class="col-3">
-                            <label>Nome</label>
-                             <input type="" value="Insumo">
-                        </div>
-                        <div class="col-2">
-                            <label>Quantidade</label>
-                            <input type="number" value="1000">
-                        </div>
-                        <div class="col-2">
-                            <label>Unidade</label>
-                            <input value="peças">
-                        </div>
-                        <div class="col-2 boxFornecedor">
-                            <label>Fornecedor</label>
-                            <input value="Maria Silva">
-                        </div>
-                        <div class="col-2 boxEntrega">
-                            <label>Entrega</label>
-                            <input type="date" value="2026-02-15">
-                        </div>
-                        <div class="col-1 align-end">
-                            <button class="delete"><span class="material-symbols-outlined icone-remover">
-                                    delete
-                                </span></button>
-                        </div>
-                        <label class="checkbox">
-                            <input type="checkbox" checked>
-                            Requer fornecedor
-                        </label>
-                    </div>
-
-
-                </div>
-
                 <!-- NOVO INSUMO -->
                 <div class="novo-insumo">
                     <h4>Adicionar Novo Insumo</h4>
@@ -115,12 +51,12 @@
                             <label>Unidade</label>
                             <input>
                         </div>
-                        
-                            <label class="checkbox">
-                                <input type="checkbox">
-                                Requer fornecedor
-                            </label>
-                        
+
+                        <label class="checkbox">
+                            <input type="checkbox">
+                            Requer fornecedor
+                        </label>
+
                         <div class="col-2">
                             <button class="add">Adicionar</button>
                         </div>
