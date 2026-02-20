@@ -1,54 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-    <link rel="stylesheet" href="../../view/homeadm/homeadm.css">
-    <link rel="stylesheet" href="../../view/paineladm/paineladm.css">
+    <title>Home - Sewfy Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="/Sewfy/view/menuadm/menuadm.css">
+    <link rel="stylesheet" href="/Sewfy/view/homeadm/homeadm.css">
 </head>
-
 <body>
-    <h2 class="page-title">Dashboard</h2>
 
-    <div class="cards">
-        <div class="card">
-            <h3>Empresas</h3>
-            <p class="card-value">12</p>
-        </div>
+    <div class="layout">
+        <!-- sidebar injetada pelo JS -->
 
-        <div class="card">
-            <h3>Usuários</h3>
-            <p class="card-value">34</p>
-        </div>
+        <main class="content">
 
-        <div class="card">
-            <h3>Contas Pendentes</h3>
-            <p class="card-value">8</p>
-        </div>
-    </div>
-
-    <div class="grid-home">
-        <div class="card large">
-            <h3>Visão Geral</h3>
-            <div class="placeholder-chart">
-                Área para gráfico futuro 📈
+            <div class="page-header">
+                <h1>Empresas Cadastradas</h1>
+                <p>Gerencie todas as empresas do sistema ERP</p>
             </div>
-        </div>
 
-        <div class="card">
-            <h3>Atividades Recentes</h3>
-            <ul class="atividades">
-                <li>Empresa X cadastrada</li>
-                <li>Usuário Maria adicionado</li>
-                <li>Conta paga registrada</li>
-            </ul>
-        </div>
+            <!-- Barra de pesquisa + filtro -->
+            <div class="barra-filtros">
+                <div class="campo-busca">
+                    <span class="material-symbols-outlined icone-busca">search</span>
+                    <input
+                        type="text"
+                        id="input-busca"
+                        placeholder="Buscar por nome ou CNPJ..."
+                        oninput="filtrarEmpresas()"
+                    />
+                </div>
+
+                <select id="select-status" onchange="filtrarEmpresas()">
+                    <option value="todas">Todas</option>
+                    <option value="ativa">Ativas</option>
+                    <option value="inativa">Inativas</option>
+                </select>
+            </div>
+
+            <!-- Lista de empresas -->
+            <div class="empresas-lista" id="empresas-lista">
+
+                <!-- Card 1 -->
+                <div class="empresa-card" data-nome="Tech Solutions Ltda" data-cnpj="12.345.678/0001-90" data-status="ativa">
+                    <button class="btn-acessar" title="Acessar empresa">
+                        <span class="material-symbols-outlined">open_in_new</span>
+                    </button>
+
+                    <div class="empresa-header">
+                        <h2 class="empresa-nome">Tech Solutions Ltda</h2>
+                        <span class="empresa-status ativa">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Ativa
+                        </span>
+                    </div>
+
+                    <p class="empresa-razao">Tech Solutions Tecnologia Ltda</p>
+
+                    <div class="empresa-info">
+                        <div class="info-grupo">
+                            <span class="info-label">CNPJ</span>
+                            <span class="info-valor">12.345.678/0001-90</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Telefone</span>
+                            <span class="info-valor">(11) 98765-4321</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Email</span>
+                            <span class="info-valor">contato@techsolutions.com</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Usuário Principal</span>
+                            <span class="info-valor">admin.tech</span>
+                        </div>
+                    </div>
+
+                    <div class="empresa-modulos">
+                        <span class="info-label">Módulos Ativos</span>
+                        <div class="modulos-lista">
+                            <span class="modulo-tag">Financeiro</span>
+                            <span class="modulo-tag">Faturamento</span>
+                            <span class="modulo-tag">Produtos</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-editar" title="Editar empresa">
+                        <span class="material-symbols-outlined">edit</span>
+                    </button>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="empresa-card" data-nome="Comércio Brasil SA" data-cnpj="98.765.432/0001-10" data-status="ativa">
+                    <button class="btn-acessar" title="Acessar empresa">
+                        <span class="material-symbols-outlined">open_in_new</span>
+                    </button>
+
+                    <div class="empresa-header">
+                        <h2 class="empresa-nome">Comércio Brasil SA</h2>
+                        <span class="empresa-status ativa">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Ativa
+                        </span>
+                    </div>
+
+                    <p class="empresa-razao">Comércio Brasil Sociedade Anônima</p>
+
+                    <div class="empresa-info">
+                        <div class="info-grupo">
+                            <span class="info-label">CNPJ</span>
+                            <span class="info-valor">98.765.432/0001-10</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Telefone</span>
+                            <span class="info-valor">(21) 97654-3210</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Email</span>
+                            <span class="info-valor">contato@comerciobrasil.com</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Usuário Principal</span>
+                            <span class="info-valor">admin.comercio</span>
+                        </div>
+                    </div>
+
+                    <div class="empresa-modulos">
+                        <span class="info-label">Módulos Ativos</span>
+                        <div class="modulos-lista">
+                            <span class="modulo-tag">Produtos</span>
+                            <span class="modulo-tag">Faturamento</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-editar" title="Editar empresa">
+                        <span class="material-symbols-outlined">edit</span>
+                    </button>
+                </div>
+
+                <!-- Card 3 (inativa — para testar o filtro) -->
+                <div class="empresa-card" data-nome="Indústria Alfa Ltda" data-cnpj="11.222.333/0001-44" data-status="inativa">
+                    <button class="btn-acessar" title="Acessar empresa">
+                        <span class="material-symbols-outlined">open_in_new</span>
+                    </button>
+
+                    <div class="empresa-header">
+                        <h2 class="empresa-nome">Indústria Alfa Ltda</h2>
+                        <span class="empresa-status inativa">
+                            <span class="material-symbols-outlined">cancel</span>
+                            Inativa
+                        </span>
+                    </div>
+
+                    <p class="empresa-razao">Indústria Alfa Comércio e Serviços Ltda</p>
+
+                    <div class="empresa-info">
+                        <div class="info-grupo">
+                            <span class="info-label">CNPJ</span>
+                            <span class="info-valor">11.222.333/0001-44</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Telefone</span>
+                            <span class="info-valor">(31) 94321-8765</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Email</span>
+                            <span class="info-valor">contato@industriaalfa.com</span>
+                        </div>
+                        <div class="info-grupo">
+                            <span class="info-label">Usuário Principal</span>
+                            <span class="info-valor">admin.alfa</span>
+                        </div>
+                    </div>
+
+                    <div class="empresa-modulos">
+                        <span class="info-label">Módulos Ativos</span>
+                        <div class="modulos-lista">
+                            <span class="modulo-tag">Estoque</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-editar" title="Editar empresa">
+                        <span class="material-symbols-outlined">edit</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Mensagem sem resultados -->
+            <p class="sem-resultados" id="sem-resultados">Nenhuma empresa encontrada.</p>
+
+        </main>
     </div>
 
+    <script src="/Sewfy/view/menuadm/menuadm.js"></script>
+    <script src="/Sewfy/view/homeadm/homeadm.js"></script>
 </body>
 </html>

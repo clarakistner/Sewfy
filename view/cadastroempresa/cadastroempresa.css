@@ -1,0 +1,178 @@
+/* Cabeçalho da página */
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #03008a;
+    margin: 0 0 6px 0;
+}
+
+.page-header p {
+    font-size: 15px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Card de seção */
+.secao-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.secao-titulo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #03008a;
+    margin: 0 0 24px 0;
+}
+
+/* Grid de campos */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.campo-full {
+    grid-column: 1 / -1;
+}
+
+.campo label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.campo input {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f3f4f6;
+    font-size: 14px;
+    color: #111827;
+    font-family: inherit;
+    outline: none;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.campo input::placeholder {
+    color: #9ca3af;
+}
+
+.campo input:focus {
+    background: #eef2ff;
+    box-shadow: 0 0 0 2px #0e59fe;
+}
+
+/* Grid de módulos */
+.modulos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 32px;
+}
+
+.modulo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #111827;
+    cursor: pointer;
+}
+
+.modulo-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    accent-color: #0e59fe;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Botão cadastrar */
+.btn-cadastrar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #0e59fe, #020066);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-top: 4px;
+}
+
+.btn-cadastrar {
+    font-size: 20px;
+}
+
+.btn-cadastrar:hover {
+    opacity: 0.92;
+    box-shadow: 0 8px 24px rgba(14, 89, 254, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-cadastrar:active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* ─── Toggle senha ─────────────────────────── */
+.campo-senha {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.campo-senha input {
+    width: 100%;
+    padding-right: 46px;
+}
+
+.btn-toggle-senha {
+    position: absolute;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.2s;
+}
+
+.btn-toggle-senha:hover {
+    color: #0e59fe;
+}
+
+.btn-toggle-senha .material-symbols-outlined {
+    font-size: 20px;
+}
