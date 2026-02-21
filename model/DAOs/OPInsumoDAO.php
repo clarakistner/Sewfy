@@ -81,12 +81,11 @@ class OPInsumoDAO
         return $opin;
     }
 
-    public function editarInsumo($qtd, $custot, $datae, $idFor, $idOPIN)
+    public function editarInsumo($qtd, $custot, $idFor, $idOPIN)
     {
         $sql = 'UPDATE OP_INSUMOS
-        SET OPIN_QTD = :qtd
-        OPIN_CUSTOT = :custot
-        
+        SET OPIN_QTD = :qtd,
+        OPIN_CUSTOT = :custot,
         FORNECEDORES_CLIFOR_ID = :idFornecedor
         WHERE OPIN_ID = :idOPIN;';
 

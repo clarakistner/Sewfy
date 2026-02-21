@@ -23,7 +23,30 @@ class EditarInsumoOrdemProducaoController{
                 ];
                 echo json_encode($response);
             }
-            
+
+            $opins = $dados['insumos'] ?? null;
+             
+            if(!$opins || count($opins) === 0){
+                return; 
+            }
+            foreach($opins as $opin){
+                $idOPIN = $opin['idOPIN'];
+                $insumoBanco = $this->opinDAO->buscarInsumo($idOPIN);
+
+                $qtd = $opin['qtdInsumo'] ?? $insumoBanco->getOPIN_QTD();
+                $idfor = $opin['idFor'] ?? $insumoBanco->getFORNECEDORES_CLIFOR_ID();
+
+                $custot = $insumoBanco->getOPIN_CUSTOU() * $qtd;
+
+                $this->opinDAO->editarInsumo($qtd, $custot, $idfor, $idOPIN);
+            }
+
+            $response = [
+                'sucesso' => true,
+                'erro' => false
+            ];
+
+            echo json_encode($response);
         }catch(Exception $error){
             $response = [
                 'sucesso' => false,

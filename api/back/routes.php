@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../controller/OPs/ListarOrdensProducaoController.php
 require_once __DIR__ . '/../../controller/OPs/VisualizarOrdemProducaoController.php';
 require_once __DIR__ . '/../../controller/OPs/DeletarInsumoOrdemProducaoController.php';
 require_once __DIR__ . '/../../controller/OPs/EditarOrdemProducaoController.php';
+require_once __DIR__ . '/../../controller/OPs/EditarInsumoOrdemProducaoController.php';
 
 //produtos
 require_once __DIR__ . '/../../controller/produtos/CadastroProdutoController.php';
@@ -109,6 +110,11 @@ function gerenciadorRotas($metodo, $uri)
     if($uri === '/ordemdeproducao/editar' && $metodo === 'PUT'){
         $controller = new EditarOrdemProducaoController();
         $controller->editarOP();
+        return;
+    }
+    if($uri === '/insumos/editar' && $metodo === 'PUT'){
+        $controller = new EditarInsumoOrdemProducaoController;
+        $controller->editaOPIN();
         return;
     }
 }

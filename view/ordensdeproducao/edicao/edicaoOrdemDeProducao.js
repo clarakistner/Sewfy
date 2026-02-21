@@ -105,7 +105,7 @@ async function salvaAlteracoes() {
       mostrarToast("Os campos de quantidade da Ordem e dos insumos\nnão podem ser vazios ou iguais a 0", "erro")
       return
     } else {
-      await atualizaOPBanco()
+      await Promise.all([atualizaOPBanco(), editaInsumos()])
       mostrarToast("Alterações salvas!")
       fechaModal()
       removeBlur()
@@ -160,7 +160,7 @@ async function resgataListaProdutos() {
 async function resgataListaFornecedores() {
   try {
     const listaBanco = await window.api.get("/fornecedores")
-    setListaFornecedores(Array.from(listaBanco))
+    setListaFornecedores(listaBanco)
   } catch (error) {
     console.log(`Erro ao tentar resgatar fornecedores: ${error}`)
     mostrarToast("Erro ao tentar resgatar fornecedores", 'erro')
@@ -175,18 +175,6 @@ function criaOptionInsumo(insumo) {
   return option
 }
 
-function defineUnidade() {
-
-}
-
-function criaBoxFornecedores() {
-
-}
-
-function formataDataSQL() {
-
-}
-
 function organizaDivNovoInsumo() {
   const selectInsumo = document.querySelector("#novoInsumo")
 
@@ -199,7 +187,7 @@ function organizaDivNovoInsumo() {
   })
 }
 
-function criarInsumo(id, nome, quantidade, unidade, fornecedor, entrega, requerFornecedor) {
+function criarInsumo(id, nome, quantidade, unidade, fornecedor, requerFornecedor) {
   const div = document.createElement('div')
   div.className = 'insumo'
   div.id = id
@@ -212,7 +200,7 @@ function criarInsumo(id, nome, quantidade, unidade, fornecedor, entrega, requerF
       </div>
       <div class="col-2">
         <label>Quantidade</label>
-        <input type="number" value="${quantidade}" class="qtd" id="qtd${id}">
+        <input type="number" value="${quantidade}" class="qtd opin${id}" id="qtd${id}">
       </div>
       <div class="col-2">
         <label>Unidade</label>
@@ -220,11 +208,7 @@ function criarInsumo(id, nome, quantidade, unidade, fornecedor, entrega, requerF
       </div>
       <div class="col-2 boxFornecedor">
         <label>Fornecedor</label>
-        <input value="${fornecedor}">
-      </div>
-      <div class="col-2 boxEntrega">
-        <label>Entrega</label>
-        <input type="date" value="${entrega}">
+        <select class="opin${id}" id="fornecedor"></select>
       </div>
       <div class="col-1 align-end">
         <button class="delete">
@@ -237,12 +221,13 @@ function criarInsumo(id, nome, quantidade, unidade, fornecedor, entrega, requerF
 
   const checkbox = div.querySelector('input[type="checkbox"]')
   const boxFornecedor = div.querySelector('.boxFornecedor')
-  const boxEntrega = div.querySelector('.boxEntrega')
+  const selectFornecedor = div.querySelector("#fornecedor")
+
+  selectFornecedor.value = fornecedor
 
   const toggleFornecedor = () => {
     const visivel = requerFornecedor
     boxFornecedor.style.display = visivel ? '' : 'none'
-    boxEntrega.style.display = visivel ? '' : 'none'
   };
 
   toggleFornecedor()
@@ -250,6 +235,41 @@ function criarInsumo(id, nome, quantidade, unidade, fornecedor, entrega, requerF
   div.querySelector('.delete').addEventListener('click', () => div.remove())
 
   return div
+}
+
+function retornaDadosCamposInsumo(insumo, campos) {
+  const dados = {}
+  let campoQtd
+  let campoFor
+  campos.forEach(campo => {
+    if (campo.id == `qtd${insumo.idOPIN}`) {
+      campoQtd = campo
+    }
+    else if (campo.id == "fornecedor") {
+      campoFor = campo
+    }
+  })
+  if (!!campoQtd) {
+    dados.qtdInsumo = parseInt(campoQtd.value)
+    dados.idFor = !campoFor ? null : parseInt(campoFor.value)
+    console.log(`ID do fornecedor que vai pro banco: |${dados.idFor}|`)
+    dados.idOPIN = parseInt(insumo.idOPIN)
+  }
+  return dados
+}
+
+async function editaInsumos() {
+  const listaInsumos = getInsumosBanco()
+  const listaEdicao = []
+  listaInsumos.forEach(insumo => {
+    const campos = document.querySelectorAll(`.opin${insumo.idOPIN}`)
+    listaEdicao.push(retornaDadosCamposInsumo(insumo, campos))
+  })
+  /// CONTINUAR
+  const dados = {
+    insumos: listaEdicao
+  }
+  await window.api.put("/insumos/editar", dados)
 }
 
 async function retornaNomeFornecedor(id) {
@@ -272,24 +292,21 @@ async function definiDivsInsumos() {
   const campoDivs = document.querySelector(".divInsumos")
   const insumosOP = getInsumosBanco()
 
-  const promessasFornecedores = insumosOP.map(insumo => {
-    console.log(`ID Fornecedor map: ${insumo.forOPIN}`)
-    return retornaNomeFornecedor(insumo.forOPIN)
-  })
+
   const promessasInsumos = insumosOP.map(insumo => {
     return retornaNomeProduto(insumo.prodIdOPIN)
   })
 
   const nomesInsumos = await Promise.all(promessasInsumos)
-  const nomesFornecedores = await Promise.all(promessasFornecedores)
+
 
   insumosOP.forEach((insumo, index) => {
     atualizaOPINs.push(insumo)
-    console.log(`Lista de fornecedores: ${nomesFornecedores[index]}`)
-    if (nomesFornecedores[index] == null) {
-      campoDivs.appendChild(criarInsumo(parseInt(insumo.idOPIN), nomesInsumos[index], insumo.qtdOPIN, insumo.umOPIN, nomesFornecedores[index], "", false))
+
+    if (insumo.forOPIN == null) {
+      campoDivs.appendChild(criarInsumo(parseInt(insumo.idOPIN), nomesInsumos[index], insumo.qtdOPIN, insumo.umOPIN, insumo.forOPIN, false))
     } else {
-      campoDivs.appendChild(criarInsumo(parseInt(insumo.idOPIN), nomesInsumos[index], insumo.qtdOPIN, insumo.umOPIN, nomesFornecedores[index], "", true))
+      campoDivs.appendChild(criarInsumo(parseInt(insumo.idOPIN), nomesInsumos[index], insumo.qtdOPIN, insumo.umOPIN, insumo.forOPIN, true))
     }
 
   })
@@ -335,6 +352,25 @@ function verificaCampo(campo) {
   }
 }
 
+async function insereOptionsFornecedores() {
+  const listaFornecedores = getListaFornecedores()
+  const selectFornecedores = document.querySelector("#fornecedor")
+
+  const promessas = listaFornecedores.map(forne => {
+    return retornaNomeFornecedor(parseInt(forne.id))
+  })
+
+  const fornecedores = await Promise.all(promessas)
+
+  listaFornecedores.forEach((forne, index) => {
+    console.log(`Nome do Fornecedor: |${fornecedores[index]}|`)
+    const option = document.createElement("option")
+    option.value = forne.id
+    option.textContent = fornecedores[index]
+    selectFornecedores.appendChild(option)
+  })
+}
+
 function insereDadosOPAtualizados() {
   const qtdOP = document.querySelector("#qtdOP")
   const quebraOP = document.querySelector("#quebraOP")
@@ -368,7 +404,9 @@ async function organizaDadosTela() {
   await Promise.all([
     defineNomeIdDOM(),
     colocaQuatidadeQuebraOP(),
-    definiDivsInsumos()
+    definiDivsInsumos(),
+
   ])
+  await insereOptionsFornecedores()
   organizaDivNovoInsumo()
 }
