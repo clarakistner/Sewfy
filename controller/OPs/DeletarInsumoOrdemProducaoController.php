@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../model/entidades/OPInsumo.php';
 require_once __DIR__ . '/../../model/DAOs/OrdemDeProducaoDAO.php';
 require_once __DIR__ . '/../../model/entidades/OrdemDeProducao.php';
 require_once __DIR__ . '/../../model/config/BancoDeDados.php';
-
+require_once __DIR__ . '/FuncoesAuxiliares.php';
 // Inicia sessão se ainda não foi iniciada
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -29,11 +29,12 @@ class DeletarInsumoOrdemProducaoController
             $opin = $this->opinDAO->buscarInsumo($idOPIN);
             $idOP = $opin->getORDEM_PRODUCAO_OP_ID();
             $idUsuario = $_SESSION['usuario_id'];
+            $this->opinDAO->deletarInsumo($idOPIN);
             $op = $this->opDAO->buscarOPPorID($idOP, $idUsuario);
-            $custotOP = $op->getOP_CUSTOT() - $opin->getOPIN_CUSTOT();
+            $custotOP = retornaCustotOP($op->getOP_ID());
             $custouOP = $custotOP / $op->getOP_QTD();
             $this->opDAO->editarOP($custotOP, $custouOP, $op->getOP_QUEBRA(), $op->getOP_QTD(), $idOP);
-            $this->opinDAO->deletarInsumo($idOPIN);
+            
 
             $response = [
                 'sucesso' => true,

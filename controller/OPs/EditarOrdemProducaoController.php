@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../model/config/BancoDeDados.php';
 require_once __DIR__ . '/../../model/DAOs/OrdemDeProducaoDAO.php';
 require_once __DIR__ . '/../../model/entidades/OrdemDeProducao.php';
+require_once __DIR__ . '/FuncoesAuxiliares.php';
 class EditarOrdemProducaoController
 {
     private $opDAO;
@@ -30,16 +31,17 @@ class EditarOrdemProducaoController
             }
 
             $op = $dados['OP'] ?? null;
+            $idOP = $op['idOP'];
             ///////////////////////////////////
             //Atualizar
-            $custot = (float) $op['custot'];
+            $custot = (float) retornaCustotOP($idOP);
            
             $qtd = $dados['NovaQtdOP'] ?: (int)$op['qtdOP'];
              //Atualizar
             $custou = $custot / $qtd;
             /////////////////////////////////
             $quebra = $dados['NovaQuebra'] ?: (float) $op['quebra'];
-            $idOP = $op['idOP'];
+            
             $this->opDAO->editarOP($custot, $custou, $quebra, $qtd, $idOP);
 
             $response = [

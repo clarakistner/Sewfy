@@ -207,6 +207,10 @@ select {
     cursor: pointer;
 }
 
+#boxForNovoInsumo{
+    display: none;
+}
+
 /* AÇÕES */
 .actions {
     display: flex;

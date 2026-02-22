@@ -109,4 +109,20 @@ class OPInsumoDAO
 
         return $stmt->rowCount() > 0;
     }
+
+    public function somaCustotInsumos($idOP){
+        $sql = 'SELECT SUM(OPIN_CUSTOT) AS SOMA FROM OP_INSUMOS WHERE ORDEM_PRODUCAO_OP_ID = :idop';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":idop", $idOP);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if(!$row){
+            return;
+        }
+
+        $soma = $row['SOMA'];
+
+        return $soma;
+    }
 }

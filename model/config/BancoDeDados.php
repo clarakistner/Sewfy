@@ -6,7 +6,7 @@ function conecta_bd(): PDO {
     $port = "3306";
     $dbname = "sewfy";
     $username = "root";
-    $password = 'DigiteSuasenhaAqui';
+    $password = 'DigiteSuaSenhaAqui';
 
     $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
 
