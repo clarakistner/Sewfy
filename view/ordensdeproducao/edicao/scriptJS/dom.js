@@ -1,6 +1,12 @@
 import { getListaFornecedores } from './estado.js'
 import { retornaNomeFornecedor } from './banco.js'
 import { mostrarToast } from '../../../toast/toast.js'
+import { setInsumosInseridos, getInsumosInseridos, setInsumosDeletados, getInsumosDeletados, getListaDOM, setListaDOM } from './estado.js'
+import { verificaCampo } from './validacoes.js'
+import { organizaDivNovoInsumo } from './renderizacao.js'
+import { resgataProdutoPeloID } from './banco.js'
+import { getOrdemProducao} from '../../modal/modalOrdemDeProducao.js'
+import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './renderizacao.js'
 
 // CRIACAO DE ELEMENTOS DOM
 
@@ -100,6 +106,97 @@ export async function insereOptionsFornecedores(selectID) {
   } catch (error) {
     console.log(`Erro ao inserir options de fornecedores: ${error}`)
     mostrarToast("Erro ao carregar fornecedores", "erro")
+    throw error
+  }
+}
+// Remove um insumo da OP no DOM e atualiza o estado em memoria
+export function deletarInsumoDOM(idOPIN) {
+  try {
+    const listaInsumosOP = getListaDOM()
+    const insumosDeletados = getInsumosDeletados()
+    
+
+    // Impede remover o ultimo insumo da OP
+    if (listaInsumosOP.length - 1 == 0) {
+      mostrarToast("Deve haver pelo menos um insumo na Ordem de Produção!", "erro")
+      return
+    }
+
+    setInsumosDeletados([idOPIN, ...insumosDeletados])
+
+    // Recarrega os insumos do DOM para manter o estado sincronizado
+    setListaDOM(listaInsumosOP.filter(insumo => {
+      console.log(`Insumo dentro de deletarInsumo(): ${insumo.idOPIN}`)
+      return String(insumo.idOPIN) !== String(idOPIN)
+    }))
+    organizaDivNovoInsumo()
+  } catch (error) {
+    console.log(`Erro ao tentar deletar insumo: ${error}`)
+    mostrarToast("Erro ao tentar deletar insumo", "erro")
+    throw error
+  }
+}
+
+// Cria novo insumo no DOM
+export async function criaNovoInsumoDOM() {
+  try {
+    const insumosDOM = getListaDOM()
+    const insumosInseridos = getInsumosInseridos()
+    const selectInsumo = document.querySelector("#novoInsumo")
+    const campoQTD = document.querySelector("#quatidadeNovoInsumo")
+    const checkbox = document.querySelector("#requerForNovoInsumo")
+    const boxFornecedor = document.querySelector("#boxForNovoInsumo")
+    const dados = {}
+
+    if (!verificaCampo(selectInsumo) || !verificaCampo(campoQTD)) {
+      console.log("Campos de novo insumo não encontrados")
+      return
+    }
+    if (parseInt(campoQTD.value) <= 0 || campoQTD.value.trim() == "") {
+      mostrarToast("Para adicionar novo insumo \n a quantidade precisa ser\n maior que 0!", "erro")
+      return
+    }
+    if (selectInsumo.value.trim() == "") {
+      mostrarToast("Para adicionar novo insumo \n é necessário escolher um dos produtos\n disponíveis", "erro")
+      return
+    }
+
+    const produto = await resgataProdutoPeloID(parseInt(selectInsumo.value))
+    const op = getOrdemProducao()
+
+    if (checkbox.checked) {
+      const selectFornecedor = document.querySelector("#fornecedorNovoInsumo")
+      dados.forOPIN = parseInt(selectFornecedor.value)
+    } else {
+      dados.forOPIN = null
+    }
+
+    console.log(`ID do fornecedor que vai pro banco: ${dados.IDFOR}`)
+    dados.prodIdOPIN = parseInt(produto.id)
+    dados.opOPIN = op.idOP
+    dados.idOPIN = - (insumosDOM.length + 1)
+    dados.umOPIN = produto.um
+    dados.qtdOPIN = parseInt(campoQTD.value)
+    dados.custouOPIN = parseFloat(produto.preco)
+    dados.custotOPIN = parseInt(campoQTD.value) * parseFloat(produto.preco)
+
+    setInsumosInseridos([...insumosInseridos, dados])
+
+    campoQTD.value = ""
+    selectInsumo.value = ""
+    if (boxFornecedor) boxFornecedor.style.display = "none"
+    if (checkbox) checkbox.checked = false
+
+    // Recarrega os insumos do DOM para manter o estado sincronizado
+    setListaDOM([...insumosDOM, dados])
+
+    limpaDivInsumos()
+    limpaSelectInsumos()
+    organizaDivNovoInsumo()
+    await organizaDadosTela()
+  } catch (error) {
+    console.log(`Erro ao tentar adicionar novo insumo: ${error}`)
+    mostrarToast("Erro ao tentar adicionar novo insumo", "erro")
     throw error
   }
 }

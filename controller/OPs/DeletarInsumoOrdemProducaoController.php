@@ -22,20 +22,36 @@ class DeletarInsumoOrdemProducaoController
         $this->opDAO = new OrdemDeProducaoDAO($conn);
     }
 
-    public function deletaInsumo($idOPIN)
+    public function deletaInsumo()
     {
         try {
 
-            $opin = $this->opinDAO->buscarInsumo($idOPIN);
-            $idOP = $opin->getORDEM_PRODUCAO_OP_ID();
-            $idUsuario = $_SESSION['usuario_id'];
-            $this->opinDAO->deletarInsumo($idOPIN);
-            $op = $this->opDAO->buscarOPPorID($idOP, $idUsuario);
-            $custotOP = retornaCustotOP($op->getOP_ID());
-            $custouOP = $custotOP / $op->getOP_QTD();
-            $this->opDAO->editarOP($custotOP, $custouOP, $op->getOP_QUEBRA(), $op->getOP_QTD(), $idOP);
-            
+            $request =  file_get_contents('php://input');
+            $dados = json_decode($request, true);
 
+            if (!$dados) {
+                $response =  [
+                    'sucesso' => false,
+                    'erro' => true,
+                    'mensagem_de_erro' => 'Dados inválidos ou ausentes!'
+                ];
+                echo json_encode($response);
+            }
+            $opinS = $dados['insumosDeletados'] ?? null;
+            $idUsuario = $_SESSION['usuario_id'];
+
+            if(count($opinS) === 0 || !$opinS){
+                return;
+            }
+            foreach ($opinS as $opin) {
+                
+                $insumo = $this->opinDAO->buscarInsumo((int) $opin);
+                $op = $this->opDAO->buscarOPPorID( $insumo->getORDEM_PRODUCAO_OP_ID(), (int) $idUsuario);
+                $this->opinDAO->deletarInsumo((int) $opin);
+                $custotOP = retornaCustotOP($op->getOP_ID());
+                $custouOP = $custotOP / $op->getOP_QTD();
+                $this->opDAO->editarOP($custotOP, $custouOP, $op->getOP_QUEBRA(), $op->getOP_QTD(), $insumo->getORDEM_PRODUCAO_OP_ID());
+            }
             $response = [
                 'sucesso' => true,
                 'erro' => false,
@@ -46,7 +62,7 @@ class DeletarInsumoOrdemProducaoController
             $response = [
                 'sucesso' => false,
                 'erro' => true,
-                'mensagem_de_erro' => 'Erro ao tentar deletar insumo: '.$error
+                'mensagem_de_erro' => 'Erro ao tentar deletar insumo: ' . $error
             ];
             echo json_encode($response);
         }

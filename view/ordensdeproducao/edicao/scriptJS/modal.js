@@ -1,6 +1,8 @@
 import { abrirModal as abreModalDetalhes } from '../../modal/modalOrdemDeProducao.js'
 import { organizaDadosTela } from './renderizacao.js'
+import { getInsumosBanco } from '../../modal/modalOrdemDeProducao.js'
 import { resgataListaFornecedores, resgataListaProdutos } from './banco.js'
+import { setListaDOM, setInsumosDeletados, setInsumosInseridos } from './estado.js'
 
 // CONTROLE DO MODAL (abrir, fechar, blur)
 
@@ -14,6 +16,9 @@ export function abreModal() {
     .then(async (data) => {
       document.body.insertAdjacentHTML("afterbegin", data)
       document.querySelector(".modal-edicao").classList.add("load")
+      setListaDOM(getInsumosBanco())
+      setInsumosDeletados([])
+      setInsumosInseridos([])
       await Promise.all([
         resgataListaFornecedores(),
         resgataListaProdutos(),
@@ -37,11 +42,11 @@ export async function fechaModalDetalhes() {
 // Aplica blur no conteudo principal e no header enquanto o modal esta aberto
 export function colocaBlur() {
   main.style.filter = "blur(25px)";
-  document.querySelector(".header").style.filter = "blur(25px)";
+  document.querySelector(".sidebar").style.filter = "blur(25px)";
 }
 
 // Remove o blur do conteudo principal e do header ao fechar o modal
 export function removeBlur() {
   main.style.filter = "blur(0)";
-  document.querySelector(".header").style.filter = "blur(0)";
+  document.querySelector(".sidebar").style.filter = "blur(0)";
 }

@@ -1,10 +1,11 @@
-import { atualizaOP, atualizaOPINs } from './estado.js'
+import { setInsumosInseridos, getInsumosInseridos, setInsumosDeletados, getInsumosDeletados, getListaDOM, atualizaOP, atualizaOPINs, setListaDOM } from './estado.js'
 import { getOrdemProducao, getInsumosBanco, setInsumosBanco } from '../../modal/modalOrdemDeProducao.js'
 import { mostrarToast } from '../../../toast/toast.js'
 import { fechaModal, removeBlur } from './modal.js'
 import { verificaQuantidadesOPOPIN, verificaCampo } from './validacoes.js'
 import { resgataProdutoPeloID } from './banco.js'
-
+import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './renderizacao.js'
+import { organizaDivNovoInsumo } from './renderizacao.js'
 // PERSISTENCIA (salvar, editar e deletar no banco)
 
 // Orquestra o fluxo de salvar: valida, persiste e fecha o modal
@@ -14,8 +15,10 @@ export async function salvaAlteracoes() {
       mostrarToast("Os campos de quantidade da Ordem e dos insumos\nnão podem ser vazios ou iguais a 0", "erro")
       return
     } else {
+      await deletaInsumosBanco()
+      await criaInsumosBanco()
       await editaInsumos()
-      await atualizaOPBanco() 
+      await atualizaOPBanco()
       mostrarToast("Alterações salvas!")
       fechaModal()
       removeBlur()
@@ -118,82 +121,42 @@ function retornaDadosCamposInsumo(insumo, campos) {
   }
 }
 
-// Remove um insumo da OP no banco e atualiza o estado em memoria
-export async function deletarInsumoOP(idOPIN) {
+// Envia lista de insumos deletados pro banco
+async function deletaInsumosBanco() {
   try {
-    const listaInsumosOP = getInsumosBanco()
-
-    // Impede remover o ultimo insumo da OP
-    if (listaInsumosOP.length - 1 == 0) {
-      mostrarToast("Deve haver pelo menos um insumo na Ordem de Produção!", "erro")
+    const listaDeletados = getInsumosDeletados()
+    if(listaDeletados.length === 0 || !listaDeletados){
       return
     }
-    await window.api.delete(`/insumos/deletar/${idOPIN}`)
-
-    // Recarrega os insumos do banco para manter o estado sincronizado
-    const busca = await window.api.get(`/ordemdeproducao/detalhes/${getOrdemProducao().idOP}`)
-    setInsumosBanco(busca.opinS)
+    const dados = {
+      insumosDeletados: listaDeletados
+    }
+    await window.api.deleteAll("/insumos/deletar", dados)
   } catch (error) {
-    console.log(`Erro ao tentar deletar insumo: ${error}`)
-    mostrarToast("Erro ao tentar deletar insumo", "erro")
+    console.log(`Erro ao tentar deletar insumos: ${error}`)
     throw error
   }
 }
 
-// Cria novo insumo no banco de dados
-export async function criaNovoInsumoBanco() {
+// Envia lista de insumos inseridos pro banco
+async function criaInsumosBanco() {
   try {
-    const selectInsumo = document.querySelector("#novoInsumo")
-    const campoQTD = document.querySelector("#quatidadeNovoInsumo")
-    const checkbox = document.querySelector("#requerForNovoInsumo")
-    const boxFornecedor = document.querySelector("#boxForNovoInsumo")
-    const dados = {}
+    const listaInseridos = getInsumosInseridos()
+    const listaDeletados = getInsumosDeletados()
+   if (listaInseridos.length === 0) return
 
-    if (!verificaCampo(selectInsumo) || !verificaCampo(campoQTD)) {
-      console.log("Campos de novo insumo não encontrados")
-      return
+   // Filtra os insumos inseridos que não foram deletados
+    const listaBanco = listaInseridos.filter(adicionado => {
+      if (!listaDeletados.includes(String(adicionado.idOPIN))){
+        return adicionado
+      }
+    })
+    const dados = {
+      insumosInseridos: listaBanco
     }
-    if (parseInt(campoQTD.value) <= 0 || campoQTD.value.trim() == "") {
-      mostrarToast("Para adicionar novo insumo \n a quantidade precisa ser\n maior que 0!", "erro")
-      return
-    }
-    if (selectInsumo.value.trim() == "") {
-      mostrarToast("Para adicionar novo insumo \n é necessário escolher um dos produtos\n disponíveis", "erro")
-      return
-    }
-
-    const produto = await resgataProdutoPeloID(parseInt(selectInsumo.value))
-    const op = getOrdemProducao()
-
-    if (checkbox.checked) {
-      const selectFornecedor = document.querySelector("#fornecedorNovoInsumo")
-      dados.IDFOR = parseInt(selectFornecedor.value)
-    } else {
-      dados.IDFOR = null
-    }
-
-    console.log(`ID do fornecedor que vai pro banco: ${dados.IDFOR}`)
-    dados.IDPROD = parseInt(produto.id)
-    dados.IDOP = op.idOP
-    dados.UM = produto.um
-    dados.QTD = parseInt(campoQTD.value)
-    dados.CUSTOU = produto.preco
-    dados.CUSTOT = parseInt(campoQTD.value) * parseFloat(produto.preco)
-
     await window.api.post("/insumos/criar", dados)
-
-    campoQTD.value = ""
-    selectInsumo.value = ""
-    if (boxFornecedor) boxFornecedor.style.display = "none"
-    if (checkbox) checkbox.checked = false
-
-    // Recarrega os insumos do banco para manter o estado sincronizado
-    const busca = await window.api.get(`/ordemdeproducao/detalhes/${getOrdemProducao().idOP}`)
-    setInsumosBanco(busca.opinS)
-
   } catch (error) {
-    console.log(`Erro ao tentar adicionar novo insumo: ${error}`)
-    mostrarToast("Erro ao tentar adicionar novo insumo", "erro")
+    console.log(`Erro ao tentar deletar insumos: ${error}`)
     throw error
   }
 }

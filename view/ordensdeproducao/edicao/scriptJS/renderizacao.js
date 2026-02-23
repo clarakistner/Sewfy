@@ -1,4 +1,4 @@
-import { getListaInsumos, getListaFornecedores, atualizaOPINs } from './estado.js'
+import { getListaDOM, getListaInsumos, getListaFornecedores, atualizaOPINs } from './estado.js'
 import { getOrdemProducao, getInsumosBanco } from '../../modal/modalOrdemDeProducao.js'
 import { retornaNomeProduto } from '../../modal/modalOrdemDeProducao.js'
 import { criarInsumo, criaOptionInsumo } from './dom.js'
@@ -66,7 +66,8 @@ async function definiDivsInsumos() {
       console.log("Div de insumos não encontrada")
       return
     }
-    const insumosOP = getInsumosBanco()
+    const insumosOP = getListaDOM()
+    console.log(`Lista DOM: ${insumosOP}`)
 
     // Limpa o array auxiliar antes de repopular para evitar acumulo em re-renderizacoes
     atualizaOPINs.length = 0
@@ -93,7 +94,7 @@ async function definiDivsInsumos() {
 }
 
 // Popula o select de insumos disponiveis para adicionar como novo insumo
-function organizaDivNovoInsumo() {
+export function organizaDivNovoInsumo() {
   try {
     const selectInsumo = document.querySelector("#novoInsumo")
     if (!selectInsumo) {
@@ -101,10 +102,14 @@ function organizaDivNovoInsumo() {
       return
     }
     const listaDeInsumos = getListaInsumos()
+    const listaDOM = getListaDOM()
     console.log(`Lista de Insumos: ${listaDeInsumos}`)
+    const listaProdIds = listaDOM.map(idProd => idProd.prodIdOPIN)
     listaDeInsumos.forEach(insumo => {
-      const option = criaOptionInsumo(insumo)
-      selectInsumo.appendChild(option)
+      if (!listaProdIds.includes(String(insumo.id))) {
+        const option = criaOptionInsumo(insumo)
+        selectInsumo.appendChild(option)
+      }
     })
   } catch (error) {
     console.log(`Erro ao organizar div de novo insumo: ${error}`)

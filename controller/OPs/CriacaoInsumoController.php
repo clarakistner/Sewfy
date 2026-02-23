@@ -32,33 +32,38 @@ class CriacaoInsumoController
                 echo json_encode($response);
                 return;
             }
-
+            $opinS = $dados['insumosInseridos'];
             $idUsuario = (int) $_SESSION['usuario_id'];
-            $um = $dados['UM'] ?? null;
-            $qtd = $dados['QTD'] ?? null;
-            $idFor = $dados['IDFOR'] ?? null;
-            $idProd = $dados['IDPROD'] ?? null;
-            $idOP = $dados['IDOP'] ?? null;
-            $custou = $dados['CUSTOU'] ?? null;
-            $custot = $dados['CUSTOT'] ?? null;
-            $opin = new OPInsumo();
-            $opin->setFORNECEDORES_CLIFOR_ID(is_numeric($idFor) ? (int) $idFor : null);
-            $opin->setOPIN_CUSTOT((float) $custot);
-            $opin->setOPIN_CUSTOU((float) $custou);
-            $opin->setOPIN_QTD((int) $qtd);
-            $opin->setOPIN_UM($um);
-            $opin->setORDEM_PRODUCAO_OP_ID($idOP);
-            $opin->setPRODUTOS_PROD_ID((int) $idProd);
+            if(count($opinS) === 0 || !$opinS){
+                return;
+            }
+            foreach ($opinS as $opin) {
+                $um = $opin['umOPIN'] ?? null;
+                $qtd = $opin['qtdOPIN'] ?? null;
+                $idFor = $opin['forOPIN'] ?? null;
+                $idProd = $opin['prodIdOPIN'] ?? null;
+                $idOP = $opin['opOPIN'] ?? null;
+                $custou = $opin['custouOPIN'] ?? null;
+                $custot = $opin['custotOPIN'] ?? null;
+                $insumo = new OPInsumo();
+                $insumo->setFORNECEDORES_CLIFOR_ID(is_numeric($idFor) ? (int) $idFor : null);
+                $insumo->setOPIN_CUSTOT((float) $custot);
+                $insumo->setOPIN_CUSTOU((float) $custou);
+                $insumo->setOPIN_QTD((int) $qtd);
+                $insumo->setOPIN_UM($um);
+                $insumo->setORDEM_PRODUCAO_OP_ID($idOP);
+                $insumo->setPRODUTOS_PROD_ID((int) $idProd);
 
-            $this->opinDAO->criarOpInsumo($opin);
-            $op = $this->opDAO->buscarOPPorID($idOP, $idUsuario);
+                $this->opinDAO->criarOpInsumo($insumo);
+                $op = $this->opDAO->buscarOPPorID($idOP, $idUsuario);
 
-            $qtdOP = $op->getOP_QTD();
-            $custotOP = retornaCustotOP($idOP);
-            $custouOP = $custotOP / $qtdOP ;
-            $quebra = $op->getOP_QUEBRA();
+                $qtdOP = $op->getOP_QTD();
+                $custotOP = retornaCustotOP($idOP);
+                $custouOP = $custotOP / $qtdOP;
+                $quebra = $op->getOP_QUEBRA();
 
-            $this->opDAO->editarOP($custotOP, $custouOP, $quebra, $qtdOP, $idOP);
+                $this->opDAO->editarOP($custotOP, $custouOP, $quebra, $qtdOP, $idOP);
+            }
             $response = [
                 'sucesso' => true,
                 'erro' => false,

@@ -88,6 +88,12 @@ export class API {
             method: 'DELETE'
         })
     }
+    async deleteAll(caminho, dados){
+        return this.request(caminho, {
+            method: 'DELETE',
+            body: JSON.stringify(dados)
+        })
+    }
 }
 
 // Cria instância global da API disponível no objeto window

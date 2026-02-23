@@ -1,8 +1,9 @@
 import { abrirModal as abreModalDetalhes } from '../../modal/modalOrdemDeProducao.js'
 import { abreModal, fechaModal, fechaModalDetalhes, colocaBlur, removeBlur } from './modal.js'
 import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos, defineDisplayBoxForNovoInsumo } from './renderizacao.js'
-import { deletarInsumoOP, criaNovoInsumoBanco, salvaAlteracoes } from './persistencia.js'
+import {salvaAlteracoes } from './persistencia.js'
 import { insereDadosOPAtualizados } from './persistencia.js'
+import { deletarInsumoDOM, criaNovoInsumoDOM } from './dom.js'
 
 // EVENTOS
 
@@ -44,7 +45,7 @@ async function handleClick(e) {
     const idOPIN = e.target.closest(".icone-remover")?.id
     if (!idOPIN) return
     const getNum = (str) => parseInt(str.match(/(\d+)$/)[1], 10);
-    await deletarInsumoOP(getNum(idOPIN))
+    deletarInsumoDOM(getNum(idOPIN))
     limpaDivInsumos()
     limpaSelectInsumos()
     await organizaDadosTela()
@@ -52,10 +53,7 @@ async function handleClick(e) {
 
   // Botao adicionar: adiciona novo insumo na OP
   if (e.target.closest(".add")) {
-    await criaNovoInsumoBanco()
-    limpaDivInsumos()
-    limpaSelectInsumos()
-    await organizaDadosTela()
+    criaNovoInsumoDOM() 
   }
 }
 
