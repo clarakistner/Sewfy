@@ -1,28 +1,99 @@
-
-<header class="header">
-    <div class="header-container">
-        <div class="header-content">
-            <h1 class="logo" id="logo" >Sewfy</h1>
-
-            <nav class="nav">
-                <button id="btn-produtos" class="nav-btn" >
-                    Produtos
-                </button>
-
-                <button id="btn-fornecedores" class="nav-btn">
-                    Fornecedores
-                </button>
-
-                <button id="btn-ordem-producao" class="nav-btn">
-                    Ordem de Produção
-                </button>
-
-                <button id="btn-contas-pagar" class="nav-btn">
-                    Contas a Pagar
-                </button>
-            </nav>
-
-            <a class="logout" id="logout">Sair</a>
-        </div>
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h1 class="sidebar-logo" id="logo">Sewfy</h1>
     </div>
-</header>
+
+    <nav class="nav">
+
+        <!-- Faturamento -->
+        <div class="nav-item" id="item-faturamento">
+            <button class="nav-btn" data-menu="item-faturamento">
+                <span class="nav-btn-label">Faturamento</span>
+                <span class="material-symbols-outlined nav-chevron">chevron_right</span>
+            </button>
+            <div class="submenu">
+                    <button class="submenu-btn" id="sub-clientes" data-path="clientes">Clientes</button>
+                    <button class="submenu-btn" id="sub-pedidos-venda" data-path="pedidosVenda">Pedidos de Venda</button>
+                    <button class="submenu-btn" id="sub-notas-fiscais" data-path="notasFiscais">Notas Fiscais</button>
+                    <button class="submenu-btn" id="sub-ordens-servico" data-path="ordensServico">Ordens de Serviço</button>
+                    <button class="submenu-btn" id="sub-vendedores" data-path="vendedores">Cadastro de Vendedores</button>
+            </div>
+        </div>
+
+        <!-- Financeiro -->
+        <div class="nav-item" id="item-financeiro">
+            <button class="nav-btn" data-menu="item-financeiro">
+                <span class="nav-btn-label">Financeiro</span>
+                <span class="material-symbols-outlined nav-chevron">chevron_right</span>
+            </button>
+            <div class="submenu">
+                    <button class="submenu-btn" id="sub-contas-pagar" data-path="contas">Contas a Pagar</button>
+                    <button class="submenu-btn" id="sub-contas-receber" data-path="contasReceber">Contas a Receber</button>
+                    <button class="submenu-btn" id="sub-caixas-bancos" data-path="caixasBancos">Caixas e Bancos</button>
+                    <button class="submenu-btn" id="sub-remessas" data-path="remessas">Remessas e Retornos</button>
+                    <button class="submenu-btn" id="sub-comissoes" data-path="comissoes">Comissões</button>
+            </div>
+        </div>
+
+        <!-- Compras -->
+        <div class="nav-item" id="item-compras">
+            <button class="nav-btn" data-menu="item-compras">
+                <span class="nav-btn-label">Compras</span>
+                <span class="material-symbols-outlined nav-chevron">chevron_right</span>
+            </button>
+            <div class="submenu">
+                    <!-- submenus futuros -->
+            </div>
+        </div>
+
+        <!-- Produção -->
+        <div class="nav-item" id="item-producao">
+            <button class="nav-btn" data-menu="item-producao">
+                <span class="nav-btn-label">Produção</span>
+                <span class="material-symbols-outlined nav-chevron">chevron_right</span>
+            </button>
+            <div class="submenu">
+                    <button class="submenu-btn" id="sub-cad-produtos" data-path="produtos">Cadastro de Produtos</button>
+                    <button class="submenu-btn" id="sub-cad-fornecedores" data-path="fornecedores">Cadastro de Fornecedores</button>
+                    <button class="submenu-btn" id="sub-ordens-producao" data-path="ordensdeproducao">Ordens de Produção</button>
+                    <button class="submenu-btn" id="sub-estoque" data-path="estoque">Estoque</button>
+            </div>
+        </div>
+
+        <!-- Relatórios -->
+        <div class="nav-item" id="item-relatorios">
+            <button class="nav-btn" data-menu="item-relatorios">
+                <span class="nav-btn-label">Relatórios</span>
+                <span class="material-symbols-outlined nav-chevron">chevron_right</span>
+            </button>
+            <div class="submenu">
+                    <button class="submenu-btn" id="sub-relatorios" data-path="relatorios">Customização de Relatórios</button>
+            </div>
+        </div>
+
+        <!-- Recursos Humanos -->
+        <div class="nav-item" id="item-rh">
+            <button class="nav-btn" data-menu="item-rh">
+                <span class="nav-btn-label">Recursos Humanos</span>
+                <span class="material-symbols-outlined nav-chevron">chevron_right</span>
+            </button>
+            <div class="submenu">
+                    <!-- submenus futuros -->
+            </div>
+        </div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+        <nav class="nav">
+            <button id="btn-config" class="nav-btn">
+                <span class="material-symbols-outlined">settings</span>
+                Configurações
+            </button>
+            <button id="btn-logout" class="nav-btn">
+                <span class="material-symbols-outlined">logout</span>
+                Sair
+            </button>
+        </nav>
+    </div>
+</aside>

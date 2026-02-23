@@ -15,129 +15,130 @@
 
 <body>
     
-    
-    <!-- Parte da lista/pesquisa/botão de criação dos produtos -->
-    <main class="principal">
-        <div class="cabecalho-principal">
-            <h1>Contas a Pagar</h1>
-        </div>
+    <div class="layout">
+        <!-- Parte da lista/pesquisa/botão de criação dos produtos -->
+        <main class="principal">
+            <div class="cabecalho-principal">
+                <h1>Contas a Pagar</h1>
+            </div>
 
-        <div class="filtros" id="filtros">
+            <div class="filtros" id="filtros">
 
-            <!-- Linha superior (pesquisa + select + botão +) -->
-            <div class="linha-filtros-topo">
+                <!-- Linha superior (pesquisa + select + botão +) -->
+                <div class="linha-filtros-topo">
 
-                <div class="input-pesquisa">
-                    <svg class="icone-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
+                    <div class="input-pesquisa">
+                        <svg class="icone-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
 
-                    <input 
-                        type="text"
-                        placeholder="Pesquisar por Fornecedor ou Ordem de Produção..."
-                    >
-                </div>
-
-                <div class="box-filtro">
-                    <span class="material-symbols-outlined icone-filtro">
-                        filter_alt
-                    </span>
-
-                    <select id="tipos-filtro">
-                        <option value="todas">Todos os Tipos</option>
-                        <option value="Pendentes">Pendentes</option>
-                        <option value="Pagas">Pagas</option>
-                    </select>
-                </div>
-
-                <div class="mais-filtros" id="mais-filtros">
-                    <button 
-                        class="material-symbols-outlined btn-filtro-extra" 
-                        id="btn-mais-filtros"
-                    >
-                        add
-                    </button>
-
-                    <div class="dropdown-filtros" id="dropdown-filtros">
-                        <button data-filtro="tempo">
-                            <span class="material-symbols-outlined icone-calendario">
-                                calendar_today
-                            </span>
-                            Adicionar intervalo de tempo
-                        </button>
-
-                        <button data-filtro="valor">
-                            <span class="material-symbols-outlined icone-dinheiro">
-                                attach_money
-                            </span>
-                            Adicionar intervalo de valor
-                        </button>
+                        <input 
+                            type="text"
+                            placeholder="Pesquisar por Fornecedor ou Ordem de Produção..."
+                        >
                     </div>
+
+                    <div class="box-filtro">
+                        <span class="material-symbols-outlined icone-filtro">
+                            filter_alt
+                        </span>
+
+                        <select id="tipos-filtro">
+                            <option value="todas">Todos os Tipos</option>
+                            <option value="Pendentes">Pendentes</option>
+                            <option value="Pagas">Pagas</option>
+                        </select>
+                    </div>
+
+                    <div class="mais-filtros" id="mais-filtros">
+                        <button 
+                            class="material-symbols-outlined btn-filtro-extra" 
+                            id="btn-mais-filtros"
+                        >
+                            add
+                        </button>
+
+                        <div class="dropdown-filtros" id="dropdown-filtros">
+                            <button data-filtro="tempo">
+                                <span class="material-symbols-outlined icone-calendario">
+                                    calendar_today
+                                </span>
+                                Adicionar intervalo de tempo
+                            </button>
+
+                            <button data-filtro="valor">
+                                <span class="material-symbols-outlined icone-dinheiro">
+                                    attach_money
+                                </span>
+                                Adicionar intervalo de valor
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
+
+                <!-- Filtros extras adicionados via JS -->
+                <div id="container-filtros"></div>
 
             </div>
 
-            <!-- Filtros extras adicionados via JS -->
-            <div id="container-filtros"></div>
 
-        </div>
+            <!-- Lista de Contas -->
+            <div id="listaContas" class="lista-contas">
 
+            <table class="tabela">
+                <!-- Cabeçalho da tabela -->
+                <thead class="table-head">
+                <tr class="table-head-row">
+                    <th class="table-head-cell">Status</th>
+                    <th class="table-head-cell">Código</th>
+                    <th class="table-head-cell">Fornecedor</th>
+                    <th class="table-head-cell">Vencimento</th>
+                    <th class="table-head-cell table-head-cell--right">Pagamento</th>
+                    <th class="table-head-cell">Ações</th>
+                </tr>
+                </thead>
 
-        <!-- Lista de Contas -->
-        <div id="listaContas" class="lista-contas">
+                <!-- Corpo da tabela -->
+                <tbody id="contas-table" class="table-body">
 
-        <table class="tabela">
-            <!-- Cabeçalho da tabela -->
-            <thead class="table-head">
-            <tr class="table-head-row">
-                <th class="table-head-cell">Status</th>
-                <th class="table-head-cell">Código</th>
-                <th class="table-head-cell">Fornecedor</th>
-                <th class="table-head-cell">Vencimento</th>
-                <th class="table-head-cell table-head-cell--right">Pagamento</th>
-                <th class="table-head-cell">Ações</th>
-            </tr>
-            </thead>
+                <tr class="table-row">
+                    <td class="table-cell td-badge">
+                        <span class="badge badge-pa">Paga</span>
+                    </td>
+                    <td class="table-cell">001</td>
+                    <td class="table-cell">Guabifios</td>
+                    <td class="table-cell">19/02/2026</td>
+                    <td class="table-cell table-cell--right">29/01/2026</td>
+                    <td class="table-cell">
+                        <button id="botao-visualizar-conta">
+                            <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
+                        </button>
+                    </td>
+                </tr>
 
-            <!-- Corpo da tabela -->
-            <tbody id="contas-table" class="table-body">
+                <tr class="table-row">
+                    <td class="table-cell td-badge">
+                        <span class="badge badge-pe">Pendente</span>
+                    </td>
+                    <td class="table-cell">002</td>
+                    <td class="table-cell">Kohler</td>
+                    <td class="table-cell">19/02/2026</td>
+                    <td class="table-cell table-cell--right">-</td>
+                    <td class="table-cell">
+                        <button id="botao-visualizar-conta">
+                            <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
+                        </button>
+                    </td>
+                </tr>
 
-            <tr class="table-row">
-                <td class="table-cell td-badge">
-                    <span class="badge badge-pa">Paga</span>
-                </td>
-                <td class="table-cell">001</td>
-                <td class="table-cell">Guabifios</td>
-                <td class="table-cell">19/02/2026</td>
-                <td class="table-cell table-cell--right">29/01/2026</td>
-                <td class="table-cell">
-                    <button id="botao-visualizar-conta">
-                        <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
-                    </button>
-                </td>
-            </tr>
-
-            <tr class="table-row">
-                <td class="table-cell td-badge">
-                    <span class="badge badge-pe">Pendente</span>
-                </td>
-                <td class="table-cell">002</td>
-                <td class="table-cell">Kohler</td>
-                <td class="table-cell">19/02/2026</td>
-                <td class="table-cell table-cell--right">-</td>
-                <td class="table-cell">
-                    <button id="botao-visualizar-conta">
-                        <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
-                    </button>
-                </td>
-            </tr>
-
-            </tbody>
-        </table>
-        </div>
-    </main>
-
+                </tbody>
+            </table>
+            </div>
+        </main>
+    </div>
+    
 <script type="module" src="../../menu/menu.js" defer></script>
 <script type="module" src="todasContas.js"></script>
 <script type="module" src="../../contas/modalVisualizarContas/visualizarContas.js" defer></script>
