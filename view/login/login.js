@@ -54,10 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // se o login for bem-sucedido, redireciona para a home
             if (response.ok) {
-                mostrarToast(msg, 'sucesso');
-                setTimeout(() => {
-                    window.location.href = '/Sewfy/view/home/home.html';
-                }, 1000);
+                window.location.href = '/Sewfy/view/home/home.html';
+                
             } else {
                 mostrarToast(msg, 'erro');
             }

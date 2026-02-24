@@ -50,11 +50,13 @@ body.loaded {
   display: flex;
   gap: 16px;
   align-items: center;
+  height: 48px;
 }
 
 #container-filtros {
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
 .input-pesquisa {
@@ -94,7 +96,8 @@ body.loaded {
 }
 
 .filtros select {
-  padding: 14px 16px;
+  padding: 0 16px;
+  height: 48px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 14px;
@@ -280,12 +283,13 @@ body.loaded {
 }
 
 .filtro-extra {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: #ffffff;
-    padding: 16px;
-    border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  padding: 0;   
 }
 
 .btn-remover-filtro {
@@ -313,9 +317,11 @@ body.loaded {
 }
 
 .input-data-inicial, .input-data-final, .input-valor-min, .input-valor-max{
-  padding: 14px 16px;
+ height: 48px;        
+  padding: 0 16px;     
   border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 14px;
-  min-width: 500px;
+  flex: 1;
+  min-width: 0;
 }
