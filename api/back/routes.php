@@ -21,6 +21,11 @@ require_once __DIR__ . '/../../controller/fornecedores/EditarFornecedorControlle
 require_once __DIR__ . '/../../controller/fornecedores/ListarFornecedoresController.php';
 require_once __DIR__ . '/../../controller/fornecedores/VisualizarFornecedorController.php';
 
+
+// adm
+require_once __DIR__ . '/../../controller/adm/AdmLoginController.php';
+
+
 // Cria função para gerenciar as rotas
 function gerenciadorRotas($metodo, $uri)
 {
@@ -29,6 +34,14 @@ function gerenciadorRotas($metodo, $uri)
 
     // Retira a parte comum da url e define o restante como uri
     $uri = str_replace('/back/api.php', '', $uri);
+
+    // login do adm
+    if ($uri === '/adm/login' && $metodo === 'POST') {
+        $controller = new AdmLoginController();
+        $controller->fazerLogin();
+        return;
+    }
+
 
     // Verifica as rotas e os metodos
     if ($uri === "/ordemdeproducao/criar" && $metodo === 'POST') {

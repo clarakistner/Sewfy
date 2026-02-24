@@ -122514,3 +122514,270 @@ Method: GET
 Chamando gerenciadorRotas
 Fim da execução
 
+2026-02-24 16:06:52 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+2026-02-24 16:07:12 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:17 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+ebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:20 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:22 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:23 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:35 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:38 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/13
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:49 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/13
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:54 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/criar
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/11
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:57 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/detalhes/OP03001
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:07:57 - Requisição recebida
+2026-02-24 16:07:57 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/11
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:00 - Requisição recebida
+2026-02-24 16:08:00 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+6:08:00 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores
+Method: GET
+api/back/api.php/produtos/11
+Method: GET
+2026-02-24 16:08:00 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/13
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:01 - Requisição recebida
+2026-02-24 16:08:01 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores/5
+URI: /Sewfy/api/back/api.php/fornecedores/4
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:23 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/13
+Method: GET
+URI: /Sewfy/api/back/api.php/produtos/11
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:23 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores/4
+URI: /Sewfy/api/back/api.php/fornecedores/5
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:37 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/11
+da
+URI: /Sewfy/api/back/api.php/produtos/13
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:39 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:44 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 16:08:45 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 18:32:09 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 18:32:09 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:13:00 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:14:30 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:16:59 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:20:26 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:22:05 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:25:16 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:25:49 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:29:25 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:36:03 - Requisição recebida
+URI: /Sewfy/api/adm/login
+Method: POST
+Chamando gerenciadorRotas
+2026-02-24 22:47:25 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:47:26 - Requisição recebida
+URI: /Sewfy/api/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:47:43 - Requisição recebida
+URI: /Sewfy/api/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+

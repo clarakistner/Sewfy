@@ -140,39 +140,3 @@
     transform: translateY(0);
     opacity: 1;
 }
-
-/* ─── Toggle senha ─────────────────────────── */
-.campo-senha {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.campo-senha input {
-    width: 100%;
-    padding-right: 46px;
-}
-
-.btn-toggle-senha {
-    position: absolute;
-    right: 10px;
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: transparent;
-    color: #9ca3af;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    transition: color 0.2s;
-}
-
-.btn-toggle-senha:hover {
-    color: #0e59fe;
-}
-
-.btn-toggle-senha .material-symbols-outlined {
-    font-size: 20px;
-}

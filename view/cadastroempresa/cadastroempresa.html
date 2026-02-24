@@ -29,7 +29,7 @@
                 <div class="form-grid">
                     <div class="campo">
                         <label>CNPJ *</label>
-                        <input type="text" placeholder="00.000.000/0000-00" id="cnpj"/>
+                        <input type="text" placeholder="99.999.999/9999-99" id="cnpj"/>
                     </div>
                     <div class="campo">
                         <label>Nome *</label>
@@ -41,7 +41,7 @@
                     </div>
                     <div class="campo">
                         <label>Telefone *</label>
-                        <input type="text" placeholder="(00) 00000-0000" id="telefone"/>
+                        <input type="text" placeholder="(99) 99999-9999" id="telefone"/>
                     </div>
                     <div class="campo campo-full">
                         <label>Razão Social *</label>
@@ -88,21 +88,12 @@
 
                 <div class="form-grid">
                     <div class="campo">
-                        <label>Usuário *</label>
+                        <label>Nome *</label>
                         <input type="text" placeholder="Nome de usuário" id="usuario"/>
                     </div>
                     <div class="campo">
                         <label>Email *</label>
                         <input type="email" placeholder="usuario@empresa.com" id="email-usuario"/>
-                    </div>
-                    <div class="campo campo-full">
-                        <label>Senha *</label>
-                        <div class="campo-senha">
-                            <input type="password" placeholder="Senha de acesso" id="senha"/>
-                            <button type="button" class="btn-toggle-senha" onclick="toggleSenha()" title="Mostrar/ocultar senha">
-                                <span class="material-symbols-outlined" id="icone-senha">visibility</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -116,6 +107,6 @@
     </div>
 
     <script src="/Sewfy/view/menuadm/menuadm.js"></script>
-    <script src="/Sewfy/view/cadastroempresa/cadastroempresa.js"></script>
+    <script type="module" src="/Sewfy/view/cadastroempresa/cadastroempresa.js"></script>
 </body>
 </html>
