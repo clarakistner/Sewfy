@@ -102,10 +102,9 @@ function gerenciadorRotas($metodo, $uri)
     }
 
     // Deletar insumo
-    if (preg_match('#^/insumos/deletar/(\d+)$#', $uri, $matches) && $metodo === 'DELETE') {
-        $idOPIN = (int) $matches[1];
+    if ($uri === '/insumos/deletar' && $metodo === 'DELETE') {
         $controller = new DeletarInsumoOrdemProducaoController();
-        $controller->deletaInsumo($idOPIN);
+        $controller->deletaInsumo();
         return;
     }
     if ($uri === '/ordemdeproducao/editar' && $metodo === 'PUT') {

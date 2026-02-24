@@ -48,7 +48,7 @@ async function handleClick(e) {
 export async function abrirModal() {
 
     getMain().style.filter = "blur(25px)"
-    document.querySelector(".header").style.filter = "blur(25px)"
+    document.querySelector(".sidebar").style.filter = "blur(25px)"
 
     try {
         const response = await fetch('/Sewfy/view/ordensdeproducao/modal/modalOrdemDeProducao.html')
@@ -74,7 +74,7 @@ function fecharModal() {
     document.querySelector("#detailsModal")?.classList.remove("load")
     document.querySelector("#detailsModal")?.remove()
     getMain().style.filter = "blur(0)"
-    document.querySelector(".header").style.filter = "blur(0)"
+    document.querySelector(".sidebar").style.filter = "blur(0)"
 }
 
 
