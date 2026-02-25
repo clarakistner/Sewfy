@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('[FETCH] Enviando dados para o servidor');
 
-            const response = await fetch('/Sewfy/controller/usuarios/LoginController.php', {
+            const response = await fetch("/Sewfy/api/adm/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -52,10 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const msg = await response.text();
 
-            // se o login for bem-sucedido, redireciona para a home
             if (response.ok) {
-                window.location.href = '/Sewfy/view/home/home.html';
-                
+                window.location.href = '/Sewfy/view/homeadm/homeadm.html';
             } else {
                 mostrarToast(msg, 'erro');
             }
