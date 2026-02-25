@@ -1,33 +1,38 @@
-/*Sombra*/
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-
-}
-
-.hidden {}
-
-/* MODAL BOX */
-.modal-container {
-    background: #ffffff;
-    border-radius: 16px;
+.principal {
     width: 100%;
-    max-width: 640px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255);
 }
 
-.modal-container .modal-header {
+
+/* MODAL BASE */
+
+.boxDadosProduto {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+}
+
+.boxDadosInsumos {
+    display: none;
+}
+.boxDadosOrdem{
+    display: none;
+}
+
+
+/* MODAL HEADER */
+.modal-header {
     background: linear-gradient(90deg, #0e59fe, #020066);
     padding: 16px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 10%;
+    width: 100%;
 }
 
 .modal-header h2 {
@@ -44,11 +49,18 @@
     cursor: pointer;
 }
 
+/* FORM DO PRODUTO */
 .modal-form {
     padding: 24px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+}
+
+.modal-form.dadosProduto {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .input-produto {
@@ -59,12 +71,14 @@
     border-radius: 8px;
     font-size: 16px;
     outline: none;
+    grid-column: span 2;
 }
 
 .input-produto:focus {
     border-color: #0e59fe;
 }
 
+/* BOTÕES */
 .botao {
     height: 56px;
     display: flex;
@@ -73,6 +87,17 @@
     font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 15px;
+}
+
+.boxBotoes {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
+.proximo.dadosProduto {
+    width: 30%;
 }
 
 .proximo,
@@ -87,21 +112,17 @@
 .cancelar {
     background: #e5e7eb;
     border: none;
+    color: #111;
 }
 
 .botao:hover {
     opacity: 0.9;
 }
 
-
-/*Modal Insumos*/
+/* MODAL INSUMOS */
 .modal-container.insumos {
     max-width: 1000px;
-    background: #f3f4f6;
-    border-radius: 18px;
-    display: none;
-    overflow: hidden;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    width: 95%;
 }
 
 .modalBoxInsumos {
@@ -111,12 +132,11 @@
     gap: 32px;
 }
 
-
 .box-tabela {
     background: #ffffff;
     padding: 20px;
     border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
 table {
@@ -142,10 +162,6 @@ td {
 }
 
 
-.modal-form {
-    margin-top: 24px;
-}
-
 .modal-form .col-2 {
     display: flex;
     flex-direction: column;
@@ -162,6 +178,10 @@ td {
     background: #ffffff;
 }
 
+.adicionar {
+    height: 48px;
+    border-radius: 10px;
+}
 
 .finalizar {
     height: 56px;
@@ -178,39 +198,27 @@ td {
     background: #e5e7eb;
     border: none;
     font-weight: 600;
-   
 }
 
-.adicionar {
-    height: 48px;
-    border-radius: 10px;
-    background: #1d3bbf;
-    color: #ffffff;
-    border: none;
-    font-weight: 600;
-}
-
-/*Mostrar Ordem*/
-
-.mostrarOrdem {
-    display: none;
-    height: 80%;
+/* MODAL MOSTRAR ORDEM */
+.modal-container.mostrarOrdem {
+    max-width: 860px;
+    width: 95%;
 }
 
 .dadosOP {
     padding: 24px;
     display: grid;
-    grid-template-rows: 2fr 2fr 2fr 2fr;
+    grid-template-rows: auto auto auto auto;
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-areas:
-        "nome insumos ."
-        "quantidade insumos confirmar"
-        "custou insumos cancelar"
-        "custot insumos .";
+        "nome    insumos ."
+        "quant   insumos confirmar"
+        "custou  insumos cancelar"
+        "custot  insumos .";
+    gap: 16px;
     height: 85%;
     width: 100%;
-    gap: 16px;
-    inset: 0;
 }
 
 .dadosOP p {
@@ -220,6 +228,7 @@ td {
     font-size: 24px;
     display: flex;
     align-items: start;
+    margin: 0;
 }
 
 .dadosOP #labelNomeProduto {
@@ -229,45 +238,48 @@ td {
 
 .dadosOP #nomeProduto {
     grid-area: nome;
-    align-self: self-end;
+    align-self: end;
+    margin: 0;
 }
 
 .dadosOP #labelQuantidade {
-    grid-area: quantidade;
-    align-self: flex-start;
+    grid-area: quant;
+    align-self: start;
 }
 
 .dadosOP #quantidadeProduto {
-    grid-area: quantidade;
-    align-self: self-end;
+    grid-area: quant;
+    align-self: end;
+    margin: 0;
 }
 
 .dadosOP #labelCustou {
     grid-area: custou;
-    align-self: flex-start;
+    align-self: start;
 }
 
 .dadosOP #custou {
     grid-area: custou;
-    align-self: self-end;
+    align-self: end;
+    margin: 0;
 }
 
 .dadosOP #labelCustot {
     grid-area: custot;
-    align-self: flex-start;
+    align-self: start;
 }
 
 .dadosOP #custot {
     grid-area: custot;
-    align-self: self-end;
+    align-self: end;
+    margin: 0;
 }
 
 .dadosOP .cancelar {
     grid-area: cancelar;
-    align-self: self-end;
+    align-self: end;
     justify-self: end;
     width: 90%;
-    height: 90%;
 }
 
 .dadosOP .confirmar {
@@ -275,20 +287,15 @@ td {
     align-self: center;
     justify-self: end;
     width: 90%;
-    height: 90%;
 }
-.dadosOP #dadosTabela{
+
+.dadosOP #dadosTabela {
     grid-area: insumos;
     overflow-y: auto;
+    margin-top: 3rem;
 }
-.dadosOP #dadosTabela #tabelaIN{
-    
-    align-self: flex-start;
-    justify-self: center;
-    margin-top: 2rem;
-    height: auto;
-}
-#tabelaIN tr td{
+
+#tabelaIN tr td {
     border: none;
     border-bottom: 1px solid black;
 }

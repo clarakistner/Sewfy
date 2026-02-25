@@ -2,6 +2,11 @@
 import { mostrarToast } from '../../toast/toast.js'
 import { listarOrdensProducao, limparLista } from '../gerenciar/gerenciarOrdensDeProducao.js'
 
+
+if (document.querySelector("select.input-produto")) {
+    console.log("Select existe")
+    carregarProdutosEmSelect('final')
+  }
 // Busca lista inicial de produtos
 
 let listaProdutos = await window.api.get("/produtos")
@@ -40,7 +45,7 @@ async function handleGlobalClick(e) {
   }
 
   // Navega para tela de insumos
-  if (e.target.closest(".proxinsumos")) {
+  if (e.target.closest(".proximo.dadosProduto")) {
     navegarParaInsumos(e)
   }
 
@@ -63,27 +68,15 @@ async function handleGlobalClick(e) {
 
 // Abre o modal de criação de ordem
 function abrirModal() {
-  if (document.querySelector("#createModal")) return
-
-  fetch('/Sewfy/view/ordensdeproducao/requisicao/requisicao.html')
-    .then(response => response.text())
-    .then(data => {
-      document.body.insertAdjacentHTML("afterbegin", data)
-      const modal = document.querySelector("#createModal")
-      modal.style.opacity = "1"
-
-      if (document.querySelector("select.input-produto")) {
-        console.log("Select existe")
-        carregarProdutosEmSelect("final")
-      }
-    })
+  window.location.href = "../requisicao/requisicao.html"
+  
 }
 
 // Fecha o modal e reseta os dados
 async function fecharModal() {
   OPINs.length = 0
   listaProdutos = await window.api.get("/produtos")
-  document.querySelector("#createModal").remove()
+  window.location.href = "../gerenciar/gerenciarOrdensDeProducao.html"
 }
 
 // Navega da tela de produto para tela de insumos
@@ -112,11 +105,11 @@ function navegarParaInsumos(e) {
   op.PROD_NOME = opcao.value
   op.PROD_ID = parseInt(opcao.id)
   op.OP_QTD = quantidade
-  
+
   // Remove produto selecionado da lista disponível
   listaProdutos = listaProdutos.filter(p => p.id !== op.PROD_ID)
-  
-  irOutraTela(".produto", ".insumos")
+
+  irOutraTela(".boxDadosProduto", ".boxDadosInsumos")
   carregarProdutosEmSelect("insumos")
   carregaFornecedores(campoFor)
 }
@@ -124,14 +117,14 @@ function navegarParaInsumos(e) {
 // Navega da tela de insumos para tela de confirmação
 function navegarParaMostrarOrdem(e) {
   e.preventDefault()
-  
+
   // Valida se ao menos um insumo foi adicionado
   if (OPINs.length <= 0) {
     mostrarToast("Insira ao menos um insumo na ordem de produção!", "erro")
     return
   }
-  
-  irOutraTela(".insumos", ".mostrarOrdem")
+
+  irOutraTela(".boxDadosInsumos", ".boxDadosOrdem")
   organizaDados()
 }
 
@@ -167,22 +160,22 @@ async function confirmarOrdem() {
       PROD_ID: op.PROD_ID,
       INSUMOS: [...OPINs]
     }
-    
+
     // Limpa array de insumos
     OPINs.length = 0
-    
+
     // Envia ordem para API
     await window.api.post('/ordemdeproducao/criar', dados)
     await new Promise(resolve => setTimeout(resolve, 300))
-    
+
     // Fecha modal
     document.querySelector("#createModal")?.remove()
-    
+
     // Atualiza lista de ordens
     await limparLista()
     await new Promise(resolve => setTimeout(resolve, 300))
     await listarOrdensProducao()
-    
+
     mostrarToast("Ordem de Produção criada!")
   } catch (error) {
     console.log(`Erro ao confirmar ordem: ${error}`)
@@ -241,13 +234,13 @@ async function defineUM(e) {
   if (e.target.closest(".campoInsumo")) {
     const select = document.querySelector(".campoInsumo")
     const insumo = obterValorSelect(select)
-    
+
     // Busca dados do produto selecionado
-   
+
     const produto = await window.api.get(`/produtos/${parseInt(insumo.id)}`)
-    
+
     console.log("Mudando a propriedade do campo de unidade")
-    
+
     // Preenche campo de unidade de medida
     const campoUm = document.querySelector(".campoUniMed")
     campoUm.value = produto.um
@@ -276,14 +269,14 @@ async function adicionarInsumo() {
     console.log(`ID do Insumo: ${parseInt(opInsumo.id)}`)
 
     // Busca preço do insumo
-    
+
     const produto = await window.api.get(`/produtos/${parseInt(opInsumo.id)}`)
     console.log(`PRODUTO: ${produto.preco}`)
 
     const um = obterValorSelect(campoUm)
     const custou = parseFloat(produto.preco)
     const custot = custou * quant
-    
+
     // Cria objeto do insumo
     const insumo = {
       IDFORNECEDOR: valorIdFornecedor("id", fornecedor),
@@ -294,14 +287,14 @@ async function adicionarInsumo() {
       INSUNOME: opInsumo.value,
       INSUID: parseInt(opInsumo.id)
     }
-    
+
     // Adiciona linha na tabela
     const tr = criarLinhaTabela(parseInt(opInsumo.id), quant, opInsumo.value, valorIdFornecedor("valor", fornecedor), um.value)
     tabelaInsumos.appendChild(tr)
-    
+
     // Adiciona insumo ao array
     OPINs.push(insumo)
-    
+
     // Remove insumo da lista de produtos disponíveis
     listaProdutos = listaProdutos.filter(produto => parseInt(produto.id) !== parseInt(opInsumo.id))
 
@@ -331,6 +324,10 @@ function criarOptionProduto(produto) {
   return option
 }
 
+if (document.querySelector("select.input-produto")) {
+    console.log("Select existe")
+    carregarProdutosEmSelect("final")
+  } 
 // Carrega produtos finais no select
 function carregarProdutosFinal(listaProd, selectProduto) {
   selectProduto.innerHTML = `
@@ -338,6 +335,7 @@ function carregarProdutosFinal(listaProd, selectProduto) {
     `
   listaProd.forEach(p => {
     if ((p.tipo == PROD_TIPO.FINAL || p.tipo == PROD_TIPO.CONJUNTO) && p.ativo == 1) {
+      console.log(`ID PRODUTO: ${p}`)
       const option = criarOptionProduto(p)
       selectProduto.appendChild(option)
     }
@@ -377,7 +375,7 @@ function carregarProdutosEmSelect(tipo) {
 async function carregaFornecedores(campo) {
   try {
     const fornecedores = await window.api.get("/fornecedores")
-    
+
     fornecedores.forEach(fornecedor => {
       const option = document.createElement("option")
       option.id = `${fornecedor.id}`
@@ -422,11 +420,11 @@ function organizaDados() {
   const campoQtd = document.querySelector("#quantidadeProduto")
   const campoCustou = document.querySelector("#custou")
   const campoCustot = document.querySelector("#custot")
-  
+
   campoProduto.innerHTML = `${op.PROD_NOME}`
   campoQtd.innerHTML = `${op.OP_QTD}`
   campoCustot.innerHTML = `${calculaCustoT().toFixed(2)}`
   campoCustou.innerHTML = `${calculaCustoU().toFixed(2)}`
-  
+
   carregaDadosInsumos()
 }

@@ -121952,3 +121952,706 @@ Method: GET
 Chamando gerenciadorRotas
 Fim da execução
 
+2026-02-24 00:08:08 - Requisição recebida
+2026-02-24 00:08:08 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 00:08:08 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 00:08:08 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:20:00 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:20:02 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:20:02 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:20:06 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:21:43 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+2026-02-24 19:21:43 - Requisição recebida
+Method: GET
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:21:43 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:21:43 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:21:54 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:25:09 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 19:25:09 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+2026-02-24 19:25:09 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:25:09 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:25:16 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:26:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 19:26:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:26:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:26:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:32:22 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:32:22 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:32:22 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:33:17 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 19:33:17 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:33:18 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:33:18 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:34:40 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:34:40 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 19:34:41 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:12:22 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:12:22 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:12:22 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:12 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 20:26:12 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:12 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:12 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:15 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 20:26:15 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:16 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:16 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:45 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+2026-02-24 20:26:45 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+2026-02-24 20:26:45 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:26:45 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:48 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 20:27:48 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:49 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:49 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 20:27:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+2026-02-24 20:27:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:27:55 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:28:03 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+2026-02-24 20:28:03 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:41:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:41:54 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+oducao/listar
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:42:26 - Requisição recebida
+2026-02-24 20:42:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:42:27 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:42:27 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:43:29 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+2026-02-24 20:43:29 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:43:29 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:43:29 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:43:33 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:43:33 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:43:33 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:46:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+2026-02-24 20:46:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:46:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 20:46:52 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:32:17 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:32:22 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:34:07 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:42:34 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+2026-02-24 21:42:34 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:42:34 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:42:34 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:42:36 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:44:12 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:44:44 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:45:11 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:46:21 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:46:51 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:48:12 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:48:16 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:56:37 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:58:08 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 21:58:49 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:02:50 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:02:54 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:02:58 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/2
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:02:59 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/2
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:03:26 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:03:30 - Requisição recebida
+URI: /Sewfy/api/back/api.php/fornecedores
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:03:34 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/1
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:03:36 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/1
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:03:41 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:03:43 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:03:43 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:05:02 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:05:04 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:05:04 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos
+Method: GET
+2026-02-24 22:05:04 - Requisição recebida
+URI: /Sewfy/api/back/api.php/ordemdeproducao/listar
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:05:04 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/4
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
+2026-02-24 22:05:04 - Requisição recebida
+URI: /Sewfy/api/back/api.php/produtos/6
+Method: GET
+Chamando gerenciadorRotas
+Fim da execução
+
