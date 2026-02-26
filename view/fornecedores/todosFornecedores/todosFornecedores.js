@@ -69,7 +69,7 @@ async function carregarFornecedores() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="3" style="text-align:center;">
+                <td colspan="3" class="mensagem-vazia">
                     Erro ao carregar fornecedores
                 </td>
             </tr>

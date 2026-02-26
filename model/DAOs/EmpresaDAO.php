@@ -106,5 +106,17 @@ class EmpresaDAO{
             return $stmt->execute();
     }
 
+
+    // verificar se o CNPJ já existe para outra empresa (usado na edição para evitar duplicidade)
+    public function cnpjJaExisteParaOutraEmpresa(string $cnpj, int $empId): bool {
+        $sql = "SELECT 1 FROM EMPRESA WHERE EMP_CNPJ = :cnpj AND EMP_ID != :empid";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':cnpj', $cnpj, PDO::PARAM_STR);
+        $stmt->bindValue(':empid', $empId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return (bool) $stmt->fetch();
+    }
+
 }
-?>

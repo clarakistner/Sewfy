@@ -6,7 +6,7 @@
     <title>Cadastrar Empresa - Sewfy Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <link rel="stylesheet" href="/Sewfy/view/menuadm/menuadm.css">
-    <link rel="stylesheet" href="/Sewfy/view/cadastroempresa/cadastroempresa.css">
+    <link rel="stylesheet" href="/Sewfy/view/editarempresa/editarempresa.css">
 </head>
 <body>
 
@@ -16,10 +16,13 @@
         <main class="content">
 
             <div class="page-header">
-                <h1>
-                    Cadastrar Nova Empresa
-                </h1>
-                <p>Preencha os dados para adicionar uma nova empresa ao sistema</p>
+                <div>
+                    <h1>
+                        Editar Empresa
+                    </h1>
+                    <p>Edite os dados da empresa</p>
+                </div>
+                <button class="material-symbols-outlined modal-close">close</button>
             </div>
 
             <!-- Seção: Dados da Empresa -->
@@ -43,9 +46,16 @@
                         <label>Telefone *</label>
                         <input type="text" placeholder="(99) 99999-9999" id="telefone"/>
                     </div>
-                    <div class="campo campo-full">
+                    <div class="campo">
                         <label>Razão Social *</label>
                         <input type="text" placeholder="Razão social completa" id="razao-social"/>
+                    </div>
+                    <div class="campo">
+                        <label>Status *</label>
+                        <select id="status">
+                            <option value="1">Ativa</option>
+                            <option value="0">Inativa</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -56,27 +66,27 @@
 
                 <div class="modulos-grid">
                     <label class="modulo-item">
-                        <input type="checkbox" value="2"/>
+                        <input type="checkbox" value="faturamento"/>
                         <span>Faturamento</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="1"/>
+                        <input type="checkbox" value="financeiro"/>
                         <span>Financeiro</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="5"/>
+                        <input type="checkbox" value="compras"/>
                         <span>Compras</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="4"/>
+                        <input type="checkbox" value="producao"/>
                         <span>Produção</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="6"/>
+                        <input type="checkbox" value="relatorios"/>
                         <span>Relatórios</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="3"/>
+                        <input type="checkbox" value="rh"/>
                         <span>Recursos Humanos</span>
                     </label>
                 </div>
@@ -99,14 +109,14 @@
             </div>
 
             <!-- Botão -->
-            <button class="btn-cadastrar" id="btn-cadastrar-empresa">
-                Cadastrar Empresa
+            <button class="btn-salvar" id="btn-salvar-empresa">
+                Salvar Alterações
             </button>
 
         </main>
     </div>
 
     <script src="/Sewfy/view/menuadm/menuadm.js"></script>
-    <script type="module" src="/Sewfy/view/cadastroempresa/cadastroempresa.js"></script>
+    <script type="module" src="/Sewfy/view/editarempresa/editarempresa.js"></script>
 </body>
 </html>

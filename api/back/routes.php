@@ -24,7 +24,9 @@ require_once __DIR__ . '/../../controller/fornecedores/VisualizarFornecedorContr
 
 // adm
 require_once __DIR__ . '/../../controller/adm/AdmLoginController.php';
-
+require_once __DIR__ . '/../../controller/adm/ListarEmpresasController.php';
+require_once __DIR__ . '/../../controller/adm/VisualizarEmpresaController.php';
+require_once __DIR__ . '/../../controller/adm/EdicaoEmpresaController.php';
 
 // Cria função para gerenciar as rotas
 function gerenciadorRotas($metodo, $uri)
@@ -42,6 +44,25 @@ function gerenciadorRotas($metodo, $uri)
         return;
     }
 
+    // listar empresas
+    if ($uri === '/adm/empresas' && $metodo === 'GET') {
+        $controller = new ListarEmpresasController();
+        $controller->listar();
+        return;
+    }
+
+    // GET /adm/empresas/{id}
+    if (preg_match('#^/adm/empresas/([0-9]+)$#', $uri, $matches) && $metodo === 'GET') {
+        $controller = new VisualizarEmpresaController();
+        $controller->visualizar((int) $matches[1]);
+        return;
+    }
+    // PUT /adm/empresas/{id}
+    if (preg_match('#^/adm/empresas/([0-9]+)$#', $uri, $matches) && $metodo === 'PUT') {
+        $controller = new EditarEmpresaController();
+        $controller->editarEmpresa((int) $matches[1]);
+        return;
+    }
 
     // Verifica as rotas e os metodos
     if ($uri === "/ordemdeproducao/criar" && $metodo === 'POST') {
