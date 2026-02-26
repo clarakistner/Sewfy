@@ -11,93 +11,111 @@ class UsuarioDAO {
         $this->conn = $conn;
     }
 
+    // =========================================================
+    // HELPERS
+    // =========================================================
 
-    // Cria um novo usuário no banco de dados
-    public function criarUsuario(Usuario $usuario): int {
-        $sql = "INSERT INTO USUARIOS (USU_EMAIL, USU_SENHA, USU_NUM) VALUES (:email, :senha, :numero)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':email', $usuario->getEmail());
-        $stmt->bindValue(':senha', password_hash($usuario->getSenha(), PASSWORD_BCRYPT));
-        $stmt->bindValue(':numero', $usuario->getNumero()); 
-        $stmt->execute();
-
-        return $this->conn->lastInsertId();
+    private function mapear(array $row): Usuario {
+        $usuario = new Usuario();
+        $usuario->setId($row['USU_ID']);
+        $usuario->setNome($row['USU_NOME']);
+        $usuario->setEmail($row['USU_EMAIL']);
+        $usuario->setSenha($row['USU_SENHA']);
+        $usuario->setNumero($row['USU_NUM']);
+        $usuario->setAtivo($row['USU_ATIV']);
+        return $usuario;
     }
 
+    // =========================================================
+    // CRIAR
+    // =========================================================
 
-    // Busca todos os usuários no banco de dados
+    public function criarUsuario(Usuario $usuario): int {
+        $sql = "INSERT INTO USUARIOS (USU_NOME, USU_EMAIL, USU_SENHA, USU_NUM)
+                VALUES (:nome, :email, :senha, :numero)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':nome',   $usuario->getNome());
+        $stmt->bindValue(':email',  $usuario->getEmail());
+        $stmt->bindValue(':senha',  password_hash($usuario->getSenha(), PASSWORD_BCRYPT));
+        $stmt->bindValue(':numero', $usuario->getNumero());
+        $stmt->execute();
+
+        return (int) $this->conn->lastInsertId();
+    }
+
+    // =========================================================
+    // BUSCAR
+    // =========================================================
+
     public function buscarUsuarios(): array {
-        $sql = "SELECT * FROM USUARIOS";
+        $sql  = "SELECT * FROM USUARIOS";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
         $usuarios = [];
-
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $usuario = new Usuario();
-            $usuario->setId($row['USU_ID']);
-            $usuario->setEmail($row['USU_EMAIL']);
-            $usuario->setSenha($row['USU_SENHA']);
-            $usuario->setNumero($row['USU_NUM']);
-
-            $usuarios[] = $usuario;
+            $usuarios[] = $this->mapear($row);
         }
 
         return $usuarios;
     }
 
-
-    // Busca um usuário pelo email
-    public function buscarUsuarioPorEmail($email): ?Usuario {
-        $sql = "SELECT * FROM USUARIOS WHERE USU_EMAIL = :email";
+    public function buscarUsuarioPorEmail(string $email): ?Usuario {
+        $sql  = "SELECT * FROM USUARIOS WHERE USU_EMAIL = :email";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':email', $email);
         $stmt->execute();
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($resultado) {
-            $usuario = new Usuario();
-            $usuario->setId($resultado['USU_ID']);
-            $usuario->setEmail($resultado['USU_EMAIL']);
-            $usuario->setSenha($resultado['USU_SENHA']);
-            $usuario->setNumero($resultado['USU_NUM']); 
-
-            return $usuario;
-        }
-
-        return null;
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $this->mapear($row) : null;
     }
 
-    
-    // Deleta um usuário pelo ID
-    function deletarUsuario($id): bool {
-        $sql = "DELETE FROM USUARIOS WHERE USU_ID = :id";
+    /**
+     * Busca o usuário proprietário (USU_E_PROPRIETARIO = 1) de uma empresa.
+     * Usado pelo VisualizarEmpresaController para retornar usuarioNome e usuarioEmail.
+     */
+    public function buscarProprietarioPorEmpresa(int $empId): ?Usuario {
+        $sql = "SELECT u.*
+                FROM USUARIOS u
+                INNER JOIN EMPRESA_USUARIOS eu ON eu.USU_ID = u.USU_ID
+                WHERE eu.EMP_ID = :empId
+                  AND eu.USU_E_PROPRIETARIO = 1
+                LIMIT 1";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':empId', $empId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $this->mapear($row) : null;
+    }
+
+    // =========================================================
+    // ATUALIZAR
+    // =========================================================
+
+    public function atualizarUsuario(Usuario $usuario): bool {
+        $sql = "UPDATE USUARIOS SET
+                    USU_NOME  = :nome,
+                    USU_EMAIL = :email,
+                    USU_NUM   = :numero,
+                    USU_ATIV  = :ativo
+                WHERE USU_ID = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':nome',   $usuario->getNome());
+        $stmt->bindValue(':email',  $usuario->getEmail());
+        $stmt->bindValue(':numero', $usuario->getNumero());
+        $stmt->bindValue(':ativo',  $usuario->getAtivo(), PDO::PARAM_INT);
+        $stmt->bindValue(':id',     $usuario->getId(),    PDO::PARAM_INT);
 
         return $stmt->execute();
     }
 
-
-    // Atualiza a senha de um usuário
-    function atualizarSenha($id, $novaSenha): bool {
-        $sql = "UPDATE USUARIOS SET USU_SENHA = :senha WHERE USU_ID = :id";
+    public function atualizarSenha(int $id, string $novaSenha): bool {
+        $sql  = "UPDATE USUARIOS SET USU_SENHA = :senha WHERE USU_ID = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':senha', password_hash($novaSenha, PASSWORD_BCRYPT));
-        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':id',    $id, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
-
-
-    // Atualiza o email de um usuário
-    function atualizarEmail($id, $novoEmail): bool {
-        $sql = "UPDATE USUARIOS SET USU_EMAIL = :email WHERE USU_ID = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':email', $novoEmail);
-        $stmt->bindValue(':id', $id);
-
-        return $stmt->execute();
-    }
-
 }

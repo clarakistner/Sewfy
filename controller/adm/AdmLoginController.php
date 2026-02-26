@@ -50,13 +50,6 @@ class AdmLoginController {
             return;
         }
 
-        var_dump([
-            'senha_digitada' => $senha,
-            'hash_do_banco'  => $adm->getADM_SENHA(),
-            'resultado'      => password_verify($senha, $adm->getADM_SENHA())
-        ]);
-        die();
-        
         // Verifica senha
         if (!password_verify($senha, $adm->getADM_SENHA())) {
             http_response_code(401);
@@ -69,7 +62,8 @@ class AdmLoginController {
         $_SESSION['ADM_EMAIL'] = $adm->getADM_EMAIL();
 
         http_response_code(200);
-        echo 'Login realizado com sucesso';
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['sucesso' => true]);
     }
 }
 

@@ -1,6 +1,9 @@
 /* Cabeçalho da página */
 .page-header {
     margin-bottom: 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
 }
 
 .page-header h1 {
@@ -17,6 +20,19 @@
     font-size: 15px;
     color: #6b7280;
     margin: 0;
+}
+
+.modal-close {
+    margin-top: 10px;
+    background: none;
+    border: none;
+    font-size: 34px;
+    cursor: pointer;
+    color: #9ca3af;
+}
+
+.modal-close:hover {
+    color: #4b5563;
 }
 
 /* Card de seção */
@@ -58,7 +74,7 @@
     color: #111827;
 }
 
-.campo input {
+.campo input, .campo select {
     padding: 10px 14px;
     border: none;
     border-radius: 8px;
@@ -105,8 +121,8 @@
     flex-shrink: 0;
 }
 
-/* Botão cadastrar */
-.btn-cadastrar {
+/* Botão salvar */
+.btn-salvar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -126,17 +142,17 @@
     margin-top: 4px;
 }
 
-.btn-cadastrar {
+.btn-salvar {
     font-size: 20px;
 }
 
-.btn-cadastrar:hover {
+.btn-salvar:hover {
     opacity: 0.92;
     box-shadow: 0 8px 24px rgba(14, 89, 254, 0.35);
     transform: translateY(-1px);
 }
 
-.btn-cadastrar:active {
+.btn-salvar:active {
     transform: translateY(0);
     opacity: 1;
 }

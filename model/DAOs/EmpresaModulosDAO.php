@@ -30,10 +30,17 @@ class EmpresaModulosDAO {
 
     // Buscar todos os módulos de uma empresa
     public function buscarModulosPorEmpresa(int $empId): array {
-        $sql  = "SELECT MOD_ID FROM EMPRESA_MODULOS WHERE EMP_ID = :empid";
+        $sql = "
+            SELECT m.MOD_NOME
+            FROM EMPRESA_MODULOS em
+            INNER JOIN MODULOS m ON m.MOD_ID = em.MOD_ID
+            WHERE em.EMP_ID = :empid
+        ";
+
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':empid', $empId, PDO::PARAM_INT);
         $stmt->execute();
+
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
@@ -48,4 +55,3 @@ class EmpresaModulosDAO {
     }
 }
 
-?>
