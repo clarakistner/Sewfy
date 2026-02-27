@@ -8,3 +8,4 @@ require __DIR__ . '/api/insumos.php';
 require __DIR__ . '/api/produtos.php';
 require __DIR__ . '/api/clifor.php';
 require __DIR__ . '/api/convites.php';
+require __DIR__ . '/api/conta.php';
