@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Convite;
+use App\Models\Empresa;
 use App\Mail\ConviteEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Illuminate\Contracts\Auth\Guard;
 
 class ConviteController extends Controller
 {
@@ -32,8 +34,14 @@ class ConviteController extends Controller
             'CONV_USADO'    => 0,
             'CONVIDADO_POR' => auth()->id(),
         ]);
-        
-        Mail::to($convite->CONV_EMAIL)->send(new ConviteEmail($convite));
+
+        $empresa = Empresa::where("EMP_ID", $convite->EMP_ID)->first();
+        $dados = (object) [
+            'convite' => $convite,
+            'nome_empresa' => $empresa->EMP_NOME,
+        ];
+
+        Mail::to($convite->CONV_EMAIL)->send(new ConviteEmail($dados));
 
         return response()->json(['mensagem' => 'Convite enviado com sucesso!']);
     }
@@ -41,9 +49,9 @@ class ConviteController extends Controller
     public function validar(string $token)
     {
         $convite = Convite::where('CONV_TOKEN', $token)
-                          ->where('CONV_USADO', 0)
-                          ->where('CONV_EXPIRA', '>', Carbon::now())
-                          ->first();
+            ->where('CONV_USADO', 0)
+            ->where('CONV_EXPIRA', '>', Carbon::now())
+            ->first();
 
         if (!$convite) {
             return response()->json(['erro' => 'Convite inválido ou expirado'], 401);
@@ -57,8 +65,8 @@ class ConviteController extends Controller
     public function show(int $idConvite, int $idEmp)
     {
         $convite = Convite::where('CONV_ID', $idConvite)
-                          ->where('EMP_ID', $idEmp)
-                          ->firstOrFail();
+            ->where('EMP_ID', $idEmp)
+            ->firstOrFail();
 
         return response()->json($convite);
     }

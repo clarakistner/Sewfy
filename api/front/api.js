@@ -4,7 +4,7 @@ import { mostrarToast } from "/Sewfy/view/toast/toast.js"
 // Classe responsável por realizar requisições à API
 export class API {
     // Construtor que define a URL base da API
-    constructor(url = '/Sewfy/api/back/api.php') {
+    constructor(url = '/api/back/public/api') {
         this.url = url
     }
 

@@ -7,11 +7,11 @@ use Illuminate\Mail\Mailable;
 
 class ConviteEmail extends Mailable
 {
-    public Convite $convite;
+    public object $dados;
 
-    public function __construct(Convite $convite)
+    public function __construct(object $dados)
     {
-        $this->convite = $convite;
+        $this->dados = $dados;
     }
 
     public function build()
