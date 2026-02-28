@@ -1,14 +1,17 @@
 <?php
 
-use App\Http\Controllers\ConviteController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ConviteController;
 
-Route::prefix('convites')->group(function () {
-
-    Route::get('/validar/{token}', [ConviteController::class, 'validar']);
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/{idEmp}', [ConviteController::class, 'index']);
-        Route::post('/', [ConviteController::class, 'store']);
-        Route::get('/{idConvite}/{idEmp}', [ConviteController::class, 'show']);
-    });
+// rotas do admin Sewfy
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/adm/convites/owner', [ConviteController::class, 'storeOwner']);
 });
+
+// rotas do owner/funcionário
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/convites', [ConviteController::class, 'store']);
+});
+
+// rota pública — confirmação pelo link do email
+Route::post('/convites/confirmar', [ConviteController::class, 'confirmar']);

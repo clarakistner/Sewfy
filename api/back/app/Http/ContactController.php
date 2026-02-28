@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Mail\Contact;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ConviteEmail;
 
 
 class ContactController extends Controller
@@ -11,7 +11,7 @@ class ContactController extends Controller
     public function  store()
     {
         
-        $send = Mail::to('email@email.com', 'nome')-> send(new Contact([
+        $send = Mail::to('email@email.com', 'nome')-> send(new ConviteEmail((object)[
             'fromName' => 'Sewfy',
             'fromEmail' => 'sewfy@email.com',
             'subjet' => 'Assunto',
