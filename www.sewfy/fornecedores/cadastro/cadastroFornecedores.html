@@ -1,0 +1,49 @@
+<div id="fornecedorModal" class="modal">
+    <div class="modal-container">
+
+        <div class="modal-header">
+            <h2 class="modal-title">Cadastrar Novo Fornecedor</h2>
+            <button class="fechar-modal">
+                <span class="material-symbols-outlined icone-fechar-modal">close</span>
+            </button>
+        </div>
+
+        <form id="fornecedor" class="modal-form">
+            <div class="form-grid">
+
+                <div class="col-span-2">
+                    <label>Nome *</label>
+                    <input type="text" id="fNome" required placeholder="Nome do Fornecedor">
+                </div>
+
+                <div>
+                    <label>CPF/CNPJ *</label>
+                    <input type="text" id="pCode" required placeholder="___.___.___-__">
+                </div>
+
+                <div>
+                    <label>Telefone *</label>
+                    <input type="text" id="fPhone" required placeholder="(99) 99999-9999">
+                </div>
+
+                <div class="col-span-2">
+                    <label for="fend">Endereço *</label>
+                    <input id="fend" placeholder="Informe o Endereço do fornecedor..."></input>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-submit">
+                    Cadastrar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script type="module" src="/Sewfy/www.sewfy/fornecedores/cadastro/cadastroFornecedores.js"></script>

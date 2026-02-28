@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Sewfy</title>
+
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+
+    <link rel="stylesheet" href="../../www.sewfy/home/home.css?v=1.0.2">
+    <link rel="stylesheet" href="../../www.sewfy/menu/menu.css?v=1.0.2">
+    <link rel="stylesheet" href="../ordensdeproducao/modal/modalOrdemDeProducao.css?v=1.0.2">
+    
+</head>
+
+<body>
+
+    <div class="layout">
+        <main class="principal">
+
+            <!-- ORDENS DE PRODUÇÃO -->
+            <section>
+                <div class="titulo-secao">
+                    <div class="barra"></div>
+                    <h2>Ordens de Produção Abertas</h2>
+                </div>
+
+                <div class="card">
+                    <div class="linha">
+                        <div class="ordem">
+                            <div class="label">Ordem de Produção</div>
+                            <div class="codigoOP">OP0002000</div>
+
+                            <span class="status">
+                                <span class="material-symbols-outlined icone-ampulheta">
+                                    hourglass
+                                </span>
+                                Aberta
+                            </span>
+                        </div>
+
+                        <div>
+                            <div class="label">Produto</div>
+                            <div>Camisas de verão</div>
+                        </div>
+
+                        <div>
+                            <div class="label">Quantidade</div>
+                            <div>3.500</div>
+                        </div>
+
+                        <div>
+                            <div class="label">Data de Abertura</div>
+                            <div>12/01/2026</div>
+                        </div>
+
+                        <div>
+                            <button class="btn-verop">Ver Ordem de Produção</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONTAS A PAGAR -->
+            <section class="secao-contas">
+                <div class="titulo-secao">
+                    <div class="barra"></div>
+                    <h2>Contas a Pagar Pendentes</h2>
+                </div>
+
+                <div class="card">
+                    <div class="linha">
+                        <div class="ordem">
+                            <div class="label">Ordem de Produção</div>
+                            <div class="codigoOP">OP0002003</div>
+                        </div>
+
+                        <div>
+                            <div class="label">Serviço</div>
+                            <div>Costura</div>
+                        </div>
+
+                        <div>
+                            <div class="label">Fornecedor</div>
+                            <div>Maria Silva</div>
+                        </div>
+
+                        <div>
+                            <div class="label">Entrega</div>
+                            <div>18/01/2026</div>
+                        </div>
+
+                        <div>
+                            <div class="label">Vencimento</div>
+                            <div>18/02/2026</div>
+                        </div>
+
+                        <div class="pendente">
+                            <span class="material-symbols-outlined">
+                                priority_high
+                            </span>
+                            PENDENTE
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+<script type="module" src="../menu/menu.js" defer></script>
+
+</body>
+
+</html>
