@@ -14,15 +14,17 @@ return Application::configure(basePath: dirname(__DIR__))
         //commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        //
+   ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(function (Request $request) {
+            return null; // impede redirecionamento para login
+        });
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function(AuthenticationException $e, Request $request){
-            if($request->is('api/*')){
-                return response()->json([
-                    'message'=> $e-> getMessage(),
-                ], 401);
-            }
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            return response()->json([
+                'message' => 'Não autenticado.'
+            ], 401);
         });
+
     })->create();
