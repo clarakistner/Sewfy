@@ -1,5 +1,5 @@
 // CHAMA O MENU
-fetch('./index.html')
+fetch('/www.sewfy/menuadm/index.html')
     .then(response => response.text())
     .then(data => {
         document.querySelector('.layout').insertAdjacentHTML("afterbegin", data)
@@ -32,19 +32,21 @@ document.addEventListener("click", (e) => {
 function irParaPagina(botao) {
     switch (botao) {
         case 0:
-            window.location.href = "/Sewfy/www.sewfy/homeadm/homeadm.html"
+            window.location.href = "/www.sewfy/homeadm/index.html"
             break
         case 1:
-            window.location.href = "/Sewfy/www.sewfy/cadastroempresa/cadastroempresa.html"
+            window.location.href = "/www.sewfy/cadastroempresa/index.html"
             break
         case 2:
-            window.location.href = "/Sewfy/www.sewfy/relatoriosadm/relatoriosadm.html"
+            window.location.href = "/www.sewfy/relatoriosadm/index.html"
             break
         case 3:
-            window.location.href = "/Sewfy/www.sewfy/configadm/configadm.html"
+            window.location.href = "/www.sewfy/configadm/index.html"
             break
         case 4:
-            window.location.replace("/Sewfy/www.sewfy/loginadm/loginadm.html")
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('email');
+            window.location.replace("/www.sewfy/loginadm/index.html");
             break
     }
 }

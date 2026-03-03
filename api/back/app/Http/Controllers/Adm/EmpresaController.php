@@ -11,13 +11,16 @@ class EmpresaController extends Controller
     // GET /api/adm/empresas - Listar todas as empresas
     public function index()
     {
-        $empresas = Empresa::all()->map(function($e) {
+        $empresas = Empresa::with('modulos')->get()->map(function($e) {
             return [
-                'id'    => $e->EMP_ID,
-                'nome'  => $e->EMP_NOME,
-                'cnpj'  => $e->EMP_CNPJ,
-                'email' => $e->EMP_EMAIL,
-                'ativo' => $e->EMP_ATIV
+                'id'      => $e->EMP_ID,
+                'nome'    => $e->EMP_NOME,
+                'raz'     => $e->EMP_RAZ,
+                'cnpj'    => $e->EMP_CNPJ,
+                'email'   => $e->EMP_EMAIL,
+                'num'     => $e->EMP_NUM,
+                'ativo'   => $e->EMP_ATIV,
+                'modulos' => $e->modulos->pluck('MOD_NOME')
             ];
         });
 
@@ -41,36 +44,52 @@ class EmpresaController extends Controller
         ]);
     }
 
+    // POST /api/adm/empresas/criar - Criar uma nova empresa
     public function store(Request $request)
     {
         $request->validate([
             'EMP_NOME'  => 'required|string|max:150',
             'EMP_RAZ'   => 'required|string|max:150',
-            'EMP_EMAIL' => 'required|email|max:150',
+            'EMP_CNPJ'  => 'required|string|max:14|unique:EMPRESAS,EMP_CNPJ',
+            'EMP_EMAIL' => 'required|email|max:150|unique:EMPRESAS,EMP_EMAIL',
             'EMP_NUM'   => 'nullable|string|max:20',
-            'EMP_ATIV'  => 'required|boolean'
+            'ADM_ID'    => 'required|integer|exists:SEWFY_ADMS,ADM_ID',
+            'modulos'   => 'nullable|array',
+            'modulos.*' => 'integer|exists:MODULOS,MOD_ID',
         ]);
 
         $empresa = Empresa::create([
             'EMP_NOME'  => trim($request->EMP_NOME),
             'EMP_RAZ'   => trim($request->EMP_RAZ),
+            'EMP_CNPJ'  => trim($request->EMP_CNPJ),
             'EMP_EMAIL' => trim($request->EMP_EMAIL),
             'EMP_NUM'   => $request->EMP_NUM ?? null,
-            'EMP_ATIV'  => $request->EMP_ATIV
+            'EMP_ATIV'  => 1,
+            'ADM_ID'    => $request->ADM_ID,
         ]);
 
-        return response()->json(['mensagem' => 'Empresa criada com sucesso', 'id' => $empresa->EMP_ID], 201);
+        if ($request->filled('modulos')) {
+            $empresa->modulos()->attach($request->modulos);
+        }
+
+        return response()->json([
+            'mensagem' => 'Empresa criada com sucesso',
+            'id'       => $empresa->EMP_ID
+        ], 201);
     }
 
-    // PUT /api/adm/empresas/{id} - Atualizar uma empresa
+    // PUT /api/adm/empresas/{id} - Atualizar dados de uma empresa
     public function update(Request $request, int $id)
     {
         $request->validate([
             'EMP_NOME'  => 'required|string|max:150',
             'EMP_RAZ'   => 'required|string|max:150',
-            'EMP_EMAIL' => 'required|email|max:150',
+            'EMP_CNPJ'  => 'required|string|max:14|unique:EMPRESAS,EMP_CNPJ,' . $id . ',EMP_ID',
+            'EMP_EMAIL' => 'required|email|max:150|unique:EMPRESAS,EMP_EMAIL,' . $id . ',EMP_ID',
             'EMP_NUM'   => 'nullable|string|max:20',
-            'EMP_ATIV'  => 'required|boolean'
+            'EMP_ATIV'  => 'required|boolean',
+            'modulos'   => 'nullable|array',
+            'modulos.*' => 'integer|exists:MODULOS,MOD_ID',
         ]);
 
         $empresa = Empresa::findOrFail($id);
@@ -78,10 +97,15 @@ class EmpresaController extends Controller
         $empresa->update([
             'EMP_NOME'  => trim($request->EMP_NOME),
             'EMP_RAZ'   => trim($request->EMP_RAZ),
+            'EMP_CNPJ'  => trim($request->EMP_CNPJ),
             'EMP_EMAIL' => trim($request->EMP_EMAIL),
             'EMP_NUM'   => $request->EMP_NUM ?? null,
-            'EMP_ATIV'  => $request->EMP_ATIV
+            'EMP_ATIV'  => $request->EMP_ATIV,
         ]);
+
+        if ($request->has('modulos')) {
+            $empresa->modulos()->sync($request->modulos ?? []);
+        }
 
         return response()->json(['mensagem' => 'Empresa atualizada com sucesso']);
     }

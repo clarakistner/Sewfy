@@ -15,10 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(function (Request $request) {
-            return null; // impede redirecionamento para login
-        });
+        $middleware->use([
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
 
+        $middleware->redirectGuestsTo(function (Request $request) {
+            return null;
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AuthenticationException $e, Request $request) {

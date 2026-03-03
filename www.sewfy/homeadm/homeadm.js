@@ -1,4 +1,7 @@
 import { mascaraCpfCnpj, mascaraTelefone } from "../assets/mascaras.js";
+import { verificarAuth, apiFetch } from "../assets/auth.js";
+
+verificarAuth();
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarEmpresas();
@@ -16,24 +19,17 @@ let todasEmpresas = [];
 
 async function carregarEmpresas() {
     try {
-        const response = await fetch("../../api/adm/empresas", {
-            method: "GET",
-            credentials: "include"
+        const response = await apiFetch('/api/adm/empresas', {
+            method: 'GET'
         });
 
-        if (response.status === 401) {
-            window.location.href = "/adm/login.html";
-            return;
-        }
-
-        if (!response.ok) throw new Error("Erro ao buscar empresas");
+        if (!response || !response.ok) throw new Error('Erro ao buscar empresas');
 
         todasEmpresas = await response.json();
-
         aplicarFiltros();
 
     } catch (error) {
-        console.error("Erro ao carregar empresas:", error);
+        console.error('Erro ao carregar empresas:', error);
     }
 }
 

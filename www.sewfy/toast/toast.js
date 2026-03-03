@@ -1,5 +1,4 @@
-export function mostrarToast(message, tipo = 'sucesso') { // por padrão, tipo é 'sucesso'
-
+export function mostrarToast(message, tipo = 'sucesso') {
     const toast = document.createElement('div');
     toast.className = `toast toast-${tipo}`;
     toast.innerText = message;
@@ -17,11 +16,20 @@ export function mostrarToast(message, tipo = 'sucesso') { // por padrão, tipo �
         toast.style.background = '#ffffff';
         toast.style.border = '3px solid #ff4d4d';
         toast.style.color = '#000';
+    } else if (tipo === 'carregando') {
+        toast.style.background = '#ffffff';
+        toast.style.border = '3px solid #f0a500';
+        toast.style.color = '#000';
     } else {
         toast.style.background = '#ffffff';
         toast.style.border = '3px solid #0e59fe';
         toast.style.color = '#000';
     }
 
-    setTimeout(() => toast.remove(), 10000);
+    // Toast de carregando não some automaticamente
+    if (tipo !== 'carregando') {
+        setTimeout(() => toast.remove(), 10000);
+    }
+
+    return toast; // retorna o elemento para poder remover depois
 }

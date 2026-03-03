@@ -17,14 +17,18 @@
 
         .btn {
             display: inline-block;
-            padding: 12px 24px;
-            background-color: #1a3c8f;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;          
+            background: linear-gradient(90deg, #0e59fe, #020066);
             color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
             text-decoration: none;
             border-radius: 6px;
             margin-top: 20px;
         }
-
+  
         .aviso {
             color: #e53e3e;
             font-size: 13px;
@@ -46,11 +50,9 @@
         <p>Clique no botão abaixo para confirmar seu cadastro e definir sua senha:</p>
         @endif
 
-        <form method="POST" action="/confirmar-email">
-            @csrf
-            <input type="hidden" name="token" value="{{ $token }}">
-            <button type="submit" class="btn">Confirmar Cadastro</button>
-        </form>
+        <a href="http://localhost/www.sewfy/confirmarcadastro/index.html?token={{ $token }}" class="btn">
+            Confirmar Cadastro
+        </a>
 
         <p style="margin-top: 24px; font-size: 13px; color: #666;">
             Este link expira em 24 horas. Se você não esperava este email, ignore-o.
