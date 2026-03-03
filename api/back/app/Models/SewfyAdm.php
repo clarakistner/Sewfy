@@ -9,14 +9,15 @@ class SewfyAdm extends Authenticatable
 {
     use HasApiTokens;
 
-    protected $table = 'SEWFY_ADMINS';
+    protected $table = 'SEWFY_ADMS';
     protected $primaryKey = 'ADM_ID';
     public $timestamps = false;
 
     protected $fillable = [
         'ADM_EMAIL',
         'ADM_SENHA',
-        'ADM_ATIV'
+        'ADM_ATIV',
+        'ADM_DATAC'
     ];
 
     protected $hidden = [

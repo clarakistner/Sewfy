@@ -8,18 +8,18 @@ class ConviteEmail extends Mailable
 {
     public string $nome;
     public string $empresa;
-    public string $link;
+    public string $token;
     public string $tipo;
 
     public function __construct(
         string $nome,
         string $empresa,
-        string $link,
+        string $token,
         string $tipo = 'funcionario'
     ) {
         $this->nome    = $nome;
         $this->empresa = $empresa;
-        $this->link    = $link;
+        $this->token    = $token;
         $this->tipo    = $tipo;
     }
 
@@ -30,6 +30,6 @@ class ConviteEmail extends Mailable
             : "Você foi convidado para acessar {$this->empresa} no Sewfy";
 
         return $this->subject($assunto)
-                    ->view('emails.convite');
+                    ->view('convite');
     }
 }

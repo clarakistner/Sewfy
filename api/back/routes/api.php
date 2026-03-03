@@ -11,4 +11,6 @@ require __DIR__ . '/api/testerota.php';
 require __DIR__ . '/api/auth.php';
 require __DIR__ . '/api/convites.php';
 require __DIR__ . '/api/empresas.php';
+require __DIR__ . '/api/sewfyadm.php';
+require __DIR__ . '/api/empresaspendentes.php';
 //require __DIR__ . '/api/conta.php';

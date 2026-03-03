@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\ConviteEmail;
+use Illuminate\Support\Facades\Log;
 
 class ConviteController extends Controller
 {
@@ -24,6 +25,7 @@ class ConviteController extends Controller
             'EMPP_CNPJ'  => 'required|string|size:14',
             'EMPP_EMAIL' => 'required|email|max:150',
             'EMPP_NUM'   => 'nullable|string|max:20',
+            'ADM_ID'   => 'required|integer|exists:SEWFY_ADMS,ADM_ID',
             'modulos'    => 'required|array|min:1',
             'modulos.*'  => 'integer|exists:MODULOS,MOD_ID',
             'CONV_EMAIL' => 'required|email',
@@ -58,7 +60,7 @@ class ConviteController extends Controller
                 'EMPP_CNPJ'  => preg_replace('/\D/', '', $request->EMPP_CNPJ),
                 'EMPP_EMAIL' => trim($request->EMPP_EMAIL),
                 'EMPP_NUM'   => $request->EMPP_NUM ?? null,
-                'ADM_ID'     => $adm->ADM_ID
+                'ADM_ID'     => $request->ADM_ID
             ]);
 
             foreach ($request->modulos as $modId) {
@@ -81,7 +83,6 @@ class ConviteController extends Controller
             ]);
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -93,18 +94,18 @@ class ConviteController extends Controller
         }
 
         // envia email fora da transação - mesmo que falhe, o cadastro da empresa não é comprometido
-        $link = config('app.front_url') . '/confirmar?token=' . $token;
+        
 
         try {
             Mail::to($request->CONV_EMAIL)
-                ->queue(new ConviteEmail(
-                    nome:    $request->CONV_NOME,
+                ->send(new ConviteEmail(
+                    nome: $request->CONV_NOME,
                     empresa: $request->EMPP_NOME,
-                    link:    $link,
-                    tipo:    'owner'
+                    token: $token,
+                    tipo: 'owner'
                 ));
         } catch (\Exception $e) {
-            \Log::error('Erro ao enviar email de convite owner: ' . $e->getMessage());
+            Log::error('Erro ao enviar email de convite owner: ' . $e->getMessage());
         }
 
         return response()->json([
@@ -126,7 +127,9 @@ class ConviteController extends Controller
         $empresa = $usuario->empresa;
 
         $jaExiste = User::where('USU_EMAIL', $request->CONV_EMAIL)
-            ->whereHas('empresas', fn($q) =>
+            ->whereHas(
+                'empresas',
+                fn($q) =>
                 $q->where('EMP_ID', $empresa->EMP_ID)
             )->exists();
 
@@ -181,7 +184,6 @@ class ConviteController extends Controller
             }
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -192,18 +194,18 @@ class ConviteController extends Controller
             ], 500);
         }
 
-        $link = config('app.front_url') . '/confirmar-funcionario?token=' . $token;
+
 
         try {
             Mail::to($request->CONV_EMAIL)
-                ->queue(new ConviteEmail(
-                    nome:    $request->CONV_NOME,
+                ->send(new ConviteEmail(
+                    nome: $request->CONV_NOME,
                     empresa: $empresa->EMP_NOME,
-                    link:    $link,
-                    tipo:    'funcionario'
+                    token: $token,
+                    tipo: 'funcionario'
                 ));
         } catch (\Exception $e) {
-            \Log::error('Erro ao enviar email de convite funcionario: ' . $e->getMessage());
+            Log::error('Erro ao enviar email de convite funcionario: ' . $e->getMessage());
         }
 
         return response()->json(['mensagem' => 'Convite enviado com sucesso!'], 201);
@@ -213,8 +215,7 @@ class ConviteController extends Controller
     public function confirmar(Request $request)
     {
         $request->validate([
-            'token' => 'required|string',
-            'senha' => 'required|string|min:8'
+            'token' => 'required|string'
         ]);
 
         $convite = Convite::where('CONV_TOKEN', $request->token)
@@ -285,7 +286,6 @@ class ConviteController extends Controller
             $pendente->delete();
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -338,7 +338,6 @@ class ConviteController extends Controller
             $convite->update(['CONV_USADO' => 1]);
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();

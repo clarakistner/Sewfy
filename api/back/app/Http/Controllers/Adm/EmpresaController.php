@@ -41,6 +41,27 @@ class EmpresaController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'EMP_NOME'  => 'required|string|max:150',
+            'EMP_RAZ'   => 'required|string|max:150',
+            'EMP_EMAIL' => 'required|email|max:150',
+            'EMP_NUM'   => 'nullable|string|max:20',
+            'EMP_ATIV'  => 'required|boolean'
+        ]);
+
+        $empresa = Empresa::create([
+            'EMP_NOME'  => trim($request->EMP_NOME),
+            'EMP_RAZ'   => trim($request->EMP_RAZ),
+            'EMP_EMAIL' => trim($request->EMP_EMAIL),
+            'EMP_NUM'   => $request->EMP_NUM ?? null,
+            'EMP_ATIV'  => $request->EMP_ATIV
+        ]);
+
+        return response()->json(['mensagem' => 'Empresa criada com sucesso', 'id' => $empresa->EMP_ID], 201);
+    }
+
     // PUT /api/adm/empresas/{id} - Atualizar uma empresa
     public function update(Request $request, int $id)
     {
