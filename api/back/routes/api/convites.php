@@ -17,3 +17,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // rota pública — confirmação pelo link do email
 Route::post('/convites/confirmar', [ConviteController::class, 'confirmar']);
+
+// rota pública — verificação do token (ex: para mostrar tela de cadastro ou login)
+Route::get('/convites/verificar', [ConviteController::class, 'verificar']);

@@ -43,14 +43,14 @@ function aplicarFiltros() {
 
     const filtradas = todasEmpresas.filter(emp => {
 
-        const nome = (emp.nome || "").toLowerCase();
-        const razao = (emp.razao || "").toLowerCase();
-        const cnpj = (emp.cnpj || "").toLowerCase();
+        const nome  = (emp.nome || "").toLowerCase();
+        const raz   = (emp.raz  || "").toLowerCase();
+        const cnpj  = (emp.cnpj || "").toLowerCase();
         const ativo = Number(emp.ativo);
 
         const correspondeBusca =
             nome.includes(busca) ||
-            razao.includes(busca) ||
+            raz.includes(busca)  ||
             cnpj.includes(busca);
 
         let correspondeStatus = true;
@@ -68,8 +68,8 @@ function aplicarFiltros() {
 }
 
 function renderizarEmpresas(empresas) {
-    const container = document.getElementById("empresas-lista");
-    const semResultados = document.getElementById("sem-resultados");
+    const container      = document.getElementById("empresas-lista");
+    const semResultados  = document.getElementById("sem-resultados");
 
     container.innerHTML = "";
 
@@ -85,22 +85,18 @@ function renderizarEmpresas(empresas) {
         const ativo = Number(empresa.ativo);
         const ativa = ativo === 1;
 
-        const statusClasse = ativa ? "ativa" : "inativa";
-        const statusTexto = ativa ? "Ativa" : "Inativa";
-        const statusIcone = ativa ? "check_circle" : "cancel";
+        const statusClasse = ativa ? "ativa"         : "inativa";
+        const statusTexto  = ativa ? "Ativa"          : "Inativa";
+        const statusIcone  = ativa ? "check_circle"   : "cancel";
 
-        const modulos = Array.isArray(empresa.modulos)
-            ? empresa.modulos
-            : [];
+        const modulos = Array.isArray(empresa.modulos) ? empresa.modulos : [];
 
         const modulosHTML = modulos.length > 0
-            ? modulos.map(mod =>
-                `<span class="modulo-tag">${mod}</span>`
-              ).join("")
+            ? modulos.map(mod => `<span class="modulo-tag">${mod}</span>`).join("")
             : `<span class="modulo-tag">Sem módulos</span>`;
 
-        const cnpjFormatado = mascaraCpfCnpj(empresa.cnpj || "");
-        const telefoneFormatado = mascaraTelefone(empresa.numero || "");
+        const cnpjFormatado     = mascaraCpfCnpj(empresa.cnpj || "");
+        const telefoneFormatado = mascaraTelefone(empresa.num  || "");
 
         const card = document.createElement("div");
         card.classList.add("empresa-card");
@@ -118,7 +114,7 @@ function renderizarEmpresas(empresas) {
                 </div>
             </div>
 
-            <p class="empresa-razao">${empresa.razao || ""}</p>
+            <p class="empresa-razao">${empresa.raz || ""}</p>
 
             <div class="empresa-info">
                 <div class="info-grupo">
@@ -128,7 +124,7 @@ function renderizarEmpresas(empresas) {
 
                 <div class="info-grupo">
                     <span class="info-label">Telefone</span>
-                    <span class="info-valor">${telefoneFormatado}</span>
+                    <span class="info-valor">${telefoneFormatado || "—"}</span>
                 </div>
 
                 <div class="info-grupo">
@@ -159,6 +155,6 @@ function acessarEmpresa(id) {
 
 function editarEmpresa(id) {
     sessionStorage.setItem("listaEmpresas_origem", window.location.href);
-    window.location.href = `/Sewfy/www.sewfy/editarempresa/editarempresa.html?id=${id}`;
+    window.location.href = `/www.sewfy/editarempresa/index.html?id=${id}`;
 }
 window.editarEmpresa = editarEmpresa;

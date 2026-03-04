@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Empresa - Sewfy Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    <link rel="stylesheet" href="/Sewfy/www.sewfy/menuadm/menuadm.css">
-    <link rel="stylesheet" href="/Sewfy/www.sewfy/editarempresa/editarempresa.css">
+    <link rel="stylesheet" href="/www.sewfy/menuadm/menuadm.css">
+    <link rel="stylesheet" href="/www.sewfy/editarempresa/editarempresa.css">
 </head>
 <body>
 
@@ -66,27 +66,27 @@
 
                 <div class="modulos-grid">
                     <label class="modulo-item">
-                        <input type="checkbox" value="faturamento"/>
+                        <input type="checkbox" value="2"/>
                         <span>Faturamento</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="financeiro"/>
+                        <input type="checkbox" value="1"/>
                         <span>Financeiro</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="compras"/>
+                        <input type="checkbox" value="5"/>
                         <span>Compras</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="producao"/>
+                        <input type="checkbox" value="4"/>
                         <span>Produção</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="relatorios"/>
+                        <input type="checkbox" value="6"/>
                         <span>Relatórios</span>
                     </label>
                     <label class="modulo-item">
-                        <input type="checkbox" value="rh"/>
+                        <input type="checkbox" value="3"/>
                         <span>Recursos Humanos</span>
                     </label>
                 </div>
@@ -99,11 +99,19 @@
                 <div class="form-grid">
                     <div class="campo">
                         <label>Nome *</label>
-                        <input type="text" placeholder="Nome de usuário" id="usuario"/>
+                        <input type="text" placeholder="Nome do usuário principal" id="usuario"/>
                     </div>
                     <div class="campo">
                         <label>Email *</label>
                         <input type="email" placeholder="usuario@empresa.com" id="email-usuario"/>
+                    </div>
+                    <div class="campo">
+                        <label>Número do Usuário Principal *</label>
+                        <input type="text" placeholder="(99) 99999-9999" id="num"/>
+                    </div>
+                    <div class="campo">
+                        <label>Confirme o Email *</label>
+                        <input type="email" placeholder="usuario@empresa.com" id="email-usuario-confirma"/>
                     </div>
                 </div>
             </div>
@@ -116,7 +124,7 @@
         </main>
     </div>
 
-    <script src="/Sewfy/www.sewfy/menuadm/menuadm.js"></script>
-    <script type="module" src="/Sewfy/www.sewfy/editarempresa/editarempresa.js"></script>
+    <script src="/www.sewfy/menuadm/menuadm.js"></script>
+    <script type="module" src="/www.sewfy/editarempresa/editarempresa.js"></script>
 </body>
 </html>

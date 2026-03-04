@@ -3,40 +3,48 @@ import { validarCNPJ } from "./../assets/validacoes.js";
 import { verificarAuth, apiFetch } from "../assets/auth.js";
 import { mostrarToast } from "../toast/toast.js";
 
+// Verifica autenticação ao carregar a página
 verificarAuth();
 
 console.log("[DEBUG] Script cadastroEmpresas.js carregado!");
 
+// Configura eventos após o DOM estar pronto
 document.addEventListener('DOMContentLoaded', () => {
     console.log("[INIT] DOM carregado!");
 
-    const cnpjInput    = document.getElementById("cnpj");
-    const telefoneInput = document.getElementById("telefone");
-
-    aplicarMascaraCpfCnpj(cnpjInput);
-    aplicarMascaraTelefone(telefoneInput);
+    // Aplica máscaras nos campos
+    aplicarMascaraCpfCnpj(document.getElementById("cnpj"));
+    aplicarMascaraTelefone(document.getElementById("telefone"));
+    aplicarMascaraTelefone(document.getElementById("num"));
 
     document.getElementById("btn-cadastrar-empresa").addEventListener("click", cadastrarEmpresa);
 });
 
 
+// Função principal para cadastrar empresa
 async function cadastrarEmpresa() {
-    const nome       = document.getElementById("nome")?.value.trim();
-    const cnpj       = document.getElementById("cnpj")?.value.trim();
-    const email      = document.getElementById("email")?.value.trim();
-    const telefone   = document.getElementById("telefone")?.value.trim();
-    const razao      = document.getElementById("razao-social")?.value.trim();
-    const convNome   = document.getElementById("usuario")?.value.trim();
-    const convEmail  = document.getElementById("email-usuario")?.value.trim();
+    const nome          = document.getElementById("nome")?.value.trim();
+    const cnpj          = document.getElementById("cnpj")?.value.trim();
+    const email         = document.getElementById("email")?.value.trim();
+    const telefone      = document.getElementById("telefone")?.value.trim();
+    const razao         = document.getElementById("razao-social")?.value.trim();
+    const convNome      = document.getElementById("usuario")?.value.trim();
+    const convEmail     = document.getElementById("email-usuario")?.value.trim();
+    const numUsuario    = document.getElementById("num")?.value.trim();
+    const emailConfirma = document.getElementById("email-usuario-confirma")?.value.trim();
 
-    // Pega os módulos selecionados
     const modulos = Array.from(
         document.querySelectorAll(".modulos-grid input[type=checkbox]:checked")
     ).map(cb => parseInt(cb.value));
 
     // Validações
-    if (!nome || !cnpj || !email || !razao || !convNome || !convEmail) {
+    if (!nome || !cnpj || !email || !razao || !convNome || !convEmail || !telefone || !numUsuario || !emailConfirma) {
         mostrarToast("Preencha todos os campos obrigatórios", "erro");
+        return;
+    }
+
+    if (convEmail !== emailConfirma) {
+        mostrarToast("Os emails não coincidem", "erro");
         return;
     }
 
@@ -55,7 +63,11 @@ async function cadastrarEmpresa() {
         return;
     }
 
-    const cnpjLimpo = apenasNumeros(cnpj);
+    // Limpa formatações para validação e envio
+    const cnpjLimpo     = apenasNumeros(cnpj);
+    const telefoneLimpo = apenasNumeros(telefone);
+    const numLimpo      = apenasNumeros(numUsuario);
+
     if (!validarCNPJ(cnpjLimpo)) {
         mostrarToast("CNPJ inválido", "erro");
         return;
@@ -66,28 +78,32 @@ async function cadastrarEmpresa() {
         return;
     }
 
+    // Prepara payload para envio
     const payload = {
         EMPP_NOME:  nome,
         EMPP_RAZ:   razao,
         EMPP_CNPJ:  cnpjLimpo,
         EMPP_EMAIL: email,
-        EMPP_NUM:   telefone || null,
+        EMPP_NUM:   telefoneLimpo || null,
         ADM_ID:     1,
         modulos:    modulos,
         CONV_NOME:  convNome,
-        CONV_EMAIL: convEmail
+        CONV_EMAIL: convEmail,
+        CONV_NUM:   numLimpo
     };
 
     try {
         console.log("[FETCH] Enviando cadastro de empresa...", payload);
         const toastCarregando = mostrarToast("Enviando cadastro...", "carregando");
 
+        // Envia requisição para API
         const response = await apiFetch("/api/adm/convites/owner", {
             method: "POST",
             body: JSON.stringify(payload)
         });
 
-        toastCarregando.remove(); // remove o toast de carregando
+        // Remove toast de carregamento
+        toastCarregando.remove();
 
         if (!response) return;
 
@@ -107,14 +123,17 @@ async function cadastrarEmpresa() {
 }
 
 
+// Função para limpar o formulário após cadastro
 function limparFormulario() {
-    document.getElementById("nome").value        = "";
-    document.getElementById("cnpj").value        = "";
-    document.getElementById("email").value       = "";
-    document.getElementById("telefone").value    = "";
-    document.getElementById("razao-social").value = "";
-    document.getElementById("usuario").value     = "";
-    document.getElementById("email-usuario").value = "";
+    document.getElementById("nome").value             = "";
+    document.getElementById("cnpj").value             = "";
+    document.getElementById("email").value            = "";
+    document.getElementById("telefone").value         = "";
+    document.getElementById("razao-social").value     = "";
+    document.getElementById("usuario").value          = "";
+    document.getElementById("email-usuario").value    = "";
+    document.getElementById("num").value              = "";
+    document.getElementById("email-usuario-confirma").value = "";
 
     document.querySelectorAll(".modulos-grid input[type=checkbox]")
         .forEach(cb => cb.checked = false);

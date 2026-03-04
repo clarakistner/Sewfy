@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Adm;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EmpresaController extends Controller
 {
@@ -32,50 +33,27 @@ class EmpresaController extends Controller
     {
         $empresa = Empresa::with('modulos')->findOrFail($id);
 
-        return response()->json([
-            'id'      => $empresa->EMP_ID,
-            'nome'    => $empresa->EMP_NOME,
-            'raz'     => $empresa->EMP_RAZ,
-            'cnpj'    => $empresa->EMP_CNPJ,
-            'email'   => $empresa->EMP_EMAIL,
-            'num'     => $empresa->EMP_NUM,
-            'ativo'   => $empresa->EMP_ATIV,
-            'modulos' => $empresa->modulos->pluck('MOD_NOME')
-        ]);
-    }
-
-    // POST /api/adm/empresas/criar - Criar uma nova empresa
-    public function store(Request $request)
-    {
-        $request->validate([
-            'EMP_NOME'  => 'required|string|max:150',
-            'EMP_RAZ'   => 'required|string|max:150',
-            'EMP_CNPJ'  => 'required|string|max:14|unique:EMPRESAS,EMP_CNPJ',
-            'EMP_EMAIL' => 'required|email|max:150|unique:EMPRESAS,EMP_EMAIL',
-            'EMP_NUM'   => 'nullable|string|max:20',
-            'ADM_ID'    => 'required|integer|exists:SEWFY_ADMS,ADM_ID',
-            'modulos'   => 'nullable|array',
-            'modulos.*' => 'integer|exists:MODULOS,MOD_ID',
-        ]);
-
-        $empresa = Empresa::create([
-            'EMP_NOME'  => trim($request->EMP_NOME),
-            'EMP_RAZ'   => trim($request->EMP_RAZ),
-            'EMP_CNPJ'  => trim($request->EMP_CNPJ),
-            'EMP_EMAIL' => trim($request->EMP_EMAIL),
-            'EMP_NUM'   => $request->EMP_NUM ?? null,
-            'EMP_ATIV'  => 1,
-            'ADM_ID'    => $request->ADM_ID,
-        ]);
-
-        if ($request->filled('modulos')) {
-            $empresa->modulos()->attach($request->modulos);
-        }
+        $usuarioPrincipal = DB::table('EMPRESA_USUARIOS')
+            ->join('USUARIOS', 'EMPRESA_USUARIOS.USU_ID', '=', 'USUARIOS.USU_ID')
+            ->where('EMPRESA_USUARIOS.EMP_ID', $id)
+            ->where('EMPRESA_USUARIOS.USU_E_PROPRIETARIO', 1)
+            ->select('USUARIOS.USU_ID', 'USUARIOS.USU_NOME', 'USUARIOS.USU_EMAIL', 'USUARIOS.USU_NUM')
+            ->first();
 
         return response()->json([
-            'mensagem' => 'Empresa criada com sucesso',
-            'id'       => $empresa->EMP_ID
-        ], 201);
+            'id'           => $empresa->EMP_ID,
+            'nome'         => $empresa->EMP_NOME,
+            'raz'          => $empresa->EMP_RAZ,
+            'cnpj'         => $empresa->EMP_CNPJ,
+            'email'        => $empresa->EMP_EMAIL,
+            'num'          => $empresa->EMP_NUM,
+            'ativo'        => $empresa->EMP_ATIV,
+            'modulos'      => $empresa->modulos->pluck('MOD_NOME'),
+            'usuarioId'    => $usuarioPrincipal?->USU_ID,
+            'usuarioNome'  => $usuarioPrincipal?->USU_NOME,
+            'usuarioEmail' => $usuarioPrincipal?->USU_EMAIL,
+            'usuarioNum'   => $usuarioPrincipal?->USU_NUM,
+        ]);
     }
 
     // PUT /api/adm/empresas/{id} - Atualizar dados de uma empresa
@@ -105,6 +83,23 @@ class EmpresaController extends Controller
 
         if ($request->has('modulos')) {
             $empresa->modulos()->sync($request->modulos ?? []);
+        }
+
+        if ($request->has('usuarioNome') || $request->has('usuarioEmail')) {
+            $usuarioId = DB::table('EMPRESA_USUARIOS')
+                ->where('EMP_ID', $id)
+                ->where('USU_E_PROPRIETARIO', 1)
+                ->value('USU_ID');
+
+            if ($usuarioId) {
+                DB::table('USUARIOS')
+                    ->where('USU_ID', $usuarioId)
+                    ->update([
+                        'USU_NOME'  => trim($request->usuarioNome),
+                        'USU_EMAIL' => trim($request->usuarioEmail),
+                        'USU_NUM'   => $request->usuarioNum ?? null,
+                    ]);
+            }
         }
 
         return response()->json(['mensagem' => 'Empresa atualizada com sucesso']);

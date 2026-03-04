@@ -25,11 +25,12 @@ class ConviteController extends Controller
             'EMPP_CNPJ'  => 'required|string|size:14',
             'EMPP_EMAIL' => 'required|email|max:150',
             'EMPP_NUM'   => 'nullable|string|max:20',
-            'ADM_ID'   => 'required|integer|exists:SEWFY_ADMS,ADM_ID',
+            'ADM_ID'     => 'required|integer|exists:SEWFY_ADMS,ADM_ID',
             'modulos'    => 'required|array|min:1',
             'modulos.*'  => 'integer|exists:MODULOS,MOD_ID',
             'CONV_EMAIL' => 'required|email',
-            'CONV_NOME'  => 'required|string|max:100'
+            'CONV_NOME'  => 'required|string|max:100',
+            'CONV_NUM'   => 'required|string|max:20',
         ]);
 
         $cnpjExiste = EmpresaPendente::where('EMPP_CNPJ', $request->EMPP_CNPJ)->exists()
@@ -52,8 +53,6 @@ class ConviteController extends Controller
 
             DB::beginTransaction();
 
-            $adm = $request->user();
-
             $pendente = EmpresaPendente::create([
                 'EMPP_NOME'  => trim($request->EMPP_NOME),
                 'EMPP_RAZ'   => trim($request->EMPP_RAZ),
@@ -73,7 +72,7 @@ class ConviteController extends Controller
             $convite = Convite::create([
                 'EMPP_ID'       => $pendente->EMPP_ID,
                 'EMP_ID'        => null,
-                'CONV_TIPO'     => 'owner',
+                'CONV_NUM'      => trim($request->CONV_NUM),
                 'CONV_EMAIL'    => trim($request->CONV_EMAIL),
                 'CONV_NOME'     => trim($request->CONV_NOME),
                 'CONV_TOKEN'    => $token,
@@ -83,6 +82,7 @@ class ConviteController extends Controller
             ]);
 
             DB::commit();
+
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -92,9 +92,6 @@ class ConviteController extends Controller
                 'detalhe' => $e->getMessage()
             ], 500);
         }
-
-        // envia email fora da transação - mesmo que falhe, o cadastro da empresa não é comprometido
-        
 
         try {
             Mail::to($request->CONV_EMAIL)
@@ -113,10 +110,11 @@ class ConviteController extends Controller
         ], 201);
     }
 
-    // POST /api/convites - Criar convite para funcionário (funcionario)
+    // POST /api/convites - Criar convite para funcionário
     public function store(Request $request)
     {
         $request->validate([
+            'CONV_NUM'   => 'required|string|max:20',
             'CONV_EMAIL' => 'required|email',
             'CONV_NOME'  => 'required|string|max:100',
             'modulos'    => 'required|array|min:1',
@@ -129,8 +127,7 @@ class ConviteController extends Controller
         $jaExiste = User::where('USU_EMAIL', $request->CONV_EMAIL)
             ->whereHas(
                 'empresas',
-                fn($q) =>
-                $q->where('EMP_ID', $empresa->EMP_ID)
+                fn($q) => $q->where('EMP_ID', $empresa->EMP_ID)
             )->exists();
 
         if ($jaExiste) {
@@ -167,7 +164,7 @@ class ConviteController extends Controller
             $convite = Convite::create([
                 'EMPP_ID'       => null,
                 'EMP_ID'        => $empresa->EMP_ID,
-                'CONV_TIPO'     => 'funcionario',
+                'CONV_NUM'      => trim($request->CONV_NUM),
                 'CONV_EMAIL'    => trim($request->CONV_EMAIL),
                 'CONV_NOME'     => trim($request->CONV_NOME),
                 'CONV_TOKEN'    => $token,
@@ -184,6 +181,7 @@ class ConviteController extends Controller
             }
 
             DB::commit();
+
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -193,8 +191,6 @@ class ConviteController extends Controller
                 'detalhe' => $e->getMessage()
             ], 500);
         }
-
-
 
         try {
             Mail::to($request->CONV_EMAIL)
@@ -211,11 +207,12 @@ class ConviteController extends Controller
         return response()->json(['mensagem' => 'Convite enviado com sucesso!'], 201);
     }
 
-    // POST /api/convites/confirmar - Confirmar convite (tanto owner quanto funcionario)
+    // POST /api/convites/confirmar - Confirmar convite
     public function confirmar(Request $request)
     {
         $request->validate([
-            'token' => 'required|string'
+            'token' => 'required|string',
+            'senha' => 'required|string|min:10',
         ]);
 
         $convite = Convite::where('CONV_TOKEN', $request->token)
@@ -223,16 +220,25 @@ class ConviteController extends Controller
             ->where('CONV_EXPIRA', '>', now())
             ->firstOrFail();
 
-        if ($convite->CONV_TIPO === 'owner') {
+        if ($convite->EMPP_ID) {
             return $this->confirmarOwner($request, $convite);
         }
 
         return $this->confirmarFuncionario($request, $convite);
     }
 
+    // Confirmar convite de owner
     private function confirmarOwner(Request $request, Convite $convite)
     {
         $pendente = EmpresaPendente::with('modulos')->findOrFail($convite->EMPP_ID);
+
+        $usuarioExistente = User::where('USU_EMAIL', $convite->CONV_EMAIL)->first();
+
+        if ($usuarioExistente) {
+            if (!Hash::check($request->senha, $usuarioExistente->USU_SENHA)) {
+                return response()->json(['erro' => 'Senha incorreta para este usuário'], 401);
+            }
+        }
 
         try {
 
@@ -254,13 +260,17 @@ class ConviteController extends Controller
                 ]);
             }
 
-            $usuario = User::create([
-                'USU_NOME'  => $convite->CONV_NOME,
-                'USU_EMAIL' => $convite->CONV_EMAIL,
-                'USU_SENHA' => Hash::make($request->senha),
-                'USU_TIPO'  => 'owner',
-                'USU_ATIV'  => 1
-            ]);
+            if ($usuarioExistente) {
+                $usuario = $usuarioExistente;
+            } else {
+                $usuario = User::create([
+                    'USU_NOME'  => $convite->CONV_NOME,
+                    'USU_EMAIL' => $convite->CONV_EMAIL,
+                    'USU_SENHA' => Hash::make($request->senha),
+                    'USU_NUM'   => $convite->CONV_NUM,
+                    'USU_ATIV'  => 1
+                ]);
+            }
 
             DB::table('EMPRESA_USUARIOS')->insert([
                 'EMP_ID'             => $empresa->EMP_ID,
@@ -286,6 +296,7 @@ class ConviteController extends Controller
             $pendente->delete();
 
             DB::commit();
+
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -299,21 +310,32 @@ class ConviteController extends Controller
         return response()->json(['mensagem' => 'Empresa e cadastro confirmados com sucesso!']);
     }
 
+    // Confirmar convite de funcionário
     private function confirmarFuncionario(Request $request, Convite $convite)
     {
+        $usuarioExistente = User::where('USU_EMAIL', $convite->CONV_EMAIL)->first();
+
+        if ($usuarioExistente) {
+            if (!Hash::check($request->senha, $usuarioExistente->USU_SENHA)) {
+                return response()->json(['erro' => 'Senha incorreta para este usuário'], 401);
+            }
+        }
+
         try {
 
             DB::beginTransaction();
 
-            $usuario = User::firstOrCreate(
-                ['USU_EMAIL' => $convite->CONV_EMAIL],
-                [
+            if ($usuarioExistente) {
+                $usuario = $usuarioExistente;
+            } else {
+                $usuario = User::create([
                     'USU_NOME'  => $convite->CONV_NOME,
+                    'USU_EMAIL' => $convite->CONV_EMAIL,
                     'USU_SENHA' => Hash::make($request->senha),
-                    'USU_TIPO'  => 'funcionario',
+                    'USU_NUM'   => $convite->CONV_NUM,
                     'USU_ATIV'  => 1
-                ]
-            );
+                ]);
+            }
 
             DB::table('EMPRESA_USUARIOS')->updateOrInsert(
                 ['EMP_ID' => $convite->EMP_ID, 'USU_ID' => $usuario->USU_ID],
@@ -338,6 +360,7 @@ class ConviteController extends Controller
             $convite->update(['CONV_USADO' => 1]);
 
             DB::commit();
+
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -349,5 +372,27 @@ class ConviteController extends Controller
         }
 
         return response()->json(['mensagem' => 'Cadastro confirmado com sucesso!']);
+    }
+
+    // GET /api/convites/verificar?token= - Verificar status do convite
+    public function verificar(Request $request)
+    {
+        $token = $request->query('token');
+
+        $convite = Convite::where('CONV_TOKEN', $token)->first();
+
+        if (!$convite) {
+            return response()->json(['status' => 'invalido']);
+        }
+
+        if ($convite->CONV_USADO) {
+            return response()->json(['status' => 'usado']);
+        }
+
+        if ($convite->CONV_EXPIRA < now()) {
+            return response()->json(['status' => 'expirado']);
+        }
+
+        return response()->json(['status' => 'valido']);
     }
 }
