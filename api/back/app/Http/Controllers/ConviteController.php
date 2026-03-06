@@ -94,7 +94,7 @@ class ConviteController extends Controller
         }
 
         // envia email fora da transação - mesmo que falhe, o cadastro da empresa não é comprometido
-        
+
 
         try {
             Mail::to($request->CONV_EMAIL)
@@ -254,13 +254,22 @@ class ConviteController extends Controller
                 ]);
             }
 
-            $usuario = User::create([
-                'USU_NOME'  => $convite->CONV_NOME,
-                'USU_EMAIL' => $convite->CONV_EMAIL,
-                'USU_SENHA' => Hash::make($request->senha),
-                'USU_TIPO'  => 'owner',
-                'USU_ATIV'  => 1
-            ]);
+            $usuarioExistente = User::where('USU_EMAIL', $convite->CONV_EMAIL)->first();
+            $usuario = null;
+
+            if ($usuarioExistente) {
+                $usuario = $usuarioExistente;
+            } else {
+                $usuario = User::create([
+                    'USU_NOME'  => $convite->CONV_NOME,
+                    'USU_EMAIL' => $convite->CONV_EMAIL,
+                    'USU_SENHA' => Hash::make($request->senha),
+                    'USU_TIPO'  => 'owner',
+                    'USU_ATIV'  => 1
+                ]);
+            }
+
+
 
             DB::table('EMPRESA_USUARIOS')->insert([
                 'EMP_ID'             => $empresa->EMP_ID,
@@ -305,15 +314,22 @@ class ConviteController extends Controller
 
             DB::beginTransaction();
 
-            $usuario = User::firstOrCreate(
-                ['USU_EMAIL' => $convite->CONV_EMAIL],
-                [
-                    'USU_NOME'  => $convite->CONV_NOME,
-                    'USU_SENHA' => Hash::make($request->senha),
-                    'USU_TIPO'  => 'funcionario',
-                    'USU_ATIV'  => 1
-                ]
-            );
+            $usuarioExistente = User::where('USU_EMAIL', $convite->CONV_EMAIL)->first();
+
+            $usuario = null;
+            if ($usuarioExistente) {
+                $usuario = $usuarioExistente;
+            } else {
+                $usuario = User::firstOrCreate(
+                    ['USU_EMAIL' => $convite->CONV_EMAIL],
+                    [
+                        'USU_NOME'  => $convite->CONV_NOME,
+                        'USU_SENHA' => Hash::make($request->senha),
+                        'USU_TIPO'  => 'funcionario',
+                        'USU_ATIV'  => 1
+                    ]
+                );
+            }
 
             DB::table('EMPRESA_USUARIOS')->updateOrInsert(
                 ['EMP_ID' => $convite->EMP_ID, 'USU_ID' => $usuario->USU_ID],

@@ -25,39 +25,9 @@ class EmpresaUsuarios extends Model
             ->where('USU_ID', $this->USU_ID);
     }
 
-    public static function criarNovoUsuarioEmpresa(array $dados): bool
+    public function getKey()
     {
-        return self::create($dados) !== null;
+        return $this->EMP_ID . '-' . $this->USU_ID;
     }
 
-    public static function buscaTodosUsuariosDaEmpresa(int $idEmp): \Illuminate\Database\Eloquent\Collection
-    {
-        return self::where('EMP_ID', $idEmp)->get();
-    }
-
-    public static function buscaEmpresasUsuario(int $idUsu): \Illuminate\Database\Eloquent\Collection
-    {
-        return self::where('USU_ID', $idUsu)->get();
-    }
-
-    public static function buscaUsuarioEmEmpresa(int $idEmp, int $idUsu): ?self
-    {
-        return self::where('EMP_ID', $idEmp)
-            ->where('USU_ID', $idUsu)
-            ->first();
-    }
-
-    public static function editaAtivoUsu(int $ativo, int $idEmp, int $idUsu): bool
-    {
-        return self::where('EMP_ID', $idEmp)
-            ->where('USU_ID', $idUsu)
-            ->update(['USU_ATIV' => $ativo]) > 0;
-    }
-
-    public static function editaEhProprietario(int $ehProprietario, int $idEmp, int $idUsu): bool
-    {
-        return self::where('EMP_ID', $idEmp)
-            ->where('USU_ID', $idUsu)
-            ->update(['USU_E_PROPRIETARIO' => $ehProprietario]) > 0;
-    }
 }

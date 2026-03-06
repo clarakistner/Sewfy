@@ -1,10 +1,10 @@
 // Importa a função de toast para exibir mensagens ao usuário
-import { mostrarToast } from "/Sewfy/view/toast/toast.js"
+import { mostrarToast } from "../../www.sewfy/toast/toast.js";
 
 // Classe responsável por realizar requisições à API
 export class API {
     // Construtor que define a URL base da API
-    constructor(url = '/api/back/public/api') {
+    constructor(url = 'http://localhost:8000/api') {
         this.url = url
     }
 
@@ -16,6 +16,7 @@ export class API {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
                 ...opcoes.headers
             },
             ...opcoes

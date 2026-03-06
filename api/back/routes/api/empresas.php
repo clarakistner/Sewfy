@@ -8,4 +8,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/adm/empresas/criar', [EmpresaController::class, 'store']);
     Route::get('/adm/empresas/{id}', [EmpresaController::class, 'show']);
     Route::put('/adm/empresas/{id}', [EmpresaController::class, 'update']);
+    Route::get('/adm/empresa/nome/{id}',[EmpresaController::class, 'retornaNomeEmpresa']);
 });

@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Models\SewfyAdm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\EmpresaUsuarios;
 
+session_start();
 class AuthController extends Controller
 {
     // POST /api/auth/login - Login para usuários comuns
@@ -27,12 +29,20 @@ class AuthController extends Controller
             return response()->json(['erro' => 'Conta inativa'], 403);
         }
 
-        $token = $user->createToken('user-token')->plainTextToken;
+        $empresasUsuario = EmpresaUsuarios::where('USU_ID', $user->USU_ID)->get();
 
+        $quantidadeEmpresas = $empresasUsuario->count();
+        $empresasIds = $empresasUsuario->pluck('EMP_ID')->toArray();
+
+        $abilities = array_map(fn($id) => "empresa_$id", $empresasIds);
+        $user->tokens()->delete();
+        $token = $user->createToken('user-token', $abilities)->plainTextToken;
         return response()->json([
             'token'   => $token,
             'nome'    => $user->USU_NOME,
             'isOwner' => $user->USU_IS_OWNER,
+            'quantidade_empresas' => $quantidadeEmpresas,
+            'empresas_ids' => $empresasIds,
             'modulos' => $user->modulos->pluck('MOD_NOME')
         ]);
     }
@@ -55,6 +65,7 @@ class AuthController extends Controller
             return response()->json(['erro' => 'Conta inativa'], 403);
         }
 
+        $_SESSION['adm_id'] = $adm->ADM_ID;
         $token = $adm->createToken('adm-token')->plainTextToken;
 
         return response()->json([
@@ -68,5 +79,24 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json(['mensagem' => 'Logout realizado com sucesso']);
+    }
+    public function defineEmpresaSelecionada(Request $request)
+    {
+        $request->validate([
+            'empresa_id' => 'required|integer|exists:EMPRESAS,EMP_ID',
+        ]);
+
+        $empresaIdToken = "empresa_{$request->empresa_id}";
+        if (!$request->user()->tokenCan($empresaIdToken)) {
+            return response()->json(['erro' => 'Acesso negado para esta empresa'], 403);
+        }
+        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->createToken('user-token', ['empresaId' => $empresaIdToken])->plainTextToken;
+
+        return response()->json([
+            'mensagem' => 'Empresa selecionada com sucesso',
+            'token' => $token,
+            'empresa_id' => $request->empresa_id
+        ]);
     }
 }

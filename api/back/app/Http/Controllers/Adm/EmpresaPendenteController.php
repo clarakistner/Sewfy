@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Adm;
 use App\Http\Controllers\Controller;
 use App\Models\EmpresaPendente;
 use Illuminate\Http\Request;
-
+session_start();
 class EmpresaPendenteController extends Controller
 {
     // GET /api/adm/empresaspendentes - Listar todas as empresas pendentes
@@ -50,7 +50,6 @@ class EmpresaPendenteController extends Controller
             'EMPP_EMAIL' => 'required|email|max:50|unique:EMPRESAS_PENDENTES,EMPP_EMAIL',
             'EMPP_CNPJ'  => 'required|string|max:14|unique:EMPRESAS_PENDENTES,EMPP_CNPJ',
             'EMPP_NUM'   => 'nullable|string|max:20',
-            'ADM_ID'     => 'required|integer|exists:SEWFY_ADMS,ADM_ID',
             'modulos'    => 'nullable|array',
             'modulos.*'  => 'integer|exists:MODULOS,MOD_ID',
         ]);
@@ -61,7 +60,7 @@ class EmpresaPendenteController extends Controller
             'EMPP_EMAIL' => trim($request->EMPP_EMAIL),
             'EMPP_CNPJ'  => trim($request->EMPP_CNPJ),
             'EMPP_NUM'   => $request->EMPP_NUM ?? null,
-            'ADM_ID'     => $request->ADM_ID,
+            'ADM_ID'     => $_SESSION['adm_id'] ?? null,
         ]);
 
         if ($request->filled('modulos')) {

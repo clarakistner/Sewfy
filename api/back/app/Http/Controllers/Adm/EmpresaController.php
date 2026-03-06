@@ -109,4 +109,15 @@ class EmpresaController extends Controller
 
         return response()->json(['mensagem' => 'Empresa atualizada com sucesso']);
     }
+    public function retornaNomeEmpresa(int $id)
+    {
+        $id = (int) $id;
+        $empresa = Empresa::find($id);
+
+        if (!$empresa) {
+            return response()->json(['erro' => 'Empresa não encontrada'], 404);
+        }
+
+        return response()->json(['EMP_NOME' => $empresa->EMP_NOME]);
+    }
 }

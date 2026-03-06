@@ -72,7 +72,7 @@ async function cadastrarEmpresa() {
         EMPP_CNPJ:  cnpjLimpo,
         EMPP_EMAIL: email,
         EMPP_NUM:   telefone || null,
-        ADM_ID:     1,
+        ADM_ID:     2,
         modulos:    modulos,
         CONV_NOME:  convNome,
         CONV_EMAIL: convEmail

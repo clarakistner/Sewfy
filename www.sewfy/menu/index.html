@@ -6,7 +6,7 @@
     <nav class="nav">
 
         <!-- Faturamento -->
-        <div class="nav-item" id="item-faturamento">
+        <div class="nav-item" id="item-faturamento" data-menu="faturamento">
             <button class="nav-btn" data-menu="item-faturamento">
                 <span class="nav-btn-label">Faturamento</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
@@ -21,7 +21,7 @@
         </div>
 
         <!-- Financeiro -->
-        <div class="nav-item" id="item-financeiro">
+        <div class="nav-item" id="item-financeiro" data-menu="financeiro">
             <button class="nav-btn" data-menu="item-financeiro">
                 <span class="nav-btn-label">Financeiro</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Compras -->
-        <div class="nav-item" id="item-compras">
+        <div class="nav-item" id="item-compras" data-menu="compras">
             <button class="nav-btn" data-menu="item-compras">
                 <span class="nav-btn-label">Compras</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
@@ -47,7 +47,7 @@
         </div>
 
         <!-- Produção -->
-        <div class="nav-item" id="item-producao">
+        <div class="nav-item" id="item-producao" data-menu="producao">
             <button class="nav-btn" data-menu="item-producao">
                 <span class="nav-btn-label">Produção</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
@@ -61,7 +61,7 @@
         </div>
 
         <!-- Relatórios -->
-        <div class="nav-item" id="item-relatorios">
+        <div class="nav-item" id="item-relatorios" data-menu="relatorios">
             <button class="nav-btn" data-menu="item-relatorios">
                 <span class="nav-btn-label">Relatórios</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
@@ -72,7 +72,7 @@
         </div>
 
         <!-- Recursos Humanos -->
-        <div class="nav-item" id="item-rh">
+        <div class="nav-item" id="item-rh" data-menu="rh">
             <button class="nav-btn" data-menu="item-rh">
                 <span class="nav-btn-label">Recursos Humanos</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
@@ -87,9 +87,13 @@
     <div class="sidebar-footer">
         <nav class="nav">
             <button id="btn-config" class="nav-btn">
-                <span class="material-symbols-outlined">settings</span>
+                <span class="material-symbols-outlined " id="icon-config">settings</span>
                 Configurações
             </button>
+            <div class="modalconfigOwner">
+                <div id="cadastraUsuario"> Cadastrar Usuário</div>
+                <div id="gerenciarUsuarios"> Gerenciar Usuários</div>
+            </div>
             <button id="btn-logout" class="nav-btn">
                 <span class="material-symbols-outlined">logout</span>
                 Sair
