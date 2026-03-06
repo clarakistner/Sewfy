@@ -1,16 +1,13 @@
-// editarempresa.js
-// Carrega os dados da empresa pelo ?id=X, preenche o formulário e salva as alterações.
-// Rota GET: /Sewfy/api/adm/empresa?id=X
-// Rota PUT: /Sewfy/api/adm/empresa?id=X
-
-import { mascaraCpfCnpj, mascaraTelefone } from "../assets/mascaras.js";
+import { mascaraCpfCnpj, mascaraTelefone, apenasNumeros } from "../assets/mascaras.js";
+import { verificarAuth, apiFetch } from "../assets/auth.js";
 import { mostrarToast } from "../toast/toast.js";
+
+verificarAuth();
 
 const empId = new URLSearchParams(window.location.search).get("id");
 
-// Redireciona se não houver ID na URL
 if (!empId) {
-    window.location.href = "/Sewfy/www.sewfy/listaempresas/listaempresas.html";
+    window.location.href = "/www.sewfy/listaempresas/listaempresas.html";
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -31,6 +28,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         campoCnpj.style.opacity = "0.6";
         campoCnpj.style.cursor  = "not-allowed";
     }
+
+    // Máscara telefone
+    const telefoneInput = document.getElementById("telefone");
+    if (telefoneInput) mascaraTelefone(telefoneInput);
+
+    const numInput = document.getElementById("num");
+    if (numInput) mascaraTelefone(numInput);
 });
 
 // =========================================================
@@ -39,12 +43,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 function fecharModal() {
     const origem = sessionStorage.getItem("listaEmpresas_origem");
-
     if (origem) {
         sessionStorage.removeItem("listaEmpresas_origem");
         window.location.href = origem;
     } else {
-        window.location.href = "/Sewfy/www.sewfy/listaempresas/listaempresas.html";
+        window.location.href = "/www.sewfy/listaempresas/listaempresas.html";
     }
 }
 
@@ -54,20 +57,18 @@ function fecharModal() {
 
 async function carregarEmpresa() {
     try {
-        const response = await fetch(`/Sewfy/api/adm/empresas/${empId}`, {
-            method: "GET",
-            credentials: "include",
+        const response = await apiFetch(`/api/adm/empresas/${empId}`, {
+            method: "GET"
         });
 
-        if (response.status === 401) {
-            window.location.href = "/adm/login.html";
-            return;
-        }
+        if (!response) return;
+
         if (response.status === 404) {
             mostrarToast("Empresa não encontrada.", "erro");
             desabilitarFormulario();
             return;
         }
+
         if (!response.ok) throw new Error("Erro ao buscar empresa.");
 
         const empresa = await response.json();
@@ -81,36 +82,23 @@ async function carregarEmpresa() {
 }
 
 function preencherFormulario(empresa) {
-    // Dados da empresa
     document.getElementById("cnpj").value         = mascaraCpfCnpj(empresa.cnpj || "");
     document.getElementById("nome").value         = empresa.nome || "";
     document.getElementById("email").value        = empresa.email || "";
-    document.getElementById("telefone").value     = mascaraTelefone(empresa.numero || "");
-    document.getElementById("razao-social").value = empresa.razao || "";
-
-    // Status (ativa/inativa) — campo gerado dinamicamente se não existir no HTML
-    garantirCampoStatus(Number(empresa.ativo) === 1);
-
-    // Módulos — marca os checkboxes que a empresa possui
-    const modulosAtivos = Array.isArray(empresa.modulos) ? empresa.modulos : [];
-    document.querySelectorAll(".modulos-grid input[type='checkbox']").forEach(cb => {
-        cb.checked = modulosAtivos.includes(cb.value);
-    });
-
-    // Usuário principal
-    document.getElementById("usuario").value       = empresa.usuarioNome  || "";
+    document.getElementById("telefone").value     = mascaraTelefone(empresa.num || "");
+    document.getElementById("razao-social").value = empresa.raz || "";
+    document.getElementById("status").value       = String(empresa.ativo ?? "1");
+    document.getElementById("usuario").value      = empresa.usuarioNome  || "";
     document.getElementById("email-usuario").value = empresa.usuarioEmail || "";
-}
+    document.getElementById("num").value          = mascaraTelefone(empresa.usuarioNum || "");
+    document.getElementById("email-usuario-confirma").value = empresa.usuarioEmail || "";
 
-/**
- * Garante que exista um campo de status no formulário.
- * Se o HTML não tiver o campo, cria e injeta após a seção de dados.
- */
-function garantirCampoStatus(ativa) {
-    if (document.getElementById("status")) {
-        document.getElementById("status").value = ativa ? "1" : "0";
-        return;
-    }
+    // Marca os módulos ativos — compara pelo MOD_ID (value dos checkboxes)
+    const modulosAtivos = Array.isArray(empresa.modulos) ? empresa.modulos.map(m => m.toLowerCase()) : [];
+    document.querySelectorAll(".modulos-grid input[type='checkbox']").forEach(cb => {
+        const labelTexto = cb.closest("label")?.querySelector("span")?.textContent?.trim().toLowerCase();
+        cb.checked = modulosAtivos.includes(labelTexto);
+    });
 }
 
 // =========================================================
@@ -120,57 +108,79 @@ function garantirCampoStatus(ativa) {
 async function salvarEmpresa() {
     const btn = document.getElementById("btn-salvar-empresa");
 
-    const nome       = document.getElementById("nome").value.trim();
-    const email      = document.getElementById("email").value.trim();
-    const telefone   = document.getElementById("telefone").value.trim();
-    const razao      = document.getElementById("razao-social").value.trim();
-    const status     = document.getElementById("status")?.value ?? "1";
+    const nome     = document.getElementById("nome")?.value.trim();
+    const email    = document.getElementById("email")?.value.trim();
+    const telefone = document.getElementById("telefone")?.value.trim();
+    const razao    = document.getElementById("razao-social")?.value.trim();
+    const status   = document.getElementById("status")?.value ?? "1";
+    const cnpj     = document.getElementById("cnpj")?.value.trim();
+
+    const usuarioNome  = document.getElementById("usuario")?.value.trim();
+    const usuarioEmail = document.getElementById("email-usuario")?.value.trim();
+    const usuarioEmailConfirma = document.getElementById("email-usuario-confirma")?.value.trim();
+    const usuarioNum   = document.getElementById("num")?.value.trim();
+
+    // Validações
+    if (usuarioEmail !== usuarioEmailConfirma) {
+        mostrarToast("Os emails do usuário principal não coincidem", "erro");
+        return;
+    }
 
     const modulos = Array.from(
         document.querySelectorAll(".modulos-grid input[type='checkbox']:checked")
-    ).map(cb => cb.value);
+    ).map(cb => parseInt(cb.value));
 
-    const usuarioNome  = document.getElementById("usuario").value.trim();
-    const usuarioEmail = document.getElementById("email-usuario").value.trim();
+    // Validações
+    if (!nome || !email || !razao || !telefone) {
+        mostrarToast("Preencha todos os campos obrigatórios", "erro");
+        return;
+    }
 
-    // --- Validação ---
-    const erros = validarFormulario({ nome, email, telefone, razao, modulos, usuarioNome, usuarioEmail });
-    if (erros.length > 0) {
-        erros.forEach(erro => mostrarToast(erro, "erro"));
+    if (modulos.length === 0) {
+        mostrarToast("Selecione ao menos um módulo", "erro");
+        return;
+    }
+
+    if (!usuarioNome || !usuarioEmail || !usuarioEmailConfirma || !usuarioNum) {
+        mostrarToast("Preencha todos os campos do usuário principal", "erro");
         return;
     }
 
     btn.disabled    = true;
     btn.textContent = "Salvando...";
 
+    const toastCarregando = mostrarToast("Salvando alterações...", "carregando");
+
     try {
-        const response = await fetch(`/Sewfy/api/adm/empresa?id=${empId}`, {
+        const response = await apiFetch(`/api/adm/empresas/${empId}`, {
             method: "PUT",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                nome,
-                email,
-                telefone,
-                razaoSocial: razao,
-                ativo: Number(status),
-                modulos,
-                usuarioNome,
-                usuarioEmail,
-            }),
+                EMP_NOME:      nome,
+                EMP_RAZ:       razao,
+                EMP_CNPJ:      apenasNumeros(cnpj),
+                EMP_EMAIL:     email,
+                EMP_NUM:       apenasNumeros(telefone) || null,
+                EMP_ATIV:      Number(status),
+                modulos:       modulos,
+                usuarioNome:   usuarioNome,
+                usuarioEmail:  usuarioEmail,
+            })
         });
 
-        const dados = await response.json();
+        toastCarregando.remove();
+
+        if (!response) return;
+
+        const data = await response.json();
 
         if (response.ok) {
-            mostrarToast(dados.mensagem ?? "Alterações salvas com sucesso!");
-        } else if (dados.erros) {
-            dados.erros.forEach(erro => mostrarToast(erro, "erro"));
+            mostrarToast(data.mensagem || "Alterações salvas com sucesso!", "sucesso");
         } else {
-            mostrarToast(dados.erro ?? "Erro inesperado. Tente novamente.", "erro");
+            mostrarToast(data.erro || "Erro ao salvar alterações", "erro");
         }
 
     } catch (error) {
+        toastCarregando.remove();
         console.error("Erro ao salvar empresa:", error);
         mostrarToast("Falha na comunicação com o servidor.", "erro");
     } finally {
