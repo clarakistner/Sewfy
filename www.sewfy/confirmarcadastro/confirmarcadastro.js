@@ -2,19 +2,47 @@ import { mostrarToast } from "../toast/toast.js";
 
 const API_BASE = 'http://localhost:8000';
 
-// Pega o token da URL
 const params = new URLSearchParams(window.location.search);
-const token = params.get('token');
+const token  = params.get('token');
+
+// Configurações de exibição por tipo
+const config = {
+    owner: {
+        titulo:  'Confirmar Cadastro',
+        botao:   'Salvar Informações',
+        sucesso: 'Empresa cadastrada com sucesso!',
+    },
+    funcionario: {
+        titulo:  'Confirmar Acesso',
+        botao:   'Salvar Informações',
+        sucesso: 'Acesso confirmado com sucesso!',
+    },
+    troca_owner: {
+        titulo:  'Confirmar Propriedade',
+        botao:   'Confirmar',
+        sucesso: 'Você agora é o proprietário da empresa!',
+    },
+    troca_email: {
+        titulo:  'Confirmar Novo Email',
+        botao:   'Confirmar Troca',
+        sucesso: 'Email atualizado com sucesso!',
+    },
+    redef_senha: {
+        titulo:  'Redefinir Senha',
+        botao:   'Salvar Nova Senha',
+        sucesso: 'Senha redefinida com sucesso!',
+    }
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // Se não tiver token na URL, exibe erro imediatamente
     if (!token) {
         mostrarErroToken('invalido');
         return;
     }
 
-    // Verifica o status do token antes de exibir o formulário
+    // Verifica o status e o tipo do token
+    let tipo = null;
     try {
         const statusResponse = await fetch(`${API_BASE}/api/convites/verificar?token=${token}`, {
             headers: { 'Accept': 'application/json' }
@@ -22,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const statusData = await statusResponse.json();
 
         if (statusData.status === 'usado') {
-            mostrarMensagemSucesso();
+            mostrarMensagemSucesso(statusData.tipo);
             return;
         }
 
@@ -31,11 +59,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        tipo = statusData.tipo;
+
     } catch (erro) {
         console.error('[ERRO] Falha ao verificar token:', erro);
         mostrarToast('Erro ao conectar com o servidor', 'erro');
         return;
     }
+
+    // Atualiza título e botão conforme o tipo
+    const cfg = config[tipo] ?? config.owner;
+    document.querySelector('.box-confirmacao h2').textContent = cfg.titulo;
+    document.querySelector('form button[type="submit"]').textContent = cfg.botao;
 
     // Toggle visibilidade das senhas
     document.querySelectorAll('.botao-senha').forEach(botao => {
@@ -49,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const senha        = document.getElementById('senha').value.trim();
+        const senha         = document.getElementById('senha').value.trim();
         const confirmaSenha = document.getElementById('confirma-senha').value.trim();
 
         if (!senha || !confirmaSenha) {
@@ -57,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Validação de senha: mínimo 10 caracteres, 1 letra maiúscula e 1 caractere especial
         const senhaRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{10,}$/;
         if (!senhaRegex.test(senha)) {
             mostrarToast(
@@ -73,20 +107,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // Envia requisição para confirmar cadastro
+            const toastCarregando = mostrarToast('Aguarde...', 'carregando');
+
             const response = await fetch(`${API_BASE}/api/convites/confirmar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    'Accept':       'application/json',
                 },
                 body: JSON.stringify({ token, senha })
             });
 
+            toastCarregando.remove();
+
             const data = await response.json();
 
             if (response.ok) {
-                mostrarMensagemSucesso();
+                mostrarMensagemSucesso(tipo);
                 return;
             }
 
@@ -95,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            mostrarToast(data.erro || 'Erro ao confirmar cadastro', 'erro');
+            mostrarToast(data.erro || 'Erro ao confirmar', 'erro');
 
         } catch (erro) {
             console.error('[ERRO FETCH]', erro);
@@ -104,18 +141,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// Exibe mensagem de sucesso após confirmação
-function mostrarMensagemSucesso() {
+function mostrarMensagemSucesso(tipo) {
+    const cfg = config[tipo] ?? config.owner;
     document.querySelector('.box-confirmacao').innerHTML = `
-        <h2>Cadastro Concluído!</h2>
+        <h2>${cfg.sucesso}</h2>
         <p style="margin: 20px 0; color: #444; font-size: 15px; text-align: center;">
-            Seu cadastro foi confirmado com sucesso. Acesse o sistema pelo 
+            Acesse o sistema pelo 
             <a href="/www.sewfy/login/index.html" style="color: #0e59fe; font-weight: bold;">Login</a>.
         </p>
     `;
 }
 
-// Exibe mensagem de erro para token inválido ou expirado
 function mostrarErroToken(status) {
     const mensagem = status === 'expirado'
         ? 'Este link expirou. Solicite um novo convite.'

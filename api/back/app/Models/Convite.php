@@ -20,6 +20,8 @@ class Convite extends Model
         'CONV_TOKEN',
         'CONV_EXPIRA',
         'CONV_USADO',
+        'CONV_TIPO',
+        'CONV_USU_ID',
         'CONVIDADO_POR'
     ];
 

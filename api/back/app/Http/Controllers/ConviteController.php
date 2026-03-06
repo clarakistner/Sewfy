@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 class ConviteController extends Controller
 {
-    // POST /api/adm/convites/owner - Criar convite para nova empresa (owner)
+    // POST /api/adm/convites/owner - Criar convite para nova empresa
     public function storeOwner(Request $request)
     {
         $request->validate([
@@ -69,9 +69,11 @@ class ConviteController extends Controller
                 ]);
             }
 
-            $convite = Convite::create([
+            Convite::create([
                 'EMPP_ID'       => $pendente->EMPP_ID,
                 'EMP_ID'        => null,
+                'CONV_USU_ID'   => null,
+                'CONV_TIPO'     => 'owner',
                 'CONV_NUM'      => trim($request->CONV_NUM),
                 'CONV_EMAIL'    => trim($request->CONV_EMAIL),
                 'CONV_NOME'     => trim($request->CONV_NOME),
@@ -96,10 +98,10 @@ class ConviteController extends Controller
         try {
             Mail::to($request->CONV_EMAIL)
                 ->send(new ConviteEmail(
-                    nome: $request->CONV_NOME,
+                    nome:    $request->CONV_NOME,
                     empresa: $request->EMPP_NOME,
-                    token: $token,
-                    tipo: 'owner'
+                    token:   $token,
+                    tipo:    'owner'
                 ));
         } catch (\Exception $e) {
             Log::error('Erro ao enviar email de convite owner: ' . $e->getMessage());
@@ -125,10 +127,8 @@ class ConviteController extends Controller
         $empresa = $usuario->empresa;
 
         $jaExiste = User::where('USU_EMAIL', $request->CONV_EMAIL)
-            ->whereHas(
-                'empresas',
-                fn($q) => $q->where('EMP_ID', $empresa->EMP_ID)
-            )->exists();
+            ->whereHas('empresas', fn($q) => $q->where('EMP_ID', $empresa->EMP_ID))
+            ->exists();
 
         if ($jaExiste) {
             return response()->json(['erro' => 'Usuário já pertence a esta empresa'], 409);
@@ -164,6 +164,8 @@ class ConviteController extends Controller
             $convite = Convite::create([
                 'EMPP_ID'       => null,
                 'EMP_ID'        => $empresa->EMP_ID,
+                'CONV_USU_ID'   => null,
+                'CONV_TIPO'     => 'funcionario',
                 'CONV_NUM'      => trim($request->CONV_NUM),
                 'CONV_EMAIL'    => trim($request->CONV_EMAIL),
                 'CONV_NOME'     => trim($request->CONV_NOME),
@@ -195,16 +197,203 @@ class ConviteController extends Controller
         try {
             Mail::to($request->CONV_EMAIL)
                 ->send(new ConviteEmail(
-                    nome: $request->CONV_NOME,
+                    nome:    $request->CONV_NOME,
                     empresa: $empresa->EMP_NOME,
-                    token: $token,
-                    tipo: 'funcionario'
+                    token:   $token,
+                    tipo:    'funcionario'
                 ));
         } catch (\Exception $e) {
             Log::error('Erro ao enviar email de convite funcionario: ' . $e->getMessage());
         }
 
         return response()->json(['mensagem' => 'Convite enviado com sucesso!'], 201);
+    }
+
+    // POST /api/adm/convites/trocar-owner - Trocar owner da empresa
+    public function trocarOwner(Request $request)
+    {
+        $request->validate([
+            'EMP_ID'     => 'required|integer|exists:EMPRESAS,EMP_ID',
+            'CONV_EMAIL' => 'required|email',
+            'CONV_NOME'  => 'required|string|max:100',
+            'CONV_NUM'   => 'required|string|max:20',
+        ]);
+
+        $token = Str::random(64);
+
+        // Busca o owner atual
+        $ownerAtualId = DB::table('EMPRESA_USUARIOS')
+            ->where('EMP_ID', $request->EMP_ID)
+            ->where('USU_E_PROPRIETARIO', 1)
+            ->value('USU_ID');
+
+        $empresa = Empresa::findOrFail($request->EMP_ID);
+
+        try {
+
+            DB::beginTransaction();
+
+            Convite::create([
+                'EMPP_ID'       => null,
+                'EMP_ID'        => $request->EMP_ID,
+                'CONV_USU_ID'   => $ownerAtualId,
+                'CONV_TIPO'     => 'troca_owner',
+                'CONV_NUM'      => trim($request->CONV_NUM),
+                'CONV_EMAIL'    => trim($request->CONV_EMAIL),
+                'CONV_NOME'     => trim($request->CONV_NOME),
+                'CONV_TOKEN'    => $token,
+                'CONV_EXPIRA'   => now()->addDay(),
+                'CONV_USADO'    => 0,
+                'CONVIDADO_POR' => null
+            ]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'erro'    => 'Erro ao criar convite de troca de owner',
+                'detalhe' => $e->getMessage()
+            ], 500);
+        }
+
+        try {
+            Mail::to($request->CONV_EMAIL)
+                ->send(new ConviteEmail(
+                    nome:    $request->CONV_NOME,
+                    empresa: $empresa->EMP_NOME,
+                    token:   $token,
+                    tipo:    'troca_owner'
+                ));
+        } catch (\Exception $e) {
+            Log::error('Erro ao enviar email de troca de owner: ' . $e->getMessage());
+        }
+
+        return response()->json(['mensagem' => 'Convite de troca de owner enviado com sucesso!'], 201);
+    }
+
+    // POST /api/auth/redefinir-senha - Solicitar redefinição de senha
+    public function redefinirSenha(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $usuario = User::where('USU_EMAIL', $request->email)->first();
+
+        // Não revela se o email existe ou não por segurança
+        if (!$usuario) {
+            return response()->json(['mensagem' => 'Se o email estiver cadastrado, você receberá um link em breve.']);
+        }
+
+        $token = Str::random(64);
+
+        try {
+
+            DB::beginTransaction();
+
+            Convite::create([
+                'EMPP_ID'       => null,
+                'EMP_ID'        => null,
+                'CONV_USU_ID'   => $usuario->USU_ID,
+                'CONV_TIPO'     => 'redef_senha',
+                'CONV_NUM'      => $usuario->USU_NUM ?? '00000000000',
+                'CONV_EMAIL'    => $usuario->USU_EMAIL,
+                'CONV_NOME'     => $usuario->USU_NOME,
+                'CONV_TOKEN'    => $token,
+                'CONV_EXPIRA'   => now()->addHours(2),
+                'CONV_USADO'    => 0,
+                'CONVIDADO_POR' => null
+            ]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'erro'    => 'Erro ao criar solicitação de redefinição',
+                'detalhe' => $e->getMessage()
+            ], 500);
+        }
+
+        try {
+            Mail::to($usuario->USU_EMAIL)
+                ->send(new ConviteEmail(
+                    nome:    $usuario->USU_NOME,
+                    empresa: '',
+                    token:   $token,
+                    tipo:    'redef_senha'
+                ));
+        } catch (\Exception $e) {
+            Log::error('Erro ao enviar email de redefinição de senha: ' . $e->getMessage());
+        }
+
+        return response()->json(['mensagem' => 'Se o email estiver cadastrado, você receberá um link em breve.']);
+    }
+
+    // POST /api/auth/trocar-email - Solicitar troca de email
+    public function trocarEmail(Request $request)
+    {
+        $request->validate([
+            'novo_email' => 'required|email|unique:USUARIOS,USU_EMAIL',
+            'senha'      => 'required|string',
+        ]);
+
+        $usuario = $request->user();
+
+        if (!Hash::check($request->senha, $usuario->USU_SENHA)) {
+            return response()->json(['erro' => 'Senha incorreta'], 401);
+        }
+
+        $token = Str::random(64);
+
+        try {
+
+            DB::beginTransaction();
+
+            Convite::create([
+                'EMPP_ID'       => null,
+                'EMP_ID'        => null,
+                'CONV_USU_ID'   => $usuario->USU_ID,
+                'CONV_TIPO'     => 'troca_email',
+                'CONV_NUM'      => $usuario->USU_NUM ?? '00000000000',
+                'CONV_EMAIL'    => trim($request->novo_email),
+                'CONV_NOME'     => $usuario->USU_NOME,
+                'CONV_TOKEN'    => $token,
+                'CONV_EXPIRA'   => now()->addDay(),
+                'CONV_USADO'    => 0,
+                'CONVIDADO_POR' => null
+            ]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'erro'    => 'Erro ao criar solicitação de troca de email',
+                'detalhe' => $e->getMessage()
+            ], 500);
+        }
+
+        try {
+            Mail::to($request->novo_email)
+                ->send(new ConviteEmail(
+                    nome:    $usuario->USU_NOME,
+                    empresa: '',
+                    token:   $token,
+                    tipo:    'troca_email'
+                ));
+        } catch (\Exception $e) {
+            Log::error('Erro ao enviar email de troca de email: ' . $e->getMessage());
+        }
+
+        return response()->json(['mensagem' => 'Email de confirmação enviado para o novo endereço!']);
     }
 
     // POST /api/convites/confirmar - Confirmar convite
@@ -220,14 +409,46 @@ class ConviteController extends Controller
             ->where('CONV_EXPIRA', '>', now())
             ->firstOrFail();
 
-        if ($convite->EMPP_ID) {
-            return $this->confirmarOwner($request, $convite);
+        switch ($convite->CONV_TIPO) {
+            case 'owner':
+                return $this->confirmarOwner($request, $convite);
+            case 'funcionario':
+                return $this->confirmarFuncionario($request, $convite);
+            case 'troca_owner':
+                return $this->confirmarTrocaOwner($request, $convite);
+            case 'troca_email':
+                return $this->confirmarTrocaEmail($request, $convite);
+            case 'redef_senha':
+                return $this->confirmarRedefinicaoSenha($request, $convite);
+            default:
+                return response()->json(['erro' => 'Tipo de convite inválido'], 400);
         }
-
-        return $this->confirmarFuncionario($request, $convite);
     }
 
-    // Confirmar convite de owner
+   
+    // GET /api/convites/verificar?token= - Verificar status do convite
+    public function verificar(Request $request)
+    {
+        $token = $request->query('token');
+
+        $convite = Convite::where('CONV_TOKEN', $token)->first();
+
+        if (!$convite) {
+            return response()->json(['status' => 'invalido', 'tipo' => null]);
+        }
+
+        if ($convite->CONV_USADO) {
+            return response()->json(['status' => 'usado', 'tipo' => $convite->CONV_TIPO]);
+        }
+
+        if ($convite->CONV_EXPIRA < now()) {
+            return response()->json(['status' => 'expirado', 'tipo' => $convite->CONV_TIPO]);
+        }
+
+        return response()->json(['status' => 'valido', 'tipo' => $convite->CONV_TIPO]);
+    }
+
+    // Confirmação de convite para owner (criação de empresa)
     private function confirmarOwner(Request $request, Convite $convite)
     {
         $pendente = EmpresaPendente::with('modulos')->findOrFail($convite->EMPP_ID);
@@ -310,7 +531,7 @@ class ConviteController extends Controller
         return response()->json(['mensagem' => 'Empresa e cadastro confirmados com sucesso!']);
     }
 
-    // Confirmar convite de funcionário
+    // Confirmação de convite para funcionário
     private function confirmarFuncionario(Request $request, Convite $convite)
     {
         $usuarioExistente = User::where('USU_EMAIL', $convite->CONV_EMAIL)->first();
@@ -374,25 +595,148 @@ class ConviteController extends Controller
         return response()->json(['mensagem' => 'Cadastro confirmado com sucesso!']);
     }
 
-    // GET /api/convites/verificar?token= - Verificar status do convite
-    public function verificar(Request $request)
+    // Confirmação de troca de owner para convites do tipo 'troca_owner'
+    private function confirmarTrocaOwner(Request $request, Convite $convite)
     {
-        $token = $request->query('token');
+        $novoOwnerEmail  = $convite->CONV_EMAIL;
+        $empresaId       = $convite->EMP_ID;
+        $ownerAntigoId   = $convite->CONV_USU_ID;
 
-        $convite = Convite::where('CONV_TOKEN', $token)->first();
+        // Busca os módulos da empresa
+        $modulosEmpresa = DB::table('EMPRESA_MODULOS')
+            ->where('EMP_ID', $empresaId)
+            ->pluck('MOD_ID');
 
-        if (!$convite) {
-            return response()->json(['status' => 'invalido']);
+        $novoUsuario = User::where('USU_EMAIL', $novoOwnerEmail)->first();
+
+        if ($novoUsuario) {
+            // Verifica a senha
+            if (!Hash::check($request->senha, $novoUsuario->USU_SENHA)) {
+                return response()->json(['erro' => 'Senha incorreta para este usuário'], 401);
+            }
         }
 
-        if ($convite->CONV_USADO) {
-            return response()->json(['status' => 'usado']);
+        try {
+
+            DB::beginTransaction();
+
+            if ($novoUsuario) {
+                $usuario = $novoUsuario;
+            } else {
+                // Cria novo usuário
+                $usuario = User::create([
+                    'USU_NOME'  => $convite->CONV_NOME,
+                    'USU_EMAIL' => $novoOwnerEmail,
+                    'USU_SENHA' => Hash::make($request->senha),
+                    'USU_NUM'   => $convite->CONV_NUM,
+                    'USU_ATIV'  => 1
+                ]);
+            }
+
+            // Vincula ou atualiza o novo owner na empresa
+            DB::table('EMPRESA_USUARIOS')->updateOrInsert(
+                ['EMP_ID' => $empresaId, 'USU_ID' => $usuario->USU_ID],
+                ['USU_E_PROPRIETARIO' => 1, 'USU_ATIV' => 1]
+            );
+
+            // Garante acesso a todos os módulos da empresa para o novo owner
+            foreach ($modulosEmpresa as $modId) {
+                DB::table('USUARIO_MODULOS')->updateOrInsert(
+                    [
+                        'USU_ID' => $usuario->USU_ID,
+                        'EMP_ID' => $empresaId,
+                        'MOD_ID' => $modId
+                    ],
+                    ['CONCEDIDO_POR' => $usuario->USU_ID]
+                );
+            }
+
+            // Rebaixa o owner antigo para funcionário comum
+            if ($ownerAntigoId) {
+                DB::table('EMPRESA_USUARIOS')
+                    ->where('EMP_ID', $empresaId)
+                    ->where('USU_ID', $ownerAntigoId)
+                    ->update(['USU_E_PROPRIETARIO' => 0]);
+            }
+
+            $convite->update(['CONV_USADO' => 1]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'erro'    => 'Erro ao confirmar troca de owner',
+                'detalhe' => $e->getMessage()
+            ], 500);
         }
 
-        if ($convite->CONV_EXPIRA < now()) {
-            return response()->json(['status' => 'expirado']);
+        return response()->json(['mensagem' => 'Troca de proprietário realizada com sucesso!']);
+    }
+
+    // Confirmação de troca de email para convites do tipo 'troca_email'
+    private function confirmarTrocaEmail(Request $request, Convite $convite)
+    {
+        $usuarioId  = $convite->CONV_USU_ID;
+        $novoEmail  = $convite->CONV_EMAIL;
+
+        $usuario = User::findOrFail($usuarioId);
+
+        if (!Hash::check($request->senha, $usuario->USU_SENHA)) {
+            return response()->json(['erro' => 'Senha incorreta'], 401);
         }
 
-        return response()->json(['status' => 'valido']);
+        try {
+
+            DB::beginTransaction();
+
+            $usuario->update(['USU_EMAIL' => $novoEmail]);
+            $convite->update(['CONV_USADO' => 1]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'erro'    => 'Erro ao confirmar troca de email',
+                'detalhe' => $e->getMessage()
+            ], 500);
+        }
+
+        return response()->json(['mensagem' => 'Email atualizado com sucesso!']);
+    }
+
+    // Redefinição de senha para convites do tipo 'redef_senha'
+    private function confirmarRedefinicaoSenha(Request $request, Convite $convite)
+    {
+        $usuario = User::findOrFail($convite->CONV_USU_ID);
+
+        try {
+
+            DB::beginTransaction();
+
+            $usuario->update([
+                'USU_SENHA' => Hash::make($request->senha)
+            ]);
+
+            $convite->update(['CONV_USADO' => 1]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'erro'    => 'Erro ao redefinir senha',
+                'detalhe' => $e->getMessage()
+            ], 500);
+        }
+
+        return response()->json(['mensagem' => 'Senha redefinida com sucesso!']);
     }
 }

@@ -1,9 +1,5 @@
 const API_BASE = 'http://localhost:8000';
 
-// =============================================================
-// VERIFICAÇÃO DE AUTH
-// Chame verificarAuth() no topo de cada página protegida
-// =============================================================
 export function verificarAuth() {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -11,18 +7,15 @@ export function verificarAuth() {
     }
 }
 
-
-// =============================================================
-// FETCH AUTENTICADO
-// Use apiFetch() no lugar de fetch() em todas as requisições
-// =============================================================
- export async function apiFetch(endpoint, options = {}) {
-    const token = sessionStorage.getItem('token');
+export async function apiFetch(endpoint, options = {}) {
+    const token     = sessionStorage.getItem('token');
+    const empresaId = sessionStorage.getItem('empresa_id');
 
     const headers = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        'Accept':       'application/json',
+        ...(token     ? { 'Authorization': `Bearer ${token}` }   : {}),
+        ...(empresaId ? { 'X-Empresa-Id': empresaId }            : {}),
         ...(options.headers || {})
     };
 
@@ -31,7 +24,6 @@ export function verificarAuth() {
         headers
     });
 
-    // Token expirado ou inválido
     if (response.status === 401) {
         logout();
         return null;
@@ -40,10 +32,6 @@ export function verificarAuth() {
     return response;
 }
 
-
-// =============================================================
-// LOGOUT
-// =============================================================
 export async function logout() {
     const token = sessionStorage.getItem('token');
 
@@ -53,7 +41,7 @@ export async function logout() {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json',
+                    'Accept':        'application/json',
                 }
             });
         } catch (e) {
@@ -63,17 +51,6 @@ export async function logout() {
 
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('email');
+    sessionStorage.removeItem('empresa_id');
     window.location.replace('/www.sewfy/loginadm/index.html');
-}
-
-
-// =============================================================
-// UTILITÁRIOS
-// =============================================================
-function getToken() {
-    return sessionStorage.getItem('token');
-}
-
-function getEmail() {
-    return sessionStorage.getItem('email');
 }

@@ -149,9 +149,32 @@ function renderizarEmpresas(empresas) {
     });
 }
 
-function acessarEmpresa(id) {
-    console.log("Acessar empresa:", id);
+async function acessarEmpresa(id) {
+    try {
+        const response = await apiFetch(`/api/adm/empresas/${id}/acessar`, {
+            method: 'POST'
+        });
+
+        if (!response || !response.ok) {
+            mostrarToast('Erro ao acessar empresa', 'erro');
+            return;
+        }
+
+        const data = await response.json();
+
+        // Salva o empresa_id no sessionStorage para o header X-Empresa-Id
+        sessionStorage.setItem('empresa_id', data.empresa_id);
+        sessionStorage.setItem('empresa_nome', data.empresa_nome);
+
+        // Redireciona para o painel da empresa
+        window.location.href = '/www.sewfy/home/index.html';
+
+    } catch (erro) {
+        console.error('[ERRO]', erro);
+        mostrarToast('Erro ao conectar com o servidor', 'erro');
+    }
 }
+window.acessarEmpresa = acessarEmpresa;
 
 function editarEmpresa(id) {
     sessionStorage.setItem("listaEmpresas_origem", window.location.href);
