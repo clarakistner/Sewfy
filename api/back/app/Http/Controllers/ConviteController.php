@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Convite;
 use App\Models\Empresa;
 use App\Models\EmpresaPendente;
+use App\Models\EmpresaUsuarios;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -82,7 +83,6 @@ class ConviteController extends Controller
             ]);
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -121,14 +121,15 @@ class ConviteController extends Controller
             'modulos.*'  => 'integer|exists:MODULOS,MOD_ID'
         ]);
 
-        $usuario = $request->user();
-        $empresa = $usuario->empresa;
+        $abilities = $request->user()->currentAccessToken()->abilities;
+        $ability = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
+        $usuario = User::where('USU_EMAIL', $request->CONV_EMAIL)->first();
+        $empresa = Empresa::where("EMP_ID", (int) $empresaId)->first();
 
-        $jaExiste = User::where('USU_EMAIL', $request->CONV_EMAIL)
-            ->whereHas(
-                'empresas',
-                fn($q) => $q->where('EMP_ID', $empresa->EMP_ID)
-            )->exists();
+        $jaExiste = $usuario && EmpresaUsuarios::where('USU_ID', $usuario->USU_ID)
+            ->where('EMP_ID', $empresa->EMP_ID)
+            ->exists();
 
         if ($jaExiste) {
             return response()->json(['erro' => 'Usuário já pertence a esta empresa'], 409);
@@ -157,6 +158,8 @@ class ConviteController extends Controller
 
         $token = Str::random(64);
 
+        $proprietario = $request->user();
+
         try {
 
             DB::beginTransaction();
@@ -164,13 +167,14 @@ class ConviteController extends Controller
             $convite = Convite::create([
                 'EMPP_ID'       => null,
                 'EMP_ID'        => $empresa->EMP_ID,
-                'CONV_NUM'      => trim($request->CONV_NUM),
                 'CONV_EMAIL'    => trim($request->CONV_EMAIL),
                 'CONV_NOME'     => trim($request->CONV_NOME),
+                'CONV_TIPO' => 'funcionario',
                 'CONV_TOKEN'    => $token,
                 'CONV_EXPIRA'   => now()->addDay(),
+                'CONV_DATAC' => now(),
                 'CONV_USADO'    => 0,
-                'CONVIDADO_POR' => $usuario->USU_ID
+                'CONVIDADO_POR' =>  $proprietario ->USU_ID
             ]);
 
             foreach ($request->modulos as $modId) {
@@ -181,7 +185,6 @@ class ConviteController extends Controller
             }
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -296,7 +299,6 @@ class ConviteController extends Controller
             $pendente->delete();
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -360,7 +362,6 @@ class ConviteController extends Controller
             $convite->update(['CONV_USADO' => 1]);
 
             DB::commit();
-
         } catch (\Exception $e) {
 
             DB::rollBack();

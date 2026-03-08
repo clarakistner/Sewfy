@@ -7,6 +7,7 @@ use App\Models\SewfyAdm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EmpresaUsuarios;
+use App\Models\Empresa;
 
 session_start();
 class AuthController extends Controller
@@ -25,14 +26,14 @@ class AuthController extends Controller
             return response()->json(['erro' => 'Credenciais inválidas'], 401);
         }
 
-        if (!$user->USU_ATIV) {
+        if ($user->USU_ATIV === 0) {
             return response()->json(['erro' => 'Conta inativa'], 403);
         }
 
         $empresasUsuario = EmpresaUsuarios::where('USU_ID', $user->USU_ID)->get();
 
         $quantidadeEmpresas = $empresasUsuario->count();
-        $empresasIds = $empresasUsuario->pluck('EMP_ID')->toArray();
+        $empresasIds = Empresa::whereIn('EMP_ID', $empresasUsuario->pluck('EMP_ID'))->whereIn('EMP_ATIV', [1])->pluck('EMP_ID')->toArray();
 
         $abilities = array_map(fn($id) => "empresa_$id", $empresasIds);
         $user->tokens()->delete();
@@ -61,7 +62,7 @@ class AuthController extends Controller
             return response()->json(['erro' => 'Credenciais inválidas'], 401);
         }
 
-        if (!$adm->ADM_ATIV) {
+        if ($adm->ADM_ATIV === 0) {
             return response()->json(['erro' => 'Conta inativa'], 403);
         }
 

@@ -26,6 +26,6 @@ class UsuarioModulosController extends Controller
         $nomesModulos = Modulo::whereIn('MOD_ID', $modulosUsuario)->pluck('MOD_NOME')->toArray();
         
 
-        return response()->json(['modulos' => $nomesModulos]);
+        return response()->json(['modulos' => $nomesModulos, 'idsModulos' => $modulosUsuario]);
     }
 }

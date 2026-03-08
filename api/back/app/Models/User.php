@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Empresa;
 
 class User extends Authenticatable
 {
@@ -37,6 +38,15 @@ class User extends Authenticatable
             'USUARIO_MODULOS',
             'USU_ID',
             'MOD_ID'
+        );
+    }
+    public function empresas()
+    {
+        return $this->belongsToMany(
+            Empresa::class,
+            'EMPRESA_USUARIOS',
+            'USU_ID',
+            'EMP_ID'
         );
     }
 }

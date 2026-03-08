@@ -17,8 +17,10 @@ class Convite extends Model
         'CONV_NUM',
         'CONV_EMAIL',
         'CONV_NOME',
+        'CONV_TIPO',
         'CONV_TOKEN',
         'CONV_EXPIRA',
+        'CONV_DATAC',
         'CONV_USADO',
         'CONVIDADO_POR'
     ];
