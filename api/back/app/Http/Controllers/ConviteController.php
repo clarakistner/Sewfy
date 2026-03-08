@@ -180,7 +180,6 @@ class ConviteController extends Controller
                 'CONV_NUM'      => trim($request->CONV_NUM),
                 'CONV_EMAIL'    => trim($request->CONV_EMAIL),
                 'CONV_NOME'     => trim($request->CONV_NOME),
-                'CONV_TIPO' => 'funcionario',
                 'CONV_TOKEN'    => $token,
                 'CONV_EXPIRA'   => now()->addDay(),
                 'CONV_DATAC' => now(),

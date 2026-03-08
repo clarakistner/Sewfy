@@ -1,0 +1,316 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  background-color: #f9fafb;
+}
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  transition: grid-template-columns 0.6s ease;
+}
+
+.layout.sem-menu {
+  grid-template-columns: 0px 1fr;
+}
+
+/* Sidebar */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: linear-gradient(160deg, #03008a 0%, #0e59fe 100%);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+.corpoConfigOwner {
+  opacity: 0;
+}
+
+.corpoConfigOwner.fechado {
+  
+  animation: fechar 0.5s forwards;
+}
+.corpoConfigOwner.aberto {
+  animation: abrir 0.5s 0.6s forwards;
+  opacity: 0;
+ 
+}
+
+@keyframes fechar {
+  from {
+    opacity: 1;
+max-width: 260px;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+max-width: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes abrir {
+  from {
+    opacity: 0;
+max-width: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    max-width: 260px;
+    transform: translateX(0);
+  }
+}
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Efeito de luz sutil */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Header */
+.sidebar-header {
+  margin-bottom: 36px;
+  padding-left: 8px;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  font-family: "Times New Roman", serif;
+  font-size: 40px;
+  font-weight: bold;
+  letter-spacing: -0.3px;
+  background: linear-gradient(180deg, #ffffff, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}
+
+.sidebar-subtitle {
+  color: rgba(180, 195, 255, 0.75);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* Nav */
+.corpoConfigOwner .nav {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+/* Nav item */
+.corpoConfigOwner .nav-item {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Botão */
+.corpoConfigOwner .nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: rgba(180, 195, 255, 0.85);
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+  text-align: left;
+  position: relative;
+}
+
+.corpoConfigOwner .nav-btn .material-symbols-outlined {
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.corpoConfigOwner .nav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.corpoConfigOwner .nav-btn:hover .material-symbols-outlined {
+  transform: scale(1.1);
+}
+
+.corpoConfigOwner .nav-btn:active {
+  transform: scale(0.98);
+}
+
+/* Botão ativo */
+.corpoConfigOwner .nav-btn.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.corpoConfigOwner .nav-btn.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #ffffff;
+}
+
+/* Label e chevron */
+.corpoConfigOwner .nav-btn-label {
+  flex: 1;
+}
+
+.corpoConfigOwner .nav-chevron {
+  font-size: 16px !important;
+  color: rgba(180, 195, 255, 0.5);
+  transition:
+    transform 0.22s ease,
+    color 0.18s ease;
+  margin-left: auto;
+}
+
+.corpoConfigOwner .nav-item.open > .nav-btn .nav-chevron {
+  transform: rotate(90deg);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Submenu */
+/* Submenu */
+.corpoConfigOwner .submenu {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 14px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 0;
+}
+
+.corpoConfigOwner .nav-item.open > .submenu {
+  max-height: 400px;
+  margin-bottom: 4px;
+}
+
+.corpoConfigOwner .nav-item.open > .nav-btn {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.corpoConfigOwner .nav-item.open > .nav-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #ffffff;
+}
+
+.corpoConfigOwner .submenu-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(180, 195, 255, 0.75);
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0 8px 8px 0;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.corpoConfigOwner .submenu-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.corpoConfigOwner .submenu-btn.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Footer da sidebar */
+.corpoConfigOwner .sidebar-footer {
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.corpoConfigOwner .sidebar-footer .nav {
+  flex: unset;
+  gap: 4px;
+}
+
+/* Conteúdo principal */
+.corpoConfigOwner .content {
+  padding: 40px;
+  min-height: 100vh;
+}
+
+.corpoConfigOwner #icon-config.girando {
+  animation: girar 0.3s linear;
+}
+
+#subtitulo {
+  color: rgba(253, 254, 255, 0.75);
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+@keyframes girar {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
