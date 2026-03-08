@@ -22,6 +22,8 @@ class Convite extends Model
         'CONV_EXPIRA',
         'CONV_DATAC',
         'CONV_USADO',
+        'CONV_TIPO',
+        'CONV_USU_ID',
         'CONVIDADO_POR'
     ];
 

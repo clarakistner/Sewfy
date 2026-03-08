@@ -25,9 +25,14 @@ class ConviteEmail extends Mailable
 
     public function build()
     {
-        $assunto = $this->tipo === 'owner'
-            ? "Ative o acesso da {$this->empresa} no Sewfy"
-            : "Você foi convidado para acessar {$this->empresa} no Sewfy";
+        $assunto = match($this->tipo) {
+            'owner'       => "Ative o acesso da {$this->empresa} no Sewfy",
+            'funcionario' => "Você foi convidado para acessar {$this->empresa} no Sewfy",
+            'troca_owner' => "Você foi indicado como novo proprietário de {$this->empresa} no Sewfy",
+            'troca_email' => "Confirme seu novo email no Sewfy",
+            'redef_senha' => "Redefinição de senha - Sewfy",
+            default       => "Notificação Sewfy",
+        };
 
         return $this->subject($assunto)
                     ->view('convite');

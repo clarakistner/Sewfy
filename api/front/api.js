@@ -1,101 +1,87 @@
-// Importa a função de toast para exibir mensagens ao usuário
 import { mostrarToast } from "../../www.sewfy/toast/toast.js";
 
-// Classe responsável por realizar requisições à API
 export class API {
-    // Construtor que define a URL base da API
     constructor(url = 'http://localhost:8000/api') {
-        this.url = url
+        this.url = url;
     }
 
-    // Método genérico para realizar requisições HTTP
     async request(caminho, opcoes = {}) {
-        const url = `${this.url}${caminho}`
+        const url       = `${this.url}${caminho}`;
+        const empresaId = sessionStorage.getItem('empresa_id');
 
-        // Configuração padrão das requisições
         const config = {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type':  'application/json',
                 'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                ...(empresaId ? { 'X-Empresa-Id': empresaId } : {}),
                 ...opcoes.headers
             },
             ...opcoes
-        }
+        };
 
         try {
-            // Realiza a requisição
-            const response = await fetch(url, config)
+            const response = await fetch(url, config);
 
-            // Lê a resposta como texto
-            const text = await response.text()
-            console.log(`Texto: ${text}`)
-            console.log(`Status HTTP: ${response.status}`)
+            const text = await response.text();
+            console.log(`Texto: ${text}`);
+            console.log(`Status HTTP: ${response.status}`);
 
-            // Converte o texto para JSON
-            const dados = JSON.parse(text)
+            const dados = JSON.parse(text);
 
-            // Exibe toast se houver mensagem de resposta
             if (!!dados.resposta) {
-                mostrarToast(`${dados.resposta}`)
+                mostrarToast(`${dados.resposta}`);
             }
 
-           
-
-            // Verifica se a requisição falhou
             if (!response.ok || dados.status === 'erro') {
-                throw new Error(dados.resposta || dados.erro || 'Erro na requisição')
+                throw new Error(dados.resposta || dados.erro || 'Erro na requisição');
             }
 
-            return dados
+            return dados;
+
         } catch (error) {
-            console.error(`Erro na API: ${error}`)
-            throw error
+            console.error(`Erro na API: ${error}`);
+            throw error;
         }
     }
 
-    // Método para requisições POST
     async post(caminho, dados) {
         return this.request(caminho, {
             method: 'POST',
-            body: JSON.stringify(dados)
-        })
+            body:   JSON.stringify(dados)
+        });
     }
 
-    // Método para requisições PUT
     async put(caminho, dados) {
         return this.request(caminho, {
             method: 'PUT',
-            body: JSON.stringify(dados)
-        })
+            body:   JSON.stringify(dados)
+        });
     }
-    
-    // Método para buscar recurso por ID
+
     async buscaId(caminho, id) {
         return this.request(`${caminho}/${id}`, {
             method: 'GET'
-        })
+        });
     }
 
-    // Método para requisições GET
     async get(caminho) {
         return this.request(caminho, {
             method: 'GET'
-        })
+        });
     }
 
-    //Método para requisições DELETE
-    async delete(caminho){
+    async delete(caminho) {
         return this.request(caminho, {
             method: 'DELETE'
-        })
+        });
     }
-    async deleteAll(caminho, dados){
+
+    async deleteAll(caminho, dados) {
         return this.request(caminho, {
             method: 'DELETE',
-            body: JSON.stringify(dados)
-        })
+            body:   JSON.stringify(dados)
+        });
     }
 }
 
-// Cria instância global da API disponível no objeto window
-window.api = new API()
+window.api = new API();

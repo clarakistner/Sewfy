@@ -26,9 +26,9 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
-       .header {
+        .header {
             background: linear-gradient(90deg, #0e59fe, #020066);
-            padding: 20px 40px; 
+            padding: 20px 40px;
             color: white;
         }
 
@@ -90,7 +90,7 @@
             display: inline-block;
             padding: 14px 36px;
             background: linear-gradient(90deg, #0e59fe, #020066);
-            color: #ffffff !important; /* força o branco */
+            color: #ffffff !important;
             border-radius: 8px;
             text-decoration: none;
             font-size: 15px;
@@ -127,26 +127,87 @@
                 <div class="aviso">
                     Atenção: sem a sua confirmação, a empresa <strong>{{ $empresa }}</strong> não será cadastrada no sistema.
                 </div>
-            @else
+
+                <div class="info-box">
+                    <strong>Já tem uma conta no Sewfy?</strong> Digite sua senha atual para vincular esta empresa ao seu cadastro existente.<br><br>
+                    <strong>É seu primeiro acesso?</strong> Crie uma senha para acessar o sistema.
+                </div>
+
+                <div class="btn-wrapper">
+                    <a href="http://localhost/www.sewfy/confirmarcadastro/index.html?token={{ $token }}" class="btn">
+                        Confirmar Cadastro
+                    </a>
+                </div>
+
+            @elseif($tipo === 'funcionario')
                 <p>Você foi convidado para fazer parte do time da empresa <strong>{{ $empresa }}</strong> no Sewfy ERP.</p>
                 <p>Clique no botão abaixo para confirmar seu acesso.</p>
+
+                <div class="info-box">
+                    <strong>Já tem uma conta no Sewfy?</strong> Digite sua senha atual para vincular esta empresa ao seu cadastro existente.<br><br>
+                    <strong>É seu primeiro acesso?</strong> Crie uma senha para acessar o sistema.
+                </div>
+
+                <div class="btn-wrapper">
+                    <a href="http://localhost/www.sewfy/confirmarcadastro/index.html?token={{ $token }}" class="btn">
+                        Confirmar Acesso
+                    </a>
+                </div>
+
+            @elseif($tipo === 'troca_owner')
+                <p>Você foi indicado como novo proprietário da empresa <strong>{{ $empresa }}</strong> no Sewfy ERP.</p>
+                <p>Ao confirmar, você assumirá a gestão da empresa e terá acesso a todos os módulos contratados.</p>
+
+                <div class="info-box">
+                    <strong>Já tem uma conta no Sewfy?</strong> Digite sua senha atual para assumir a propriedade da empresa.<br><br>
+                    <strong>É seu primeiro acesso?</strong> Crie uma senha para acessar o sistema.
+                </div>
+
+                <div class="btn-wrapper">
+                    <a href="http://localhost/www.sewfy/confirmarcadastro/index.html?token={{ $token }}" class="btn">
+                        Confirmar Propriedade
+                    </a>
+                </div>
+
+            @elseif($tipo === 'troca_email')
+                <p>Recebemos uma solicitação para alterar o email da sua conta no Sewfy ERP para este endereço.</p>
+                <p>Para confirmar a troca, clique no botão abaixo e informe sua senha atual.</p>
+
+                <div class="aviso">
+                    Se você não solicitou esta alteração, ignore este email. Seu email atual permanecerá o mesmo.
+                </div>
+
+                <div class="btn-wrapper">
+                    <a href="http://localhost/www.sewfy/confirmarcadastro/index.html?token={{ $token }}" class="btn">
+                        Confirmar Novo Email
+                    </a>
+                </div>
+
+            @elseif($tipo === 'redef_senha')
+                <p>Recebemos uma solicitação para redefinir a senha da sua conta no Sewfy ERP.</p>
+                <p>Clique no botão abaixo para criar uma nova senha. O link expira em <strong>2 horas</strong>.</p>
+
+                <div class="aviso">
+                    Se você não solicitou a redefinição de senha, ignore este email. Sua senha atual permanecerá a mesma.
+                </div>
+
+                <div class="btn-wrapper">
+                    <a href="http://localhost/www.sewfy/confirmarcadastro/index.html?token={{ $token }}" class="btn">
+                        Redefinir Senha
+                    </a>
+                </div>
+
             @endif
 
-            <div class="info-box">
-                <strong>Já tem uma conta no Sewfy?</strong> Digite sua senha atual para vincular esta empresa ao seu cadastro existente.<br><br>
-                <strong>É seu primeiro acesso?</strong> Crie uma senha para acessar o sistema.
-            </div>
-
-            <div class="btn-wrapper">
-                <a href="http://localhost/www.sewfy/confirmarcadastro/index.html?token={{ $token }}" class="btn">
-                    Confirmar Cadastro
-                </a>
-            </div>
         </div>
 
         <div class="footer">
-            Este link expira em 24 horas. Se você não esperava este email, ignore-o.<br>
-            © 2026 Sewfy. Todos os direitos reservados.
+            @if($tipo === 'redef_senha')
+                Este link expira em 2 horas. Se você não esperava este email, ignore-o.
+            @else
+                Este link expira em 24 horas. Se você não esperava este email, ignore-o.
+            @endif
+            <br>© 2026 Sewfy. Todos os direitos reservados.
         </div>
 
     </div>
