@@ -132,12 +132,6 @@ class ConviteController extends Controller
         $jaExiste = $usuario && EmpresaUsuarios::where('USU_ID', $usuario->USU_ID)
             ->where('EMP_ID', $empresa->EMP_ID)
             ->exists();
-        $usuario = $request->user();
-        $empresa = $usuario->empresa;
-
-        $jaExiste = User::where('USU_EMAIL', $request->CONV_EMAIL)
-            ->whereHas('empresas', fn($q) => $q->where('EMP_ID', $empresa->EMP_ID))
-            ->exists();
 
         if ($jaExiste) {
             return response()->json(['erro' => 'Usuário já pertence a esta empresa'], 409);

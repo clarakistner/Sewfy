@@ -19,7 +19,7 @@ class SewfyAdmController extends Controller
         return response()->json($adm);
     }
 
-    /*
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -36,6 +36,6 @@ class SewfyAdmController extends Controller
 
         return response()->json(['message' => 'Administrador criado com sucesso', 'id' => $adm->ADM_ID], 201);
     }
-    */
+    
     
 }
