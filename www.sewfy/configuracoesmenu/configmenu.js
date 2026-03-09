@@ -1,5 +1,6 @@
-import { abrirMenu } from "../menu/menu.js";
+import { abrirMenu, usuarioEhProprietario } from "../menu/menu.js";
 import { initCadastroFuncionario } from "../cadastrousuario/cadastrousuario.js";
+import { initGerenciarFuncionarios } from "../gerenciarfuncionarios/gerenciarfuncionarios.js";
 let urlAtual = null;
 document.addEventListener("click", handleClick);
 
@@ -23,7 +24,7 @@ window.addEventListener("load", () => {
 
 async function handleClick(e) {
   const menuItem = e.target.closest("[data-menu]");
-  if (e.target.closest("#btn-config")) {
+  if (e.target.closest("#btn-config") && (await usuarioEhProprietario())) {
     setTimeout(() => trocaModais(), 300);
     const icon = document.getElementById("icon-config");
     icon?.classList.add("girando");
@@ -36,6 +37,7 @@ async function handleClick(e) {
   }
   if (menuItem?.dataset.menu === "item-gerenciar") {
     await trocarPagina("gerenciarfuncionarios", "gerenciar-funcionarios");
+    initGerenciarFuncionarios()
   }
   if (menuItem?.dataset.menu === "item-editar-conta") {
     await trocarPagina("editarcontaOwner", "editar-conta");
@@ -103,8 +105,7 @@ async function abrirConfigMenu() {
 
 async function trocarPagina(pasta, url) {
   
-  document.querySelector("#css-config")?.remove();
-  document.querySelector("#js-config")?.remove();
+  
 
   const containerConfig = document.querySelector(".containerConfigOwner");
   const [responseHTML, responseCSS] = await Promise.all([
@@ -122,13 +123,16 @@ async function trocarPagina(pasta, url) {
   const style = document.createElement("style");
   style.id = "css-config";
   style.textContent = cssText;
-  document.head.appendChild(style);
 
   const script = document.createElement("script");
   script.id = "js-config"; 
   script.type = "module";
   script.src = `/www.sewfy/${pasta}/${pasta}.js`;
+  document.querySelector("#css-config")?.remove();
+  document.querySelector("#js-config")?.remove();
+  
   document.body.appendChild(script);
+  document.head.appendChild(style);
 
   history.pushState({}, "", `/www.sewfy/${url}`);
 }

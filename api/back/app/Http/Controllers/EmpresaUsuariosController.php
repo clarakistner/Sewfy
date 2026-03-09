@@ -39,4 +39,24 @@ class EmpresaUsuariosController extends Controller
         $ehProprietario = $empresaUsuario->USU_E_PROPRIETARIO === 1;
         return response()->json(['proprietario' => $ehProprietario]);
     }
+
+    public function buscaFuncionariosEmpresa(Request $request)
+    {
+        $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
+
+        $listaFuncionarios = User::whereIn(
+            'USU_ID',
+            EmpresaUsuarios::where('EMP_ID', $empresaId)
+                ->where('USU_ID', '!=', $user->USU_ID)
+                ->pluck('USU_ID')
+        )->select('USU_NOME', 'USU_EMAIL', 'USU_NUM', 'USU_ATIV', 'USU_ID')
+        ->get();
+
+        return response()->json([
+            'funcionarios'=> $listaFuncionarios,
+        ]);
+    }
 }

@@ -1,5 +1,5 @@
 // CHAMA O MENU
-fetch("/www.sewfy/menu/index.html")
+export function abrirMenu(){fetch("/www.sewfy/menu/index.html")
   .then((response) => response.text())
   .then(async (data) => {
     document.querySelector(".layout").insertAdjacentHTML("afterbegin", data);
@@ -26,9 +26,9 @@ fetch("/www.sewfy/menu/index.html")
 
     ativarModuloAtual();
     document.body.classList.add("loaded");
-  });
+  });}
 
-async function usuarioEhProprietario() {
+export async function usuarioEhProprietario() {
   try {
     console.log("Token:", sessionStorage.getItem('token'));
     const response = await window.api.get("/empresa-usuario/ehproprietario");
@@ -82,14 +82,7 @@ document.addEventListener("click", async (e) => {
       window.location.href = rotas[id];
     }
   }
-  if (id === "btn-config" && (await usuarioEhProprietario())) {
-    const configMenu = document.querySelector(".modalconfigOwner")
-    const icon = document.getElementById("icon-config");
-    configMenu.style.display =
-    configMenu.style.display === "block" ? "none" : "block";
-    icon.classList.add("girando");
-    setTimeout(() => icon.classList.remove("girando"), 500);
-  }
+  
 });
 
 // MARCA O MÓDULO E SUBMENU ATIVO COM BASE NA URL ATUAL
@@ -142,3 +135,6 @@ function ativarModuloAtual() {
     }
   });
 }
+
+
+abrirMenu()

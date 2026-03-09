@@ -30,4 +30,10 @@ class EmpresaUsuarios extends Model
         return $this->EMP_ID . '-' . $this->USU_ID;
     }
 
+    public function usuarios(){
+        return $this->belongsToMany(User::class,
+        "USUARIOS",
+        );
+    }
+
 }

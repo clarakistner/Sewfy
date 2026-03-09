@@ -41,7 +41,9 @@ async function cadastrarFuncionario() {
       modulos: modulosSelecionados,
     };
 
+    const toastCarregando = mostrarToast("Enviando convite...","carregando");
     await window.api.post("/convites", data);
+    toastCarregando.remove();
     limparFormulario();
 
     mostrarToast("Convite enviado com sucesso!");

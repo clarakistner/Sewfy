@@ -1,5 +1,18 @@
+Options -Indexes
 RewriteEngine On
+RewriteBase /
+
 RewriteRule ^$ /index.php [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([^/]+)/?$ $1/$1.html [NC,L]
+
+RewriteRule ^www\.sewfy/cadastro-funcionario/?$ /www.sewfy/home [L]
+RewriteRule ^www\.sewfy/gerenciar-funcionarios/?$ /www.sewfy/home [L]
+RewriteRule ^www\.sewfy/editar-conta/?$ /www.sewfy/home [L]
+RewriteRule ^www\.sewfy/editar-tela-inicial/?$ /www.sewfy/home [L]
+
+# rotas desconhecidas do sewfy
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^www\.sewfy/.*$ /www.sewfy/home [L]
