@@ -1,4 +1,4 @@
-import { mascaraTelefone } from "../assets/mascaras";
+import { mascaraTelefone } from "../assets/mascaras.js";
 
 async function buscaTodosFuncionariosEmpresa() {
   try {

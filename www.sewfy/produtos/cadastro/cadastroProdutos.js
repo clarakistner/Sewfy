@@ -8,7 +8,7 @@ document.addEventListener("click", (e) => {
     if (e.target.closest(".botao-criar-produto")) {
         console.log('[MODAL] Clique em "Novo Produto"');
 
-        fetch("/Sewfy/www.sewfy/produtos/cadastro/cadastroProdutos.html")
+        fetch("/www.sewfy/produtos/cadastro/index.html")
             .then(res => {
                 console.log("[MODAL] Fetch HTML status:", res.status);
                 return res.text();
@@ -46,7 +46,7 @@ document.addEventListener("click", (e) => {
 
 // INICIALIZAR EVENTOS
 function inicializarEventosModal() {
-    const form = document.querySelector("#Produto");
+    const form = document.querySelector(".modal-form");
     console.log("[INIT] Form encontrado?", !!form);
     if (!form) return;
 
