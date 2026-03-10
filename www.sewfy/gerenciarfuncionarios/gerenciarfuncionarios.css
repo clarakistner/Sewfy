@@ -179,7 +179,7 @@
 
 .icone-visualizar-funcionario {
   font-size: 26px;
-  color: #0e59fe;
+  color: rgb(234, 227, 227);
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
@@ -201,7 +201,7 @@
 
 /*Estilo para a linha vazia*/
 .linha-vazia {
-    background-color: #f8f9fc;
+    background-color: #dce1f0;
 }
 
 .mensagem-vazia {
