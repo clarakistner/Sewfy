@@ -37,7 +37,9 @@ async function carregarFuncionarios() {
 
   tbody.innerHTML = `
             <tr>
-                <td colspan="3" style="text-align:center;">Carregando...</td>
+                <td colspan="4" class="mensagem-vazia">
+                    Carregando...
+                </td>
             </tr>
         `;
   const listaFuncionarios = await buscaTodosFuncionariosEmpresa();
@@ -75,7 +77,7 @@ function renderizaFuncionarios(funcionarios) {
   if (!Array.isArray(funcionarios) || funcionarios.length === 0) {
     tbody.innerHTML = `
                 <tr class="linha-vazia">
-                    <td colspan="3" class="mensagem-vazia">
+                    <td colspan="4" class="mensagem-vazia">
                         Nenhum funcionário encontrado
                     </td>
                 </tr>
@@ -97,7 +99,7 @@ function renderizaFuncionarios(funcionarios) {
                 <td class="table-cell">${mascaraTelefone(funcionario.USU_NUM)}</td>
                 <td class="table-cell">
                     <button 
-                        class="botao-visualizar-fornecedor"
+                        class="botao-visualizar-funcionario"
                         data-id="${funcionario.USU_ID}"
                     >
                         <span class="material-symbols-outlined icone-visualizar-funcionario">

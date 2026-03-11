@@ -32,8 +32,6 @@ async function cadastrarFuncionario() {
     const modulosSelecionados = retornaIdsModulosSelecionados();
     verificaCampos(nome, email, telefone, modulosSelecionados);
 
-    
-
     const data = {
       CONV_EMAIL: email,
       CONV_NOME: nome,

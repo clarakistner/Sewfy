@@ -1,28 +1,43 @@
 <div class="containerConfigOwner">
+
   <div class="cadastrarUsuario">
-    <h3 class="tituloPagina">Cadastrar Funcionário</h3>
-    <div class="corpoCadastro">
-      <div class="containerInput">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required/>
+
+    <div class="tituloPagina">
+          <h1>
+              Cadastrar Funcionário
+          </h1>
+          <p>Preencha os dados para adicionar um novo funcionário ao sistema</p>
+    </div>
+
+    <!-- Seção de Dados do Funcionário -->
+    <div class="secao-card">
+                <h2 class="secao-titulo">Dados do Funcionário</h2>
+
+                <div class="form-grid">
+                    <div class="campo">
+                        <label>Nome *</label>
+                        <input type="text" placeholder="Nome do funcionário" id="nome"/>
+                    </div>                    
+                    <div class="campo">
+                        <label>Telefone *</label>
+                        <input type="text" placeholder="(99) 99999-9999" id="telefone"/>
+                    </div>
+                    <div class="campo campo-full">
+                        <label>Email *</label>
+                        <input type="email" placeholder="funcionario@gmail.com" id="email"/>
+                    </div>
+                </div>
       </div>
 
-      <div class="containerInput">
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email"  required/>
-      </div>
-      <div class="containerInput">
-        <label for="telefone">Telefone:</label>
-        <input type="text" id="telefone" name="telefone" required/>
-      </div>
       <div class="secao-card">
                 <h2 class="secao-titulo">Módulos da Empresa</h2>
                 <div class="modulos-grid">       
                 </div>
-            </div>
+      </div>
+
       <div class="containerButton">
         <button class="botaoCadastrar">Cadastrar Funcionário</button>
       </div>
-    </div>
+    
   </div>
 </div>

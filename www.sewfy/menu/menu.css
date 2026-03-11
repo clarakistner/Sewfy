@@ -75,10 +75,10 @@ body {
   cursor: pointer;
 }
 
-.sidebar-subtitle {
-  color: rgba(180, 195, 255, 0.75);
-  font-size: 13px;
-  font-weight: 400;
+.sidebar-empresa {
+    color: rgba(180, 195, 255, 0.75);
+    font-size: 13px;
+    font-weight: 400;
 }
 
 .corpoMenu.fechado {

@@ -9,7 +9,7 @@ document.addEventListener("click", (e) => {
     if (e.target.closest(".botao-criar-fornecedor")) {
         console.log('[MODAL] Clique em "Novo Fornecedor"');
 
-        fetch("/Sewfy/view/fornecedores/cadastro/cadastroFornecedores.html")
+        fetch("/www.sewfy/fornecedores/cadastro/index.html")
             .then(res => {
                 console.log("[MODAL] Fetch HTML status:", res.status);
                 return res.text();

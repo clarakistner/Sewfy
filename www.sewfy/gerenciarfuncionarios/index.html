@@ -1,8 +1,16 @@
-<div class="containerConfigOwner">
+<div class="containerConfigOwner"> 
   <div class="gerenciarFuncionarios">
-    <h3>Gerenciar Funcionários</h3>
+    
+    <div class="header">
+
+    <div class="tituloPagina">
+          <h1>Gerenciar Funcionários</h1>    
+    </div>
+
     <div class="corpoGerenciar">
+
       <div class="filtros">
+
         <div class="input-pesquisa">
           <svg
             class="icone-lupa"
@@ -17,7 +25,17 @@
 
           <input type="text" placeholder="Pesquisar por nome ou email..." id="barrapesquisa"/>
         </div>
+
+        <div class="box-filtro">
+          <select id="status-filtro">
+            <option value="">Todos</option>
+            <option value="ativo">Ativos</option>
+            <option value="inativo">Inativos</option>
+          </select>
+        </div>
+
       </div>
+
       <div id="listaFuncionarios" class="lista-funcionarios">
         <table class="table">
           <thead class="table-head">
@@ -30,10 +48,11 @@
           </thead>
 
           <tbody id="funcionarios-table" class="table-body">
-            <!-- Linhas de fornecedores serão inseridas aqui dinamicamente -->
+            
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
 </div>
