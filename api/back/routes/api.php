@@ -15,4 +15,5 @@ require __DIR__ . '/api/sewfyadm.php';
 require __DIR__ . '/api/empresaspendentes.php';
 require __DIR__ . '/api/usuariomodulos.php';
 require __DIR__ . '/api/empresausuarios.php';
+require __DIR__ . '/api/usuario.php';
 //require __DIR__ . '/api/conta.php';
