@@ -1,41 +1,53 @@
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("[INIT] DOM carregado");
 
+  // Exibe o email do usuário
+  const usuarioEmail = sessionStorage.getItem("usuario_email");
+  const emailEl = document.getElementById("usuario-email");
+  if (emailEl && usuarioEmail) {
+    emailEl.textContent = usuarioEmail;
+  }
+
   const empresasIds = JSON.parse(
     sessionStorage.getItem("empresas_ids") || "[]",
   );
-  const container = document.querySelector(".container");
-  if (!container) return;
+  const select = document.getElementById("select-empresa");
+  if (!select) return;
+
   if (empresasIds.length === 0) {
-    container.innerHTML = "<p>Nenhuma empresa associada a esta conta.</p>";
+    const option = document.createElement("option");
+    option.disabled = true;
+    option.textContent = "Nenhuma empresa associada a esta conta.";
+    select.appendChild(option);
     return;
   }
+
   try {
     const promises = empresasIds.map((id) => retornarNomeEmpresa(id));
     const nomes = await Promise.all(promises);
+
     empresasIds.forEach((id, index) => {
-      const boxEmpresa = document.createElement("div");
-      boxEmpresa.classList.add("box-empresa");
-      boxEmpresa.id = id;
-      console.log(`Criando box para empresa ID: ${id} com nome: ${nomes[index]}`);  
-      boxEmpresa.innerHTML = `<h3>${nomes[index]}</h3>`;
-      container.appendChild(boxEmpresa);
+      const option = document.createElement("option");
+      option.value = id;
+      option.textContent = nomes[index];
+      console.log(`Adicionando opção: ID ${id} - ${nomes[index]}`);
+      select.appendChild(option);
     });
   } catch (error) {
     console.error("Erro ao carregar empresas:", error);
-    container.innerHTML =
-      "<p>Erro ao carregar empresas. Tente novamente mais tarde.</p>";
+    const option = document.createElement("option");
+    option.disabled = true;
+    option.textContent = "Erro ao carregar empresas. Tente novamente.";
+    select.appendChild(option);
   }
-});
 
-document.addEventListener("click", handleClick);
-
-function handleClick(e) {
-  if (e.target.closest(".box-empresa")) {
-    const empresaId = e.target.closest(".box-empresa").id;
+  // Botão continuar
+  document.getElementById("btn-continuar")?.addEventListener("click", () => {
+    const empresaId = select.value;
+    if (!empresaId) return;
     selecionarEmpresa(empresaId);
-  }
-}
+  });
+});
 
 async function selecionarEmpresa(empresaId) {
   try {
@@ -52,12 +64,10 @@ async function selecionarEmpresa(empresaId) {
 
 async function retornarNomeEmpresa(id) {
   try {
-    
     const response = await window.api.get(`/adm/empresa/nome/${parseInt(id)}`);
-
     return response.EMP_NOME;
   } catch (error) {
     console.error("Erro ao retornar nome da empresa:", error);
-    return "Empresa Desconecatada";
+    return "Empresa Desconectada";
   }
 }

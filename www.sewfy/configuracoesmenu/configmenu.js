@@ -100,6 +100,21 @@ async function abrirConfigMenu() {
   containerPrincipal.style.display = "none";
   document.querySelector(".layout").insertAdjacentHTML("afterbegin", data);
 
+  // Exibe o nome da empresa no header do menu de configurações
+  const empresaId = sessionStorage.getItem('empresa_id');
+  if (empresaId) {
+    try {
+      const resp = await window.api.get(`/adm/empresa/nome/${empresaId}`);
+      const nomeEmpresa = resp.EMP_NOME ?? '';
+      const header = document.querySelector(".sidebar-header");
+      if (header && nomeEmpresa) {
+        header.innerHTML += `<p class="sidebar-empresa">${nomeEmpresa}</p>`;
+      }
+    } catch (e) {
+      console.warn("[CONFIG MENU] Não foi possível carregar nome da empresa:", e);
+    }
+  }
+
   await trocarPagina("cadastrousuario", "cadastro-funcionario");
 }
 

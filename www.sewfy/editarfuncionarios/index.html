@@ -1,0 +1,107 @@
+<div class="funcionario-modal">
+  <div class="modal-container">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Editar Funcionário</h2>
+      <button class="material-symbols-outlined modal-close" id="btn-fechar-editar">close</button>
+    </div>
+
+    <!-- Content -->
+    <div class="modal-content">
+      <div class="details-grid">
+
+        <div class="detail">
+          <label class="label" for="edit-nome">Nome *</label>
+          <input class="input-edicao" type="text" id="edit-nome" data-field="nome" placeholder="Nome completo" />
+        </div>
+
+        <div class="detail">
+          <label class="label" for="edit-telefone">Telefone *</label>
+          <input class="input-edicao" type="text" id="edit-telefone" data-field="telefone" placeholder="(00) 00000-0000" />
+        </div>
+
+        <div class="detail">
+          <label class="label" for="edit-email">E-mail *</label>
+          <input class="input-edicao" type="email" id="edit-email" data-field="email" placeholder="email@exemplo.com" />
+        </div>
+
+        <div class="detail">
+          <label class="label">Status *</label>
+          <div class="toggle-wrapper">
+            <button class="toggle-btn ativo" id="toggle-ativo" data-ativo="true">
+              <span class="toggle-indicator"></span>
+              <span class="toggle-label" id="toggle-label">Ativo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Módulos -->
+        <div class="detail col-span-2">
+          <span class="label">Módulos com acesso</span>
+          <div class="modulos-grid">
+
+            <label class="modulo-item">
+              <input type="checkbox" class="modulo-check" data-modulo="faturamento" />
+              <span class="modulo-box">
+                <span class="modulo-check-icon material-symbols-outlined">check</span>
+              </span>
+              <span class="modulo-nome">Faturamento</span>
+            </label>
+
+            <label class="modulo-item">
+              <input type="checkbox" class="modulo-check" data-modulo="financeiro" />
+              <span class="modulo-box">
+                <span class="modulo-check-icon material-symbols-outlined">check</span>
+              </span>
+              <span class="modulo-nome">Financeiro</span>
+            </label>
+
+            <label class="modulo-item">
+              <input type="checkbox" class="modulo-check" data-modulo="compras" />
+              <span class="modulo-box">
+                <span class="modulo-check-icon material-symbols-outlined">check</span>
+              </span>
+              <span class="modulo-nome">Compras</span>
+            </label>
+
+            <label class="modulo-item">
+              <input type="checkbox" class="modulo-check" data-modulo="rh" />
+              <span class="modulo-box">
+                <span class="modulo-check-icon material-symbols-outlined">check</span>
+              </span>
+              <span class="modulo-nome">Recursos Humanos</span>
+            </label>
+
+            <label class="modulo-item">
+              <input type="checkbox" class="modulo-check" data-modulo="relatorios" />
+              <span class="modulo-box">
+                <span class="modulo-check-icon material-symbols-outlined">check</span>
+              </span>
+              <span class="modulo-nome">Relatórios</span>
+            </label>
+
+            <label class="modulo-item">
+              <input type="checkbox" class="modulo-check" data-modulo="producao" />
+              <span class="modulo-box">
+                <span class="modulo-check-icon material-symbols-outlined">check</span>
+              </span>
+              <span class="modulo-nome">Produção</span>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Ações -->
+        <div class="detail col-span-2 actions-row">
+          <button class="btn-cancelar" id="btn-cancelar-editar">Cancelar</button>
+          <button class="btn-salvar" id="btn-salvar-funcionario">Salvar alterações</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module" src="editarFuncionario.js"></script>
