@@ -7,8 +7,6 @@ import {
 } from "../../assets/mascaras.js";
 import { validarCpfCnpj } from "../../assets/validacoes.js";
 
-console.log("[DEBUG] Script visualizarFornecedor.js carregado!");
-
 // ABRIR MODAL
 document.addEventListener("click", async (e) => {
     const botao = e.target.closest(".botao-visualizar-fornecedor");
@@ -18,27 +16,18 @@ document.addEventListener("click", async (e) => {
 
     try {
         const modalHTML = await fetch(
-            "/Sewfy/www.sewfy/fornecedores/visualizar/visualizarFornecedores.html"
+            "/www.sewfy/fornecedores/visualizar/index.html"
         ).then(res => res.text());
 
         document.body.insertAdjacentHTML("afterbegin", modalHTML);
 
-        const response = await fetch(
-            `/Sewfy/api/fornecedores/${window.fornecedorAtualId}`
-        );
+        const fornecedor = await window.api.buscaId("/clifor", window.fornecedorAtualId);
 
-        if (!response.ok) {
-            const erro = await response.json();
-            throw new Error(erro.erro || "Erro ao buscar fornecedor");
-        }
-
-        const fornecedor = await response.json();
-
-        document.getElementById("modal-nome").textContent = fornecedor.nome;
-        document.getElementById("modal-cpfcnpj").textContent = mascaraCpfCnpj(fornecedor.cpfCnpj);
+        document.getElementById("modal-nome").textContent     = fornecedor.nome;
+        document.getElementById("modal-cpfcnpj").textContent  = mascaraCpfCnpj(fornecedor.cpfCnpj);
         document.getElementById("modal-telefone").textContent = mascaraTelefone(fornecedor.telefone);
         document.getElementById("modal-endereco").textContent = fornecedor.endereco;
-        document.getElementById("modal-ativo").textContent = fornecedor.ativo ? "Ativo" : "Inativo";
+        document.getElementById("modal-ativo").textContent    = fornecedor.ativo ? "Ativo" : "Inativo";
 
     } catch (erro) {
         console.error(erro);
@@ -68,7 +57,7 @@ function ativarModoEdicao() {
             el.value = valor === "Ativo" ? "1" : "0";
         } else {
             el = document.createElement("input");
-            el.type = "text";
+            el.type  = "text";
             el.value = valor;
         }
 
@@ -77,7 +66,7 @@ function ativarModoEdicao() {
         el.id = span.id;
 
         if (field === "telefone") aplicarMascaraTelefone(el);
-        if (field === "cpfCnpj") aplicarMascaraCpfCnpj(el);
+        if (field === "cpfCnpj")  aplicarMascaraCpfCnpj(el);
 
         span.replaceWith(el);
     });
@@ -85,64 +74,55 @@ function ativarModoEdicao() {
     trocarBotaoParaSalvar();
 }
 
-// SALVAR 
+// SALVAR
 async function salvarFornecedor() {
+    const nomeInput     = document.querySelector('[data-field="nome"]');
+    const cpfInput      = document.querySelector('[data-field="cpfCnpj"]');
+    const telefoneInput = document.querySelector('[data-field="telefone"]');
+    const enderecoInput = document.querySelector('[data-field="endereco"]');
+    const ativoInput    = document.querySelector('[data-field="ativo"]');
 
-    const nome = document.querySelector('[data-field="nome"]').value.trim();
-    const cpf = document.querySelector('[data-field="cpfCnpj"]').value.trim().replace(/\D/g, "");
-    const telefone = document.querySelector('[data-field="telefone"]').value.trim().replace(/\D/g, "");
-    const endereco = document.querySelector('[data-field="endereco"]').value.trim();
-    const ativo = document.querySelector('[data-field="ativo"]').value === "1" ? 1 : 0;
+    const nome     = nomeInput.value.trim();
+    const cpfCnpj  = cpfInput.value.trim();
+    const telefone = telefoneInput.value.trim();
+    const endereco = enderecoInput.value.trim();
+    const ativo    = ativoInput.value === "1" ? 1 : 0;
 
-    if (!nome || !cpf || !telefone || !endereco) {
+    if (!nome || !cpfCnpj || !telefone || !endereco) {
         mostrarToast("Preencha todos os campos", "erro");
         return;
     }
-
     if (nome.length < 4 || nome.length > 45) {
         mostrarToast("Nome inválido", "erro");
         return;
     }
-
-    if (!validarCpfCnpj(cpf)) {
+    if (!validarCpfCnpj(cpfCnpj)) {
         mostrarToast("CPF/CNPJ inválido", "erro");
         return;
     }
-
-    if (telefone.length !== 11) {
+    if (cpfCnpj.replace(/\D/g, "").length !== 11 && cpfCnpj.replace(/\D/g, "").length !== 14) {
+        mostrarToast("CPF/CNPJ inválido", "erro");
+        return;
+    }
+    if (telefone.replace(/\D/g, "").length !== 11) {
         mostrarToast("Telefone inválido", "erro");
         return;
     }
 
     try {
-        const response = await fetch(
-            `/Sewfy/api/fornecedores/${window.fornecedorAtualId}`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    nome,
-                    cpfCnpj: cpf,
-                    telefone,
-                    endereco,
-                    ativo
-                })
-            }
-        );
+        const response = await window.api.put(`/clifor/${window.fornecedorAtualId}`, {
+            CLIFOR_TIPO:    "fornecedor",
+            CLIFOR_NOME:    nome,
+            CLIFOR_CPFCNPJ: cpfCnpj,
+            CLIFOR_NUM:     telefone,
+            CLIFOR_END:     endereco,
+            CLIFOR_ATIV:    ativo
+        });
 
-        const resultado = await response.json();
-
-        if (!response.ok) {
-            throw new Error(resultado.erro || "Erro ao atualizar fornecedor");
-        }
-
-        atualizarModalComDados({ nome, cpf, telefone, endereco, ativo });
+        atualizarModalComDados({ nome, cpfCnpj, telefone, endereco, ativo });
         trocarBotaoParaEditar();
         window.atualizarListaFornecedores?.();
-
-        mostrarToast(resultado.mensagem || "Fornecedor atualizado", "sucesso");
+        mostrarToast(response.mensagem || "Fornecedor atualizado", "sucesso");
 
     } catch (erro) {
         mostrarToast(erro.message, "erro");
@@ -163,7 +143,7 @@ function atualizarModalComDados(dados) {
         if (input.dataset.field === "ativo") {
             span.textContent = dados.ativo ? "Ativo" : "Inativo";
         } else if (input.dataset.field === "cpfCnpj") {
-            span.textContent = mascaraCpfCnpj(dados.cpf);
+            span.textContent = mascaraCpfCnpj(dados.cpfCnpj); // era dados.cpf — corrigido
         } else if (input.dataset.field === "telefone") {
             span.textContent = mascaraTelefone(dados.telefone);
         } else {

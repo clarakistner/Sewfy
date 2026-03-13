@@ -52,12 +52,14 @@ async function carregarFornecedores() {
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="3" style="text-align:center;">Carregando...</td>
+            <td colspan="3" class="mensagem-vazia">
+                Carregando...
+            </td>
         </tr>
     `;
 
     try {
-        const fornecedores = await window.api.get("/clifor");
+        const fornecedores = await window.api.get("/clifor/todos");
         console.log("[FETCH] Dados recebidos:", fornecedores);
 
         renderizarTabela(fornecedores);
@@ -85,7 +87,7 @@ async function pesquisarFornecedores(termo) {
 
     try {
         const fornecedores = await window.api.get(
-            `/clifor?search=${encodeURIComponent(termo)}`
+            `/clifor/todos?search=${encodeURIComponent(termo)}`
         );
 
         renderizarTabela(fornecedores);

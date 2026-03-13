@@ -8,14 +8,26 @@ use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
 {
-    // GET /api/produtos?termo=camisa&tipo=1 - Lista produtos ativos, com busca opcional por nome/código e filtro por tipo
+    private function getEmpresaId(Request $request): string
+    {
+        $abilities = $request->user()->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+
+        if (!$ability) {
+            abort(403, 'Token sem empresa associada');
+        }
+
+        return str_replace('empresa_', '', $ability);
+    }
+
+    // GET /api/produtos?termo=camisa&tipo=insumo
     public function index(Request $request)
     {
-        $empresa = $request->user()->empresa;
-        $termo = trim($request->get('termo', ''));
-        $tipo = $request->get('tipo');
+        $empresaId = $this->getEmpresaId($request);
+        $termo     = trim($request->get('termo', ''));
+        $tipo      = $request->get('tipo');
 
-        $query = Produto::where('EMP_ID', $empresa->EMP_ID)
+        $query = Produto::where('EMP_ID', $empresaId)
             ->where('PROD_ATIV', 1);
 
         if ($termo !== '') {
@@ -26,7 +38,7 @@ class ProdutoController extends Controller
         }
 
         if (!is_null($tipo)) {
-            $query->where('PROD_TIPO', (int) $tipo);
+            $query->where('PROD_TIPO', $tipo); // string do enum
         }
 
         $produtos = $query->get()->map(function($p) {
@@ -34,12 +46,8 @@ class ProdutoController extends Controller
                 'id'    => $p->PROD_ID,
                 'cod'   => $p->PROD_COD,
                 'nome'  => $p->PROD_NOME,
-                'tipo'  => match ((int) $p->PROD_TIPO) {
-                    0 => 'Insumo',
-                    1 => 'Produto Acabado',
-                    default => 'Desconhecido'
-                },
-                'um'    => $p->PROD_UM,
+                'tipo'  => $p->PROD_TIPO,      // 'insumo', 'produto acabado', 'conjunto'
+                'um'    => $p->PROD_UM,         // 'UN', 'KG', 'MT'
                 'preco' => $p->PROD_PRECO,
                 'ativo' => $p->PROD_ATIV
             ];
@@ -48,21 +56,21 @@ class ProdutoController extends Controller
         return response()->json($produtos);
     }
 
-    // POST /api/produtos - Cadastra um novo produto
+    // POST /api/produtos
     public function store(Request $request)
     {
         $request->validate([
-            'PROD_COD'  => 'required|string',
-            'PROD_NOME' => 'required|string',
-            'PROD_TIPO' => 'required|integer',
-            'PROD_UM'   => 'required|string',
-            'PROD_DESC' => 'nullable|string',
+            'PROD_COD'   => 'required|string',
+            'PROD_NOME'  => 'required|string',
+            'PROD_TIPO'  => 'required|string|in:insumo,produto acabado,conjunto',
+            'PROD_UM'    => 'required|string|in:UN,KG,MT',
+            'PROD_DESC'  => 'nullable|string',
             'PROD_PRECO' => 'nullable|numeric'
         ]);
 
-        $empresa = $request->user()->empresa;
+        $empresaId = $this->getEmpresaId($request);
 
-        $existe = Produto::where('EMP_ID', $empresa->EMP_ID)
+        $existe = Produto::where('EMP_ID', $empresaId)
             ->where(function($q) use ($request) {
                 $q->where('PROD_COD', trim($request->PROD_COD))
                   ->orWhere('PROD_NOME', trim($request->PROD_NOME));
@@ -73,10 +81,10 @@ class ProdutoController extends Controller
         }
 
         $produto = Produto::create([
-            'EMP_ID'     => $empresa->EMP_ID,
+            'EMP_ID'     => $empresaId,
             'PROD_COD'   => trim($request->PROD_COD),
             'PROD_NOME'  => trim($request->PROD_NOME),
-            'PROD_TIPO'  => (int) $request->PROD_TIPO,
+            'PROD_TIPO'  => $request->PROD_TIPO,
             'PROD_UM'    => trim($request->PROD_UM),
             'PROD_DESC'  => $request->PROD_DESC ?? null,
             'PROD_PRECO' => $request->PROD_PRECO ? (float) $request->PROD_PRECO : null,
@@ -89,25 +97,20 @@ class ProdutoController extends Controller
         ], 201);
     }
 
-    // GET /api/produtos/{id} - Visualiza detalhes de um produto
+    // GET /api/produtos/{id}
     public function show(Request $request, int $id)
     {
-        $empresa = $request->user()->empresa;
+        $empresaId = $this->getEmpresaId($request);
 
         $p = Produto::where('PROD_ID', $id)
-            ->where('EMP_ID', $empresa->EMP_ID)
+            ->where('EMP_ID', $empresaId)
             ->firstOrFail();
 
         return response()->json([
             'id'    => $p->PROD_ID,
             'cod'   => $p->PROD_COD,
             'nome'  => $p->PROD_NOME,
-            'tipo'  => match ((int) $p->PROD_TIPO) {
-                0 => 'Insumo',
-                1 => 'Produto Acabado',
-                3 => 'Conjunto',
-                default => 'Desconhecido'
-            },
+            'tipo'  => $p->PROD_TIPO,
             'um'    => $p->PROD_UM,
             'preco' => $p->PROD_PRECO,
             'ativo' => $p->PROD_ATIV,
@@ -115,26 +118,26 @@ class ProdutoController extends Controller
         ]);
     }
 
-    // PUT /api/produtos/{id} - Atualiza um produto existente
+    // PUT /api/produtos/{id}
     public function update(Request $request, int $id)
     {
         $request->validate([
             'PROD_COD'   => 'required|string',
             'PROD_NOME'  => 'required|string',
-            'PROD_TIPO'  => 'required|integer',
-            'PROD_UM'    => 'required|string',
+            'PROD_TIPO'  => 'required|string|in:insumo,produto acabado,conjunto',
+            'PROD_UM'    => 'required|string|in:UN,KG,MT',
             'PROD_DESC'  => 'nullable|string',
             'PROD_PRECO' => 'nullable|numeric',
             'PROD_ATIV'  => 'required|boolean'
         ]);
 
-        $empresa = $request->user()->empresa;
+        $empresaId = $this->getEmpresaId($request);
 
         $produto = Produto::where('PROD_ID', $id)
-            ->where('EMP_ID', $empresa->EMP_ID)
+            ->where('EMP_ID', $empresaId)
             ->firstOrFail();
 
-        $existe = Produto::where('EMP_ID', $empresa->EMP_ID)
+        $existe = Produto::where('EMP_ID', $empresaId)
             ->where(function($q) use ($request) {
                 $q->where('PROD_COD', trim($request->PROD_COD))
                   ->orWhere('PROD_NOME', trim($request->PROD_NOME));
@@ -149,7 +152,7 @@ class ProdutoController extends Controller
         $produto->update([
             'PROD_COD'   => trim($request->PROD_COD),
             'PROD_NOME'  => trim($request->PROD_NOME),
-            'PROD_TIPO'  => (int) $request->PROD_TIPO,
+            'PROD_TIPO'  => $request->PROD_TIPO,
             'PROD_UM'    => trim($request->PROD_UM),
             'PROD_DESC'  => $request->PROD_DESC ?? null,
             'PROD_PRECO' => $request->PROD_PRECO ? (float) $request->PROD_PRECO : null,
@@ -157,5 +160,40 @@ class ProdutoController extends Controller
         ]);
 
         return response()->json(['mensagem' => 'Produto atualizado com sucesso']);
+    }
+
+    // GET /api/produtos/todos
+    public function todos(Request $request)
+    {
+        $empresaId = $this->getEmpresaId($request);
+        $termo     = trim($request->get('termo', ''));
+        $tipo      = $request->get('tipo');
+
+        $query = Produto::where('EMP_ID', $empresaId); // sem o PROD_ATIV
+
+        if ($termo !== '') {
+            $query->where(function($q) use ($termo) {
+                $q->where('PROD_NOME', 'ilike', '%' . $termo . '%')
+                ->orWhere('PROD_COD', 'ilike', '%' . $termo . '%');
+            });
+        }
+
+        if (!is_null($tipo)) {
+            $query->where('PROD_TIPO', $tipo);
+        }
+
+        $produtos = $query->get()->map(function($p) {
+            return [
+                'id'    => $p->PROD_ID,
+                'cod'   => $p->PROD_COD,
+                'nome'  => $p->PROD_NOME,
+                'tipo'  => $p->PROD_TIPO,
+                'um'    => $p->PROD_UM,
+                'preco' => $p->PROD_PRECO,
+                'ativo' => $p->PROD_ATIV
+            ];
+        });
+
+        return response()->json($produtos);
     }
 }

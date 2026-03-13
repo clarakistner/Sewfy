@@ -1,92 +1,79 @@
 import { mostrarToast } from "../../toast/toast.js";
 import { aplicarMascaraTelefone, mascaraTelefone } from "../../assets/mascaras.js";
 
-console.log("[DEBUG] Script editarFuncionario.js carregado!");
+// ─── DETECTA QUANDO O MODAL É INSERIDO NO DOM ─────────────────────────────────
 
-// ABRIR MODAL
-document.addEventListener("click", async (e) => {
-  const botao = e.target.closest(".botao-visualizar-funcionario");
-  if (!botao) return;
+const observer = new MutationObserver(async (mutations) => {
+  for (const mutation of mutations) {
+    for (const node of mutation.addedNodes) {
+      if (node.nodeType === 1 && node.id === "modal-editar-funcionario") {
+        observer.disconnect();
+        await carregarDadosFuncionario();
+        return;
+      }
+    }
+  }
+});
 
-  window.funcionarioAtualId = botao.dataset.id;
+observer.observe(document.body, { childList: true });
 
+// ─── BUSCA E PREENCHE ─────────────────────────────────────────────────────────
+
+async function carregarDadosFuncionario() {
   try {
-    const modalHTML = await fetch(
-      "/www.sewfy/editarfuncionario/editarFuncionario.html"
-    ).then((res) => res.text());
-
-    document.body.insertAdjacentHTML("afterbegin", modalHTML);
-
     const response = await window.api.get(`/empresa-usuario/${window.funcionarioAtualId}`);
-
     preencherModal(response);
-
   } catch (erro) {
     console.error(erro);
     mostrarToast(erro.message || "Erro ao carregar funcionário", "erro");
   }
-});
+}
 
-// PREENCHE O MODAL COM OS DADOS DO FUNCIONÁRIO
 function preencherModal(funcionario) {
   document.getElementById("edit-nome").value = funcionario.nome ?? "";
   document.getElementById("edit-telefone").value = mascaraTelefone(funcionario.telefone ?? "");
   document.getElementById("edit-email").value = funcionario.email ?? "";
 
-  // Toggle ativo/inativo
   atualizarToggle(funcionario.ativo);
 
-  // Checkboxes de módulos
   const modulos = Array.from(funcionario.modulos ?? []);
-  document.querySelectorAll(".modulo-check").forEach((checkbox) => {
-    checkbox.checked = modulos.includes(checkbox.dataset.modulo);
+  document.querySelectorAll(".modulo-check").forEach((cb) => {
+    cb.checked = modulos.includes(cb.dataset.modulo);
   });
 
-  // Máscara no campo de telefone
-  const telInput = document.getElementById("edit-telefone");
-  aplicarMascaraTelefone(telInput);
+  aplicarMascaraTelefone(document.getElementById("edit-telefone"));
 
-  // Eventos
   iniciarEventos();
 }
 
-// TOGGLE ATIVO/INATIVO
+// ─── TOGGLE ───────────────────────────────────────────────────────────────────
+
 function atualizarToggle(ativo) {
   const btn = document.getElementById("toggle-ativo");
   const label = document.getElementById("toggle-label");
   if (!btn || !label) return;
 
-  if (ativo) {
-    btn.dataset.ativo = "true";
-    btn.classList.add("ativo");
-    btn.classList.remove("inativo");
-    label.textContent = "Ativo";
-  } else {
-    btn.dataset.ativo = "false";
-    btn.classList.remove("ativo");
-    btn.classList.add("inativo");
-    label.textContent = "Inativo";
-  }
+  btn.dataset.ativo = ativo ? "true" : "false";
+  btn.classList.toggle("ativo", ativo);
+  btn.classList.toggle("inativo", !ativo);
+  label.textContent = ativo ? "Ativo" : "Inativo";
 }
 
-// INICIAR EVENTOS DO MODAL
+// ─── EVENTOS ──────────────────────────────────────────────────────────────────
+
 function iniciarEventos() {
-  // Toggle clique
   document.getElementById("toggle-ativo")?.addEventListener("click", () => {
     const btn = document.getElementById("toggle-ativo");
-    const ativoAtual = btn.dataset.ativo === "true";
-    atualizarToggle(!ativoAtual);
+    atualizarToggle(btn.dataset.ativo !== "true");
   });
 
-  // Salvar
   document.getElementById("btn-salvar-funcionario")?.addEventListener("click", salvarFuncionario);
-
-  // Cancelar / fechar
   document.getElementById("btn-cancelar-editar")?.addEventListener("click", fecharModal);
   document.getElementById("btn-fechar-editar")?.addEventListener("click", fecharModal);
 }
 
-// SALVAR
+// ─── SALVAR ───────────────────────────────────────────────────────────────────
+
 async function salvarFuncionario() {
   const nome = document.getElementById("edit-nome").value.trim();
   const telefone = document.getElementById("edit-telefone").value.trim().replace(/\D/g, "");
@@ -98,22 +85,18 @@ async function salvarFuncionario() {
     modulos.push(cb.dataset.modulo);
   });
 
-  // Validações
   if (!nome || !telefone || !email) {
     mostrarToast("Preencha todos os campos obrigatórios", "erro");
     return;
   }
-
   if (nome.length < 4 || nome.length > 45) {
     mostrarToast("Nome inválido", "erro");
     return;
   }
-
   if (telefone.length < 10 || telefone.length > 11) {
     mostrarToast("Telefone inválido", "erro");
     return;
   }
-
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     mostrarToast("E-mail inválido", "erro");
     return;
@@ -135,7 +118,9 @@ async function salvarFuncionario() {
   }
 }
 
-// FECHAR MODAL
+// ─── FECHAR ───────────────────────────────────────────────────────────────────
+
 function fecharModal() {
-  document.querySelector(".funcionario-modal")?.remove();
+  document.querySelector("#modal-editar-funcionario")?.remove();
+  observer.observe(document.body, { childList: true });
 }

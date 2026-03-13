@@ -1,33 +1,33 @@
-<div class="funcionario-modal">
+<div class="modal" id="modal-editar-funcionario">
   <div class="modal-container">
 
     <!-- Header -->
     <div class="modal-header">
       <h2 class="modal-title">Editar Funcionário</h2>
-      <button class="material-symbols-outlined modal-close" id="btn-fechar-editar">close</button>
+      <button class="material-symbols-outlined fechar-modal" id="btn-fechar-editar">close</button>
     </div>
 
     <!-- Content -->
-    <div class="modal-content">
-      <div class="details-grid">
+    <div class="modal-form">
+      <div class="form-grid">
 
-        <div class="detail">
-          <label class="label" for="edit-nome">Nome *</label>
-          <input class="input-edicao" type="text" id="edit-nome" data-field="nome" placeholder="Nome completo" />
+        <div>
+          <label for="edit-nome">Nome *</label>
+          <input type="text" id="edit-nome" placeholder="Nome completo" />
         </div>
 
-        <div class="detail">
-          <label class="label" for="edit-telefone">Telefone *</label>
-          <input class="input-edicao" type="text" id="edit-telefone" data-field="telefone" placeholder="(00) 00000-0000" />
+        <div>
+          <label for="edit-telefone">Telefone *</label>
+          <input type="text" id="edit-telefone" placeholder="(00) 00000-0000" />
         </div>
 
-        <div class="detail">
-          <label class="label" for="edit-email">E-mail *</label>
-          <input class="input-edicao" type="email" id="edit-email" data-field="email" placeholder="email@exemplo.com" />
+        <div>
+          <label for="edit-email">E-mail *</label>
+          <input type="email" id="edit-email" placeholder="email@exemplo.com" />
         </div>
 
-        <div class="detail">
-          <label class="label">Status *</label>
+        <div>
+          <label>Status *</label>
           <div class="toggle-wrapper">
             <button class="toggle-btn ativo" id="toggle-ativo" data-ativo="true">
               <span class="toggle-indicator"></span>
@@ -37,8 +37,8 @@
         </div>
 
         <!-- Módulos -->
-        <div class="detail col-span-2">
-          <span class="label">Módulos com acesso</span>
+        <div class="col-span-2">
+          <label>Módulos com acesso</label>
           <div class="modulos-grid">
 
             <label class="modulo-item">
@@ -93,9 +93,9 @@
         </div>
 
         <!-- Ações -->
-        <div class="detail col-span-2 actions-row">
-          <button class="btn-cancelar" id="btn-cancelar-editar">Cancelar</button>
-          <button class="btn-salvar" id="btn-salvar-funcionario">Salvar alterações</button>
+        <div class="col-span-2 modal-actions">
+          <button type="button" class="btn-cancel" id="btn-cancelar-editar">Cancelar</button>
+          <button type="button" class="btn-submit" id="btn-salvar-funcionario">Salvar alterações</button>
         </div>
 
       </div>
@@ -103,5 +103,3 @@
 
   </div>
 </div>
-
-<script type="module" src="editarFuncionario.js"></script>
