@@ -12,6 +12,22 @@ export function abrirMenu(){fetch("/www.sewfy/menu/index.html")
         item.style.display = "flex";
       }
     });
+
+    // Exibe o nome da empresa no header do menu
+    const empresaId = sessionStorage.getItem('empresa_id');
+    if (empresaId) {
+      try {
+        const resp = await window.api.get(`/adm/empresa/nome/${empresaId}`);
+        const nomeEmpresa = resp.EMP_NOME ?? '';
+        const header = document.querySelector(".sidebar-header");
+        if (header && nomeEmpresa) {
+          header.innerHTML += `<p class="sidebar-empresa">${nomeEmpresa}</p>`;
+        }
+      } catch (e) {
+        console.warn("[MENU] Não foi possível carregar nome da empresa:", e);
+      }
+    }
+
     // Toggle dos submenus
     document.querySelectorAll(".nav-btn[data-menu]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -136,5 +152,6 @@ function ativarModuloAtual() {
   });
 }
 
-
-abrirMenu()
+window.addEventListener("DOMContentLoaded", () => {
+  abrirMenu();
+});

@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             sessionStorage.setItem("token", data.token);
             sessionStorage.setItem("empresas_ids", JSON.stringify(data.empresas_ids));
+            sessionStorage.setItem("usuario_email", email);
 
             
             if (data.empresas_ids?.length === 1) {

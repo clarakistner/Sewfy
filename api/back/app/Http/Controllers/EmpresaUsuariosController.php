@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\EmpresaUsuarios;
 use App\Models\SewfyAdm;
+use App\Models\UsuarioModulos;
+use App\Models\Modulo;
 
 class EmpresaUsuariosController extends Controller
 {
@@ -59,4 +61,92 @@ class EmpresaUsuariosController extends Controller
             'funcionarios'=> $listaFuncionarios,
         ]);
     }
+
+    public function buscaFuncionario(Request $request, $id)
+    {
+        $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
+
+        $vinculo = EmpresaUsuarios::where('EMP_ID', $empresaId)
+            ->where('USU_ID', $id)
+            ->first();
+
+        if (!$vinculo) {
+            return response()->json(['erro' => 'Funcionário não encontrado'], 404);
+        }
+
+        $funcionario = User::where('USU_ID', $id)
+            ->select('USU_ID', 'USU_NOME', 'USU_EMAIL', 'USU_NUM', 'USU_ATIV')
+            ->first();
+
+        $modulos = UsuarioModulos::where('USU_ID', $id)
+            ->where('EMP_ID', $empresaId)
+            ->pluck('MOD_ID')
+            ->map(fn($modId) => strtolower(Modulo::find($modId)?->MOD_NOME ?? ''))
+            ->filter()
+            ->values();
+
+        return response()->json([
+            'nome'     => $funcionario->USU_NOME,
+            'email'    => $funcionario->USU_EMAIL,
+            'telefone' => $funcionario->USU_NUM,
+            'ativo'    => $funcionario->USU_ATIV === 1,
+            'modulos'  => $modulos,
+        ]);
+    }
+
+    public function atualizarFuncionario(Request $request, $id)
+    {
+        $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
+
+        $vinculo = EmpresaUsuarios::where('EMP_ID', $empresaId)
+            ->where('USU_ID', $id)
+            ->first();
+
+        if (!$vinculo) {
+            return response()->json(['erro' => 'Funcionário não encontrado'], 404);
+        }
+
+        $request->validate([
+            'nome'     => 'required|string|min:4|max:45',
+            'email'    => 'required|email',
+            'telefone' => 'required|string|min:10|max:11',
+            'ativo'    => 'required|boolean',
+            'modulos'  => 'array',
+        ]);
+
+        User::where('USU_ID', $id)->update([
+            'USU_NOME'  => $request->nome,
+            'USU_EMAIL' => $request->email,
+            'USU_NUM'   => $request->telefone,
+            'USU_ATIV'  => $request->ativo ? 1 : 0,
+        ]);
+
+        $vinculo->USU_ATIV = $request->ativo ? 1 : 0;
+        $vinculo->save();
+
+        // remove módulos antigos e insere os novos
+        UsuarioModulos::where('USU_ID', $id)->where('EMP_ID', $empresaId)->delete();
+
+        foreach ($request->modulos ?? [] as $nomeModulo) {
+            $modulo = Modulo::whereRaw('LOWER(MOD_NOME) = ?', [strtolower($nomeModulo)])->first();
+            if ($modulo) {
+                UsuarioModulos::create([
+                    'USU_ID'        => $id,
+                    'EMP_ID'        => $empresaId,
+                    'MOD_ID'        => $modulo->MOD_ID,
+                    'CONCEDIDO_POR' => $user->USU_ID,
+                ]);
+            }
+        }
+
+        return response()->json(['mensagem' => 'Funcionário atualizado com sucesso']);
+    }
+
+
 }

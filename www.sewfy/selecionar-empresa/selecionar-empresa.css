@@ -1,67 +1,256 @@
-body{
-    background-image: linear-gradient(135deg, #eff6ff, #e0e7ff);
-    font-family: Arial, sans-serif;
-    offset: 0;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.container {
-    border-radius: 8px;
-    background-color: transparent;
-    width: auto;
-    height: auto;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 1%;
-}
-.box-empresa {
-    display: flex;
-    offset: 0;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    width: 24vw;
-    border-radius: 1rem;
-    margin-top: 1%;
-    margin-bottom: 1%;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.box-empresa:hover {
-    background-image: linear-gradient(45deg, #0e59fe, #020066);
-    background-clip: content-box;
-    -webkit-background-clip: content-box;
-    color: white;
-    cursor: pointer;
+:root {
+  --azul-forte: #03008a;
+  --azul-medio: #0e59fe;
+  --gradiente: linear-gradient(135deg, #0e59fe, #020066);
+  --fundo: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+  --branco: #ffffff;
+  --texto-principal: #111827;
+  --texto-secundario: #6b7280;
+  --borda: #e5e7eb;
+  --sombra: 0 20px 60px rgba(2, 0, 102, 0.12), 0 4px 16px rgba(14, 89, 254, 0.08);
 }
 
+body {
+  background: var(--fundo);
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Orbs decorativos no fundo */
+.bg-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.35;
+}
+
+.orb-1 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, #a5b4fc, transparent 70%);
+  top: -100px;
+  left: -80px;
+  animation: drift 12s ease-in-out infinite alternate;
+}
+
+.orb-2 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #bfdbfe, transparent 70%);
+  bottom: -80px;
+  right: -60px;
+  animation: drift 15s ease-in-out infinite alternate-reverse;
+}
+
+.orb-3 {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, #c7d2fe, transparent 70%);
+  top: 50%;
+  left: 60%;
+  animation: drift 10s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.06); }
+}
+
+/* Card principal */
+.card {
+  position: relative;
+  z-index: 1;
+  background: var(--branco);
+  border-radius: 20px;
+  box-shadow: var(--sombra);
+  padding: 40px 44px 44px;
+  width: 100%;
+  max-width: 480px;
+  animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Brand topo do card */
+.card-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--gradiente);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.brand-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.brand-name {
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  background: var(--gradiente);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+/* Header do card */
+.card-header {
+  margin-bottom: 28px;
+}
+
+.card-title {
+  font-family: Arial, sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: var(--texto-secundario);
+  line-height: 1.6;
+}
+
+.card-subtitle strong {
+  color: var(--texto-principal);
+  font-weight: bold;
+}
+
+/* Corpo do formulário */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.select-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--texto-principal);
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-empresa {
+  width: 100%;
+  padding: 13px 44px 13px 16px;
+  border: 1.5px solid var(--borda);
+  border-radius: 12px;
+  background-color: #f9fafb;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: var(--texto-principal);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  outline: none;
+}
+
+.select-empresa:focus {
+  border-color: var(--azul-medio);
+  background-color: var(--branco);
+  box-shadow: 0 0 0 3px rgba(14, 89, 254, 0.12);
+}
+
+.select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--texto-secundario);
+  display: flex;
+  align-items: center;
+}
+
+/* Botão continuar */
+.btn-continuar {
+  margin-top: 8px;
+  width: 100%;
+  padding: 14px;
+  background: var(--gradiente);
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(14, 89, 254, 0.3);
+}
+
+.btn-continuar:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(14, 89, 254, 0.4);
+}
+
+.btn-continuar:active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Copyright */
 .copyright {
-    margin-top: 24px;
-    text-align: center;
-    font-size: 12px;
-    color: #6b7280; 
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  color: var(--texto-secundario);
+  text-align: center;
+  animation: slideUp 0.5s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.subtitulo{
-    font-size: 27px;
-    font-weight: bold;
-    font-family: "Times New Roman", serif;
-    color:#020066
-}
-#titulo {
-    font-size: 90px;
-    font-weight: bold;
-    font-family: "Times New Roman", serif;
-    background-image: linear-gradient(45deg, #0e59fe, #020066);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    margin: 0;
+/* Responsivo */
+@media (max-width: 540px) {
+  .card {
+    margin: 0 16px;
+    padding: 32px 24px 36px;
+  }
+
+  .card-title {
+    font-size: 22px;
+  }
 }

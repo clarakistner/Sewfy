@@ -1,7 +1,12 @@
+import { API } from "/api/front/api.js";
 import { mostrarToast } from "../../toast/toast.js";
 import { mascaraTelefone } from "../../assets/mascaras.js";
 
-console.log("[DEBUG] Script listarFornecedores.js carregado");
+if (!window.api) {
+    window.api = new API();
+}
+
+console.log("[DEBUG] Script todosFornecedores.js carregado");
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarFornecedores();
@@ -47,19 +52,14 @@ async function carregarFornecedores() {
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="3" style="text-align:center;">Carregando...</td>
+            <td colspan="3" class="mensagem-vazia">
+                Carregando...
+            </td>
         </tr>
     `;
 
     try {
-        const response = await fetch("/Sewfy/api/fornecedores");
-
-        if (!response.ok) {
-            const erro = await response.json();
-            throw new Error(erro.erro || "Erro ao carregar fornecedores");
-        }
-
-        const fornecedores = await response.json();
+        const fornecedores = await window.api.get("/clifor/todos");
         console.log("[FETCH] Dados recebidos:", fornecedores);
 
         renderizarTabela(fornecedores);
@@ -79,23 +79,16 @@ async function carregarFornecedores() {
     }
 }
 
-// PESQUISAR 
+// PESQUISAR
 async function pesquisarFornecedores(termo) {
     console.log("[BUSCA] Pesquisando por:", termo);
 
     const tbody = document.getElementById("fornecedores-table");
 
     try {
-        const response = await fetch(
-            `/Sewfy/api/fornecedores?search=${encodeURIComponent(termo)}`
+        const fornecedores = await window.api.get(
+            `/clifor/todos?search=${encodeURIComponent(termo)}`
         );
-
-        if (!response.ok) {
-            const erro = await response.json();
-            throw new Error(erro.erro || "Erro na pesquisa");
-        }
-
-        const fornecedores = await response.json();
 
         renderizarTabela(fornecedores);
 

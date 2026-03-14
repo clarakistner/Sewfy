@@ -8,20 +8,31 @@ use Illuminate\Http\Request;
 
 class ClienteFornecedorController extends Controller
 {
-    
-    // GET /api/clifor?search=Clara - Lista clientes/fornecedores ativos, com busca opcional por nome ou CPF/CNPJ
+    private function getEmpresaId(Request $request): string
+    {
+        $abilities = $request->user()->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+
+        if (!$ability) {
+            abort(403, 'Token sem empresa associada');
+        }
+
+        return str_replace('empresa_', '', $ability);
+    }
+
+    // GET /api/clifor?search=Clara
     public function index(Request $request)
     {
-        $empresa = $request->user()->empresa;
-        $termo = trim($request->get('search', ''));
+        $empresaId = $this->getEmpresaId($request);
+        $termo     = trim($request->get('search', ''));
 
-        $query = ClienteFornecedor::where('EMP_ID', $empresa->EMP_ID)
+        $query = ClienteFornecedor::where('EMP_ID', $empresaId)
             ->where('CLIFOR_ATIV', 1);
 
         if ($termo !== '') {
             $query->where(function($q) use ($termo) {
                 $q->where('CLIFOR_NOME', 'ilike', '%' . $termo . '%')
-                ->orWhere('CLIFOR_CPFCNPJ', 'like', '%' . $termo . '%');
+                  ->orWhere('CLIFOR_CPFCNPJ', 'like', '%' . $termo . '%');
             });
         }
 
@@ -50,13 +61,11 @@ class ClienteFornecedorController extends Controller
             'CLIFOR_NUM'     => 'nullable|string'
         ]);
 
-        $empresa = $request->user()->empresa;
+        $empresaId = $this->getEmpresaId($request);
+        $cpfCnpj   = preg_replace('/\D/', '', $request->CLIFOR_CPFCNPJ);
+        $telefone  = preg_replace('/\D/', '', $request->CLIFOR_NUM ?? '');
 
-        $cpfCnpj = preg_replace('/\D/', '', $request->CLIFOR_CPFCNPJ);
-        $telefone = preg_replace('/\D/', '', $request->CLIFOR_NUM ?? '');
-
-        // verifica CPF/CNPJ duplicado na empresa
-        $existe = ClienteFornecedor::where('EMP_ID', $empresa->EMP_ID)
+        $existe = ClienteFornecedor::where('EMP_ID', $empresaId)
             ->where('CLIFOR_CPFCNPJ', $cpfCnpj)
             ->exists();
 
@@ -65,7 +74,7 @@ class ClienteFornecedorController extends Controller
         }
 
         $clifor = ClienteFornecedor::create([
-            'EMP_ID'         => $empresa->EMP_ID,
+            'EMP_ID'         => $empresaId,
             'CLIFOR_TIPO'    => $request->CLIFOR_TIPO,
             'CLIFOR_NOME'    => trim($request->CLIFOR_NOME),
             'CLIFOR_CPFCNPJ' => $cpfCnpj,
@@ -80,13 +89,13 @@ class ClienteFornecedorController extends Controller
         ], 201);
     }
 
-    // GET /api/clifor/{id} - Visualiza detalhes de um cliente/fornecedor
+    // GET /api/clifor/{id}
     public function show(Request $request, int $id)
     {
-        $empresa = $request->user()->empresa;
+        $empresaId = $this->getEmpresaId($request);
 
         $clifor = ClienteFornecedor::where('CLIFOR_ID', $id)
-            ->where('EMP_ID', $empresa->EMP_ID)
+            ->where('EMP_ID', $empresaId)
             ->firstOrFail();
 
         return response()->json([
@@ -99,8 +108,7 @@ class ClienteFornecedorController extends Controller
         ]);
     }
 
-    
-    // PUT /api/clifor/{id} - Atualiza um cliente/fornecedor existente
+    // PUT /api/clifor/{id}
     public function update(Request $request, int $id)
     {
         $request->validate([
@@ -112,20 +120,18 @@ class ClienteFornecedorController extends Controller
             'CLIFOR_ATIV'    => 'required|boolean'
         ]);
 
-        $empresa = $request->user()->empresa;
+        $empresaId = $this->getEmpresaId($request);
 
         $clifor = ClienteFornecedor::where('CLIFOR_ID', $id)
-            ->where('EMP_ID', $empresa->EMP_ID)
-            ->firstOrFail(); // já retorna 404 se não encontrar
+            ->where('EMP_ID', $empresaId)
+            ->firstOrFail();
 
-        $cpfCnpj = preg_replace('/\D/', '', $request->CLIFOR_CPFCNPJ);
+        $cpfCnpj  = preg_replace('/\D/', '', $request->CLIFOR_CPFCNPJ);
         $telefone = preg_replace('/\D/', '', $request->CLIFOR_NUM ?? '');
-
-        // só verifica duplicata se o CPF/CNPJ mudou
         $cpfAtual = preg_replace('/\D/', '', $clifor->CLIFOR_CPFCNPJ);
 
         if ($cpfAtual !== $cpfCnpj) {
-            $existe = ClienteFornecedor::where('EMP_ID', $empresa->EMP_ID)
+            $existe = ClienteFornecedor::where('EMP_ID', $empresaId)
                 ->where('CLIFOR_CPFCNPJ', $cpfCnpj)
                 ->where('CLIFOR_ID', '!=', $id)
                 ->exists();
@@ -145,5 +151,34 @@ class ClienteFornecedorController extends Controller
         ]);
 
         return response()->json(['mensagem' => 'Atualizado com sucesso']);
+    }
+
+    // GET /api/clifor/todos
+    public function todos(Request $request)
+    {
+        $empresaId = $this->getEmpresaId($request);
+        $termo     = trim($request->get('search', ''));
+
+        $query = ClienteFornecedor::where('EMP_ID', $empresaId); // sem CLIFOR_ATIV
+
+        if ($termo !== '') {
+            $query->where(function($q) use ($termo) {
+                $q->where('CLIFOR_NOME', 'ilike', '%' . $termo . '%')
+                ->orWhere('CLIFOR_CPFCNPJ', 'like', '%' . $termo . '%');
+            });
+        }
+
+        $clifor = $query->get()->map(function($item) {
+            return [
+                'id'       => $item->CLIFOR_ID,
+                'nome'     => $item->CLIFOR_NOME,
+                'cpfCnpj'  => $item->CLIFOR_CPFCNPJ,
+                'telefone' => $item->CLIFOR_NUM,
+                'endereco' => $item->CLIFOR_END,
+                'ativo'    => $item->CLIFOR_ATIV
+            ];
+        });
+
+        return response()->json($clifor);
     }
 }

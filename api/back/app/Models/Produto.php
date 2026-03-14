@@ -28,10 +28,20 @@ class Produto extends Model
 
     public function getTipoTextoAttribute(): string
     {
-        return match ((int) $this->PROD_TIPO) {
-            0 => 'Insumo',
-            1 => 'Produto Acabado',
-            3 => 'Conjunto',
+        return match ($this->PROD_TIPO) {
+            'insumo'          => 'Insumo',
+            'produto acabado' => 'Produto Acabado',
+            'conjunto'        => 'Conjunto',
+            default           => 'Desconhecido'
+        };
+    }
+
+    public function getUmTextoAttribute(): string
+    {
+        return match ($this->PROD_UM) {
+            'UN' => 'Unidade',
+            'KG' => 'Quilograma',
+            'MT' => 'Metro',
             default => 'Desconhecido'
         };
     }
