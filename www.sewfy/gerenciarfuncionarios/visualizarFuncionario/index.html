@@ -1,8 +1,8 @@
-<div class="fornecedormodal">
+<div class="funcionariomodal">
   <div class="modal-container">
     <!-- Header -->
     <div class="modal-header">
-      <h2 class="modal-title">Detalhes do Fornecedor</h2>
+      <h2 class="modal-title">Detalhes do Funcionario</h2>
       <button class="material-symbols-outlined modal-close">close</button>
     </div>
 
@@ -11,7 +11,7 @@
       <div class="details-grid">
         <div class="detail">
           <span class="label">Nome *</span>
-          <span class="value" id="modal-nome" data-field="nome"></span>
+          <span id="modal-nome" data-field="nome"></span>
         </div>
 
         <div class="detail">
@@ -20,26 +20,18 @@
         </div>
 
         <div class="detail">
-          <span class="label">CPF/CNPJ *</span>
-          <span class="value" id="modal-cpfcnpj" data-field="cpfCnpj"></span>
+          <span class="label">Email *</span>
+          <span  id="modal-email" data-field="email"></span>
         </div>
 
         <div class="detail">
           <span class="label">Número de telefone *</span>
           <span class="value" id="modal-telefone" data-field="telefone"></span>
         </div>
-
         <div class="detail col-span-2">
-          <span class="label">Endereço *</span>
-          <span class="value" id="modal-endereco" data-field="endereco"></span>
-        </div>
-
-        <div class="detail col-span-2">
-          <button class="btn-editar-fornecedor">Editar Fornecedor</button>
+          <button class="btn-editar-funcionario">Editar Funcionario</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<script type="module" src="visualizarFornecedor.js"></script>

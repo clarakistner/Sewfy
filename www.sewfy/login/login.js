@@ -1,4 +1,5 @@
 import { mostrarToast } from "../toast/toast.js";
+import { initTelaCarregamento, removeTelaCarregamento } from "../telacarregamento/telacarregamento.js";
 
 const API_BASE = 'http://localhost:8000';
 
@@ -65,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const toastCarregando = mostrarToast("Entrando...", "carregando");
+            initTelaCarregamento();
 
             const response = await fetch(`${API_BASE}/api/auth/login`, {
                 method: "POST",
@@ -76,27 +77,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify({ email, senha })
             });
-
-            toastCarregando.remove();
-
             const data = await response.json();
 
             if (response.status === 401) {
                 mostrarToast("Email ou senha incorretos", "erro");
+            removeTelaCarregamento();
                 return;
             }
 
             if (!response.ok) {
                 mostrarToast(data.erro || "Erro ao fazer login", "erro");
+            removeTelaCarregamento();
                 return;
             }
 
             sessionStorage.setItem("token", data.token);
             sessionStorage.setItem("empresas_ids", JSON.stringify(data.empresas_ids));
 
+            
             if (data.empresas_ids?.length === 1) {
+                removeTelaCarregamento();
                 window.location.href = "/www.sewfy/home";
             } else {
+                removeTelaCarregamento();
                 window.location.href = "/www.sewfy/selecionar-empresa";
             }
 

@@ -1,10 +1,11 @@
 import { mascaraTelefone } from "../assets/mascaras.js";
+import { importCssJsVisualizarFuncionario } from "./visualizarFuncionario/visualizarFuncionario.js";
+
 let timeout;
 document.addEventListener("input", handleInput);
 
 function handleInput(e) {
   if (e.target.closest("#barrapesquisa")) {
-    console.log('Entrou no if do handleInput!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     console.log(String(e.target.value))
     clearTimeout(timeout);
     timeout = setTimeout(() => {
@@ -97,7 +98,7 @@ function renderizaFuncionarios(funcionarios) {
                 <td class="table-cell">${mascaraTelefone(funcionario.USU_NUM)}</td>
                 <td class="table-cell">
                     <button 
-                        class="botao-visualizar-fornecedor"
+                        class="botao-visualizar-funcionario"
                         data-id="${funcionario.USU_ID}"
                     >
                         <span class="material-symbols-outlined icone-visualizar-funcionario">
@@ -113,4 +114,5 @@ function renderizaFuncionarios(funcionarios) {
 
 export function initGerenciarFuncionarios() {
   carregarFuncionarios();
+  importCssJsVisualizarFuncionario();
 }

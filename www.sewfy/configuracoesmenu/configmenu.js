@@ -1,6 +1,8 @@
 import { abrirMenu, usuarioEhProprietario } from "../menu/menu.js";
 import { initCadastroFuncionario } from "../cadastrousuario/cadastrousuario.js";
 import { initGerenciarFuncionarios } from "../gerenciarfuncionarios/gerenciarfuncionarios.js";
+import { initEditarOwner } from "../editarcontaOwner/editarcontaOwner.js";
+import { retiraCssJsVisualizarFuncionario } from "../gerenciarfuncionarios/visualizarFuncionario/visualizarFuncionario.js";
 let urlAtual = null;
 document.addEventListener("click", handleClick);
 
@@ -25,13 +27,14 @@ window.addEventListener("load", () => {
 async function handleClick(e) {
   const menuItem = e.target.closest("[data-menu]");
   if (e.target.closest("#btn-config") && (await usuarioEhProprietario())) {
-    setTimeout(() => trocaModais(), 300);
+    trocaModais();
     const icon = document.getElementById("icon-config");
     icon?.classList.add("girando");
-    setTimeout(() => icon?.classList.remove("girando"), 500);
+    setTimeout(() => icon?.classList.remove("girando"), 300);
   }
   if (menuItem?.dataset.menu === "item-cadastros") {
     await trocarPagina("cadastrousuario", "cadastro-funcionario");
+    retiraCssJsVisualizarFuncionario();
     initCadastroFuncionario();
 
   }
@@ -40,10 +43,14 @@ async function handleClick(e) {
     initGerenciarFuncionarios()
   }
   if (menuItem?.dataset.menu === "item-editar-conta") {
+    retiraCssJsVisualizarFuncionario();
     await trocarPagina("editarcontaOwner", "editar-conta");
+    retiraCssJsVisualizarFuncionario();
+    initEditarOwner();
   }
   if (menuItem?.dataset.menu === "item-tela-inicial") {
     await trocarPagina("editartelainicial", "editar-tela-inicial");
+    retiraCssJsVisualizarFuncionario();
   }
 }
 
@@ -55,7 +62,7 @@ async function trocaModais() {
   if (!configMenu && menu) {
     menu.classList.add("fechado");
     layout.classList.add("sem-menu");
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     menu.remove();
 
     await abrirConfigMenu();
@@ -68,16 +75,18 @@ async function trocaModais() {
     configMenu.classList.remove("aberto");
     configMenu.classList.add("fechado");
     layout.classList.add("sem-menu");
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     configMenu.remove();
+    retiraCssJsVisualizarFuncionario();
     document.querySelector("#css-config")?.remove();
     document.querySelector("#js-config")?.remove();
+    document.querySelector(".containerConfigOwner")?.remove();
     const urlAnterior =
       sessionStorage.getItem("urlAnterior") || "/www.sewfy/home";
     history.pushState({}, "", urlAnterior);
     sessionStorage.removeItem("urlAnterior");
     document.querySelector(".principal").style.display = "block";
-    document.querySelector(".containerConfigOwner")?.remove();
+    
     await abrirMenu();
 
     requestAnimationFrame(() => {
