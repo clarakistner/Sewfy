@@ -1,17 +1,18 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .fundo {
-  position:fixed;
+  position: fixed;
   height: 98vh;
   margin: 0;
   offset: 0;
   inset: 0;
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   z-index: 50;
   overflow: hidden;
@@ -19,7 +20,6 @@
 
 #fundo-fosco {
   backdrop-filter: blur(3px);
-  
 }
 
 .icone {
@@ -28,20 +28,37 @@
   border-radius: 100%;
   position: relative;
   outline: 5px solid transparent;
-  background: 
-    linear-gradient(45deg, #ffffff, #020066) border-box;
-  -webkit-mask:
-    radial-gradient(farthest-side, transparent calc(100% - 5px), white calc(100% - 5px));
-  mask:
-    radial-gradient(farthest-side, transparent calc(100% - 5px), white calc(100% - 5px));
-    animation: girar 1s linear infinite;
+  background: linear-gradient(45deg, #ffffff, #020066) border-box;
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 5px),
+    white calc(100% - 5px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 5px),
+    white calc(100% - 5px)
+  );
+  animation: girar 1.5s linear infinite;
 }
 
-@keyframes girar
- {
-    from{
-        transform: rotate(0deg);
-    }to{
-        transform: rotate(360deg);
-    }
+#textoCarregando::after{
+  content: "";
+  animation: adicionaPontos 1.5s infinite;
+}
+
+@keyframes girar {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes adicionaPontos {
+  0% { content: "."; }
+  33% { content: ".."; }
+  66% { content: "..."; }
+  100% { content: ""; }
 }

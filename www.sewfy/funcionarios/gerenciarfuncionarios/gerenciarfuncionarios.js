@@ -2,6 +2,7 @@ import { mascaraTelefone } from "../../assets/mascaras.js";
 import { mostrarToast } from "../../toast/toast.js";
 import { aplicarMascaraTelefone } from "../../assets/mascaras.js";
 
+
 let timeout;
 document.addEventListener("input", handleInput);
 
@@ -41,9 +42,14 @@ export function limparLista() {
 
 function aplicaPesquisa(listaFun, valorPesquisa) {
   if (!valorPesquisa) return listaFun;
-  return listaFun.filter((fun) =>
-    fun.USU_NOME.trim().toLowerCase().includes(valorPesquisa.trim().toLowerCase()) ||
-    fun.USU_EMAIL.trim().toLowerCase().includes(valorPesquisa.trim().toLowerCase())
+  return listaFun.filter(
+    (fun) =>
+      fun.USU_NOME.trim()
+        .toLowerCase()
+        .includes(valorPesquisa.trim().toLowerCase()) ||
+      fun.USU_EMAIL.trim()
+        .toLowerCase()
+        .includes(valorPesquisa.trim().toLowerCase()),
   );
 }
 
@@ -99,10 +105,15 @@ document.addEventListener("click", async (e) => {
   e.stopPropagation();
 
   window.funcionarioAtualId = botao.dataset.id;
-
+  const { carregaJsCssEditarFuncionario } = await import("../editarfuncionarios/editarfuncionarios.js");
+  await carregaJsCssEditarFuncionario();
   try {
-    const modalHTML = await fetch("/www.sewfy/funcionarios/editarfuncionarios/index.html").then(r => r.text());
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
+    const modalHTML = await fetch(
+      "/www.sewfy/funcionarios/editarfuncionarios/index.html",
+    ).then((r) => r.text());
+    const telaGerenciar = document.querySelector(".gerenciarFuncionarios");
+    if (!telaGerenciar) return;
+    telaGerenciar.insertAdjacentHTML("afterbegin", modalHTML);
   } catch (erro) {
     console.error(erro);
     mostrarToast("Erro ao abrir modal", "erro");
@@ -112,17 +123,6 @@ document.addEventListener("click", async (e) => {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 
 export function initGerenciarFuncionarios() {
-  if (!document.getElementById("css-editar-funcionario")) {
-    fetch("/www.sewfy/funcionarios/editarfuncionarios/editarfuncionarios.css")
-      .then(r => r.text())
-      .then(css => {
-        const style = document.createElement("style");
-        style.id = "css-editar-funcionario";
-        style.textContent = css;
-        document.head.appendChild(style);
-      });
-  }
-
   carregarFuncionarios();
   window.atualizarListaFuncionarios = carregarFuncionarios;
 }

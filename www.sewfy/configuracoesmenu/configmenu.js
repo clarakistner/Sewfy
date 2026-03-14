@@ -1,10 +1,9 @@
 import { abrirMenu, usuarioEhProprietario } from "../menu/menu.js";
 import { initCadastroFuncionario } from "../cadastrousuario/cadastrousuario.js";
 import { initGerenciarFuncionarios } from "../funcionarios/gerenciarfuncionarios/gerenciarfuncionarios.js";
-
-import { initGerenciarFuncionarios } from "../gerenciarfuncionarios/gerenciarfuncionarios.js";
 import { initEditarOwner } from "../editarcontaOwner/editarcontaOwner.js";
-import { retiraCssJsVisualizarFuncionario } from "../gerenciarfuncionarios/visualizarFuncionario/visualizarFuncionario.js";
+
+import { retiraCssJsEditarFuncionario } from "../funcionarios/editarfuncionarios/editarfuncionarios.js";
 let urlAtual = null;
 document.addEventListener("click", handleClick);
 
@@ -38,35 +37,29 @@ async function handleClick(e) {
 
   if (menuItem?.dataset.menu === "item-cadastros") {
     await trocarPagina("cadastrousuario", "cadastrousuario", "cadastro-funcionario");
-    retiraCssJsVisualizarFuncionario();
+    
+    retiraCssJsEditarFuncionario();
     initCadastroFuncionario();
   }
 
   if (menuItem?.dataset.menu === "item-gerenciar") {
     await trocarPagina("funcionarios/gerenciarfuncionarios", "gerenciarfuncionarios", "gerenciar-funcionarios");
-    
-    // carrega o JS do modal de edição
-    if (!document.getElementById("js-editar-funcionario")) {
-      const scriptEditar = document.createElement("script");
-      scriptEditar.id = "js-editar-funcionario";
-      scriptEditar.type = "module";
-      scriptEditar.src = "/www.sewfy/funcionarios/editarfuncionarios/editarfuncionarios.js";
-      document.body.appendChild(scriptEditar);
-    }
 
     initGerenciarFuncionarios();
   }
 
   if (menuItem?.dataset.menu === "item-editar-conta") {
     await trocarPagina("editarcontaOwner", "editarcontaOwner", "editar-conta");
-    retiraCssJsVisualizarFuncionario();
+    
+    retiraCssJsEditarFuncionario();
     initEditarOwner();
   }
 
   if (menuItem?.dataset.menu === "item-tela-inicial") {
     await trocarPagina("editartelainicial", "editartelainicial", "editar-tela-inicial");
     await trocarPagina("editartelainicial", "editar-tela-inicial");
-    retiraCssJsVisualizarFuncionario();
+    
+    retiraCssJsEditarFuncionario();
   }
 }
 
@@ -94,7 +87,8 @@ async function trocaModais() {
     layout.classList.add("sem-menu");
     await new Promise((resolve) => setTimeout(resolve, 300));
     configMenu.remove();
-    retiraCssJsVisualizarFuncionario();
+    
+    retiraCssJsEditarFuncionario();
     document.querySelector("#css-config")?.remove();
     document.querySelector("#js-config")?.remove();
 
