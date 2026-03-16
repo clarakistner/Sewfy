@@ -169,6 +169,7 @@ class ProdutoController extends Controller
         $termo     = trim($request->get('termo', ''));
         $tipo      = $request->get('tipo');
 
+        \Log::info('[PRODUTOS] empId: ' . $empresaId);
         $query = Produto::where('EMP_ID', $empresaId); // sem o PROD_ATIV
 
         if ($termo !== '') {

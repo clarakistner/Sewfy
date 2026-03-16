@@ -1,7 +1,7 @@
 import { mostrarToast } from "../../toast/toast.js";
-import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js"
+import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js";
 
-// HELPER
+// HELPERS
 function exibirTipo(tipo) {
     const mapa = {
         'insumo':          'Insumo',
@@ -20,6 +20,19 @@ function exibirUm(um) {
     return mapa[um] ?? um;
 }
 
+// PRÉ-CARREGA O HTML DO MODAL
+let modalHTMLCache = null;
+
+async function carregarModalHTML() {
+    if (modalHTMLCache) return modalHTMLCache;
+    modalHTMLCache = await fetch("/www.sewfy/produtos/visualizar/index.html")
+        .then(res => res.text());
+    return modalHTMLCache;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    carregarModalHTML();
+});
 
 // ABRIR MODAL
 document.addEventListener("click", async (e) => {
@@ -29,27 +42,23 @@ document.addEventListener("click", async (e) => {
     window.produtoAtualId = botao.dataset.id;
 
     try {
-        const modalHTML = await fetch(
-            "/www.sewfy/produtos/visualizar/index.html"
-        ).then(res => res.text());
-
+        const modalHTML = await carregarModalHTML();
         document.body.insertAdjacentHTML("afterbegin", modalHTML);
 
-        const produto = await window.api.buscaId("/produtos", window.produtoAtualId);
+        const d = botao.dataset;
 
-        document.getElementById("modal-cod").textContent   = produto.cod;
-        document.getElementById("modal-tipo").textContent  = exibirTipo(produto.tipo);
-        document.getElementById("modal-nome").textContent  = produto.nome;
-        document.getElementById("modal-um").textContent    = exibirUm(produto.um);
-        document.getElementById("modal-preco").textContent = formatarMoeda(produto.preco);
-        document.getElementById("modal-cadastro").textContent = produto.ativo ? "Ativo" : "Inativo";
-        document.getElementById("modal-desc").textContent  = produto.desc ?? "";
+        document.getElementById("modal-cod").textContent      = d.cod;
+        document.getElementById("modal-tipo").textContent     = exibirTipo(d.tipo);
+        document.getElementById("modal-nome").textContent     = d.nome;
+        document.getElementById("modal-um").textContent       = exibirUm(d.um);
+        document.getElementById("modal-preco").textContent    = d.preco ? formatarMoeda(d.preco) : '';
+        document.getElementById("modal-cadastro").textContent = d.ativo === "1" ? "Ativo" : "Inativo";
+        document.getElementById("modal-desc").textContent     = d.desc || '';
 
     } catch (erro) {
         mostrarToast(erro.message || "Erro ao carregar produto", "erro");
     }
 });
-
 
 // ATIVAR EDIÇÃO
 document.addEventListener("click", (e) => {
@@ -57,7 +66,6 @@ document.addEventListener("click", (e) => {
         ativarModoEdicao();
     }
 });
-
 
 function ativarModoEdicao() {
     document.querySelectorAll(".value").forEach(span => {
@@ -80,7 +88,6 @@ function ativarModoEdicao() {
                 <option value="KG">Quilograma</option>
                 <option value="MT">Metro</option>
             `;
-            // valor exibido é "Unidade", "Quilograma", "Metro" — reverter para enum
             const umReverso = { 'Unidade': 'UN', 'Quilograma': 'KG', 'Metro': 'MT' };
             el.value = umReverso[valor] ?? valor;
 
@@ -91,7 +98,6 @@ function ativarModoEdicao() {
                 <option value="produto acabado">Produto Acabado</option>
                 <option value="conjunto">Conjunto</option>
             `;
-            // valor exibido é "Insumo", "Produto Acabado", "Conjunto" — reverter para enum
             const tipoReverso = { 'Insumo': 'insumo', 'Produto Acabado': 'produto acabado', 'Conjunto': 'conjunto' };
             el.value = tipoReverso[valor] ?? valor.toLowerCase();
 
@@ -99,7 +105,6 @@ function ativarModoEdicao() {
             el = document.createElement("input");
             el.type  = "text";
             el.value = valor;
-
             el.addEventListener("input", (e) => {
                 let v = e.target.value.replace(/\D/g, "");
                 v = (Number(v) / 100).toFixed(2);
@@ -122,8 +127,6 @@ function ativarModoEdicao() {
     trocarBotaoParaSalvar();
 }
 
-
-// TROCAR BOTÃO
 function trocarBotaoParaSalvar() {
     const btn = document.querySelector(".btn-editar-produto");
     btn.textContent = "Salvar alterações";
@@ -133,8 +136,6 @@ function trocarBotaoParaSalvar() {
         .addEventListener("click", salvarProduto);
 }
 
-
-// SALVAR PRODUTO
 async function salvarProduto() {
     const codInput   = document.querySelector('[data-field="codigo"]');
     const tipoInput  = document.querySelector('[data-field="tipo"]');
@@ -195,8 +196,6 @@ async function salvarProduto() {
     }
 }
 
-
-// ATUALIZAR MODAL
 function atualizarModalComDados(dados) {
     document.querySelectorAll(".detail").forEach(detail => {
         const input = detail.querySelector(".input-edicao");
@@ -209,17 +208,12 @@ function atualizarModalComDados(dados) {
 
         if (input.dataset.field === "ativo") {
             span.textContent = input.value === "1" ? "Ativo" : "Inativo";
-
         } else if (input.dataset.field === "tipo") {
             span.textContent = exibirTipo(input.value);
-
         } else if (input.dataset.field === "um") {
             span.textContent = exibirUm(input.value);
-
         } else if (input.dataset.field === "preco") {
-            span.textContent = formatarMoeda(
-                converterMoedaParaNumero(input.value)
-            );
+            span.textContent = formatarMoeda(converterMoedaParaNumero(input.value));
         } else {
             span.textContent = input.value;
         }
@@ -228,8 +222,6 @@ function atualizarModalComDados(dados) {
     });
 }
 
-
-// VOLTAR BOTÃO
 function trocarBotaoParaEditar() {
     const btn = document.querySelector(".btn-editar-produto");
     btn.textContent = "Editar Produto";
@@ -238,7 +230,6 @@ function trocarBotaoParaEditar() {
     document.querySelector(".btn-editar-produto")
         .addEventListener("click", ativarModoEdicao);
 }
-
 
 // FECHAR MODAL
 document.addEventListener("click", (e) => {

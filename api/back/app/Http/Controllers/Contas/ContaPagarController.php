@@ -5,75 +5,102 @@ namespace App\Http\Controllers\Contas;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ContaPagar;
-use Illuminate\Auth\Illuminate\Contracts\Auth\Guard;
 
 class ContaPagarController extends Controller
 {
-    public function mostrarConta(Request $request)
+    private function getEmpresaId(Request $request): string
     {
-        $request->validate([
-            'cp_id' => 'required|integer',
-        ]);
-        $conta = ContaPagar::where('CP_ID', $request->cp_id)
-        ->where('USU_ID', auth()->id())
-        ->first();
+        $abilities = $request->user()->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+
+        if (!$ability) {
+            abort(403, 'Token sem empresa associada');
+        }
+
+        return str_replace('empresa_', '', $ability);
+    }
+
+    // LISTAR TODAS
+    public function listarContas(Request $request)
+    {
+        $empId = $this->getEmpresaId($request);
+
+        $query = ContaPagar::with(['clifor', 'ordemProducao'])
+            ->where('EMP_ID', $empId);
+
+        // Filtro por status (pendente / pago)
+        if ($request->filled('status') && $request->status !== 'todas') {
+            $query->where('CP_STATUS', strtolower($request->status));
+        }
+
+        // Filtro por termo (nome do fornecedor ou código da OP)
+        if ($request->filled('termo')) {
+            $termo = $request->termo;
+            $query->where(function ($q) use ($termo) {
+                $q->whereHas('clifor', function ($q2) use ($termo) {
+                    $q2->where('CLIFOR_NOME', 'ilike', "%{$termo}%");
+                })
+                ->orWhere('OP_ID', 'ilike', "%{$termo}%");
+            });
+        }
+
+        // Filtro por intervalo de data de vencimento
+        if ($request->filled('data_inicial')) {
+            $query->where('CP_DATAV', '>=', $request->data_inicial);
+        }
+        if ($request->filled('data_final')) {
+            $query->where('CP_DATAV', '<=', $request->data_final);
+        }
+
+        // Filtro por intervalo de valor
+        if ($request->filled('valor_min')) {
+            $query->where('CP_VALOR', '>=', $request->valor_min);
+        }
+        if ($request->filled('valor_max')) {
+            $query->where('CP_VALOR', '<=', $request->valor_max);
+        }
+
+        $contas = $query->orderBy('CP_DATAV', 'asc')->get();
+
+        return response()->json($contas->map(function ($conta) {
+            return [
+                'id'         => $conta->CP_ID,
+                'status'     => $conta->CP_STATUS,
+                'fornecedor' => $conta->clifor->CLIFOR_NOME ?? '—',
+                'telefone'   => $conta->clifor->CLIFOR_NUM  ?? '',
+                'op_id'      => $conta->OP_ID,
+                'valor'      => $conta->CP_VALOR,
+                'vencimento' => $conta->CP_DATAV,
+                'emissao'    => $conta->CP_DATAE,
+                'pagamento'  => $conta->CP_DATAP,
+            ];
+        }));
+    }
+
+    // BUSCAR POR ID
+    public function mostrarConta(Request $request, $id)
+    {
+        $empId = $this->getEmpresaId($request);
+
+        $conta = ContaPagar::with(['clifor', 'ordemProducao'])
+            ->where('CP_ID', $id)
+            ->where('EMP_ID', $empId)
+            ->first();
 
         if (!$conta) {
             return response()->json(['erro' => 'Conta não encontrada'], 404);
         }
-        return response()->json($conta);
-    }
-    public function listarContas()
-    {
-        $contas = ContaPagar::where('USU_ID', auth()->id())->get();
-        return response()->json($contas);
-    }
-    public function criarConta(Request $request)
-    {
-        $request->validate([
-            'EMP_ID' => 'required|integer',
-            'OP_ID' => 'required|integer',
-            'OPIN_ID' => 'required|integer',
-            'CLIFOR_ID' => 'required|integer',
-            'CP_VALOR' => 'required|numeric',
-            'CP_DATAE' => 'required|date',
-            'CP_DATAV' => 'required|date',
-            'CP_DATAP' => 'nullable|date',
-            'CP_STATUS' => 'required|string|max:255',
+
+        return response()->json([
+            'id'         => $conta->CP_ID,
+            'status'     => $conta->CP_STATUS,
+            'fornecedor' => $conta->clifor->CLIFOR_NOME    ?? '—',
+            'telefone'   => $conta->clifor->CLIFOR_NUM     ?? '—',   
+            'op_id'      => $conta->OP_ID,
+            'valor'      => $conta->CP_VALOR,
+            'vencimento' => $conta->CP_DATAV,
+            'emissao'    => $conta->CP_DATAE,
+            'pagamento'  => $conta->CP_DATAP,
         ]);
-
-        $conta = ContaPagar::create([
-            'EMP_ID' => $request->EMP_ID,
-            'OP_ID' => $request->OP_ID,
-            'OPIN_ID' => $request->OPIN_ID,
-            'CLIFOR_ID' => $request->CLIFOR_ID,
-            'CP_VALOR' => $request->CP_VALOR,
-            'CP_DATAE' => $request->CP_DATAE,
-            'CP_DATAV' => $request->CP_DATAV,
-            'CP_DATAP' => $request->CP_DATAP,
-            'CP_STATUS' => $request->CP_STATUS,
-            'USU_ID' => auth()->id(),
-        ]);
-
-        return response()->json($conta, 201);
-    }
-    public function atualizarDataPagamento(Request $request)
-    {
-        $request->validate([
-            'cp_id' => 'required|integer',
-            'cp_datap' => 'required|date',
-        ]);
-
-        $conta = ContaPagar::where('CP_ID', $request->cp_id)
-        ->where('USU_ID', auth()->id())
-        ->first();
-
-        if (!$conta) {
-            return response()->json(['erro' => 'Conta não encontrada'], 404);
-        }
-
-        $conta->update(['CP_DATAP' => $request->cp_datap]);
-
-        return response()->json($conta);
     }
 }

@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="todasContas.css?v=1.0.2">
 
     <link rel="stylesheet" href="../../menu/menu.css?v=1.0.2">
-    <link rel="stylesheet" href="../../contas/modalVisualizarContas/visualizarContas.css?v=1.0.2">
+    <link rel="stylesheet" href="../modalVisualizarContas/visualizarContas.css?v=1.0.2">
+    <link rel="stylesheet" href="../../configuracoesmenu/configmenu.css?v=1.0.2">
 </head>
 
 <body>
@@ -46,8 +47,8 @@
 
                         <select id="tipos-filtro">
                             <option value="todas">Todos os Tipos</option>
-                            <option value="Pendentes">Pendentes</option>
-                            <option value="Pagas">Pagas</option>
+                            <option value="pendente">Pendentes</option>
+                            <option value="pago">Pagas</option>
                         </select>
                     </div>
 
@@ -103,36 +104,6 @@
                 <!-- Corpo da tabela -->
                 <tbody id="contas-table" class="table-body">
 
-                <tr class="table-row">
-                    <td class="table-cell td-badge">
-                        <span class="badge badge-pa">Paga</span>
-                    </td>
-                    <td class="table-cell">001</td>
-                    <td class="table-cell">Guabifios</td>
-                    <td class="table-cell">19/02/2026</td>
-                    <td class="table-cell table-cell--right">29/01/2026</td>
-                    <td class="table-cell">
-                        <button id="botao-visualizar-conta">
-                            <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
-                        </button>
-                    </td>
-                </tr>
-
-                <tr class="table-row">
-                    <td class="table-cell td-badge">
-                        <span class="badge badge-pe">Pendente</span>
-                    </td>
-                    <td class="table-cell">002</td>
-                    <td class="table-cell">Kohler</td>
-                    <td class="table-cell">19/02/2026</td>
-                    <td class="table-cell table-cell--right">-</td>
-                    <td class="table-cell">
-                        <button id="botao-visualizar-conta">
-                            <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
-                        </button>
-                    </td>
-                </tr>
-
                 </tbody>
             </table>
             </div>
@@ -141,6 +112,7 @@
     
 <script type="module" src="../../menu/menu.js" defer></script>
 <script type="module" src="todasContas.js"></script>
-<script type="module" src="../../contas/modalVisualizarContas/visualizarContas.js" defer></script>
+<script type="module" src="../modalVisualizarContas/visualizarContas.js" defer></script>
+<script type="module" src="../../configuracoesmenu/configmenu.js"></script>
 </body>
 </html>

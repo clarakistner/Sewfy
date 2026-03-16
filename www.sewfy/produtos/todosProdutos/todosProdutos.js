@@ -19,7 +19,7 @@ function inicializarPesquisa() {
 
     function executarBusca() {
         const termo = inputPesquisa.value.trim();
-        const tipo  = selectTipo.value; // '' | 'insumo' | 'produto acabado' | 'conjunto'
+        const tipo  = selectTipo.value;
 
         if (termo === "" && tipo === "") {
             carregarProdutos();
@@ -125,7 +125,15 @@ function renderizarTabela(produtos) {
             </td>
             <td class="table-cell">${produto.um}</td>
             <td class="table-cell">
-                <button type="button" class="botao-visualizar-produto" data-id="${produto.id}">
+                <button type="button" class="botao-visualizar-produto"
+                    data-id="${produto.id}"
+                    data-cod="${produto.cod}"
+                    data-nome="${produto.nome}"
+                    data-tipo="${produto.tipo}"
+                    data-um="${produto.um}"
+                    data-preco="${produto.preco ?? ''}"
+                    data-ativo="${produto.ativo}"
+                    data-desc="${produto.desc ?? ''}">
                     <span class="material-symbols-outlined icone-visualizar-produto">visibility</span>
                 </button>
             </td>
