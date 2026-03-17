@@ -41,7 +41,7 @@ class EditarInsumoOrdemProducaoController extends Controller
                 $insumoBanco->update([
                     'OPIN_QTD'               => $qtd,
                     'OPIN_CUSTOT'            => $custot,
-                    'FORNECEDORES_CLIFOR_ID' => $idFor
+                    'CLIFOR_ID' => $idFor
                 ]);
             }
 

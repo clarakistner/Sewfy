@@ -12,11 +12,16 @@ class VisualizarOrdemProducaoController extends Controller
     public function visualizarOP(Request $request, $id)
     {
         try {
-            $idUsuario = (int) $request->session()->get('usuario_id');
+            $idUsuario = (int) $request->user()->USU_ID;
+            $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
 
             // Busca a OP pelo ID e usuário
             $op = OrdemDeProducao::where('OP_ID', $id)
-                ->where('USUARIOS_USU_ID', $idUsuario)
+                ->where('USU_RESPONSAVEL', $idUsuario)
+                ->where('EMP_ID', $empresaId)
                 ->first();
 
             if (!$op) {
@@ -29,7 +34,7 @@ class VisualizarOrdemProducaoController extends Controller
 
             $opResposta = [
                 'idOP'        => $op->OP_ID,
-                'prodIDOP'    => $op->PRODUTOS_PROD_ID,
+                'prodIDOP'    => $op->PROD_ID,
                 'dataa'       => $op->OP_DATAA,
                 'datae'       => $op->OP_DATAE,
                 'custot'      => $op->OP_CUSTOT,
@@ -37,24 +42,24 @@ class VisualizarOrdemProducaoController extends Controller
                 'custour'     => $op->OP_CUSTOUR,
                 'qtdOP'       => $op->OP_QTD,
                 'qtdeOP'      => $op->OP_QTDE,
-                'usuarioIDOP' => $op->USUARIOS_USU_ID,
+                'usuarioIDOP' => $op->USU_ID,
                 'quebra'      => $op->OP_QUEBRA
             ];
 
             // Busca os insumos da OP
-            $insumos = OPInsumo::where('ORDEM_PRODUCAO_OP_ID', $op->OP_ID)->get();
+            $insumos = OPInsumo::where('OP_ID', $op->OP_ID)->get();
 
             $opinSResposta = [];
             foreach ($insumos as $opin) {
                 $opinSResposta[] = [
                     'idOPIN'     => $opin->OPIN_ID,
-                    'forOPIN'    => $opin->FORNECEDORES_CLIFOR_ID,
+                    'forOPIN'    => $opin->CLIFOR_ID,
                     'custotOPIN' => $opin->OPIN_CUSTOT,
                     'custouOPIN' => $opin->OPIN_CUSTOU,
                     'qtdOPIN'    => $opin->OPIN_QTD,
                     'umOPIN'     => $opin->OPIN_UM,
-                    'opOPIN'     => $opin->ORDEM_PRODUCAO_OP_ID,
-                    'prodIdOPIN' => $opin->PRODUTOS_PROD_ID
+                    'opOPIN'     => $opin->OP_ID,
+                    'prodIdOPIN' => $opin->PROD_ID
                 ];
             }
 

@@ -16,6 +16,10 @@ class CriacaoOrdemDeProducaoController extends Controller
         try {
             $dados = $request->json()->all();
 
+            $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
             // Valida se os dados foram recebidos corretamente
             if (!$dados) {
                 return response()->json([
@@ -25,7 +29,7 @@ class CriacaoOrdemDeProducaoController extends Controller
             }
 
             // Extrai os dados da Ordem de Produção
-            $usuarioId = $request->session()->get('usuario_id');
+            $usuarioId = $request->user()->USU_ID;
             $qtdProd   = $dados['OP_QTD'] ?? null;
             $dataa     = $dados['OP_DATAA'] ?? null;
             $produtoId = $dados['PROD_ID'] ?? null;
@@ -33,7 +37,7 @@ class CriacaoOrdemDeProducaoController extends Controller
             $custotOP  = $dados['OP_CUSTOT'] ?? null;
 
             // Gera ID único para a Ordem de Produção
-            $numero = OrdemDeProducao::where('USUARIOS_USU_ID', $usuarioId)->count() + 1;
+            $numero = OrdemDeProducao::where('USU_RESPONSAVEL', $usuarioId)->where('EMP_ID',$empresaId)->count() + 1;
             $idOp = 'OP0' . $usuarioId . '00' . $numero;
 
             // Persiste a Ordem de Produção no banco
@@ -43,8 +47,9 @@ class CriacaoOrdemDeProducaoController extends Controller
                 'OP_DATAA'         => $dataa,
                 'OP_CUSTOU'        => $custouOP,
                 'OP_CUSTOT'        => $custotOP,
-                'USUARIOS_USU_ID'  => $usuarioId,
-                'PRODUTOS_PROD_ID' => $produtoId
+                'USU_RESPONSAVEL'  => $usuarioId,
+                'PROD_ID' => $produtoId,
+                'EMP_ID' => $empresaId,
             ]);
 
             // Extrai e persiste os insumos da OP
@@ -55,9 +60,9 @@ class CriacaoOrdemDeProducaoController extends Controller
                     'OPIN_QTD'               => $ins['QTDIN'],
                     'OPIN_CUSTOU'            => $ins['CUSTOU'],
                     'OPIN_CUSTOT'            => $ins['CUSTOT'],
-                    'PRODUTOS_PROD_ID'       => $ins['INSUID'],
-                    'ORDEM_PRODUCAO_OP_ID'   => $idOp,
-                    'FORNECEDORES_CLIFOR_ID' => $ins['IDFORNECEDOR']
+                    'PROD_ID'       => $ins['INSUID'],
+                    'OP_ID'   => $idOp,
+                    'CLIFOR_ID' => $ins['IDFORNECEDOR'],
                 ]);
             }
 

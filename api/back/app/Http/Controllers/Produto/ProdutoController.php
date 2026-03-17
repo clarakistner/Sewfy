@@ -100,7 +100,10 @@ class ProdutoController extends Controller
     // GET /api/produtos/{id}
     public function show(Request $request, int $id)
     {
-        $empresaId = $this->getEmpresaId($request);
+        $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
 
         $p = Produto::where('PROD_ID', $id)
             ->where('EMP_ID', $empresaId)

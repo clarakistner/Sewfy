@@ -13,26 +13,32 @@ class ListarOrdensProducaoController extends Controller
     public function listarOPs(Request $request)
     {
         try {
-            $idUsuario = (int) $request->session()->get('usuario_id');
+            $idUsuario = (int) $request->user()->USU_ID;
+            $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
 
             // Busca todas as Ordens de Produção do usuário
-            $ops = OrdemDeProducao::where('USUARIOS_USU_ID', $idUsuario)->get();
+            $ops = OrdemDeProducao::where('USU_RESPONSAVEL', $idUsuario)
+            ->where("EMP_ID", $empresaId)
+            ->get();
 
             $listaResposta = [];
 
             // Itera sobre as ordens encontradas e monta a resposta
             foreach ($ops as $op) {
                 $listaResposta[] = [
-                    'OP_ID'      => $op->OP_ID,
-                    'OP_DATAA'   => $op->OP_DATAA,
-                    'OP_DATAE'   => $op->OP_DATAE,
-                    'OP_CUSTOT'  => $op->OP_CUSTOT,
-                    'OP_CUSTOU'  => $op->OP_CUSTOU,
-                    'OP_CUSTOUR' => $op->OP_CUSTOUR,
-                    'OP_QTD'     => $op->OP_QTD,
-                    'OP_QTDE'    => $op->OP_QTDE,
-                    'PRODUTO_ID' => $op->PRODUTOS_PROD_ID,
-                    'OP_QUEBRA'  => $op->OP_QUEBRA
+                    'idOP'      => $op->OP_ID,
+                    'dataa'   => $op->OP_DATAA,
+                    'datae'   => $op->OP_DATAE,
+                    'custot'  => $op->OP_CUSTOT,
+                    'custou'  => $op->OP_CUSTOU,
+                    'custour' => $op->OP_CUSTOUR,
+                    'qtdOP'     => $op->OP_QTD,
+                    'qtdeOP'    => $op->OP_QTDE,
+                    'prodIDOP' => $op->PROD_ID,
+                    'quebra'  => $op->OP_QUEBRA
                 ];
             }
 

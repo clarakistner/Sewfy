@@ -21,8 +21,8 @@ class OPInsumo extends Model
         'OPIN_QTD',
         'OPIN_CUSTOU',
         'OPIN_CUSTOT',
-        'PRODUTOS_PROD_ID',
-        'ORDEM_PRODUCAO_OP_ID',
-        'FORNECEDORES_CLIFOR_ID'
+        'PROD_ID',
+        'OP_ID',
+        'CLIFOR_ID'
     ];
 }

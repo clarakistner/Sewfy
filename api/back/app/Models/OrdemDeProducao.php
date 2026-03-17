@@ -32,7 +32,10 @@ class OrdemDeProducao extends Model
         'OP_CUSTOUR',
         'OP_QTDE',
         'OP_QUEBRA',
-        'USUARIOS_USU_ID',
-        'PRODUTOS_PROD_ID'
+        'USU_RESPONSAVEL',
+        'PROD_ID',
+        'OP_STATUS',
+        'EMP_ID'
+
     ];
 }

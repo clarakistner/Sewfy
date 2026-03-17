@@ -24,7 +24,11 @@ class CriacaoInsumoController extends Controller
             }
 
             $opinS     = $dados['insumosInseridos'];
-            $idUsuario = (int) $request->session()->get('usuario_id');
+            $idUsuario = (int) $request->user()->USU_ID;
+            $user = $request->user();
+        $abilities = $user->currentAccessToken()->abilities;
+        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+        $empresaId = str_replace('empresa_', '', $ability);
 
             if (!$opinS || count($opinS) === 0) {
                 return;
@@ -39,14 +43,15 @@ class CriacaoInsumoController extends Controller
                     'OPIN_QTD'               => (int) ($opin['qtdOPIN'] ?? null),
                     'OPIN_CUSTOU'            => (float) ($opin['custouOPIN'] ?? null),
                     'OPIN_CUSTOT'            => (float) ($opin['custotOPIN'] ?? null),
-                    'PRODUTOS_PROD_ID'       => (int) ($opin['prodIdOPIN'] ?? null),
-                    'ORDEM_PRODUCAO_OP_ID'   => $idOP,
-                    'FORNECEDORES_CLIFOR_ID' => is_numeric($opin['forOPIN'] ?? null) ? (int) $opin['forOPIN'] : null
+                    'PROD_ID'       => (int) ($opin['prodIdOPIN'] ?? null),
+                    'OP_ID'   => $idOP,
+                    'CLIFOR_ID' => is_numeric($opin['forOPIN'] ?? null) ? (int) $opin['forOPIN'] : null
                 ]);
 
                 // Recalcula e atualiza os custos da OP
                 $op       = OrdemDeProducao::where('OP_ID', $idOP)
-                    ->where('USUARIOS_USU_ID', $idUsuario)
+                    ->where('USU_RESPONSAVEL', $idUsuario)
+                    ->where('EMP_ID', $empresaId)
                     ->first();
 
                 $custotOP = FuncoesAuxiliares::retornaCustotOP($idOP);
