@@ -1,29 +1,37 @@
-<div class="containerConfigOwner">
-  <div class="editarContaOwner">
-    <h3>Editar Conta</h3>
-    <div class="corpoEditarOwner">
-      <div class="content">
-        <div class="details-grid">
-          <div class="detail">
-            <span class="label">Nome *</span>
-            <input class="value" id="nome" data-field="nome"/>
-          </div>
-          <div class="detail">
-            <span class="label">Email *</span>
-            <input class="value" id="email" data-field="email"/>
-          </div>
+<div class="containerEditarOwner">
 
-          <div class="detail">
-            <span class="label">Número de telefone *</span>
-            <input class="value" id="telefone" data-field="telefone"
-              />
-            
-          </div>
-          <div class="detail col-span-2">
-            <button class="btn-editar-owner">Editar Conta</button>
-          </div>
-        </div>
-      </div>
+  <div class="editarUsuario">
+
+    <div class="tituloPagina">
+          <h1>
+              Editar Conta do Proprietário
+          </h1>
+          <p>Atualize suas informações de administrador</p>
     </div>
+
+    <!-- Seção de Dados do Proprietário -->
+    <div class="secao-card">
+                <h2 class="secao-titulo">Dados Pessoais</h2>
+
+                <div class="form-grid">
+                    <div class="campo campo-full">
+                        <label>Nome *</label>
+                        <input type="text" placeholder="Nome do funcionário" id="nome"/>
+                    </div>                    
+                    <div class="campo campo-full">
+                        <label>Telefone *</label>
+                        <input type="text" placeholder="(99) 99999-9999" id="telefone"/>
+                    </div>
+                    <div class="campo campo-full">
+                        <label>Email *</label>
+                        <input type="email" placeholder="funcionario@gmail.com" id="email"/>
+                    </div>
+                </div>
+      </div>
+
+      <div class="containerButton">
+        <button class="botaoSalvar">Salvar Alterações</button>
+      </div>
+    
   </div>
 </div>

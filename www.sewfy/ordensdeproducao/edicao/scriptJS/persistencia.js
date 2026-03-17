@@ -11,14 +11,19 @@ import { organizaDivNovoInsumo } from './renderizacao.js'
 // Orquestra o fluxo de salvar: valida, persiste e fecha o modal
 export async function salvaAlteracoes() {
   try {
+
+    const {initTelaCarregamento, removeTelaCarregamento} = await import('../../../telacarregamento/telacarregamento.js')
+    const container = document.querySelector(".modal-container")
     if (!verificaQuantidadesOPOPIN()) {
       mostrarToast("Os campos de quantidade da Ordem e dos insumos\nnão podem ser vazios ou iguais a 0", "erro")
       return
     } else {
+      initTelaCarregamento(container)
       await deletaInsumosBanco()
       await criaInsumosBanco()
       await editaInsumos()
       await atualizaOPBanco()
+      removeTelaCarregamento()
       mostrarToast("Alterações salvas!")
       fechaModal()
       removeBlur()
@@ -41,10 +46,13 @@ export function insereDadosOPAtualizados() {
     }
     const novaQtd = parseInt(qtdOP.value)
     const novaQuebra = parseInt(quebraOP.value)
-    if (isNaN(novaQtd) || isNaN(novaQuebra)) {
-      console.log("Valores de quantidade ou quebra inválidos")
-      mostrarToast("Valores de quantidade ou quebra inválidos", "erro")
+    if (isNaN(novaQtd)) {
+      console.log("Valor de quantidadeinválido")
+      mostrarToast("Valor de quantidade inválido", "erro")
       return
+    }
+    if(isNaN(novaQuebra)){
+      novaQuebra = null
     }
     atualizaOP.NovaQtdOP = novaQtd
     atualizaOP.NovaQuebra = novaQuebra

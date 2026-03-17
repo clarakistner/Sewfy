@@ -4,6 +4,7 @@ import { getInsumosBanco } from '../../modal/modalOrdemDeProducao.js'
 import { resgataListaFornecedores, resgataListaProdutos } from './banco.js'
 import { setListaDOM, setInsumosDeletados, setInsumosInseridos } from './estado.js'
 
+
 // CONTROLE DO MODAL (abrir, fechar, blur)
 
 var main = document.querySelector(".principal");
@@ -11,7 +12,7 @@ var main = document.querySelector(".principal");
 // Abre o modal de edicao: carrega o HTML via fetch, injeta no DOM
 // e dispara o carregamento de todos os dados necessarios para a tela
 export function abreModal() {
-  fetch('/Sewfy/www.sewfy/ordensdeproducao/edicao/edicaoOrdemDeProducao.html')
+  fetch('/www.sewfy/ordensdeproducao/edicao/edicaoOrdemDeProducao.html')
     .then(response => response.text())
     .then(async (data) => {
       document.body.insertAdjacentHTML("afterbegin", data)
@@ -24,6 +25,7 @@ export function abreModal() {
         resgataListaProdutos(),
         organizaDadosTela()
       ])
+      
     })
 }
 

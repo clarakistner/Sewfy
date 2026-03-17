@@ -24,7 +24,15 @@ function preencherModal(funcionario) {
   document.getElementById("edit-telefone").value = mascaraTelefone(
     funcionario.telefone ?? "",
   );
-  document.getElementById("edit-email").value = funcionario.email ?? "";
+
+
+  const campoEmail = document.getElementById("edit-email");
+  if (campoEmail) {
+    campoEmail.value = funcionario.email ?? "";
+    campoEmail.setAttribute("readonly", true);
+    campoEmail.style.opacity = "0.6";
+    campoEmail.style.cursor = "not-allowed";
+  }
 
   atualizarToggle(funcionario.ativo);
 
@@ -78,7 +86,6 @@ async function salvarFuncionario() {
     .getElementById("edit-telefone")
     .value.trim()
     .replace(/\D/g, "");
-  const email = document.getElementById("edit-email").value.trim();
   const ativo =
     document.getElementById("toggle-ativo").dataset.ativo === "true";
 

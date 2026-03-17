@@ -23,7 +23,7 @@ export async function resgataListaProdutos() {
 // Busca e armazena em memoria a lista de fornecedores
 export async function resgataListaFornecedores() {
   try {
-    const listaBanco = await window.api.get("/fornecedores")
+    const listaBanco = await window.api.get("/clifor")
     setListaFornecedores(listaBanco)
   } catch (error) {
     console.log(`Erro ao tentar resgatar fornecedores: ${error}`)
@@ -39,7 +39,7 @@ export async function retornaNomeFornecedor(id) {
       return null
     } else {
       console.log(`ID fornecedor: ${id}`)
-      const fornecedor = await window.api.get(`/fornecedores/${parseInt(id)}`)
+      const fornecedor = await window.api.get(`/clifor/${parseInt(id)}`)
       return fornecedor.nome
     }
   } catch (error) {

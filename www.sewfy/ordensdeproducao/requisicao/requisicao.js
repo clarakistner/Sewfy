@@ -3,18 +3,22 @@ import { mostrarToast } from '../../toast/toast.js'
 import { listarOrdensProducao, limparLista } from '../gerenciar/gerenciarOrdensDeProducao.js'
 
 
-if (document.querySelector("select.input-produto")) {
-    console.log("Select existe")
-    carregarProdutosEmSelect('final')
-  }
+
 // Busca lista inicial de produtos
 
-let listaProdutos = await window.api.get("/produtos")
+let listaProdutos = null;
+
+const getListaProdutosBanco = async () => {
+  if (!listaProdutos) {
+    listaProdutos = await window.api.get("/produtos");
+  }
+  return listaProdutos;
+}
 
 // Constantes para tipos de produtos
 const PROD_TIPO = {
-  INSUMO: "Insumo",
-  FINAL: "Produto Acabado",
+  INSUMO: "insumo",
+  FINAL: "produto acabado",
   CONJUNTO: "Desconhecido"
 }
 
@@ -31,11 +35,13 @@ const OPINs = []
 // Registra event listeners globais
 document.addEventListener("click", handleGlobalClick)
 document.addEventListener("change", defineUM)
+document.addEventListener("DOMContentLoaded", iniciaRequisicao)
 
 // Handler central para todos os cliques da página
 async function handleGlobalClick(e) {
   // Abre modal de criação de ordem
   if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
+    console.log("CLICADOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
     abrirModal()
   }
 
@@ -68,10 +74,15 @@ async function handleGlobalClick(e) {
 
 // Abre o modal de criação de ordem
 function abrirModal() {
+  
   window.location.href = "../requisicao"
   
+  
 }
-
+function iniciaRequisicao(){
+  console.log("WERFOFAGAAAAAAAGAGAGA")
+  carregarProdutosEmSelect("final")
+}
 // Fecha o modal e reseta os dados
 async function fecharModal() {
   OPINs.length = 0
@@ -82,7 +93,6 @@ async function fecharModal() {
 // Navega da tela de produto para tela de insumos
 function navegarParaInsumos(e) {
   e.preventDefault()
-
   const selectProduto = document.querySelector("select.input-produto")
   const opcao = selectProduto.options[selectProduto.selectedIndex]
   const campoQuant = document.querySelector("input.input-produto")
@@ -168,15 +178,13 @@ async function confirmarOrdem() {
     await window.api.post('/ordemdeproducao/criar', dados)
     await new Promise(resolve => setTimeout(resolve, 300))
 
-    // Fecha modal
-    document.querySelector("#createModal")?.remove()
+    
 
-    // Atualiza lista de ordens
-    await limparLista()
-    await new Promise(resolve => setTimeout(resolve, 300))
-    await listarOrdensProducao()
+  
 
     mostrarToast("Ordem de Produção criada!")
+    // Fecha modal
+    window.location.href = "../gerenciar/gerenciarOrdensDeProducao.html"
   } catch (error) {
     console.log(`Erro ao confirmar ordem: ${error}`)
   }
@@ -335,7 +343,7 @@ function carregarProdutosFinal(listaProd, selectProduto) {
     `
   listaProd.forEach(p => {
     if ((p.tipo == PROD_TIPO.FINAL || p.tipo == PROD_TIPO.CONJUNTO) && p.ativo == 1) {
-      console.log(`ID PRODUTO: ${p}`)
+      console.log(`ID PRODUTO: ${p.id}`)
       const option = criarOptionProduto(p)
       selectProduto.appendChild(option)
     }
@@ -356,15 +364,16 @@ function carregarProdutosInsumo(listaProd, selectInsumo) {
 }
 
 // Carrega produtos em select conforme tipo
-function carregarProdutosEmSelect(tipo) {
+async function carregarProdutosEmSelect(tipo) {
   try {
     const selectProduto = document.querySelector("select.input-produto")
     const selectInsumo = document.querySelector(".campoInsumo")
+    const lista = await getListaProdutosBanco()
 
     if (tipo == 'final') {
-      carregarProdutosFinal(listaProdutos, selectProduto)
+      carregarProdutosFinal(lista, selectProduto)
     } else {
-      carregarProdutosInsumo(listaProdutos, selectInsumo)
+      carregarProdutosInsumo(lista, selectInsumo)
     }
   } catch (error) {
     console.log(`Erro ao buscar produtos: ${error}`)
@@ -374,7 +383,7 @@ function carregarProdutosEmSelect(tipo) {
 // Carrega fornecedores no select
 async function carregaFornecedores(campo) {
   try {
-    const fornecedores = await window.api.get("/fornecedores")
+    const fornecedores = await window.api.get("/clifor")
 
     fornecedores.forEach(fornecedor => {
       const option = document.createElement("option")

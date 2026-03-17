@@ -1,7 +1,17 @@
 let timeout
 document.addEventListener("input", handleInput)
 document.addEventListener("change", handleChange)
+document.addEventListener("DOMContentLoaded", initGerenciarOPs)
 
+async function initGerenciarOPs(){
+    const { initTelaCarregamento, removeTelaCarregamento } =
+      await import("../../telacarregamento/telacarregamento.js");
+
+      initTelaCarregamento()
+      setTimeout(() => {
+        removeTelaCarregamento()
+      }, 1500)
+}
 function handleInput(e) {
     if (e.target.closest("#barraPesquisa")) {
         clearTimeout(timeout)
@@ -26,7 +36,7 @@ async function buscarEOrganizarOPs() {
     let listaOPs = listaOPsBanco.ordensProducao
     listaOPs.sort((a, b) => {
         const getNum = (str) => parseInt(str.match(/(\d+)$/)[1], 10)
-        return getNum(a.OP_ID) - getNum(b.OP_ID)
+        return getNum(a.idOP) - getNum(b.idOP)
     })
     return listaOPs
 }
@@ -34,12 +44,12 @@ async function buscarEOrganizarOPs() {
 // Aplica os filtros de pesquisa e status
 function filtrarOPs(listaOPs, valorPesquisa, filtro) {
     if (valorPesquisa) {
-        listaOPs = listaOPs.filter(op => op.OP_ID.includes(String(valorPesquisa)))
+        listaOPs = listaOPs.filter(op => op.idOP.includes(String(valorPesquisa)))
     }
     if (filtro) {
         listaOPs = listaOPs.filter(op => {
-            if (filtro === "abertas") return !op.OP_DATAE
-            if (filtro === "fechadas") return op.OP_DATAE
+            if (filtro === "abertas") return !op.datae
+            if (filtro === "fechadas") return op.datae
             return op
         })
     }
@@ -56,15 +66,15 @@ async function criarCardOP(op) {
 
     contentOrdem.appendChild(criarCabecalhoOP(op))
 
-    const nomeProduto = await retornaNomeProduto(op.PRODUTO_ID)
-    const dataAbertura = new Date(op.OP_DATAA).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
-    const dataFechamento = op.OP_DATAE ? new Date(op.OP_DATAE).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '------'
+    const nomeProduto = await retornaNomeProduto(op.prodIDOP)
+    const dataAbertura = new Date(op.dataa).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+    const dataFechamento = op.datae ? new Date(op.datae).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '------'
 
     contentOrdem.appendChild(criarInfoOrdem('package_2', 'Produto', nomeProduto || 'Sem Nome'))
-    contentOrdem.appendChild(criarInfoOrdem('package_2', 'Quantidade', parseInt(op.OP_QTD).toLocaleString('pt-BR')))
+    contentOrdem.appendChild(criarInfoOrdem('package_2', 'Quantidade', parseInt(op.qtdOP).toLocaleString('pt-BR')))
     contentOrdem.appendChild(criarInfoOrdem('calendar_month', 'Data de Abertura', dataAbertura || '01/01/2026'))
     contentOrdem.appendChild(criarInfoOrdem('calendar_month', 'Data de Fechamento', dataFechamento))
-    contentOrdem.appendChild(criarBotaoVerOP(op.OP_ID))
+    contentOrdem.appendChild(criarBotaoVerOP(op.idOP))
 
     cardsOrdens.appendChild(contentOrdem)
     return cardsOrdens
@@ -81,10 +91,10 @@ function criarCabecalhoOP(op) {
 
     const codigoOrdem = document.createElement('div')
     codigoOrdem.className = 'codigo-ordem'
-    codigoOrdem.textContent = op.OP_ID
+    codigoOrdem.textContent = op.idOP
 
-    const statusClass = !op.OP_DATAE ? 'aberta' : 'fechada'
-    const statusTexto = !op.OP_DATAE ? 'Aberta' : 'Fechada'
+    const statusClass = !op.datae ? 'aberta' : 'fechada'
+    const statusTexto = !op.datae ? 'Aberta' : 'Fechada'
 
     const statusOrdem = document.createElement('div')
     statusOrdem.className = `status-ordem ${statusClass}`
@@ -160,7 +170,8 @@ async function retornaNomeProduto(id) {
     try {
         // Faz requisição para buscar dados do produto
 
-        const produto = await window.api.get(`/produtos/${id}`)
+        console.log("ID DO PRODUTOOOOOOOOOOOOOOOOO: "+id)
+        const produto = await window.api.get(`/produtos/${parseInt(id)}`)
 
         // Log de debug
         console.log(` DENTRO DA FUNÇÃO retornaNomeProduto() -> PROD_NOME:${produto.nome}`)

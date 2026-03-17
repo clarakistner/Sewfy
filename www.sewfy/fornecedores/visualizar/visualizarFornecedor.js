@@ -7,6 +7,20 @@ import {
 } from "../../assets/mascaras.js";
 import { validarCpfCnpj } from "../../assets/validacoes.js";
 
+// PRÉ-CARREGA O HTML DO MODAL
+let modalHTMLCache = null;
+
+async function carregarModalHTML() {
+    if (modalHTMLCache) return modalHTMLCache;
+    modalHTMLCache = await fetch("/www.sewfy/fornecedores/visualizar/index.html")
+        .then(res => res.text());
+    return modalHTMLCache;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    carregarModalHTML();
+});
+
 // ABRIR MODAL
 document.addEventListener("click", async (e) => {
     const botao = e.target.closest(".botao-visualizar-fornecedor");
@@ -15,19 +29,16 @@ document.addEventListener("click", async (e) => {
     window.fornecedorAtualId = botao.dataset.id;
 
     try {
-        const modalHTML = await fetch(
-            "/www.sewfy/fornecedores/visualizar/index.html"
-        ).then(res => res.text());
-
+        const modalHTML = await carregarModalHTML();
         document.body.insertAdjacentHTML("afterbegin", modalHTML);
 
-        const fornecedor = await window.api.buscaId("/clifor", window.fornecedorAtualId);
+        const d = botao.dataset;
 
-        document.getElementById("modal-nome").textContent     = fornecedor.nome;
-        document.getElementById("modal-cpfcnpj").textContent  = mascaraCpfCnpj(fornecedor.cpfCnpj);
-        document.getElementById("modal-telefone").textContent = mascaraTelefone(fornecedor.telefone);
-        document.getElementById("modal-endereco").textContent = fornecedor.endereco;
-        document.getElementById("modal-ativo").textContent    = fornecedor.ativo ? "Ativo" : "Inativo";
+        document.getElementById("modal-nome").textContent     = d.nome;
+        document.getElementById("modal-ativo").textContent    = d.ativo === "1" ? "Ativo" : "Inativo";
+        document.getElementById("modal-cpfcnpj").textContent  = mascaraCpfCnpj(d.cpfcnpj);
+        document.getElementById("modal-telefone").textContent = mascaraTelefone(d.telefone);
+        document.getElementById("modal-endereco").textContent = d.endereco || '—';
 
     } catch (erro) {
         console.error(erro);
@@ -143,7 +154,7 @@ function atualizarModalComDados(dados) {
         if (input.dataset.field === "ativo") {
             span.textContent = dados.ativo ? "Ativo" : "Inativo";
         } else if (input.dataset.field === "cpfCnpj") {
-            span.textContent = mascaraCpfCnpj(dados.cpfCnpj); // era dados.cpf — corrigido
+            span.textContent = mascaraCpfCnpj(dados.cpfCnpj);
         } else if (input.dataset.field === "telefone") {
             span.textContent = mascaraTelefone(dados.telefone);
         } else {

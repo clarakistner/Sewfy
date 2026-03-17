@@ -21,6 +21,7 @@
 }
 .boxDadosOrdem{
     display: none;
+    height: 60%;
 }
 
 
@@ -249,7 +250,7 @@ td {
 
 .dadosOP #quantidadeProduto {
     grid-area: quant;
-    align-self: end;
+    align-self: center;
     margin: 0;
 }
 
@@ -260,7 +261,7 @@ td {
 
 .dadosOP #custou {
     grid-area: custou;
-    align-self: end;
+    align-self: center;
     margin: 0;
 }
 

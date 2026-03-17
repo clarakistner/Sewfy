@@ -1,13 +1,20 @@
-export async function initTelaCarregamento() {
+export async function initTelaCarregamento(container = null) {
   try {
     const [cssResponse, dataResponse] = await Promise.all([
       fetch("/www.sewfy/telacarregamento/telacarregamento.css"),
       fetch("/www.sewfy/telacarregamento/index.html"),
     ]);
-    const [cssText, dataText] = await Promise.all([cssResponse.text(), dataResponse.text()]);
+    const [cssText, dataText] = await Promise.all([
+      cssResponse.text(),
+      dataResponse.text(),
+    ]);
 
-    
-    document.body.insertAdjacentHTML("afterbegin",dataText)
+    if (container) {
+      container.insertAdjacentHTML("beforeend", dataText);
+    } else {
+      document.body.insertAdjacentHTML("afterbegin", dataText);
+    }
+
     const script = document.createElement("script");
     script.id = "js-telaC";
     script.type = "module";

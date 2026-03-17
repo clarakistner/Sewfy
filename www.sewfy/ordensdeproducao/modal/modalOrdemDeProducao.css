@@ -68,7 +68,7 @@ body {
 }
 
 
-.modal-header {
+#detailsModal .modal-container .modal-header {
     background: linear-gradient(90deg, #0e59fe, #020066);
     padding: 16px;
     display: flex;
@@ -76,7 +76,7 @@ body {
     align-items: center;
 }
 
-.modal-header h2 {
+#detailsModal .modal-container .modal-header h2 {
     color: #ffffff;
     font-size: 18px;
     font-weight: bold;

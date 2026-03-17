@@ -15,11 +15,33 @@ export function formatarMoeda(valor) {
 export function converterMoedaParaNumero(valorFormatado) {
     return parseFloat(
         valorFormatado
-            .replace("R$", "")      // remove símbolo
-            .replace(/\s/g, "")     // remove espaços
-            .replace(/\./g, "")     // remove separador de milhar
-            .replace(",", ".")      // troca vírgula por ponto
+            .replace("R$", "")
+            .replace(/\s/g, "")
+            .replace(/\./g, "")
+            .replace(",", ".")
     );
+}
+
+// Aplica máscara de moeda em um input enquanto digita
+export function aplicarMascaraMoeda(input) {
+    if (!input) return;
+
+    input.addEventListener("input", () => {
+        // Pega só os dígitos
+        const apenasDigitos = input.value.replace(/\D/g, "");
+
+        if (!apenasDigitos) {
+            input.value = "";
+            return;
+        }
+
+        // Converte para centavos e formata
+        const numero = parseInt(apenasDigitos, 10) / 100;
+        input.value = new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        }).format(numero);
+    });
 }
 
 // CPF / CNPJ
@@ -67,4 +89,11 @@ export function aplicarMascaraCpfCnpj(input) {
     input.addEventListener("input", () => {
         input.value = mascaraCpfCnpj(input.value);
     });
+}
+
+// FORMATAR DATA
+export function formatarData(data) {
+    if (!data) return '—';
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
 }
