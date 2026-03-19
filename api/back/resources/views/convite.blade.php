@@ -139,8 +139,20 @@
                     </a>
                 </div>
 
-            @elseif($tipo === 'funcionario')
+            @elseif($tipo === 'funcionario' || $tipo === 'funcionario_multi')
                 <p>Você foi convidado para fazer parte do time da empresa <strong>{{ $empresa }}</strong> no Sewfy ERP.</p>
+
+                @if(count($outrasEmpresas) > 0)
+                    <p>Além disso, você também terá acesso às seguintes empresas:</p>
+                    <div class="info-box">
+                        <ul style="margin: 0; padding-left: 16px;">
+                            @foreach($outrasEmpresas as $nomeEmpresa)
+                                <li>{{ $nomeEmpresa }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <p>Clique no botão abaixo para confirmar seu acesso.</p>
 
                 <div class="info-box">

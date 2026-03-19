@@ -88,7 +88,7 @@
 
 #modal-editar-funcionario input:focus,
 #modal-editar-funcionario select:focus {
-  border: 2px solid #082db2;
+  border: 2px solid #0e59fe;
   outline: none;
 }
 
@@ -112,6 +112,10 @@
   color: #64748b;
   width: 100%;
   transition: all 0.2s;
+}
+
+#modal-editar-funcionario .toggle-btn:focus, #modal-editar-funcionario .toggle-btn:focus-visible {
+  border: 2px solid #0e59fe;
 }
 
 #modal-editar-funcionario .toggle-btn.ativo {
@@ -246,6 +250,10 @@
   color: #fff;
   cursor: pointer;
   transition: background 0.2s;
+}
+
+#modal-editar-funcionario .btn-submit:focus {
+  outline: none;
 }
 
 #modal-editar-funcionario .btn-submit:hover {

@@ -10,7 +10,12 @@ export function abrirMenu() {
   ])
   .then(([html, banco, empresaResp]) => {
     document.querySelector(".layout").insertAdjacentHTML("afterbegin", html);
-
+    // Exibe ícone de trocar empresa se tiver mais de uma
+    const empresasIds = JSON.parse(sessionStorage.getItem("empresas_ids") || "[]");
+    const btnTrocar = document.getElementById("btn-trocar-empresa");
+    if (btnTrocar && empresasIds.length > 1) {
+        btnTrocar.style.display = "flex";
+    }
     // Exibe módulos
     console.log("[MENU] Módulos do usuário:", Array.from(banco.modulos));
     document.querySelectorAll(".nav-item").forEach((item) => {
@@ -58,6 +63,8 @@ export async function usuarioEhProprietario() {
 
 // NAVEGAÇÃO DOS SUBMENUS
 const rotas = {
+  // Header
+  "btn-trocar-empresa": "/www.sewfy/selecionar-empresa",
   // Faturamento
   "sub-clientes":       "/www.sewfy/faturamento/clientes",
   "sub-pedidos-venda":  "/www.sewfy/faturamento/pedidosVenda",

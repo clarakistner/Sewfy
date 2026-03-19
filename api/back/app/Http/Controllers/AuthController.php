@@ -87,16 +87,23 @@ class AuthController extends Controller
             'empresa_id' => 'required|integer|exists:EMPRESAS,EMP_ID',
         ]);
 
-        $empresaIdToken = "empresa_{$request->empresa_id}";
-        if (!$request->user()->tokenCan($empresaIdToken)) {
+        // Verifica se o usuário realmente pertence à empresa no banco
+        $pertenceAEmpresa = EmpresaUsuarios::where('USU_ID', $request->user()->USU_ID)
+            ->where('EMP_ID', $request->empresa_id)
+            ->where('USU_ATIV', 1)
+            ->exists();
+
+        if (!$pertenceAEmpresa) {
             return response()->json(['erro' => 'Acesso negado para esta empresa'], 403);
         }
+
+        $empresaIdToken = "empresa_{$request->empresa_id}";
         $request->user()->currentAccessToken()->delete();
-        $token = $request->user()->createToken('user-token', ['empresaId' => $empresaIdToken])->plainTextToken;
+        $token = $request->user()->createToken('user-token', [$empresaIdToken])->plainTextToken;
 
         return response()->json([
-            'mensagem' => 'Empresa selecionada com sucesso',
-            'token' => $token,
+            'mensagem'   => 'Empresa selecionada com sucesso',
+            'token'      => $token,
             'empresa_id' => $request->empresa_id
         ]);
     }

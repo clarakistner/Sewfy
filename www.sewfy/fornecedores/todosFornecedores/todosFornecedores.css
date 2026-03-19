@@ -51,6 +51,10 @@ body.loaded {
   font-size: 16px;
 }
 
+.botao-criar-fornecedor:focus {
+  outline: none;
+}
+
 .botao-criar-fornecedor:hover {
   background: linear-gradient(90deg, #020066, #0e59fe);
 }

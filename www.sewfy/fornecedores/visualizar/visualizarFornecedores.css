@@ -98,6 +98,9 @@
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+.btn-editar-fornecedor:focus {
+    outline: none;
+}
 
 .btn-editar-fornecedor:hover {
   background: linear-gradient(90deg, #020066, #0e59fe);
@@ -117,7 +120,7 @@
 
 .input-edicao:focus {
     outline: none;
-    border: 2px solid #082db2;
+    border: 2px solid #0e59fe;
 }
 
 

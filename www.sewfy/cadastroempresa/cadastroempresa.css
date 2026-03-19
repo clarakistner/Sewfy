@@ -130,6 +130,10 @@
     font-size: 20px;
 }
 
+.btn-cadastrar:focus {
+    outline: none;
+}
+
 .btn-cadastrar:hover {
     opacity: 0.92;
     box-shadow: 0 8px 24px rgba(14, 89, 254, 0.35);

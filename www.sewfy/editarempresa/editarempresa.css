@@ -95,6 +95,11 @@
     box-shadow: 0 0 0 2px #0e59fe;
 }
 
+.campo #status:focus{
+    outline: none;
+    box-shadow: 0 0 0 2px #0e59fe;
+}
+
 /* Grid de módulos */
 .modulos-grid {
     display: grid;
@@ -144,6 +149,10 @@
 
 .btn-salvar {
     font-size: 20px;
+}
+
+.btn-salvar:focus{
+    outline: none;
 }
 
 .btn-salvar:hover {

@@ -17,3 +17,5 @@ require __DIR__ . '/api/usuariomodulos.php';
 require __DIR__ . '/api/empresausuarios.php';
 require __DIR__ . '/api/usuario.php';
 require __DIR__ . '/api/contapagar.php';
+//require __DIR__ . '/api/contareceber.php';
+require __DIR__ . '/api/funcionario.php';

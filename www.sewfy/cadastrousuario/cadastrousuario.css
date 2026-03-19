@@ -146,6 +146,10 @@
     transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 
+.botaoCadastrar:focus {
+    outline: none;
+}
+
 .botaoCadastrar:hover {
     opacity: 0.92;
     box-shadow: 0 8px 24px rgba(14, 89, 254, 0.35);
@@ -155,4 +159,154 @@
 .botaoCadastrar:active {
     transform: translateY(0);
     opacity: 1;
+}
+
+/* ─── MODAL MULTIEMPRESA ─────────────────────────────────────────────────── */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-multiempresa {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+    animation: slideUp 0.25s ease;
+}
+
+.modal-titulo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #03008a;
+    margin: 0 0 8px 0;
+}
+
+.modal-subtitulo {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 24px 0;
+}
+
+.modal-empresa-card {
+    background: #f3f4f6;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.modal-empresa-card.empresa-atual {
+    border-left: 4px solid #0e59fe;
+    opacity: 0.7;
+}
+
+.modal-empresa-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-empresa-checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    accent-color: #0e59fe;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.modal-empresa-nome {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.modal-empresa-tag {
+    font-size: 12px;
+    font-weight: 500;
+    color: #0e59fe;
+    background: #eef2ff;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.modal-modulos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+    padding-left: 30px;
+}
+
+.modal-modulos-grid.desabilitado {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.modal-botoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.btn-cancelar-modal {
+    padding: 10px 24px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: transparent;
+    color: #6b7280;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-cancelar-modal:hover {
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+.btn-confirmar-modal {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #0e59fe, #020066);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-confirmar-modal:focus {
+    outline: none;
+}
+
+.btn-confirmar-modal:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
 }
