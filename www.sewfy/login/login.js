@@ -74,14 +74,14 @@ document.addEventListener("DOMContentLoaded", () => {
         initTelaCarregamento();
       
 
+        console.log("EMail: "+ email + "\nSenha: "+senha);
       const response = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ email, senha }),
+        body: JSON.stringify({ email, senha}),
       });
       const data = await response.json();
 

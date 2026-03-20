@@ -22,27 +22,23 @@ export const getInsumosBanco = () => {
 };
 
 // Listener global usando event delegation
-document.addEventListener("click", handleClick);
 
+
+document.addEventListener("click", handleClick);
 // Controla cliques relevantes da página
+
 async function handleClick(e) {
-  // Abre modal ao clicar em visualizar OP
   const botao = e.target.closest(".btn-verop, .verop");
   if (botao) {
-    console.log("O botão foi clicado!");
-    const idOP = botao.id;
-    await resgataOPCompletaBanco(idOP);
-    await abrirModal();
-  }
-
-  // Fecha modal
+    await abrirModal(botao.id);
+  } // Fecha modal
   if (e.target.closest(".modal-close")) {
     fecharModal();
   }
 }
 
 // Abre o modal e injeta o HTML no DOM
-export async function abrirModal() {
+export async function abrirModal(id) {
   getMain().style.filter = "blur(25px)";
   document.querySelector(".sidebar").style.filter = "blur(25px)";
 
@@ -60,6 +56,7 @@ export async function abrirModal() {
       await import("../../telacarregamento/telacarregamento.js");
     const container = document.querySelector(".modal-container");
     initTelaCarregamento(container);
+    await resgataOPCompletaBanco(id);
     await insereDetalhesNaTela();
     removeTelaCarregamento();
   } catch (error) {
@@ -70,7 +67,7 @@ export async function abrirModal() {
 }
 
 // Remove o modal e restaura o layout
-function fecharModal() {
+export function fecharModal() {
   document.querySelector("#detailsModal")?.classList.remove("load");
   document.querySelector("#detailsModal")?.remove();
   getMain().style.filter = "blur(0)";
