@@ -8,6 +8,7 @@ import {
   removeTelaCarregamento,
   initTelaCarregamento,
 } from "../../telacarregamento/telacarregamento.js";
+import { atualizarBarraProgresso, inicializarIconesOriginais } from "./progressoEtapas.js";
 
 // ─────────────────────────────────────────
 // ESTADO GLOBAL
@@ -37,6 +38,8 @@ document.addEventListener("DOMContentLoaded", iniciaRequisicao);
 document.addEventListener("click", handleGlobalClick);
 
 function iniciaRequisicao() {
+  inicializarIconesOriginais()
+  atualizarBarraProgresso(1)
   carregarProdutosEmSelect("final");
   renderLista();
 }
@@ -69,8 +72,10 @@ async function handleGlobalClick(e) {
     e.preventDefault();
     const ordemVisivel = document.querySelector(".boxDadosOrdem");
     if (ordemVisivel && ordemVisivel.style.display === "block") {
+      atualizarBarraProgresso(2)
       irOutraTela(".boxDadosOrdem", ".boxDadosInsumos");
     } else {
+      atualizarBarraProgresso(1)
       irOutraTela(".boxDadosInsumos", ".boxDadosProduto");
     }
   }
@@ -86,6 +91,7 @@ async function handleGlobalClick(e) {
 
   if (e.target.closest(".voltarProduto")) {
     e.preventDefault();
+    atualizarBarraProgresso(1)
     irOutraTela(".boxDadosInsumos", ".boxDadosProduto");
   }
 }
@@ -130,6 +136,7 @@ function navegarParaInsumos(e) {
   listaProdutos = listaProdutos.filter((p) => p.id !== op.PROD_ID);
   console.log("op.PROD_ID: " + op.PROD_ID);
 
+  atualizarBarraProgresso(2)
   irOutraTela(".boxDadosProduto", ".boxDadosInsumos");
   carregarProdutosEmSelect("insumos");
   carregaFornecedores(campoFor);
@@ -143,6 +150,7 @@ function navegarParaMostrarOrdem(e) {
     return;
   }
 
+  atualizarBarraProgresso(3)
   irOutraTela(".boxDadosInsumos", ".boxDadosOrdem");
   organizaDados();
 }
@@ -158,7 +166,6 @@ function irOutraTela(atual, proxima) {
 
 async function adicionarInsumo() {
   try {
-    const tabelaInsumos = document.getElementById("tabelaInsumos");
     const campoInsumo = document.querySelector(".campoInsumo");
     const campoQuant = document.querySelector(".campoQuant");
     const campoFor = document.querySelector(".campoFornecedor");
@@ -191,7 +198,7 @@ async function adicionarInsumo() {
     OPINs.push(insumo);
 
     listaProdutos = listaProdutos.filter(
-      (p) => parseInt(p.id) !== parseInt(opInsumo.id),
+      (p) => parseInt(p.id) !== parseInt(opInsumo.id)
     );
     carregarProdutosInsumo(listaProdutos, campoInsumo);
 
@@ -220,30 +227,27 @@ function renderLista() {
     const card = document.createElement("div");
     card.className = "insumo-card";
     card.innerHTML =
+      // Insumo/Serviço
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' +
-      svgScissors("#9b59b6") +
-      " INSUMO/SERVIÇO</span>" +
-      '<span class="insumo-card-value">' +
-      esc(insumo.INSUNOME) +
-      "</span>" +
+        '<span class="insumo-card-label">' + svgScissors("#9b59b6") + " INSUMO/SERVIÇO</span>" +
+        '<span class="insumo-card-value">' + esc(insumo.INSUNOME) + "</span>" +
       "</div>" +
+      // Quantidade 
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' +
-      svgUser("#e74c3c") +
-      " FORNECEDOR</span>" +
-      '<span class="insumo-card-value">' +
-      esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) +
-      "</span>" +
+        '<span class="insumo-card-label">' + svgHash("#6b7280") + " QUANTIDADE</span>" +
+        '<span class="insumo-card-value">' + parseInt(insumo.QTDIN).toLocaleString("pt-BR") + " " + esc(insumo.UM) + "</span>" +
       "</div>" +
+      // Fornecedor
+      '<div class="insumo-card-field">' +
+        '<span class="insumo-card-label">' + svgUser("#e74c3c") + " FORNECEDOR</span>" +
+        '<span class="insumo-card-value">' + esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) + "</span>" +
+      "</div>" +
+      // Ações
       '<div class="insumo-card-actions">' +
-      '<span class="insumo-card-actions-label">' +
-      svgCircle("#9ca3af") +
-      " AÇÕES</span>" +
+        '<span class="insumo-card-actions-label">' + svgCircle("#9ca3af") + " AÇÕES</span>" +
       "</div>" +
-      '<button class="btn-remover" data-index="' +
-      index +
-      '">Remover</button>';
+      '<button class="btn-remover" data-index="' + index + '">Remover</button>';
+
     listaCards.appendChild(card);
   });
 
@@ -300,15 +304,15 @@ async function confirmarOrdem() {
 function organizaDados() {
   document.querySelector("#nomeProduto").innerHTML = op.PROD_NOME;
   document.querySelector("#quantidadeProduto").innerHTML = parseInt(
-    op.OP_QTD,
+    op.OP_QTD
   ).toLocaleString("pt-BR");
   document.querySelector("#custot").innerHTML = calculaCustoT().toLocaleString(
     "pt-BR",
-    { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+    { minimumFractionDigits: 2, maximumFractionDigits: 2 }
   );
   document.querySelector("#custou").innerHTML = calculaCustoU().toLocaleString(
     "pt-BR",
-    { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+    { minimumFractionDigits: 2, maximumFractionDigits: 2 }
   );
 
   carregaDadosInsumos();
@@ -444,7 +448,7 @@ function valorIdFornecedor(atributo, fornecedor) {
 function valorNomeFornecedor(idFornecedor) {
   if (!idFornecedor) return "Sem fornecedor";
   const option = document.querySelector(
-    `.campoFornecedor option[id="${idFornecedor}"]`,
+    `.campoFornecedor option[id="${idFornecedor}"]`
   );
   return option ? option.textContent : "Sem fornecedor";
 }
@@ -476,6 +480,10 @@ function svgScissors(color) {
 
 function svgUser(color) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+}
+
+function svgHash(color) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`;
 }
 
 function svgCircle(color) {

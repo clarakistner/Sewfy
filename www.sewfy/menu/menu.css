@@ -40,7 +40,11 @@ body {
 .sidebar::-webkit-scrollbar {
   display: none;
 }
-
+.sidebar-logo {
+  font-size: 40px;
+  font-family: "Times New Roman", Times, serif;
+  color: #ffffff;
+}
 /* Efeito de luz sutil */
 .sidebar::before {
   content: "";
