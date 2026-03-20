@@ -104,6 +104,7 @@ select {
 .btn-cancel:hover {
   background: #d1d5db;
 }
+
 .btn-submit {
   padding: 12px 24px;
   background: linear-gradient(90deg, #0e59fe, #020066);
@@ -111,6 +112,10 @@ select {
   border-radius: 8px;
   border: none;
   cursor: pointer;
+}
+
+.btn-submit:focus {
+  outline: none;
 }
 
 .btn-submit:hover {
@@ -133,5 +138,5 @@ select {
 
 input:focus, select:focus {
     outline: none;
-    border: 2px solid #082db2;
+    border: 2px solid #0e59fe;
 }

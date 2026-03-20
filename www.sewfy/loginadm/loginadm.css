@@ -105,6 +105,10 @@ button {
     cursor: pointer;
 }
 
+button:focus {
+    outline: none;
+}
+
 button:hover {
     background: linear-gradient(45deg,  #020066, #0e59fe);
 }

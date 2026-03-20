@@ -189,9 +189,8 @@ body {
 }
 
 .select-empresa:focus {
-  border-color: var(--azul-medio);
-  background-color: var(--branco);
-  box-shadow: 0 0 0 3px rgba(14, 89, 254, 0.12);
+  outline: none;
+  border: 2px solid #0e59fe;
 }
 
 .select-arrow {
@@ -220,6 +219,10 @@ body {
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
   box-shadow: 0 4px 16px rgba(14, 89, 254, 0.3);
+}
+
+.btn-continuar:focus {
+  outline: none;
 }
 
 .btn-continuar:hover {

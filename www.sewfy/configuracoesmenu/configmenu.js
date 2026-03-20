@@ -2,8 +2,8 @@ import { abrirMenu, usuarioEhProprietario } from "../menu/menu.js";
 import { initCadastroFuncionario } from "../cadastrousuario/cadastrousuario.js";
 import { initGerenciarFuncionarios } from "../funcionarios/gerenciarfuncionarios/gerenciarfuncionarios.js";
 import { initEditarOwner } from "../editarcontaOwner/editarcontaOwner.js";
-
 import { retiraCssJsEditarFuncionario } from "../funcionarios/editarfuncionarios/editarfuncionarios.js";
+
 let urlAtual = null;
 document.addEventListener("click", handleClick);
 
@@ -19,7 +19,6 @@ window.addEventListener("load", () => {
   ];
 
   const estaEmPaginaConfig = paginasConfig.some((p) => urlAtual.includes(p));
-
   if (estaEmPaginaConfig) {
     window.location.replace(urlAnterior || "/www.sewfy/home");
   }
@@ -37,28 +36,23 @@ async function handleClick(e) {
 
   if (menuItem?.dataset.menu === "item-cadastros") {
     await trocarPagina("cadastrousuario", "cadastrousuario", "cadastro-funcionario");
-    
     retiraCssJsEditarFuncionario();
     initCadastroFuncionario();
   }
 
   if (menuItem?.dataset.menu === "item-gerenciar") {
     await trocarPagina("funcionarios/gerenciarfuncionarios", "gerenciarfuncionarios", "gerenciar-funcionarios");
-
     initGerenciarFuncionarios();
   }
 
   if (menuItem?.dataset.menu === "item-editar-conta") {
     await trocarPagina("editarcontaOwner", "editarcontaOwner", "editar-conta");
-    
     retiraCssJsEditarFuncionario();
     initEditarOwner();
   }
 
   if (menuItem?.dataset.menu === "item-tela-inicial") {
     await trocarPagina("editartelainicial", "editartelainicial", "editar-tela-inicial");
-    await trocarPagina("editartelainicial", "editar-tela-inicial");
-    
     retiraCssJsEditarFuncionario();
   }
 }
@@ -87,17 +81,16 @@ async function trocaModais() {
     layout.classList.add("sem-menu");
     await new Promise((resolve) => setTimeout(resolve, 300));
     configMenu.remove();
-    
+
     retiraCssJsEditarFuncionario();
     document.querySelector("#css-config")?.remove();
-    document.querySelector("#js-config")?.remove();
 
     const urlAnterior = sessionStorage.getItem("urlAnterior") || "/www.sewfy/home";
     document.querySelector(".containerConfigOwner")?.remove();
     history.pushState({}, "", urlAnterior);
     sessionStorage.removeItem("urlAnterior");
     document.querySelector(".principal").style.display = "block";
-    
+
     await abrirMenu();
 
     requestAnimationFrame(() => {
@@ -139,7 +132,9 @@ async function abrirConfigMenu() {
 }
 
 async function trocarPagina(caminho, nomeArquivo, url) {
-  const containerConfig = document.querySelector(".containerConfigOwner");
+  // Remove ANTES de qualquer await
+  document.querySelector(".containerConfigOwner")?.remove();
+  document.querySelector("#css-config")?.remove();
 
   const [responseHTML, responseCSS] = await Promise.all([
     fetch(`/www.sewfy/${caminho}/index.html`),
@@ -151,23 +146,12 @@ async function trocarPagina(caminho, nomeArquivo, url) {
     responseCSS.text(),
   ]);
 
-  containerConfig?.remove();
   document.querySelector(".layout").insertAdjacentHTML("beforeend", dataContainer);
 
   const style = document.createElement("style");
   style.id = "css-config";
   style.textContent = cssText;
-
-  const script = document.createElement("script");
-  script.id = "js-config";
-  script.type = "module";
-  script.src = `/www.sewfy/${caminho}/${nomeArquivo}.js`;
-
-  document.querySelector("#css-config")?.remove();
-  document.querySelector("#js-config")?.remove();
-
-  document.body.appendChild(script);
   document.head.appendChild(style);
 
-  history.pushState({}, "", `/www.sewfy/${url}`);
+  if (url) history.pushState({}, "", `/www.sewfy/${url}`);
 }

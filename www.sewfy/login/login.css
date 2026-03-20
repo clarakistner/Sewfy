@@ -80,8 +80,7 @@ body {
 
 .campo-formulario input:focus {
     outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+    border: 2px solid #0e59fe;
 }
 
 .campo-senha {
@@ -120,8 +119,12 @@ button {
     cursor: pointer;
 }
 
+button:focus {
+    outline: none;
+}   
+
 button:hover {
-    background-color: #4338ca;
+    background: linear-gradient(45deg, #020066, #0e59fe);;
 }
 
 .esqueceu-senha {

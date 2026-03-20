@@ -64,21 +64,43 @@ body {
   flex-shrink: 0;
 }
 
-.sidebar-logo {
-  font-family: "Times New Roman", serif;
-  font-size: 40px;
-  font-weight: bold;
-  letter-spacing: -0.3px;
-  background: linear-gradient(180deg, #ffffff, #ffffff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  cursor: pointer;
+.sidebar-header-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-right: 8px;
 }
 
 .sidebar-empresa {
-    color: rgba(180, 195, 255, 0.75);
-    font-size: 13px;
-    font-weight: 400;
+  color: rgba(180, 195, 255, 0.75);
+  font-size: 13px;
+  font-weight: 400;
+  margin-top: 4px;
+  padding-left: 2px;
+}
+
+.btn-trocar-empresa {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s;
+}
+
+.btn-trocar-empresa:hover {
+  opacity: 0.9;
+}
+
+.btn-trocar-empresa:focus {
+  outline: none;
+}
+
+.btn-trocar-empresa .material-symbols-outlined {
+  font-size: 20px;
 }
 
 .corpoMenu.fechado {

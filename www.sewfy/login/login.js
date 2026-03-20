@@ -73,8 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         initTelaCarregamento();
       
-
-        console.log("EMail: "+ email + "\nSenha: "+senha);
       const response = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: {
