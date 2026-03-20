@@ -104,6 +104,7 @@ function ativarModoEdicao() {
         } else if (field === "preco") {
             el = document.createElement("input");
             el.type  = "text";
+            el.placeholder = "R$ 0,00";
             el.value = valor;
             el.addEventListener("input", (e) => {
                 let v = e.target.value.replace(/\D/g, "");

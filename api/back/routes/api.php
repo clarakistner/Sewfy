@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Rotas para API
+
 //require __DIR__ . '/api/adm.php';
 require __DIR__ . '/api/ordens_producao.php';
 require __DIR__ . '/api/insumos.php';
@@ -19,3 +21,4 @@ require __DIR__ . '/api/usuario.php';
 require __DIR__ . '/api/contapagar.php';
 //require __DIR__ . '/api/contareceber.php';
 require __DIR__ . '/api/funcionario.php';
+require __DIR__ . '/api/homeconfig.php';

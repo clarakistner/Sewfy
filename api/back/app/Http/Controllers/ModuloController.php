@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 
 class ModuloController extends Controller
 {
+    // Método para retornar o nome do módulo com base no ID
     public function retornaNomeModulo($idModulo){
-        $modulos = [
+        $modulos = [ 
             1 => 'financeiro',
             2 => 'faturamento',
             3 => 'rh',

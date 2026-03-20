@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
 {
+    // Função para extrair o ID da empresa a partir das abilities do token de acesso do usuário
     private function getEmpresaId(Request $request): string
     {
         $abilities = $request->user()->currentAccessToken()->abilities;
@@ -20,7 +21,7 @@ class ProdutoController extends Controller
         return str_replace('empresa_', '', $ability);
     }
 
-    // GET /api/produtos?termo=camisa&tipo=insumo
+    // GET /api/produtos?termo=camisa&tipo=insumo - Listar produtos ativos, com busca por nome ou código, e filtro por tipo
     public function index(Request $request)
     {
         $empresaId = $this->getEmpresaId($request);
@@ -56,7 +57,7 @@ class ProdutoController extends Controller
         return response()->json($produtos);
     }
 
-    // POST /api/produtos
+    // POST /api/produtos - Cadastrar um novo produto
     public function store(Request $request)
     {
         $request->validate([
@@ -97,7 +98,7 @@ class ProdutoController extends Controller
         ], 201);
     }
 
-    // GET /api/produtos/{id}
+    // GET /api/produtos/{id} - Detalhes de um produto específico
     public function show(Request $request, int $id)
     {
         $user = $request->user();
@@ -121,7 +122,7 @@ class ProdutoController extends Controller
         ]);
     }
 
-    // PUT /api/produtos/{id}
+    // PUT /api/produtos/{id} - Atualizar um produto específico
     public function update(Request $request, int $id)
     {
         $request->validate([
@@ -165,7 +166,7 @@ class ProdutoController extends Controller
         return response()->json(['mensagem' => 'Produto atualizado com sucesso']);
     }
 
-    // GET /api/produtos/todos
+    // GET /api/produtos/todos - Retorna todos os produtos, incluindo os inativos, para uma empresa específica (usado para relatórios e exportação de dados)
     public function todos(Request $request)
     {
         $empresaId = $this->getEmpresaId($request);

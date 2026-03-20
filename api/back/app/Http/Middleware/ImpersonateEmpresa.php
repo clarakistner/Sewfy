@@ -8,8 +8,10 @@ use App\Models\Empresa;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class ImpersonateEmpresa
+class ImpersonateEmpresa // Middleware para permitir que um usuário admin do Sewfy possa se "impersonar" como uma empresa específica, usando um header customizado para identificar a empresa
 {
+
+    // Função handle para processar a requisição e verificar se o usuário é um admin do Sewfy ou um usuário comum, e então adicionar a empresa correspondente à requisição
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();

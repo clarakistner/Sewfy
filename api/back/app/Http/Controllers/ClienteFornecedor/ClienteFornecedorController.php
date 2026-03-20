@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class ClienteFornecedorController extends Controller
 {
+
+    // Função para extrair o ID da empresa a partir das abilities do token de acesso do usuário
     private function getEmpresaId(Request $request): string
     {
         $abilities = $request->user()->currentAccessToken()->abilities;
@@ -20,7 +22,7 @@ class ClienteFornecedorController extends Controller
         return str_replace('empresa_', '', $ability);
     }
 
-    // GET /api/clifor?search=Clara
+    // GET /api/clifor?search=Clara - Listar clientes/fornecedores ativos, com busca por nome ou CPF/CNPJ
     public function index(Request $request)
     {
         $empresaId = $this->getEmpresaId($request);
@@ -50,7 +52,7 @@ class ClienteFornecedorController extends Controller
         return response()->json($clifor);
     }
 
-    // POST /api/clifor
+    // POST /api/clifor - Cadastrar um novo cliente/fornecedor
     public function store(Request $request)
     {
         $request->validate([
@@ -89,7 +91,7 @@ class ClienteFornecedorController extends Controller
         ], 201);
     }
 
-    // GET /api/clifor/{id}
+    // GET /api/clifor/{id} - Detalhes de um cliente/fornecedor específico
     public function show(Request $request, int $id)
     {
         $empresaId = $this->getEmpresaId($request);
@@ -108,7 +110,7 @@ class ClienteFornecedorController extends Controller
         ]);
     }
 
-    // PUT /api/clifor/{id}
+    // PUT /api/clifor/{id} - Atualizar um cliente/fornecedor específico
     public function update(Request $request, int $id)
     {
         $request->validate([
@@ -153,7 +155,7 @@ class ClienteFornecedorController extends Controller
         return response()->json(['mensagem' => 'Atualizado com sucesso']);
     }
 
-    // GET /api/clifor/todos
+    // GET /api/clifor/todos - Retorna todos os clientes/fornecedores, incluindo os inativos, para uma empresa específica (usado para relatórios e exportação de dados)
     public function todos(Request $request)
     {
         $empresaId = $this->getEmpresaId($request);

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioModulosController;
 
+// Rotas para Módulos do Usuário
 Route::middleware(['auth:sanctum', 'impersonate'])->group(function () {
     Route::get('/modulos-usuario', [UsuarioModulosController::class, 'getModulosUsuario']);
 });

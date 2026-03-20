@@ -8,6 +8,7 @@ use App\Models\EmpresaUsuarios;
 
 class UsuarioController extends Controller
 {
+    // GET /api/usuario/{id} - Detalhes de um usuário específico
     public function retornaFuncionario(int $id)
     {
 
@@ -18,6 +19,7 @@ class UsuarioController extends Controller
         return response()->json(['funcionario' => $funcionario]);
     }
 
+    // PUT /api/usuario/{id} - Atualizar dados de um funcionário específico
     public function editarFuncionario(Request $request, int $id)
     {
         $request->validate([
@@ -30,6 +32,8 @@ class UsuarioController extends Controller
         ]);
         return response()->json("Funcionário atualizado com sucesso!");
     }
+
+    // GET /api/usuario/owner - Retornar dados do proprietário da empresa atual
     public function retornaOwner(Request $request)
     {
         $user = $request->user();
@@ -41,6 +45,8 @@ class UsuarioController extends Controller
             ->where('EMP_ID', $empresaId)->where('USU_E_PROPRIETARIO', 1)->pluck('USU_ID'))->select('USU_NOME', 'USU_ATIV', 'USU_EMAIL', 'USU_NUM')->first();
         return response()->json(['owner'=> $owner]);
     }
+
+    // PUT /api/usuario/owner - Atualizar dados do proprietário da empresa atual
     public function editarOwner(Request $request)
     {
         $request->validate([

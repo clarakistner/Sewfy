@@ -131,6 +131,8 @@ class EmpresaController extends Controller
         return response()->json(['mensagem' => 'Empresa atualizada com sucesso']);
     }
 
+
+    // GET /api/adm/empresas/{id}/nome - Retorna apenas o nome da empresa (usado para exibir no header da aplicação)
     public function retornaNomeEmpresa(int $id)
     {
         $id = (int) $id;
@@ -143,6 +145,8 @@ class EmpresaController extends Controller
         return response()->json(['EMP_NOME' => $empresa->EMP_NOME]);
     }
 
+
+    // GET /api/adm/empresas/{id}/acessar - Endpoint para acessar uma empresa específica, retornando o ID e nome da empresa (usado para redirecionar o usuário para a empresa selecionada)
     public function acessar(Request $request, int $id)
     {
         $empresa = Empresa::findOrFail($id);

@@ -625,7 +625,7 @@ class ConviteController extends Controller
         return response()->json(['mensagem' => 'Cadastro confirmado com sucesso!']);
     }
 
-    // Confirmação de convite para funcionário (múltiplas empresas) ← novo
+    // Confirmação de convite para funcionário (múltiplas empresas)
     private function confirmarFuncionarioMultiEmpresa(Request $request, Convite $convite)
     {
         $usuarioExistente = User::where('USU_EMAIL', $convite->CONV_EMAIL)->first();

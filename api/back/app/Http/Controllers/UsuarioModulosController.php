@@ -9,6 +9,7 @@ use App\Models\SewfyAdm;
 
 class UsuarioModulosController extends Controller
 {
+    // GET /api/usuario/modulos - Retornar os módulos disponíveis para o usuário logado
     public function getModulosUsuario(Request $request)
     {
         $user = $request->user();

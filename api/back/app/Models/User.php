@@ -8,13 +8,13 @@ use App\Models\Empresa;
 
 class User extends Authenticatable
 {
-    use HasApiTokens;
+    use HasApiTokens; // para autenticação via token
 
-    protected $table = 'USUARIOS';
-    protected $primaryKey = 'USU_ID';
-    public $timestamps = false;
+    protected $table = 'USUARIOS'; // nome da tabela no banco
+    protected $primaryKey = 'USU_ID'; // chave primária
+    public $timestamps = false; // desabilita timestamps (created_at, updated_at)
 
-    protected $fillable = [
+    protected $fillable = [ // campos que podem ser preenchidos em massa
         'USU_NOME',
         'USU_EMAIL',
         'USU_SENHA',
@@ -22,15 +22,18 @@ class User extends Authenticatable
         'USU_ATIV'
     ];
 
+    // campos que devem ser ocultados em arrays e JSON (como a senha)
     protected $hidden = [
         'USU_SENHA'
     ];
 
+    // função para retornar a senha do usuário para autenticação
     public function getAuthPassword(): string
     {
         return $this->USU_SENHA;
     }
 
+    // função para relacionar o usuário com os módulos (relação muitos-para-muitos)
     public function modulos()
     {
         return $this->belongsToMany(
@@ -40,6 +43,8 @@ class User extends Authenticatable
             'MOD_ID'
         );
     }
+
+    // função para relacionar o usuário com as empresas (relação muitos-para-muitos)
     public function empresas()
     {
         return $this->belongsToMany(

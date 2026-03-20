@@ -31,6 +31,13 @@ async function cadastrarFuncionario() {
   try {
     const nome     = document.getElementById("nome").value;
     const email    = document.getElementById("email").value;
+    const confirmarEmail = document.getElementById("confirmarEmail").value;
+
+    if (email !== confirmarEmail) {
+      mostrarToast("Os emails não coincidem!", "erro");
+      throw new Error("Emails não coincidem");
+    }
+
     const telefone = retornaNumerosTelefone(document.getElementById("telefone").value);
     const modulosSelecionados = retornaIdsModulosSelecionados();
 
@@ -278,6 +285,7 @@ function retornaIdsModulosSelecionados() {
 function limparFormulario() {
   document.getElementById("nome").value = "";
   document.getElementById("email").value = "";
+  document.getElementById("confirmarEmail").value = "";
   document.getElementById("telefone").value = "";
   document.querySelectorAll(".modulos-grid input[type=checkbox]")
     .forEach((cb) => (cb.checked = false));

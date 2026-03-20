@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Adm\EmpresaController;
 
+// Rotas para Empresas (Administração)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/adm/empresas', [EmpresaController::class, 'index']);
     Route::get('/adm/empresas/{id}', [EmpresaController::class, 'show']);

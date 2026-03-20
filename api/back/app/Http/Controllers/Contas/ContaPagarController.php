@@ -8,6 +8,7 @@ use App\Models\ContaPagar;
 
 class ContaPagarController extends Controller
 {
+    // Função para extrair o ID da empresa a partir das abilities do token de acesso do usuário
     private function getEmpresaId(Request $request): string
     {
         $abilities = $request->user()->currentAccessToken()->abilities;
@@ -77,7 +78,7 @@ class ContaPagarController extends Controller
         }));
     }
 
-    // BUSCAR POR ID
+    // BUSCAR POR ID - Detalhes de uma conta a pagar específica
     public function mostrarConta(Request $request, $id)
     {
         $empId = $this->getEmpresaId($request);
