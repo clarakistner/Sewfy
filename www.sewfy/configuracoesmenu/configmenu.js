@@ -3,6 +3,7 @@ import { initCadastroFuncionario } from "../cadastrousuario/cadastrousuario.js";
 import { initGerenciarFuncionarios } from "../funcionarios/gerenciarfuncionarios/gerenciarfuncionarios.js";
 import { initEditarOwner } from "../editarcontaOwner/editarcontaOwner.js";
 import { retiraCssJsEditarFuncionario } from "../funcionarios/editarfuncionarios/editarfuncionarios.js";
+import { initEditarTelaInicial } from "../editartelainicial/editartelainicial.js";
 
 let urlAtual = null;
 document.addEventListener("click", handleClick);
@@ -54,6 +55,7 @@ async function handleClick(e) {
   if (menuItem?.dataset.menu === "item-tela-inicial") {
     await trocarPagina("editartelainicial", "editartelainicial", "editar-tela-inicial");
     retiraCssJsEditarFuncionario();
+    initEditarTelaInicial();
   }
 }
 

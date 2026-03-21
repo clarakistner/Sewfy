@@ -6,16 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmpresaPendente extends Model
 {
-    protected $table = 'EMPRESAS_PENDENTES';
-    protected $primaryKey = 'EMPP_ID';
-    public $timestamps = false;
+    protected $table = 'EMPRESAS_PENDENTES'; // nome da tabela no banco
+    protected $primaryKey = 'EMPP_ID'; // chave primária
+    public $timestamps = false; // desabilita timestamps (created_at, updated_at)
 
-    protected $fillable = [
+    protected $fillable = [ // campos que podem ser preenchidos em massa
         'EMPP_NOME', 'EMPP_RAZ', 'EMPP_CNPJ',
         'EMPP_EMAIL', 'EMPP_NUM', 'ADM_ID'
     ];
 
-    public function modulos()
+    // função para relacionar a empresa pendente com os módulos (relação muitos-para-muitos)
+    public function modulos() 
     {
         return $this->belongsToMany(
             Modulo::class,

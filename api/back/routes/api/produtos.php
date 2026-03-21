@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Produto\ProdutoController;
 
+
+// Rotas para Produtos
 Route::middleware(['auth:sanctum', 'impersonate'])->group(function () {
     Route::get('/produtos', [ProdutoController::class, 'index']);
     Route::post('/produtos', [ProdutoController::class, 'store']);

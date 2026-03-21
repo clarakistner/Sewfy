@@ -7,11 +7,11 @@ use App\Models\Empresa;
 
 class Convite extends Model
 {
-    protected $table = 'CONVITES';
-    protected $primaryKey = 'CONV_ID';
-    public $timestamps = false;
+    protected $table = 'CONVITES'; // nome da tabela no banco
+    protected $primaryKey = 'CONV_ID'; // chave primária
+    public $timestamps = false; // desabilita timestamps (created_at, updated_at)
 
-    protected $fillable = [
+    protected $fillable = [ // campos que podem ser preenchidos em massa
         'EMPP_ID',
         'EMP_ID',
         'CONV_NUM',

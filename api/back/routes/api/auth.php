@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
+// Rotas de autenticação
 Route::post('/auth/login', [AuthController::class, 'loginUsuario']);
 Route::post('/auth/adm/login', [AuthController::class, 'loginAdm']);
 Route::middleware('auth:sanctum')->post('/auth/define-empresa', [AuthController::class, 'defineEmpresaSelecionada']);

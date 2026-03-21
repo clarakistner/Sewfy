@@ -11,6 +11,7 @@ use App\Models\Modulo;
 
 class EmpresaUsuariosController extends Controller
 {
+    // GET /api/empresa/usuario/proprietario - Verificar se o usuário é proprietário da empresa atual
     public function usuarioEhProprietario(Request $request)
     {
         $user = $request->user();
@@ -42,6 +43,8 @@ class EmpresaUsuariosController extends Controller
         return response()->json(['proprietario' => $ehProprietario]);
     }
 
+
+    // GET /api/empresa/usuario/funcionarios - Listar funcionários da empresa atual (excluindo o próprio usuário)
     public function buscaFuncionariosEmpresa(Request $request)
     {
         $user = $request->user();
@@ -62,6 +65,7 @@ class EmpresaUsuariosController extends Controller
         ]);
     }
 
+    // GET /api/empresa/usuario/{id} - Detalhes de um funcionário específico da empresa atual
     public function buscaFuncionario(Request $request, $id)
     {
         $user = $request->user();
@@ -97,6 +101,7 @@ class EmpresaUsuariosController extends Controller
         ]);
     }
 
+    // PUT /api/empresa/usuario/{id} - Atualizar dados de um funcionário específico da empresa atual
     public function atualizarFuncionario(Request $request, $id)
     {
         $user = $request->user();

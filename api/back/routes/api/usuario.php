@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 
+// Rotas para Usuário
 Route::middleware('auth:sanctum')->group(function() {
     Route::get('/funcionario/{id}', [UsuarioController::class, 'retornaFuncionario']);
     Route::get('/funcionario/owner/resgatar',[UsuarioController::class,'retornaOwner']);

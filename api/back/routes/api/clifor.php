@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClienteFornecedor\ClienteFornecedorController;
 
+// Rotas para Cliente/Fornecedor
 Route::middleware(['auth:sanctum', 'impersonate'])->group(function () {
     Route::get('/clifor/todos', [ClienteFornecedorController::class, 'todos']); // antes do {id}
     Route::get('/clifor', [ClienteFornecedorController::class, 'index']);

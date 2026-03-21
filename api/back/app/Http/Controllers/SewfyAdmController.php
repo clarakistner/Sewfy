@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SewfyAdm;
 class SewfyAdmController extends Controller
 {
+    // GET /api/adm - Listar todos os administradores
     public function index()
     {
         $adm = SewfyAdm::all()->map(function($a) {
@@ -19,7 +20,8 @@ class SewfyAdmController extends Controller
         return response()->json($adm);
     }
 
-    
+
+    // POST /api/adm - Criar um novo administrador
     public function store(Request $request)
     {
         $request->validate([

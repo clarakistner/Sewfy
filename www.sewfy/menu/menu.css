@@ -87,12 +87,16 @@ body {
   display: none;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
   border: none;
   border-radius: 8px;
   padding: 6px;
   cursor: pointer;
   color: white;
   transition: background 0.2s;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0; /* ← impede que o botão cresça */
 }
 
 .btn-trocar-empresa:hover {

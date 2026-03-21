@@ -6,13 +6,13 @@ use Illuminate\Mail\Mailable;
 
 class ConviteEmail extends Mailable
 {
-    public string $nome;
-    public string $empresa;
-    public string $token;
-    public string $tipo;
-    public array $outrasEmpresas;
+    public string $nome; // nome do destinatário
+    public string $empresa; // nome da empresa relacionada ao convite
+    public string $token; // token para aceitar o convite ou realizar a ação necessária
+    public string $tipo; // tipo do convite (owner, funcionario, funcionario_multi, troca_owner, troca_email, redef_senha)
+    public array $outrasEmpresas; // array de outras empresas (usado para convites de funcionário com acesso a múltiplas empresas)
 
-    public function __construct(
+    public function __construct( // construtor para inicializar as propriedades do email
         string $nome,
         string $empresa,
         string $token,
@@ -26,6 +26,7 @@ class ConviteEmail extends Mailable
         $this->outrasEmpresas = $outrasEmpresas;
     }
 
+    // função para construir o email, definindo o assunto e a view a ser usada
     public function build()
     {
         $assunto = match($this->tipo) {
