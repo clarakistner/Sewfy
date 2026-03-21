@@ -7,8 +7,9 @@
   justify-content: center;
   padding: 16px;
   z-index: 50;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
 /* Container */
@@ -148,21 +149,42 @@ select {
   background: linear-gradient(90deg, #020066, #0e59fe);
 }
 
-#pNome, #pCode, #pTipo, #pPreco, #pUm {
-    padding: 12px 6px;
+#pNome,
+#pCode,
+#pTipo,
+#pPreco,
+#pUm {
+  padding: 12px 6px;
 }
 
 #pDesc {
-  width: 100%;         
-  padding: 14px 16px;         
+  width: 100%;
+  padding: 14px 16px;
   font-size: 15px;
-  font-family: inherit;       
+  font-family: inherit;
   line-height: 1.4;
   resize: vertical;
   box-sizing: border-box;
 }
 
-input:focus, select:focus {
-    outline: none;
-    border: 2px solid #0e59fe;
+.area-checkCliFor {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+ align-self: flex-end;
+  width: 50%;
+}
+.area-checkCliFor label {
+  width: 5.4rem;
+}
+#checkCliFor {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 1rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border: 2px solid #0e59fe;
 }

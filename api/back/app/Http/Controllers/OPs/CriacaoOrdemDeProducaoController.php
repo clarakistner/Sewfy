@@ -5,6 +5,7 @@ namespace App\Http\Controllers\OPs;
 use App\Http\Controllers\Controller;
 use App\Models\OrdemDeProducao;
 use App\Models\OPInsumo;
+use App\Helpers\FuncoesAuxiliares;
 use Illuminate\Http\Request;
 
 // Controlador responsável pela criação de Ordens de Produção
@@ -17,9 +18,9 @@ class CriacaoOrdemDeProducaoController extends Controller
             $dados = $request->json()->all();
 
             $user = $request->user();
-        $abilities = $user->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId = str_replace('empresa_', '', $ability);
+            $abilities = $user->currentAccessToken()->abilities;
+            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+            $empresaId = str_replace('empresa_', '', $ability);
             // Valida se os dados foram recebidos corretamente
             if (!$dados) {
                 return response()->json([
@@ -37,7 +38,7 @@ class CriacaoOrdemDeProducaoController extends Controller
             $custotOP  = $dados['OP_CUSTOT'] ?? null;
 
             // Gera ID único para a Ordem de Produção
-            $numero = OrdemDeProducao::where('USU_RESPONSAVEL', $usuarioId)->where('EMP_ID',$empresaId)->count() + 1;
+            $numero = OrdemDeProducao::where('USU_RESPONSAVEL', $usuarioId)->where('EMP_ID', $empresaId)->count() + 1;
             $idOp = 'OP0' . $usuarioId . '00' . $numero;
 
             // Persiste a Ordem de Produção no banco
@@ -63,6 +64,7 @@ class CriacaoOrdemDeProducaoController extends Controller
                     'PROD_ID'       => $ins['INSUID'],
                     'OP_ID'   => $idOp,
                     'CLIFOR_ID' => $ins['IDFORNECEDOR'],
+                    'NECESSITA_CLIFOR' => FuncoesAuxiliares::retornaNecessitaCliFor($ins['INSUID'], $empresaId)
                 ]);
             }
 

@@ -40,6 +40,7 @@ function inicializarEventosModal() {
     const umInput    = document.getElementById("pUm");
     const descInput  = document.getElementById("pDesc");
     const precoInput = document.getElementById("pPreco");
+    const checkCLifor = document.getElementById("checkCliFor");
 
     precoInput.addEventListener("input", (e) => {
         let valor = e.target.value.replace(/\D/g, "");
@@ -50,18 +51,19 @@ function inicializarEventosModal() {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        await cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInput, precoInput);
+        await cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInput, precoInput, checkCLifor);
     });
 }
 
 // CADASTRAR
-async function cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInput, precoInput) {
+async function cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInput, precoInput, checkCliFor) {
     const cod   = codInput.value.trim();
     const nome  = nomeInput.value.trim();
     const desc  = descInput.value.trim();
     const preco = converterMoedaParaNumero(precoInput.value.trim());
     const tipo  = tipoInput.value;   // 'insumo' | 'produto acabado' | 'conjunto'
     const um    = umInput.value;     // 'UN' | 'KG' | 'MT'
+    const necessitaCliFor = checkCliFor.checked;
 
     if (!cod || !nome || !tipo || !um) {
         mostrarToast("Preencha todos os campos obrigatórios", "erro");
@@ -87,7 +89,8 @@ async function cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInp
             PROD_TIPO:  tipo,
             PROD_UM:    um,
             PROD_DESC:  desc  || null,
-            PROD_PRECO: preco || null
+            PROD_PRECO: preco || null,
+            NECESSITA_CLIFOR: necessitaCliFor
         });
 
         mostrarToast(response.mensagem || "Produto cadastrado com sucesso!", "sucesso");

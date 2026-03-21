@@ -59,7 +59,8 @@ class VisualizarOrdemProducaoController extends Controller
                     'qtdOPIN'    => $opin->OPIN_QTD,
                     'umOPIN'     => $opin->OPIN_UM,
                     'opOPIN'     => $opin->OP_ID,
-                    'prodIdOPIN' => $opin->PROD_ID
+                    'prodIdOPIN' => $opin->PROD_ID,
+                    'necessita_clifor' => $opin->NECESSITA_CLIFOR === 1
                 ];
             }
 

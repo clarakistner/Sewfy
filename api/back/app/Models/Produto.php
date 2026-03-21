@@ -18,7 +18,8 @@ class Produto extends Model
         'PROD_TIPO',
         'PROD_UM',
         'PROD_PRECO',
-        'PROD_ATIV'
+        'PROD_ATIV',
+        'NECESSITA_CLIFOR'
     ];
 
     public function empresa()

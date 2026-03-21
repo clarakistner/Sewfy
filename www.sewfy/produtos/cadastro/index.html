@@ -1,66 +1,68 @@
 <div id="produtoModal" class="modal">
-    <div class="modal-container">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2 class="modal-title">Cadastrar Novo Produto</h2>
+      <button class="fechar-modal">
+        <span class="material-symbols-outlined icone-fechar-modal">close</span>
+      </button>
+    </div>
 
-        <div class="modal-header">
-            <h2 class="modal-title">Cadastrar Novo Produto</h2>
-            <button class="fechar-modal">
-                <span class="material-symbols-outlined icone-fechar-modal">close</span>
-            </button>
+    <form id="Produto" class="modal-form">
+      <div class="form-grid">
+        <div class="area-cod">
+          <label>Código *</label>
+          <input type="text" id="pCode" required placeholder="EX: MAL-00" />
         </div>
 
-        <form id="Produto" class="modal-form">
-            <div class="form-grid">
+        <div class="area-tipo">
+          <label>Tipo *</label>
+          <select id="pTipo">
+            <option value="insumo">Insumo</option>
+            <option value="produto acabado">Produto Acabado</option>
+            <option value="conjunto">Conjunto</option>
+          </select>
+        </div>
 
-                <div class="area-cod">
-                    <label>Código *</label>
-                    <input type="text" id="pCode" required placeholder="EX: MAL-00">
-                </div>
+        <div class="area-nome">
+          <label>Nome *</label>
+          <input
+            type="text"
+            id="pNome"
+            required
+            placeholder="Nome do produto"
+          />
+        </div>
 
-                <div class="area-tipo">
-                    <label>Tipo *</label>
-                    <select id="pTipo">
-                        <option value="insumo">Insumo</option>
-                        <option value="produto acabado">Produto Acabado</option>
-                        <option value="conjunto">Conjunto</option>
-                    </select>
-                </div>
+        <div class="area-um">
+          <label>Unidade de Medida *</label>
+          <select id="pUm">
+            <option value="UN">UN</option>
+            <option value="KG">KG</option>
+            <option value="MT">MT</option>
+          </select>
+        </div>
 
-                <div class="area-nome">
-                    <label>Nome *</label>
-                    <input type="text" id="pNome" required placeholder="Nome do produto">
-                </div>
+        <div class="area-descricao">
+          <label for="pDesc">Descrição </label>
+          <input id="pDesc" placeholder="Descreva o produto..." />
+        </div>
 
-                <div class="area-um">
-                    <label>Unidade de Medida *</label>
-                    <select id="pUm">
-                        <option value="UN">UN</option>
-                        <option value="KG">KG</option>
-                        <option value="MT">MT</option>
-                    </select>
-                </div>
+        <div class="area-preco clifor">
+          <label>Preço Unitário </label>
+          <input type="text" id="pPreco" placeholder=" R$ 0.00" />
+          <div class="area-checkCliFor">
+          <label>Necessita de fornecedor?</label>
+          <input type="checkbox" id="checkCliFor" />
+        </div>
+        </div>
 
-                <div class="area-descricao">
-                    <label for="pDesc">Descrição </label>
-                    <input id="pDesc" placeholder="Descreva o produto...">
-                </div>
+        
+      </div>
 
-                <div class="area-preco">
-                    <label>Preço Unitário </label>
-                    <input type="text" id="pPreco" placeholder=" R$ 0.00">
-                </div>
-
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn-submit">
-                    Cadastrar
-                </button>
-            </div>
-
-        </form>
-
-    </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-submit">Cadastrar</button>
+      </div>
+    </form>
+  </div>
 </div>

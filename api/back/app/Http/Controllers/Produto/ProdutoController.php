@@ -49,7 +49,8 @@ class ProdutoController extends Controller
                 'tipo'  => $p->PROD_TIPO,      // 'insumo', 'produto acabado', 'conjunto'
                 'um'    => $p->PROD_UM,         // 'UN', 'KG', 'MT'
                 'preco' => $p->PROD_PRECO,
-                'ativo' => $p->PROD_ATIV
+                'ativo' => $p->PROD_ATIV,
+                'necessita_clifor' => $p->NECESSITA_CLIFOR === 1 
             ];
         });
 
@@ -65,7 +66,8 @@ class ProdutoController extends Controller
             'PROD_TIPO'  => 'required|string|in:insumo,produto acabado,conjunto',
             'PROD_UM'    => 'required|string|in:UN,KG,MT',
             'PROD_DESC'  => 'nullable|string',
-            'PROD_PRECO' => 'nullable|numeric'
+            'PROD_PRECO' => 'nullable|numeric',
+            'NECESSITA_CLIFOR' => 'required|boolean'
         ]);
 
         $empresaId = $this->getEmpresaId($request);
@@ -88,7 +90,8 @@ class ProdutoController extends Controller
             'PROD_UM'    => trim($request->PROD_UM),
             'PROD_DESC'  => $request->PROD_DESC ?? null,
             'PROD_PRECO' => $request->PROD_PRECO ? (float) $request->PROD_PRECO : null,
-            'PROD_ATIV'  => 1
+            'PROD_ATIV'  => 1,
+            'NECESSITA_CLIFOR' => $request->NECESSITA_CLIFOR ? 1 : 0
         ]);
 
         return response()->json([
@@ -117,7 +120,8 @@ class ProdutoController extends Controller
             'um'    => $p->PROD_UM,
             'preco' => $p->PROD_PRECO,
             'ativo' => $p->PROD_ATIV,
-            'desc'  => $p->PROD_DESC
+            'desc'  => $p->PROD_DESC,
+            'necessita_clifor' => $p->NECESSITA_CLIFOR === 1 
         ]);
     }
 
@@ -194,7 +198,8 @@ class ProdutoController extends Controller
                 'tipo'  => $p->PROD_TIPO,
                 'um'    => $p->PROD_UM,
                 'preco' => $p->PROD_PRECO,
-                'ativo' => $p->PROD_ATIV
+                'ativo' => $p->PROD_ATIV,
+                'necessita_clifor' => $p->NECESSITA_CLIFOR === 1
             ];
         });
 

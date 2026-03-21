@@ -26,9 +26,9 @@ class CriacaoInsumoController extends Controller
             $opinS     = $dados['insumosInseridos'];
             $idUsuario = (int) $request->user()->USU_ID;
             $user = $request->user();
-        $abilities = $user->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId = str_replace('empresa_', '', $ability);
+            $abilities = $user->currentAccessToken()->abilities;
+            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+            $empresaId = str_replace('empresa_', '', $ability);
 
             if (!$opinS || count($opinS) === 0) {
                 return;
@@ -45,7 +45,8 @@ class CriacaoInsumoController extends Controller
                     'OPIN_CUSTOT'            => (float) ($opin['custotOPIN'] ?? null),
                     'PROD_ID'       => (int) ($opin['prodIdOPIN'] ?? null),
                     'OP_ID'   => $idOP,
-                    'CLIFOR_ID' => is_numeric($opin['forOPIN'] ?? null) ? (int) $opin['forOPIN'] : null
+                    'CLIFOR_ID' => is_numeric($opin['forOPIN'] ?? null) ? (int) $opin['forOPIN'] : null,
+                    'NECESSITA_CLIFOR' => $opin['necessita_clifor'] ? 1 : 0
                 ]);
 
                 // Recalcula e atualiza os custos da OP

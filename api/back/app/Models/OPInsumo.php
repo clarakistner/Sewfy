@@ -23,6 +23,7 @@ class OPInsumo extends Model
         'OPIN_CUSTOT',
         'PROD_ID',
         'OP_ID',
-        'CLIFOR_ID'
+        'CLIFOR_ID',
+        'NECESSITA_CLIFOR'
     ];
 }
