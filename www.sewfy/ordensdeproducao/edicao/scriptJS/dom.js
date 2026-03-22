@@ -144,7 +144,6 @@ export async function criaNovoInsumoDOM() {
     const insumosInseridos = getInsumosInseridos()
     const selectInsumo = document.querySelector("#novoInsumo")
     const campoQTD = document.querySelector("#quatidadeNovoInsumo")
-    const checkbox = document.querySelector("#requerForNovoInsumo")
     const boxFornecedor = document.querySelector("#boxForNovoInsumo")
     const dados = {}
 
@@ -164,14 +163,14 @@ export async function criaNovoInsumoDOM() {
     const produto = await resgataProdutoPeloID(parseInt(selectInsumo.value))
     const op = getOrdemProducao()
 
-    if (checkbox.checked) {
+    if (produto.necessita_clifor) {
       const selectFornecedor = document.querySelector("#fornecedorNovoInsumo")
       dados.forOPIN = parseInt(selectFornecedor.value)
     } else {
       dados.forOPIN = null
     }
 
-    console.log(`ID do fornecedor que vai pro banco: ${dados.IDFOR}`)
+    console.log(`ID do fornecedor que vai pro banco: ${dados.forOPIN}`)
     dados.prodIdOPIN = parseInt(produto.id)
     dados.opOPIN = op.idOP
     dados.idOPIN = - (insumosDOM.length + 1)
@@ -185,7 +184,6 @@ export async function criaNovoInsumoDOM() {
     campoQTD.value = ""
     selectInsumo.value = ""
     if (boxFornecedor) boxFornecedor.style.display = "none"
-    if (checkbox) checkbox.checked = false
 
     // Recarrega os insumos do DOM para manter o estado sincronizado
     setListaDOM([...insumosDOM, dados])

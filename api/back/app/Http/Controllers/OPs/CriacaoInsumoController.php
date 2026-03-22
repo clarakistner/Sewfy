@@ -46,7 +46,7 @@ class CriacaoInsumoController extends Controller
                     'PROD_ID'       => (int) ($opin['prodIdOPIN'] ?? null),
                     'OP_ID'   => $idOP,
                     'CLIFOR_ID' => is_numeric($opin['forOPIN'] ?? null) ? (int) $opin['forOPIN'] : null,
-                    'NECESSITA_CLIFOR' => $opin['necessita_clifor'] ? 1 : 0
+                    'NECESSITA_CLIFOR' => FuncoesAuxiliares::retornaNecessitaCliFor((int) $opin['prodIdOPIN'], $empresaId)
                 ]);
 
                 // Recalcula e atualiza os custos da OP

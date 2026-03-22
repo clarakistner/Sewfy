@@ -24,7 +24,11 @@ class DeletarInsumoOrdemProducaoController extends Controller
             }
 
             $opinS     = $dados['insumosDeletados'] ?? null;
-            $idUsuario = (int) $request->session()->get('usuario_id');
+            $user = $request->user();
+            $abilities = $user->currentAccessToken()->abilities;
+            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
+            $empresaId = str_replace('empresa_', '', $ability);
+            $idUsuario = $user->USU_ID;
 
             if (!$opinS || count($opinS) === 0) {
                 return;
@@ -33,8 +37,9 @@ class DeletarInsumoOrdemProducaoController extends Controller
             foreach ($opinS as $opin) {
                 // Busca o insumo e a OP relacionada
                 $insumo = OPInsumo::find((int) $opin);
-                $op = OrdemDeProducao::where('OP_ID', $insumo->ORDEM_PRODUCAO_OP_ID)
-                    ->where('USUARIOS_USU_ID', $idUsuario)
+                $op = OrdemDeProducao::where('OP_ID', $insumo->OP_ID)
+                    ->where('USU_RESPONSAVEL', $idUsuario)
+                    ->where('EMP_ID', $empresaId)
                     ->first();
 
                 // Deleta o insumo
@@ -44,7 +49,7 @@ class DeletarInsumoOrdemProducaoController extends Controller
                 $custotOP = FuncoesAuxiliares::retornaCustotOP($op->OP_ID);
                 $custouOP = $custotOP / $op->OP_QTD;
 
-                OrdemDeProducao::where('OP_ID', $insumo->ORDEM_PRODUCAO_OP_ID)->update([
+                OrdemDeProducao::where('OP_ID', $insumo->OP_ID)->update([
                     'OP_QTD'    => $op->OP_QTD,
                     'OP_CUSTOU' => $custouOP,
                     'OP_CUSTOT' => $custotOP,

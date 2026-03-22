@@ -12,6 +12,7 @@ class EditarInsumoOrdemProducaoController extends Controller
     {
         try {
             $dados = $request->json()->all();
+            \Log::info($dados);
 
             if (!$dados) {
                 return response()->json([
@@ -24,15 +25,26 @@ class EditarInsumoOrdemProducaoController extends Controller
             $opins = $dados['insumos'] ?? null;
 
             if (!$opins || count($opins) === 0) {
-                return;
+                return response()->json([
+                    'mensagem' => 'Lista de edicao de insumos vazia'
+                ]);
             }
 
             foreach ($opins as $opin) {
-                $idOPIN      = $opin['idOPIN'];
-                $insumoBanco = OPInsumo::find($idOPIN);
+                $idOPIN      = $opin['idOPIN'] ?? null;
+                if (!$idOPIN) {
+                    continue;
+                }
+                $insumoBanco = OPInsumo::find($idOPIN) ?? null;
+                if (!$insumoBanco) {
+                    continue;
+                }
 
                 $qtd   = $opin['qtdInsumo'] ?? $insumoBanco->OPIN_QTD;
-                $idFor = $opin['idFor'] ?? $insumoBanco->FORNECEDORES_CLIFOR_ID;
+                if ($insumoBanco->NECESSITA_CLIFOR === 1) {
+                    $idFor = $opin['idFor'] ?? $insumoBanco->CLIFOR_ID;
+                }
+
 
                 // Recalcula o custo total do insumo
                 $custot = $insumoBanco->OPIN_CUSTOU * $qtd;

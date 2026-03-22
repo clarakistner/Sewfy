@@ -59,7 +59,9 @@ async function handleClick(e) {
 
 function handleChange(e) {
   // Checkbox que controla se o novo insumo requer fornecedor
-  if (e.target.matches("#requerForNovoInsumo")) {
-    defineDisplayBoxForNovoInsumo(e.target)
+  if (e.target.closest("#novoInsumo")) {
+
+    const insumoId = e.target.closest("#novoInsumo").value
+    defineDisplayBoxForNovoInsumo(parseInt(insumoId))
   }
 }

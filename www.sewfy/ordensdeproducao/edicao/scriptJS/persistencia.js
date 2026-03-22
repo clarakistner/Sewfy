@@ -45,9 +45,9 @@ export function insereDadosOPAtualizados() {
       return
     }
     const novaQtd = parseInt(qtdOP.value)
-    const novaQuebra = parseInt(quebraOP.value)
+    let novaQuebra = parseInt(quebraOP.value)
     if (isNaN(novaQtd)) {
-      console.log("Valor de quantidadeinválido")
+      console.log("Valor de quantidade inválido")
       mostrarToast("Valor de quantidade inválido", "erro")
       return
     }
@@ -86,6 +86,7 @@ async function editaInsumos() {
     const listaInsumos = getInsumosBanco()
     const listaEdicao = []
     listaInsumos.forEach(insumo => {
+      console.log("OpinID: opin"+ insumo.idOPIN)
       const campos = document.querySelectorAll(`.opin${insumo.idOPIN}`)
       listaEdicao.push(retornaDadosCamposInsumo(insumo, campos))
     })
@@ -110,7 +111,7 @@ function retornaDadosCamposInsumo(insumo, campos) {
       if (campo.id == `qtd${insumo.idOPIN}`) {
         campoQtd = campo
       }
-      else if (campo.dataset.field == "fornecedor") {
+      else if (campo.dataset.field == "fornecedor" && campo.closest('.boxFornecedor').style.display !== 'none') {
         campoFor = campo
       }
     })

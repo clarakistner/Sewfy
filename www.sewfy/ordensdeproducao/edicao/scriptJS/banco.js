@@ -10,8 +10,9 @@ export async function resgataListaProdutos() {
     console.log(`É um array? ${Array.isArray(listaBanco)}`)
     console.log(`Array[0] =>  ${JSON.stringify(listaBanco[0])}`)
     const lista = Array.from(listaBanco).filter(insumo => {
-      return insumo.tipo === "Insumo" && insumo.ativo === "1"
+      return insumo.tipo === "insumo" && insumo.ativo === 1
     })
+    console.log("Lista que veio do banco: " + JSON.stringify(lista, null, 2));
     setListaInsumos(lista)
   } catch (error) {
     console.log(`Erro ao tentar resgatar produtos: ${error}`)

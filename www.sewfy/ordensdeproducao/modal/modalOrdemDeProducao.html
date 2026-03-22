@@ -3,29 +3,58 @@
 
     <div class="modal-header">
       <h2>Detalhes da Ordem</h2>
-      <button type="button" class="modal-close">✕</button>
+      <button type="button" class="modal-close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
 
     <div id="detailsContent" class="modal-content">
-      <label for="" id="labelnomeProd">Produto:</label>
-      <h3 id="nomeProd"></h3>
-      <label for="" id="labelquantProd">Quantidade:</label>
-      <h3 id="quantProd"></h3>
-      <label for="" id="labelcustou">Custo Unitário:</label>
-      <h3 id="custou"></h3>
-      <label for="" id="labelcustot">Custo Total:</label>
-      <h3 id="custot"></h3>
-      <h3 id="tituloTabela">Insumos</h3>
-      <div class="boxTabela">
-        <table class="tabelaInsumos">
+      <div class="detalhes-tela-grid">
 
-        </table>
+      
+        <div class="detalhes-tela-col-esquerda">
+
+          <div class="detalhes-tela-campo">
+            <label class="detalhes-tela-label" id="labelnomeProd">Produto:</label>
+            <h3 class="detalhes-tela-valor-grande" id="nomeProd"></h3>
+          </div>
+
+          <div class="detalhes-tela-campo">
+            <label class="detalhes-tela-label" id="labelquantProd">Quantidade:</label>
+            <h3 class="detalhes-tela-valor-medio" id="quantProd"></h3>
+          </div>
+
+          <div class="detalhes-tela-campo detalhes-tela-divider">
+            <label class="detalhes-tela-label" id="labelcustou">Custo Unitário:</label>
+            <h3 class="detalhes-tela-valor-pequeno" id="custou"></h3>
+          </div>
+
+          <div class="detalhes-tela-campo detalhes-tela-divider">
+            <label class="detalhes-tela-label" id="labelcustot">Custo Total:</label>
+            <h3 class="detalhes-tela-valor-grande" id="custot"></h3>
+          </div>
+
+        </div>
+
+       
+        <div class="detalhes-tela-col-direita">
+          <h3 class="detalhes-tela-subtitulo" id="tituloTabela">Insumos</h3>
+          <div class="boxTabela">
+            <table class="tabelaInsumos"></table>
+          </div>
+        </div>
+
       </div>
+
+    
       <div class="box-botoes">
-        <button type="button" class="botao editar"> Editar</button>
+        <button type="button" class="botao editar">Editar</button>
       </div>
     </div>
-
 
   </div>
 </div>

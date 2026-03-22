@@ -1,64 +1,51 @@
 import { mostrarToast } from "../../toast/toast.js";
 
-// Elemento principal que será desfocado ao abrir o modal
 const getMain = () => document.querySelector(".principal");
 
-// Cria módulos para guardar a OP e seus insumos
 let ordemProducao = null;
 let insumosBanco = [];
 
-const setOrdemProducao = (op) => {
-  ordemProducao = op;
-};
-export const getOrdemProducao = () => {
-  return ordemProducao;
-};
+const setOrdemProducao = (op) => { ordemProducao = op; };
+export const getOrdemProducao = () => ordemProducao;
 
-export const setInsumosBanco = (insumos) => {
-  insumosBanco = insumos;
-};
-export const getInsumosBanco = () => {
-  return insumosBanco;
-};
-
-// Listener global usando event delegation
-
+export const setInsumosBanco = (insumos) => { insumosBanco = insumos; };
+export const getInsumosBanco = () => insumosBanco;
 
 document.addEventListener("click", handleClick);
-// Controla cliques relevantes da página
 
 async function handleClick(e) {
   const botao = e.target.closest(".btn-verop, .verop");
   if (botao) {
     await abrirModal(botao.id);
-  } // Fecha modal
+  }
   if (e.target.closest(".modal-close")) {
     fecharModal();
   }
 }
 
-// Abre o modal e injeta o HTML no DOM
 export async function abrirModal(id) {
   getMain().style.filter = "blur(25px)";
   document.querySelector(".sidebar").style.filter = "blur(25px)";
 
   try {
-    const response = await fetch(
-      "/www.sewfy/ordensdeproducao/modal/modalOrdemDeProducao.html",
-    );
+    const response = await fetch("/www.sewfy/ordensdeproducao/modal/modalOrdemDeProducao.html");
     const data = await response.text();
 
     document.body.insertAdjacentHTML("afterbegin", data);
 
     const modal = document.querySelector("#detailsModal");
     modal.classList.add("load");
+
     const { initTelaCarregamento, removeTelaCarregamento } =
       await import("../../telacarregamento/telacarregamento.js");
+
     const container = document.querySelector(".modal-container");
     initTelaCarregamento(container);
+
     await resgataOPCompletaBanco(id);
     await insereDetalhesNaTela();
     removeTelaCarregamento();
+
   } catch (error) {
     console.error("Erro ao abrir modal:", error);
     mostrarToast("Erro ao abrir modal", "erro");
@@ -66,7 +53,6 @@ export async function abrirModal(id) {
   }
 }
 
-// Remove o modal e restaura o layout
 export function fecharModal() {
   document.querySelector("#detailsModal")?.classList.remove("load");
   document.querySelector("#detailsModal")?.remove();
@@ -74,7 +60,6 @@ export function fecharModal() {
   document.querySelector(".sidebar").style.filter = "blur(0)";
 }
 
-// Busca dados da OP e seus insumos no backend
 async function resgataOPCompletaBanco(id) {
   try {
     const busca = await window.api.get(`/ordemdeproducao/detalhes/${id}`);
@@ -87,7 +72,6 @@ async function resgataOPCompletaBanco(id) {
   }
 }
 
-// Retorna o nome do produto pelo ID
 export async function retornaNomeProduto(id) {
   try {
     const produto = await window.api.get(`/produtos/${id}`);
@@ -99,36 +83,33 @@ export async function retornaNomeProduto(id) {
   }
 }
 
-// Insere os insumos na tabela do modal
 async function insereInsumosTabela() {
   try {
     const tabelaDOM = document.querySelector(".tabelaInsumos");
 
     const promessas = getInsumosBanco().map((insumo) =>
-      retornaNomeProduto(insumo.prodIdOPIN),
+      retornaNomeProduto(insumo.prodIdOPIN)
     );
     const nomes = await Promise.all(promessas);
 
     getInsumosBanco().forEach((insumo, index) => {
       const tr = document.createElement("tr");
-      const tdQtd = document.createElement("td");
-      tdQtd.textContent = `${insumo.qtdOPIN} ${insumo.umOPIN}`;
-
-      const tdNome = document.createElement("td");
-      tdNome.textContent = nomes[index];
-
-      const tdCusto = document.createElement("td");
-      tdCusto.textContent = parseFloat(insumo.custotOPIN).toLocaleString(
-        "pt-BR",
-        { style: "currency", currency: "BRL" },
-      );
-
-      tr.appendChild(tdQtd);
-      tr.appendChild(tdNome);
-      tr.appendChild(tdCusto);
-
+      tr.innerHTML = `
+        <td>
+          <div class="detalhes-insumo-card">
+            <div>
+              <p class="detalhes-insumo-nome">${nomes[index]}</p>
+              <p class="detalhes-insumo-qtd">${insumo.qtdOPIN} ${insumo.umOPIN}</p>
+            </div>
+            <p class="detalhes-insumo-valor">
+              ${parseFloat(insumo.custotOPIN).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+            </p>
+          </div>
+        </td>
+      `;
       tabelaDOM.appendChild(tr);
     });
+
   } catch (error) {
     console.log(`Erro ao inserir insumos na tabela: ${error}`);
     mostrarToast("Erro ao inserir insumos na tabela", "erro");
@@ -136,10 +117,9 @@ async function insereInsumosTabela() {
   }
 }
 
-// Preenche os dados principais da OP no modal
 async function insereDetalhesNaTela() {
-  const campoNome = document.querySelector("#nomeProd");
-  const campoQuant = document.querySelector("#quantProd");
+  const campoNome   = document.querySelector("#nomeProd");
+  const campoQuant  = document.querySelector("#quantProd");
   const campoCustou = document.querySelector("#custou");
   const campoCustot = document.querySelector("#custot");
 
@@ -150,14 +130,12 @@ async function insereDetalhesNaTela() {
     insereInsumosTabela(),
   ]);
 
-  campoNome.textContent = nomeProd;
-  campoQuant.textContent = parseInt(getOrdemProducao().qtdOP).toLocaleString(
-    "pt-BR",
-  );
-  campoCustou.textContent = parseFloat(
-    getOrdemProducao().custou,
-  ).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  campoCustot.textContent = parseFloat(
-    getOrdemProducao().custot,
-  ).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  campoNome.textContent  = nomeProd;
+  campoQuant.textContent = parseInt(getOrdemProducao().qtdOP).toLocaleString("pt-BR");
+  campoCustou.textContent = parseFloat(getOrdemProducao().custou).toLocaleString("pt-BR", {
+    style: "currency", currency: "BRL",
+  });
+  campoCustot.textContent = parseFloat(getOrdemProducao().custot).toLocaleString("pt-BR", {
+    style: "currency", currency: "BRL",
+  });
 }
