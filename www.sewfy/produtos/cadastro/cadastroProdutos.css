@@ -58,40 +58,22 @@
   padding: 24px;
 }
 
-.area-nome {
-  grid-area: nome;
-}
-
-.area-cod {
-  grid-area: cod;
-}
-
-.area-tipo {
-  grid-area: tipo;
-}
-
-.area-um {
-  grid-area: um;
-}
-
-.area-descricao {
-  grid-area: descricao;
-}
-
-.area-preco {
-  grid-area: preco;
-}
+.area-nome      { grid-area: nome; }
+.area-cod       { grid-area: cod; }
+.area-tipo      { grid-area: tipo; }
+.area-um        { grid-area: um; }
+.area-descricao { grid-area: descricao; }
+.area-preco     { grid-area: preco; }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
-
   grid-template-areas:
     "cod tipo"
     "nome um"
     "descricao descricao"
-    "preco .";
+    "preco preco";
 }
 
 label {
@@ -108,8 +90,174 @@ select {
   border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
+input:focus,
+select:focus {
+  outline: none;
+  border: 2px solid #0e59fe;
+}
+
+#pNome,
+#pCode,
+#pTipo,
+#pPreco,
+#pUm {
+  padding: 12px 6px;
+}
+
+#pDesc {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.4;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* Linha preço + toggle */
+.preco-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.preco-field {
+  flex: 1;
+}
+
+/* Label com ícone de info */
+.clifor-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.clifor-label-row label {
+  margin: 0;
+}
+
+/* Toggle switch */
+.toggle-wrapper {
+  padding: 10px 0;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.toggle input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-track {
+  width: 44px;
+  height: 24px;
+  background: #d1d5db;
+  border-radius: 999px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  border: none;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle input:checked + .toggle-track {
+  background: #0e59fe;
+}
+
+.toggle input:checked + .toggle-track .toggle-thumb {
+  left: 23px;
+}
+
+.toggle-label {
+  font-size: 14px;
+  color: #374151;
+  user-select: none;
+  min-width: 28px;
+}
+
+/* Info tooltip */
+.info-tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.info-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.info-icon:hover {
+  background: #d1d5db;
+  color: #374151;
+}
+
+.info-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: #f9fafb;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  width: 220px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.info-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1f2937;
+}
+
+.info-tip:hover .info-tooltip {
+  display: block;
+}
+
+/* Actions */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -147,44 +295,4 @@ select {
 
 .btn-submit:hover {
   background: linear-gradient(90deg, #020066, #0e59fe);
-}
-
-#pNome,
-#pCode,
-#pTipo,
-#pPreco,
-#pUm {
-  padding: 12px 6px;
-}
-
-#pDesc {
-  width: 100%;
-  padding: 14px 16px;
-  font-size: 15px;
-  font-family: inherit;
-  line-height: 1.4;
-  resize: vertical;
-  box-sizing: border-box;
-}
-
-.area-checkCliFor {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
- align-self: flex-end;
-  width: 50%;
-}
-.area-checkCliFor label {
-  width: 5.4rem;
-}
-#checkCliFor {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 1rem;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border: 2px solid #0e59fe;
 }

@@ -112,7 +112,7 @@
 /* Grid de informações */
 .empresa-info {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 16px 32px;
     margin-bottom: 20px;
 }
