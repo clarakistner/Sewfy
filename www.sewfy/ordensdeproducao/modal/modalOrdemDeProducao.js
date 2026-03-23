@@ -18,32 +18,35 @@ async function handleClick(e) {
   if (botao) {
     await abrirModal(botao.id);
   }
-  if (e.target.closest(".modal-close")) {
+  if (e.target.closest(".ver-modal-close")) {
     fecharModal();
   }
 }
 
 export async function abrirModal(id) {
-  getMain().style.filter = "blur(25px)";
-  document.querySelector(".sidebar").style.filter = "blur(25px)";
+  
 
   try {
-    const response = await fetch("/www.sewfy/ordensdeproducao/modal/modalOrdemDeProducao.html");
-    const data = await response.text();
+   
+    const [response, { initTelaCarregamento, removeTelaCarregamento }] =
+      await Promise.all([
+        fetch("/www.sewfy/ordensdeproducao/modal/modalOrdemDeProducao.html"),
+        import("../../telacarregamento/telacarregamento.js")
+      ]);
 
+   
+    initTelaCarregamento(document.body);
+
+    const data = await response.text();
     document.body.insertAdjacentHTML("afterbegin", data);
 
     const modal = document.querySelector("#detailsModal");
     modal.classList.add("load");
 
-    const { initTelaCarregamento, removeTelaCarregamento } =
-      await import("../../telacarregamento/telacarregamento.js");
-
-    const container = document.querySelector(".modal-container");
-    initTelaCarregamento(container);
-
+ 
     await resgataOPCompletaBanco(id);
     await insereDetalhesNaTela();
+
     removeTelaCarregamento();
 
   } catch (error) {
@@ -54,10 +57,9 @@ export async function abrirModal(id) {
 }
 
 export function fecharModal() {
+  
   document.querySelector("#detailsModal")?.classList.remove("load");
   document.querySelector("#detailsModal")?.remove();
-  getMain().style.filter = "blur(0)";
-  document.querySelector(".sidebar").style.filter = "blur(0)";
 }
 
 async function resgataOPCompletaBanco(id) {

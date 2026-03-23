@@ -45,7 +45,7 @@
   margin: 0;
 }
 
-#detailsModal .modal-close {
+#detailsModal .ver-modal-close {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -59,7 +59,7 @@
   line-height: 0;
 }
 
-#detailsModal .modal-close:hover {
+#detailsModal .ver-modal-close:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 

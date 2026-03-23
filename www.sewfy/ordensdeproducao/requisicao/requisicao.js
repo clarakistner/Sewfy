@@ -1,13 +1,7 @@
 // Importa funções auxiliares
 import { mostrarToast } from "../../toast/toast.js";
-import {
-  listarOrdensProducao,
-  limparLista,
-} from "../gerenciar/gerenciarOrdensDeProducao.js";
-import {
-  removeTelaCarregamento,
-  initTelaCarregamento,
-} from "../../telacarregamento/telacarregamento.js";
+
+
 import {
   atualizarBarraProgresso,
   inicializarIconesOriginais,
@@ -37,15 +31,26 @@ const OPINs = [];
 // INICIALIZAÇÃO
 // ─────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", iniciaRequisicao);
+document.addEventListener("DOMContentLoaded", async () => {
+  const { initTelaCarregamento, removeTelaCarregamento } =
+    await import("../../telacarregamento/telacarregamento.js");
+
+  initTelaCarregamento();
+
+  await iniciaRequisicao();
+
+  removeTelaCarregamento();
+});
 document.addEventListener("click", handleGlobalClick);
 document.addEventListener("change", handleChange);
 document.addEventListener("input", handleInput);
 
-function iniciaRequisicao() {
+async function iniciaRequisicao() {
   inicializarIconesOriginais();
   atualizarBarraProgresso(1);
-  carregarProdutosEmSelect("final");
+
+  await carregarProdutosEmSelect("final");
+
   renderLista();
 }
 
@@ -131,6 +136,7 @@ function handleInput(e) {
 
 function abrirModal() {
   window.location.href = "../requisicao";
+   
 }
 
 async function fecharModal() {
@@ -324,6 +330,7 @@ function renderLista(pesquisa = null) {
       renderLista();
     });
   });
+  
 }
 
 // ─────────────────────────────────────────

@@ -10,11 +10,8 @@ async function initGerenciarOPs() {
     await import("../../telacarregamento/telacarregamento.js");
 
   initTelaCarregamento();
-
   await listarOrdensProducao(null, null);
-  setTimeout(() => {
-    removeTelaCarregamento();
-  }, 3300);
+  removeTelaCarregamento();
 }
 function handleInput(e) {
   if (e.target.closest("#barraPesquisa")) {
@@ -60,7 +57,7 @@ function filtrarOPs(listaOPs, valorPesquisa, filtro) {
 }
 
 // Cria o card de uma OP
-async function criarCardOP(op) {
+async function criarCardOP(op, mapaProdutos) {
   const cardsOrdens = document.createElement("div");
   cardsOrdens.className = "card-ordem";
 
@@ -69,7 +66,7 @@ async function criarCardOP(op) {
 
   contentOrdem.appendChild(criarCabecalhoOP(op));
 
-  const nomeProduto = await retornaNomeProduto(op.prodIDOP);
+  const nomeProduto = mapaProdutos.get(op.prodIDOP);
   const dataAbertura = new Date(op.dataa).toLocaleDateString("pt-BR", {
     timeZone: "UTC",
   });
@@ -179,16 +176,25 @@ export async function listarOrdensProducao(
     let listaOPs = await buscarEOrganizarOPs();
     listaOPs = filtrarOPs(listaOPs, valorPesquisa, filtro);
 
+    const ids = [...new Set(listaOPs.map((op) => op.prodIDOP))];
+
+    const produtos = await window.api.get(`/produtos?ids=${ids.join(",")}`);
+
+    const mapaProdutos = new Map(produtos.map((p) => [p.id, p.nome]));
+
     if (listaOPs.length == 0) {
       listaOrdensDOM.appendChild(criaCardSemOPs());
       return;
     }
 
-    for (const op of listaOPs) {
-      console.log("Criando card para OP:", op.idOP);
-      const card = await criarCardOP(op);
-      listaOrdensDOM.appendChild(card);
-    }
+    const promises = listaOPs.map(op => criarCardOP(op, mapaProdutos));
+    const cards = await Promise.all(promises);
+
+    const fragment = document.createDocumentFragment();
+
+    cards.forEach((card) => fragment.appendChild(card));
+
+    listaOrdensDOM.appendChild(fragment);
   } catch (error) {
     console.log(`Erro ao listar as ordens de produção: ${error}`);
   } finally {
@@ -198,21 +204,13 @@ export async function listarOrdensProducao(
 
 // Função para buscar o nome do produto pelo ID
 async function retornaNomeProduto(id) {
-  try {
-    // Faz requisição para buscar dados do produto
-
-    console.log("ID DO PRODUTOOOOOOOOOOOOOOOOO: " + id);
-    const produto = await window.api.get(`/produtos/${parseInt(id)}`);
-
-    // Log de debug
-    console.log(
-      ` DENTRO DA FUNÇÃO retornaNomeProduto() -> PROD_NOME:${produto.nome}`,
-    );
-
-    return produto.nome;
-  } catch (error) {
-    console.log(`Erro ao buscar produto: ${error}`);
+  if (!cacheProdutos.has(id)) {
+    const promessa = window.api.get(`/produtos/${parseInt(id)}`);
+    cacheProdutos.set(id, promessa);
   }
+
+  const produto = await cacheProdutos.get(id);
+  return produto.nome;
 }
 
 // Função auxiliar para criar elementos de informação da ordem
