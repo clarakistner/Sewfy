@@ -1,5 +1,5 @@
 import { mostrarToast } from "../../toast/toast.js";
-import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js"
+import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js";
 
 // ABRIR MODAL
 document.addEventListener("click", (e) => {
@@ -34,13 +34,14 @@ function inicializarEventosModal() {
     const form = document.querySelector("#Produto");
     if (!form) return;
 
-    const codInput   = document.getElementById("pCode");
-    const tipoInput  = document.getElementById("pTipo");
-    const nomeInput  = document.getElementById("pNome");
-    const umInput    = document.getElementById("pUm");
-    const descInput  = document.getElementById("pDesc");
-    const precoInput = document.getElementById("pPreco");
-    const checkCLifor = document.getElementById("checkCliFor");
+    const codInput    = document.getElementById("pCode");
+    const tipoInput   = document.getElementById("pTipo");
+    const nomeInput   = document.getElementById("pNome");
+    const umInput     = document.getElementById("pUm");
+    const descInput   = document.getElementById("pDesc");
+    const precoInput  = document.getElementById("pPreco");
+    const checkCliFor = document.getElementById("checkCliFor");
+    const toggleLabel = document.querySelector(".toggle-label");
 
     precoInput.addEventListener("input", (e) => {
         let valor = e.target.value.replace(/\D/g, "");
@@ -48,10 +49,14 @@ function inicializarEventosModal() {
         e.target.value = formatarMoeda(valor);
     });
 
+    checkCliFor.addEventListener("change", () => {
+        toggleLabel.textContent = checkCliFor.checked ? "Sim" : "Não";
+    });
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        await cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInput, precoInput, checkCLifor);
+        await cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInput, precoInput, checkCliFor);
     });
 }
 
@@ -61,8 +66,8 @@ async function cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInp
     const nome  = nomeInput.value.trim();
     const desc  = descInput.value.trim();
     const preco = converterMoedaParaNumero(precoInput.value.trim());
-    const tipo  = tipoInput.value;   // 'insumo' | 'produto acabado' | 'conjunto'
-    const um    = umInput.value;     // 'UN' | 'KG' | 'MT'
+    const tipo  = tipoInput.value;
+    const um    = umInput.value;
     const necessitaCliFor = checkCliFor.checked;
 
     if (!cod || !nome || !tipo || !um) {
@@ -84,12 +89,12 @@ async function cadastrarProduto(codInput, tipoInput, nomeInput, umInput, descInp
 
     try {
         const response = await window.api.post("/produtos", {
-            PROD_COD:   cod,
-            PROD_NOME:  nome,
-            PROD_TIPO:  tipo,
-            PROD_UM:    um,
-            PROD_DESC:  desc  || null,
-            PROD_PRECO: preco || null,
+            PROD_COD:         cod,
+            PROD_NOME:        nome,
+            PROD_TIPO:        tipo,
+            PROD_UM:          um,
+            PROD_DESC:        desc  || null,
+            PROD_PRECO:       preco || null,
             NECESSITA_CLIFOR: necessitaCliFor
         });
 

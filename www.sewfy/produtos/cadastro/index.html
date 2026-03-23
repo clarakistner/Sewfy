@@ -9,6 +9,7 @@
 
     <form id="Produto" class="modal-form">
       <div class="form-grid">
+
         <div class="area-cod">
           <label>Código *</label>
           <input type="text" id="pCode" required placeholder="EX: MAL-00" />
@@ -25,12 +26,7 @@
 
         <div class="area-nome">
           <label>Nome *</label>
-          <input
-            type="text"
-            id="pNome"
-            required
-            placeholder="Nome do produto"
-          />
+          <input type="text" id="pNome" required placeholder="Nome do produto" />
         </div>
 
         <div class="area-um">
@@ -43,20 +39,42 @@
         </div>
 
         <div class="area-descricao">
-          <label for="pDesc">Descrição </label>
+          <label for="pDesc">Descrição</label>
           <input id="pDesc" placeholder="Descreva o produto..." />
         </div>
 
-        <div class="area-preco clifor">
-          <label>Preço Unitário </label>
-          <input type="text" id="pPreco" placeholder=" R$ 0.00" />
-          <div class="area-checkCliFor">
-          <label>Necessita de fornecedor?</label>
-          <input type="checkbox" id="checkCliFor" />
-        </div>
+        <div class="area-preco">
+          <div class="preco-row">
+
+            <div class="preco-field">
+              <label>Preço Unitário</label>
+              <input type="text" id="pPreco" placeholder="R$ 0.00" />
+            </div>
+
+            <div class="preco-field">
+              <div class="clifor-label-row">
+                <label>Necessita de fornecedor?</label>
+                <div class="info-tip">
+                  <span class="info-icon">i</span>
+                  <div class="info-tooltip">
+                    Produtos caracterizados como serviços necessitam de fornecedor.
+                  </div>
+                </div>
+              </div>
+              <div class="toggle-wrapper">
+                <label class="toggle">
+                  <input type="checkbox" id="checkCliFor" />
+                  <span class="toggle-track">
+                    <span class="toggle-thumb"></span>
+                  </span>
+                  <span class="toggle-label">Não</span>
+                </label>
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        
       </div>
 
       <div class="modal-actions">
