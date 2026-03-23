@@ -67,6 +67,10 @@ async function handleGlobalClick(e) {
 
   if (e.target.closest(".proximo.dadosProduto")) {
     navegarParaInsumos(e);
+    const campoQuantOPIN = document.querySelector(".campoQuant");
+    campoQuantOPIN.disabled = true;
+    const campoFor = document.querySelector(".campoFornecedor");
+    campoFor.disabled = true;
   }
 
   if (e.target.closest(".finalizar")) {
@@ -79,6 +83,10 @@ async function handleGlobalClick(e) {
     if (ordemVisivel && ordemVisivel.style.display === "block") {
       atualizarBarraProgresso(2);
       irOutraTela(".boxDadosOrdem", ".boxDadosInsumos");
+      const campoQuantOPIN = document.querySelector(".campoQuant");
+      campoQuantOPIN.disabled = true;
+      const campoFor = document.querySelector(".campoFornecedor");
+      campoFor.disabled = true;
     } else {
       atualizarBarraProgresso(1);
       irOutraTela(".boxDadosInsumos", ".boxDadosProduto");
@@ -105,15 +113,16 @@ function handleChange(e) {
   if (e.target.closest(".campoInsumo")) {
     const select = e.target.closest(".campoInsumo");
     const insumo = select.options[select.selectedIndex];
+    mudaLabelQuantidade(insumo.id);
     fornecedorAplicavel(insumo.id);
   }
 }
 
-function handleInput(e){
-if(e.target.closest("#barraPesquisa")){
-  const valor = e.target.closest("#barraPesquisa").value;
-  renderLista(valor);
-}
+function handleInput(e) {
+  if (e.target.closest("#barraPesquisa")) {
+    const valor = e.target.closest("#barraPesquisa").value;
+    renderLista(valor);
+  }
 }
 
 // ─────────────────────────────────────────
@@ -160,6 +169,7 @@ function navegarParaInsumos(e) {
   irOutraTela(".boxDadosProduto", ".boxDadosInsumos");
   carregarProdutosEmSelect("insumos");
   carregaFornecedores(campoFor);
+  campoFor.disabled = true;
 }
 
 function navegarParaMostrarOrdem(e) {
@@ -262,21 +272,39 @@ function renderLista(pesquisa = null) {
     card.className = "insumo-card";
     card.innerHTML =
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' + svgScissors("#9b59b6") + " INSUMO/SERVIÇO</span>" +
-      '<span class="insumo-card-value">' + esc(insumo.INSUNOME) + "</span>" +
+      '<span class="insumo-card-label">' +
+      svgScissors("#9b59b6") +
+      " INSUMO/SERVIÇO</span>" +
+      '<span class="insumo-card-value">' +
+      esc(insumo.INSUNOME) +
+      "</span>" +
       "</div>" +
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' + svgHash("#6b7280") + " QUANTIDADE</span>" +
-      '<span class="insumo-card-value">' + parseInt(insumo.QTDIN).toLocaleString("pt-BR") + " " + esc(insumo.UM) + "</span>" +
+      '<span class="insumo-card-label">' +
+      svgHash("#6b7280") +
+      " QUANTIDADE</span>" +
+      '<span class="insumo-card-value">' +
+      parseInt(insumo.QTDIN).toLocaleString("pt-BR") +
+      " " +
+      esc(insumo.UM) +
+      "</span>" +
       "</div>" +
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' + svgUser("#e74c3c") + " FORNECEDOR</span>" +
-      '<span class="insumo-card-value">' + esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) + "</span>" +
+      '<span class="insumo-card-label">' +
+      svgUser("#e74c3c") +
+      " FORNECEDOR</span>" +
+      '<span class="insumo-card-value">' +
+      esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) +
+      "</span>" +
       "</div>" +
       '<div class="insumo-card-actions">' +
-      '<span class="insumo-card-actions-label">' + svgCircle("#9ca3af") + " AÇÕES</span>" +
+      '<span class="insumo-card-actions-label">' +
+      svgCircle("#9ca3af") +
+      " AÇÕES</span>" +
       "</div>" +
-      '<button class="btn-remover" data-index="' + index + '">Remover</button>';
+      '<button class="btn-remover" data-index="' +
+      index +
+      '">Remover</button>';
 
     listaCards.appendChild(card);
   });
@@ -503,7 +531,7 @@ function calculaCustoU() {
 }
 
 async function fornecedorAplicavel(idProd) {
-  console.log("ID do INSUMO: "+idProd);
+  console.log("ID do INSUMO: " + idProd);
   const campoFor = document.querySelector(".campoFornecedor");
   const listaProdutos = await getListaProdutosBanco();
 
@@ -516,6 +544,23 @@ async function fornecedorAplicavel(idProd) {
     campoFor.disabled = true;
   } else {
     campoFor.disabled = false;
+  }
+}
+async function mudaLabelQuantidade(idProd) {
+  const label = document.querySelector("#label-quantidade");
+  const campo = document.querySelector(".campoQuant");
+  const listaProdutos = await getListaProdutosBanco();
+
+  const produto = listaProdutos.find(
+    (insumo) => insumo.id === parseInt(idProd),
+  );
+
+  if (produto) {
+    label.textContent = `Quantidade em ${produto.um}*`;
+    campo.disabled = false;
+  } else {
+    label.textContent = `Quantidade*`;
+    campo.disabled = true;
   }
 }
 
