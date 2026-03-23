@@ -40,6 +40,7 @@ const OPINs = [];
 document.addEventListener("DOMContentLoaded", iniciaRequisicao);
 document.addEventListener("click", handleGlobalClick);
 document.addEventListener("change", handleChange);
+document.addEventListener("input", handleInput);
 
 function iniciaRequisicao() {
   inicializarIconesOriginais();
@@ -106,6 +107,13 @@ function handleChange(e) {
     const insumo = select.options[select.selectedIndex];
     fornecedorAplicavel(insumo.id);
   }
+}
+
+function handleInput(e){
+if(e.target.closest("#barraPesquisa")){
+  const valor = e.target.closest("#barraPesquisa").value;
+  renderLista(valor);
+}
 }
 
 // ─────────────────────────────────────────
@@ -221,7 +229,7 @@ async function adicionarInsumo() {
   }
 }
 
-function renderLista() {
+function renderLista(pesquisa = null) {
   const listaCards = document.getElementById("tabelaInsumos");
   if (!listaCards) return;
 
@@ -235,48 +243,40 @@ function renderLista() {
     return;
   }
 
-  OPINs.forEach(function (insumo, index) {
+  const termo = pesquisa ? pesquisa.trim().toLowerCase() : null;
+  const listaFiltrada = termo
+    ? OPINs.filter((insumo) => insumo.INSUNOME.toLowerCase().includes(termo))
+    : OPINs;
+
+  if (listaFiltrada.length === 0) {
+    const p = document.createElement("p");
+    p.className = "lista-vazia";
+    p.textContent = "Insumo não encontrado na lista.";
+    listaCards.appendChild(p);
+    return;
+  }
+
+  listaFiltrada.forEach(function (insumo) {
+    const index = OPINs.indexOf(insumo); // índice real para o botão remover
     const card = document.createElement("div");
     card.className = "insumo-card";
     card.innerHTML =
-      // Insumo/Serviço
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' +
-      svgScissors("#9b59b6") +
-      " INSUMO/SERVIÇO</span>" +
-      '<span class="insumo-card-value">' +
-      esc(insumo.INSUNOME) +
-      "</span>" +
+      '<span class="insumo-card-label">' + svgScissors("#9b59b6") + " INSUMO/SERVIÇO</span>" +
+      '<span class="insumo-card-value">' + esc(insumo.INSUNOME) + "</span>" +
       "</div>" +
-      // Quantidade
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' +
-      svgHash("#6b7280") +
-      " QUANTIDADE</span>" +
-      '<span class="insumo-card-value">' +
-      parseInt(insumo.QTDIN).toLocaleString("pt-BR") +
-      " " +
-      esc(insumo.UM) +
-      "</span>" +
+      '<span class="insumo-card-label">' + svgHash("#6b7280") + " QUANTIDADE</span>" +
+      '<span class="insumo-card-value">' + parseInt(insumo.QTDIN).toLocaleString("pt-BR") + " " + esc(insumo.UM) + "</span>" +
       "</div>" +
-      // Fornecedor
       '<div class="insumo-card-field">' +
-      '<span class="insumo-card-label">' +
-      svgUser("#e74c3c") +
-      " FORNECEDOR</span>" +
-      '<span class="insumo-card-value">' +
-      esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) +
-      "</span>" +
+      '<span class="insumo-card-label">' + svgUser("#e74c3c") + " FORNECEDOR</span>" +
+      '<span class="insumo-card-value">' + esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) + "</span>" +
       "</div>" +
-      // Ações
       '<div class="insumo-card-actions">' +
-      '<span class="insumo-card-actions-label">' +
-      svgCircle("#9ca3af") +
-      " AÇÕES</span>" +
+      '<span class="insumo-card-actions-label">' + svgCircle("#9ca3af") + " AÇÕES</span>" +
       "</div>" +
-      '<button class="btn-remover" data-index="' +
-      index +
-      '">Remover</button>';
+      '<button class="btn-remover" data-index="' + index + '">Remover</button>';
 
     listaCards.appendChild(card);
   });
