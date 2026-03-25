@@ -22,6 +22,14 @@ export class API {
         try {
             const response = await fetch(url, config);
 
+            if (response.status === 401) {
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem('empresa_id');
+                sessionStorage.removeItem('empresa_nome');
+                window.location.replace('/www.sewfy/login');
+                return;
+            }
+
             const text = await response.text();
             console.log(`Texto: ${text}`);
             console.log(`Status HTTP: ${response.status}`);
