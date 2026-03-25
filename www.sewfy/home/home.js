@@ -47,7 +47,6 @@ async function renderizarOrdens(main, filtro) {
     const res = await window.api.get("/ordemdeproducao/listar");
     let ordens = res.ordensProducao ?? [];
 
-    // Aplica filtro
     if (filtro === "aberta")  ordens = ordens.filter(op => !op.datae);
     if (filtro === "fechada") ordens = ordens.filter(op => !!op.datae);
 
@@ -65,6 +64,7 @@ async function renderizarOrdens(main, filtro) {
 
       const card = document.createElement("div");
       card.classList.add("card");
+      card.style.cursor = "pointer";
       card.innerHTML = `
         <div class="linha">
           <div class="ordem">
@@ -88,10 +88,16 @@ async function renderizarOrdens(main, filtro) {
             <div>${dataAbertura}</div>
           </div>
           <div>
-            <button class="btn-verop" data-id="${op.idOP}">Ver Ordem de Produção</button>
+            <button class="btn-verop">Ver Ordem de Produção</button>
           </div>
         </div>
       `;
+
+      card.addEventListener("click", async () => {
+        const { abrirModal } = await import("../ordensdeproducao/modal/modalOrdemDeProducao.js");
+        await abrirModal(op.idOP);
+      });
+
       lista.appendChild(card);
     }
 
@@ -129,7 +135,17 @@ async function renderizarContasPagar(main, filtro) {
 
     contas.forEach(cp => {
       const card = document.createElement("div");
-      card.classList.add("card");
+      card.classList.add("card", "botao-visualizar-conta");
+      card.style.cursor = "pointer";
+
+      card.dataset.fornecedor = cp.fornecedor ?? "";
+      card.dataset.status     = cp.status     ?? "";
+      card.dataset.valor      = cp.valor      ?? "";
+      card.dataset.vencimento = cp.vencimento ?? "";
+      card.dataset.pagamento  = cp.pagamento  ?? "";
+      card.dataset.telefone   = cp.telefone   ?? "";
+      card.dataset.op         = cp.op_id      ?? "";
+
       card.innerHTML = `
         <div class="linha">
           <div class="ordem">
@@ -160,6 +176,11 @@ async function renderizarContasPagar(main, filtro) {
           </div>
         </div>
       `;
+
+      card.addEventListener("click", async () => {
+          const { } = await import("../contaspagar/modalVisualizarContas/visualizarContas.js");
+      });
+
       lista.appendChild(card);
     });
 
