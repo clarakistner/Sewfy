@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarPesquisa();
 });
 
-// PESQUISA
+
 function inicializarPesquisa() {
     const inputPesquisa = document.querySelector(".input-pesquisa input");
 

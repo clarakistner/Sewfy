@@ -85,7 +85,6 @@ export async function insereOptionsFornecedores(selectID) {
     const listaFornecedores = getListaFornecedores()
     const selectsFornecedores = document.querySelectorAll(selectID)
     if (selectsFornecedores.length === 0) {
-      console.log(`Select ${selectID} não encontrado`)
       return
     }
 
@@ -130,7 +129,6 @@ export function deletarInsumoDOM(idOPIN) {
 
     // Recarrega os insumos do DOM para manter o estado sincronizado
     setListaDOM(listaInsumosOP.filter(insumo => {
-      console.log(`Insumo dentro de deletarInsumo(): ${insumo.idOPIN}`)
       return String(insumo.idOPIN) !== String(idOPIN)
     }))
     organizaDivNovoInsumo()
@@ -178,8 +176,6 @@ export async function criaNovoInsumoDOM() {
     } else {
       dados.forOPIN = null
     }
-
-    console.log(`ID do fornecedor que vai pro banco: ${dados.forOPIN}`)
     dados.prodIdOPIN = parseInt(produto.id)
     dados.opOPIN = op.idOP
     dados.idOPIN = - (insumosDOM.length + 1)

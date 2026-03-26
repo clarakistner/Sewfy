@@ -21,7 +21,6 @@ export function abrirMenu() {
         btnTrocar.style.display = "flex";
       }
       // Exibe módulos
-      console.log("[MENU] Módulos do usuário:", Array.from(banco.modulos));
       document.querySelectorAll(".nav-item").forEach((item) => {
         const modulo = item.dataset.menu;
         if (Array.from(banco.modulos).includes(modulo)) {

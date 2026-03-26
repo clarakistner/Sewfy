@@ -6,11 +6,11 @@ import { mostrarToast } from "../toast/toast.js";
 // Verifica autenticação ao carregar a página
 verificarAuth();
 
-console.log("[DEBUG] Script cadastroEmpresas.js carregado!");
+
 
 // Configura eventos após o DOM estar pronto
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[INIT] DOM carregado!");
+  
 
     // Aplica máscaras nos campos
     aplicarMascaraCpfCnpj(document.getElementById("cnpj"));
@@ -93,7 +93,7 @@ async function cadastrarEmpresa() {
     };
 
     try {
-        console.log("[FETCH] Enviando cadastro de empresa...", payload);
+      
         const toastCarregando = mostrarToast("Enviando cadastro...", "carregando");
 
         // Envia requisição para API

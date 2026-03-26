@@ -1,7 +1,6 @@
 import { mascaraTelefone } from "../assets/mascaras.js";
 import { mostrarToast } from "../toast/toast.js";
 
-console.log("Script de edição do proprietário carregado");
 
 document.addEventListener("click", async (e) => {
   if (e.target.closest(".botaoSalvar")) {
@@ -12,12 +11,10 @@ document.addEventListener("click", async (e) => {
 let ownerAbortController = null;
 
 async function carregarOwner() {
-  // Cancela qualquer requisição anterior ainda em andamento
   if (ownerAbortController) ownerAbortController.abort();
   ownerAbortController = new AbortController();
   const signal = ownerAbortController.signal;
 
-  console.log("[FETCH] Buscando o owner");
   const toast = mostrarToast("Carregando dados do proprietário...", "carregando");
 
   try {
@@ -45,9 +42,7 @@ async function buscaOwner(signal) {
 }
 
 function renderizaOwner(owner) {
-  // Escopa ao container da página — evita preencher campos de outras páginas
-  const container = document.querySelector(".editarUsuario");
-  console.log("[DEBUG] editarUsuario existe?", !!container);
+  const container = document.querySelector(".editarUsuario")
   if (!container) return;
 
   const nome = container.querySelector("#nome");
@@ -75,7 +70,7 @@ function retornaNumerosTelefone(telefone) {
 }
 
 async function editarOwner() {
-  // Escopa ao container da página
+
   const container = document.querySelector(".containerConfigOwner");
   if (!container) return;
 

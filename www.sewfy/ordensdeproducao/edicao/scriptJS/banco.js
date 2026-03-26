@@ -7,12 +7,9 @@ import { mostrarToast } from '../../../toast/toast.js'
 export async function resgataListaProdutos() {
   try {
     const listaBanco = await window.api.get("/produtos")
-    console.log(`É um array? ${Array.isArray(listaBanco)}`)
-    console.log(`Array[0] =>  ${JSON.stringify(listaBanco[0])}`)
     const lista = Array.from(listaBanco).filter(insumo => {
       return insumo.tipo === "insumo" && insumo.ativo === 1
     })
-    console.log("Lista que veio do banco: " + JSON.stringify(lista, null, 2));
     setListaInsumos(lista)
   } catch (error) {
     console.log(`Erro ao tentar resgatar produtos: ${error}`)
@@ -39,7 +36,6 @@ export async function retornaNomeFornecedor(id) {
     if (id == null) {
       return null
     } else {
-      console.log(`ID fornecedor: ${id}`)
       const fornecedor = await window.api.get(`/clifor/${parseInt(id)}`)
       return fornecedor.nome
     }

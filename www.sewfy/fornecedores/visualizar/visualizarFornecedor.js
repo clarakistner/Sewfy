@@ -7,7 +7,6 @@ import {
 } from "../../assets/mascaras.js";
 import { validarCpfCnpj } from "../../assets/validacoes.js";
 
-// PRÉ-CARREGA O HTML DO MODAL
 let modalHTMLCache = null;
 
 async function carregarModalHTML() {

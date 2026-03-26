@@ -8,7 +8,7 @@ import {
 
 async function carregarDadosFuncionario() {
   try {
-    console.log("CARREGA OS DADOS DO FUNCIONARIO");
+    
     const response = await window.api.get(
       `/empresa-usuario/${window.funcionarioAtualId}`,
     );

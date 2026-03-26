@@ -2,8 +2,6 @@ import { mascaraTelefone } from "../../assets/mascaras.js";
 import { mostrarToast } from "../../toast/toast.js";
 import { aplicarMascaraTelefone } from "../../assets/mascaras.js";
 
-console.log("Script de gerenciamento de funcionários carregado");
-
 let timeout;
 document.addEventListener("input", handleInput);
 

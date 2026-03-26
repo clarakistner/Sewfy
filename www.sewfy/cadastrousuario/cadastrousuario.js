@@ -1,7 +1,7 @@
 import { mostrarToast } from "../toast/toast.js";
 import { mascaraTelefone } from "../assets/mascaras.js";
 
-console.log("Script de cadastro de usuário carregado");
+
 
 const modulosDOM = {
   financeiro: "Financeiro",
@@ -55,7 +55,6 @@ async function cadastrarFuncionario() {
       abrirModalMultiEmpresa(outrasEmpresas, { nome, email, telefone, modulosSelecionados });
     }
   } catch (error) {
-    // Erros de validação já mostram toast, erros de API mostram a mensagem do servidor
     console.error("Erro ao cadastrar funcionário:", error);
   }
 }
@@ -81,7 +80,7 @@ async function enviarConvite({ nome, email, telefone, modulosSelecionados, outra
     mostrarToast("Convite enviado com sucesso!");
   } catch (error) {
     toastCarregando.remove();
-    throw error; // deixa o caller tratar
+    throw error; 
   }
 }
 
@@ -178,7 +177,7 @@ async function abrirModalMultiEmpresa(outrasEmpresas, dadosConvite) {
       outrasEmpresasSelecionadas.push({ emp_id: empId, modulos });
     });
 
-    // Verifica se alguma empresa marcada ficou sem módulos
+   
     const empresasMarcadas = overlay.querySelectorAll(".modal-empresa-checkbox:checked").length;
     if (empresasMarcadas > 0 && outrasEmpresasSelecionadas.length !== empresasMarcadas) return;
 

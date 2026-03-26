@@ -65,7 +65,6 @@ export function insereDadosOPAtualizados() {
 // Envia a atualizacao da OP (quantidade e quebra) para o backend
 async function atualizaOPBanco() {
   try {
-    console.log(`NovaQTD: ${atualizaOP.NovaQtdOP} NovaQuebra:${atualizaOP.NovaQuebra}`)
     const op = getOrdemProducao()
     const dados = {
       NovaQtdOP: atualizaOP.NovaQtdOP,
@@ -86,7 +85,6 @@ async function editaInsumos() {
     const listaInsumos = getInsumosBanco()
     const listaEdicao = []
     listaInsumos.forEach(insumo => {
-      console.log("OpinID: opin"+ insumo.idOPIN)
       const campos = document.querySelectorAll(`.opin${insumo.idOPIN}`)
       listaEdicao.push(retornaDadosCamposInsumo(insumo, campos))
     })
@@ -119,7 +117,6 @@ function retornaDadosCamposInsumo(insumo, campos) {
       const qtdParsed = parseInt(campoQtd.value)
       dados.qtdInsumo = isNaN(qtdParsed) ? 0 : qtdParsed
       dados.idFor = !campoFor ? null : parseInt(campoFor.value)
-      console.log(`ID do fornecedor que vai pro banco: |${dados.idFor}|`)
       dados.idOPIN = parseInt(insumo.idOPIN)
     }
     return dados

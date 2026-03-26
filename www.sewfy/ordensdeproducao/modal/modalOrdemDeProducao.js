@@ -1,8 +1,6 @@
 import { mostrarToast } from "../../toast/toast.js";
 import { listarOrdensProducao } from "../gerenciar/gerenciarOrdensDeProducao.js";
 
-const getMain = () => document.querySelector(".principal");
-
 let ordemProducao = null;
 let insumosBanco = [];
 

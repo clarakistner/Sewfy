@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("[INIT] DOM carregado");
 
   // Exibe o email do usuário
   const usuarioEmail = sessionStorage.getItem("usuario_email");
@@ -30,7 +29,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const option = document.createElement("option");
       option.value = id;
       option.textContent = nomes[index];
-      console.log(`Adicionando opção: ID ${id} - ${nomes[index]}`);
       select.appendChild(option);
     });
   } catch (error) {
@@ -51,7 +49,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function selecionarEmpresa(empresaId) {
   try {
-    console.log(`Selecionando empresa com ID: ${empresaId}`);
     const body = { empresa_id: parseInt(empresaId) };
     const response = await window.api.post("/auth/define-empresa", body);
     sessionStorage.setItem("token", response.token);

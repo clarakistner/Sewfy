@@ -271,5 +271,3 @@ export function limparLista() {
   const listaOrdensDOM = document.querySelector(".lista-ordens");
   listaOrdensDOM.innerHTML = "";
 }
-
-// Executa a função de listagem ao carregar o módulo

@@ -3,7 +3,6 @@ import { mostrarToast } from "../toast/toast.js";
 const API_BASE = 'http://localhost:8000'; // ajuste a porta se necessário
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('[INIT] DOM carregado');
 
     const form = document.querySelector('form');
     const emailInput = document.getElementById('email');
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Envio do formulário
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log('[SUBMIT] Formulário enviado');
 
         const email = emailInput.value.trim();
         const senha = senhaInput.value.trim();
@@ -31,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            console.log('[FETCH] Enviando dados para o servidor');
 
             const response = await fetch(`${API_BASE}/api/auth/adm/login`, {
                 method: 'POST',
@@ -47,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('email', data.email);
-                console.log('[LOGIN] Token salvo, redirecionando...');
                 window.location.href = '/www.sewfy/homeadm/index.html'; // ajuste o caminho
             } else {
                 mostrarToast(data.erro || 'Erro ao fazer login', 'erro');

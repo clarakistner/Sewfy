@@ -209,9 +209,7 @@ async function adicionarInsumo() {
 
     if (!validarCamposInsumo(opInsumo, quant, preco)) return;
 
-    console.log("Campo quant: " + campoQuant.value);
     const produto = await window.api.get(`/produtos/${parseInt(opInsumo.id)}`);
-    console.log("Necessita_CliFor: " + produto.necessita_clifor);
     if(produto.necessita_clifor && (!fornecedor || String(fornecedor).trim() === "")){
       mostrarToast("Selecione um fornecedor!", "erro");
       return;

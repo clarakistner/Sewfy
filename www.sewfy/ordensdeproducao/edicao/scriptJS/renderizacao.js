@@ -32,13 +32,10 @@ async function defineNomeIdDOM() {
   try {
     const campo = document.querySelector("#idNome");
     if (!campo) {
-      console.log("Não achei o paragrafo");
       return;
     }
-    console.log(`Achou Paragrafo? ${campo}`);
     const op = getOrdemProducao();
     const nomeProd = await retornaNomeProduto(op.prodIDOP);
-    console.log(`Produto da OP: ${nomeProd}`);
     campo.textContent = `
   ${op.idOP} — ${nomeProd}
   `;
@@ -75,7 +72,6 @@ async function definiDivsInsumos() {
       return;
     }
     const insumosOP = getListaDOM();
-    console.log(`Lista DOM: ${insumosOP}`);
 
     // Limpa o array auxiliar antes de repopular para evitar acumulo em re-renderizacoes
     atualizaOPINs.length = 0;
@@ -132,20 +128,13 @@ export function organizaDivNovoInsumo() {
     const listaDeInsumos = getListaInsumos();
     const listaDOM = getListaDOM();
     const insumosDeletados = getInsumosDeletados();
-    console.log(`Lista de Insumos: ${JSON.stringify(listaDeInsumos, null, 2)}`);
-    console.log(`Lista DOM: ${JSON.stringify(listaDOM, null, 2)}`);
-    console.log(
-      `Lista Deletados: ${JSON.stringify(insumosDeletados, null, 2)}`,
-    );
     const listaProdIds = listaDOM.map((idProd) => idProd.prodIdOPIN);
-    console.log("ListaProdsID: " + listaProdIds);
     const listaDeletados = insumosDeletados.map((idDel) => idDel.prodIdOPIN);
     listaDeInsumos.forEach((insumo) => {
       if (
         !listaProdIds.includes(insumo.id) &&
         !listaDeletados.includes(insumo.id)
       ) {
-        console.log("Insumo: " + insumo);
         const option = criaOptionInsumo(insumo);
         selectInsumo.appendChild(option);
       }

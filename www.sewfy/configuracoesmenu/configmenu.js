@@ -134,7 +134,7 @@ async function abrirConfigMenu() {
 }
 
 async function trocarPagina(caminho, nomeArquivo, url) {
-  // Remove ANTES de qualquer await
+  
   document.querySelector(".containerConfigOwner")?.remove();
   document.querySelector("#css-config")?.remove();
 
