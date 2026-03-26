@@ -52,6 +52,12 @@ h2 {
     margin-bottom: 12px;
 }
 
+.card:hover {
+    border: 2px solid #0e59fe;
+    box-shadow: 0 8px 24px rgba(14, 89, 254, 0.12);
+    cursor: pointer;
+}
+
 .linha {
     display: flex;
     flex-wrap: wrap;
