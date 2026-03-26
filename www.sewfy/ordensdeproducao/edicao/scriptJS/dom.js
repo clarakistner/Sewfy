@@ -19,7 +19,7 @@ export function criaOptionInsumo(insumo) {
 }
 
 // Cria e retorna a div completa de um insumo com seus campos editaveis
-export function criarInsumo(id, nome, quantidade, unidade, fornecedor, requerFornecedor) {
+export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, requerFornecedor) {
   const div = document.createElement('div')
   div.className = 'insumo'
   div.id = id
@@ -33,6 +33,10 @@ export function criarInsumo(id, nome, quantidade, unidade, fornecedor, requerFor
       <div class="col-2">
         <label>Quantidade</label>
         <input type="number" value="${quantidade}" class="qtd opin${id}" id="qtd${id}">
+      </div>
+      <div class="col-2">
+        <label>Preço</label>
+        <input type="number" step="0.01" value="${preco}" class="preco opin${id}" id="preco${id}">
       </div>
       <div class="col-2">
         <label>Unidade</label>
@@ -145,9 +149,10 @@ export async function criaNovoInsumoDOM() {
     const selectInsumo = document.querySelector("#novoInsumo")
     const campoQTD = document.querySelector("#quatidadeNovoInsumo")
     const boxFornecedor = document.querySelector("#boxForNovoInsumo")
+    const  campoPreco = document.querySelector("#precoNovoInsumo")
     const dados = {}
 
-    if (!verificaCampo(selectInsumo) || !verificaCampo(campoQTD)) {
+    if (!verificaCampo(selectInsumo) || !verificaCampo(campoQTD) || !verificaCampo(campoPreco)) {
       console.log("Campos de novo insumo não encontrados")
       return
     }
@@ -157,6 +162,10 @@ export async function criaNovoInsumoDOM() {
     }
     if (selectInsumo.value.trim() == "") {
       mostrarToast("Para adicionar novo insumo \n é necessário escolher um dos produtos\n disponíveis", "erro")
+      return
+    }
+    if(parseFloat(campoPreco.value) <= 0 || campoPreco.value.trim() == ""){
+      mostrarToast("Para adicionar novo insumo \n o preço precisa ser\n maior que 0!", "erro")
       return
     }
 
@@ -176,12 +185,13 @@ export async function criaNovoInsumoDOM() {
     dados.idOPIN = - (insumosDOM.length + 1)
     dados.umOPIN = produto.um
     dados.qtdOPIN = parseInt(campoQTD.value)
-    dados.custouOPIN = parseFloat(produto.preco)
-    dados.custotOPIN = parseInt(campoQTD.value) * parseFloat(produto.preco)
+    dados.custouOPIN = parseFloat(campoPreco.value)
+    dados.custotOPIN = parseInt(campoQTD.value) * parseFloat(campoPreco.value)
 
     setInsumosInseridos([...insumosInseridos, dados])
 
     campoQTD.value = ""
+    campoPreco.value = ""
     selectInsumo.value = ""
     if (boxFornecedor) boxFornecedor.style.display = "none"
 

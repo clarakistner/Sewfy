@@ -190,10 +190,11 @@
   white-space: nowrap;
 }
 
-/* BOTÃO EDITAR — canto inferior direito */
+/* BOTÕES*/
 #detailsModal .box-botoes {
   display: flex;
-  justify-content: flex-end;
+  width: 100%;
+  justify-content: space-between;
   margin-top: 28px;
 }
 
@@ -212,5 +213,22 @@
 }
 
 #detailsModal .botao.editar:hover {
+  opacity: 0.88;
+}
+#detailsModal .botao.fecharOP {
+  background: #ced1dd;
+  color: #171616;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  box-shadow: 0 4px 14px rgba(159, 158, 158, 0.3);
+  width: auto;
+}
+
+#detailsModal .botao.fecharOP:hover {
   opacity: 0.88;
 }

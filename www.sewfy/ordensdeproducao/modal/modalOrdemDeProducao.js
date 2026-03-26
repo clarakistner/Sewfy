@@ -1,14 +1,19 @@
 import { mostrarToast } from "../../toast/toast.js";
+import { listarOrdensProducao } from "../gerenciar/gerenciarOrdensDeProducao.js";
 
 const getMain = () => document.querySelector(".principal");
 
 let ordemProducao = null;
 let insumosBanco = [];
 
-const setOrdemProducao = (op) => { ordemProducao = op; };
+const setOrdemProducao = (op) => {
+  ordemProducao = op;
+};
 export const getOrdemProducao = () => ordemProducao;
 
-export const setInsumosBanco = (insumos) => { insumosBanco = insumos; };
+export const setInsumosBanco = (insumos) => {
+  insumosBanco = insumos;
+};
 export const getInsumosBanco = () => insumosBanco;
 
 document.addEventListener("click", handleClick);
@@ -16,48 +21,67 @@ document.addEventListener("click", handleClick);
 async function handleClick(e) {
   const botao = e.target.closest(".btn-verop, .verop");
   if (botao) {
-    await abrirModal(botao.id);
+    abrirModal(botao.id);
   }
   if (e.target.closest(".ver-modal-close")) {
     fecharModal();
   }
+  if (e.target.closest(".fecharOP")) {
+    fecharOrdemProd();
+  }
 }
 
-export async function abrirModal(id) {
-  
-
+async function fecharOrdemProd() {
   try {
-   
-    const [response, { initTelaCarregamento, removeTelaCarregamento }] =
+    const op = getOrdemProducao();
+    window.api.put("/ordemdeproducao/fechar", { opID: op.idOP });
+    fecharModal();
+    listarOrdensProducao(null, null);
+  } catch (error) {
+    console.log("Erro ao tentar fechar ordem de produção: " + error);
+    throw error;
+  }
+}
+export async function abrirModal(id) {
+  try {
+     const [response, { initTelaCarregamento, removeTelaCarregamento }] =
       await Promise.all([
         fetch("/www.sewfy/ordensdeproducao/modal/modalOrdemDeProducao.html"),
-        import("../../telacarregamento/telacarregamento.js")
+        import("../../telacarregamento/telacarregamento.js"),
       ]);
-
-   
-    initTelaCarregamento(document.body);
-
-    const data = await response.text();
+    
+initTelaCarregamento(document.body);
+   await resgataOPCompletaBanco(id);
+   const data = await response.text();
     document.body.insertAdjacentHTML("afterbegin", data);
+    await insereDetalhesNaTela();
 
     const modal = document.querySelector("#detailsModal");
     modal.classList.add("load");
 
- 
-    await resgataOPCompletaBanco(id);
-    await insereDetalhesNaTela();
-
+    ordemAbertah();
     removeTelaCarregamento();
-
   } catch (error) {
     console.error("Erro ao abrir modal:", error);
     mostrarToast("Erro ao abrir modal", "erro");
     throw error;
   }
 }
+function ordemAbertah() {
+  const btnEditar = document.querySelector(".editar");
+  const btnFecharOP = document.querySelector(".fecharOP");
+  const op = getOrdemProducao();
 
+  if (!btnEditar || !btnFecharOP) {
+    console.log("Botões não encontrados");
+    return;
+  }
+  if (!!op.datae) {
+    btnEditar.remove();
+    btnFecharOP.remove();
+  }
+}
 export function fecharModal() {
-  
   document.querySelector("#detailsModal")?.classList.remove("load");
   document.querySelector("#detailsModal")?.remove();
 }
@@ -90,7 +114,7 @@ async function insereInsumosTabela() {
     const tabelaDOM = document.querySelector(".tabelaInsumos");
 
     const promessas = getInsumosBanco().map((insumo) =>
-      retornaNomeProduto(insumo.prodIdOPIN)
+      retornaNomeProduto(insumo.prodIdOPIN),
     );
     const nomes = await Promise.all(promessas);
 
@@ -111,7 +135,6 @@ async function insereInsumosTabela() {
       `;
       tabelaDOM.appendChild(tr);
     });
-
   } catch (error) {
     console.log(`Erro ao inserir insumos na tabela: ${error}`);
     mostrarToast("Erro ao inserir insumos na tabela", "erro");
@@ -120,8 +143,8 @@ async function insereInsumosTabela() {
 }
 
 async function insereDetalhesNaTela() {
-  const campoNome   = document.querySelector("#nomeProd");
-  const campoQuant  = document.querySelector("#quantProd");
+  const campoNome = document.querySelector("#nomeProd");
+  const campoQuant = document.querySelector("#quantProd");
   const campoCustou = document.querySelector("#custou");
   const campoCustot = document.querySelector("#custot");
 
@@ -132,12 +155,20 @@ async function insereDetalhesNaTela() {
     insereInsumosTabela(),
   ]);
 
-  campoNome.textContent  = nomeProd;
-  campoQuant.textContent = parseInt(getOrdemProducao().qtdOP).toLocaleString("pt-BR");
-  campoCustou.textContent = parseFloat(getOrdemProducao().custou).toLocaleString("pt-BR", {
-    style: "currency", currency: "BRL",
+  campoNome.textContent = nomeProd;
+  campoQuant.textContent = parseInt(getOrdemProducao().qtdOP).toLocaleString(
+    "pt-BR",
+  );
+  campoCustou.textContent = parseFloat(
+    getOrdemProducao().custou,
+  ).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   });
-  campoCustot.textContent = parseFloat(getOrdemProducao().custot).toLocaleString("pt-BR", {
-    style: "currency", currency: "BRL",
+  campoCustot.textContent = parseFloat(
+    getOrdemProducao().custot,
+  ).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   });
 }

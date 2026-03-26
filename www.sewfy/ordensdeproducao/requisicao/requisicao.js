@@ -1,7 +1,6 @@
 // Importa funções auxiliares
 import { mostrarToast } from "../../toast/toast.js";
 
-
 import {
   atualizarBarraProgresso,
   inicializarIconesOriginais,
@@ -59,13 +58,6 @@ async function iniciaRequisicao() {
 // ─────────────────────────────────────────
 
 async function handleGlobalClick(e) {
-  if (
-    e.target.closest(".icone-adicionar-ordem") ||
-    e.target.closest(".botao-criar-ordem")
-  ) {
-    abrirModal();
-  }
-
   if (e.target.closest(".modal-close") || e.target.closest(".cancelar")) {
     await fecharModal();
   }
@@ -134,10 +126,7 @@ function handleInput(e) {
 // NAVEGAÇÃO
 // ─────────────────────────────────────────
 
-function abrirModal() {
-  window.location.href = "../requisicao";
-   
-}
+
 
 async function fecharModal() {
   OPINs.length = 0;
@@ -205,6 +194,7 @@ async function adicionarInsumo() {
     const campoInsumo = document.querySelector(".campoInsumo");
     const campoQuant = document.querySelector(".campoQuant");
     const campoFor = document.querySelector(".campoFornecedor");
+    const campoPreco = document.querySelector(".campoPreco");
 
     const opInsumo = obterValorSelect(campoInsumo);
     const quant =
@@ -212,20 +202,27 @@ async function adicionarInsumo() {
         ? 0
         : parseInt(campoQuant.value);
     const fornecedor = obterValorSelect(campoFor);
+    const preco =
+      parseFloat(campoPreco.value) <= 0 || isNaN(campoPreco.value)
+        ? 0
+        : parseFloat(campoPreco.value);
 
-    if (!validarCamposInsumo(opInsumo, quant)) return;
+    if (!validarCamposInsumo(opInsumo, quant, preco)) return;
 
     console.log("Campo quant: " + campoQuant.value);
-
     const produto = await window.api.get(`/produtos/${parseInt(opInsumo.id)}`);
-    const custou = parseFloat(produto.preco);
-    const custot = custou * quant;
+    console.log("Necessita_CliFor: " + produto.necessita_clifor);
+    if(produto.necessita_clifor && (!fornecedor || String(fornecedor).trim() === "")){
+      mostrarToast("Selecione um fornecedor!", "erro");
+      return;
+    }
+    const custot = preco * quant;
 
     const insumo = {
       IDFORNECEDOR: valorIdFornecedor("id", fornecedor),
       QTDIN: quant,
       CUSTOT: custot,
-      CUSTOU: custou,
+      CUSTOU: preco,
       UM: produto.um,
       INSUNOME: opInsumo.textContent,
       INSUID: parseInt(opInsumo.id),
@@ -239,7 +236,7 @@ async function adicionarInsumo() {
     carregarProdutosInsumo(listaProdutos, campoInsumo);
 
     renderLista();
-    limparCamposInsumo(campoInsumo, campoQuant, campoFor);
+    limparCamposInsumo(campoInsumo, campoQuant, campoFor, campoPreco);
   } catch (error) {
     console.log(`Erro ao adicionar insumo: ${error}`);
   }
@@ -273,7 +270,7 @@ function renderLista(pesquisa = null) {
   }
 
   listaFiltrada.forEach(function (insumo) {
-    const index = OPINs.indexOf(insumo); // índice real para o botão remover
+    const index = OPINs.indexOf(insumo);
     const card = document.createElement("div");
     card.className = "insumo-card";
     card.innerHTML =
@@ -293,6 +290,18 @@ function renderLista(pesquisa = null) {
       parseInt(insumo.QTDIN).toLocaleString("pt-BR") +
       " " +
       esc(insumo.UM) +
+      "</span>" +
+      "</div>" +
+      '<div class="insumo-card-field">' +
+      '<span class="insumo-card-label">' +
+      svgDollar("#27ae60") +
+      " PREÇO</span>" +
+      '<span class="insumo-card-value">' +
+      "R$ " +
+      parseFloat(insumo.CUSTOU || 0).toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) +
       "</span>" +
       "</div>" +
       '<div class="insumo-card-field">' +
@@ -330,7 +339,6 @@ function renderLista(pesquisa = null) {
       renderLista();
     });
   });
-  
 }
 
 // ─────────────────────────────────────────
@@ -349,6 +357,8 @@ async function confirmarOrdem() {
     };
 
     OPINs.length = 0;
+    const { initTelaCarregamento, removeTelaCarregamento } =
+    await import("../../telacarregamento/telacarregamento.js");
     initTelaCarregamento();
     await window.api.post("/ordemdeproducao/criar", dados);
     removeTelaCarregamento();
@@ -485,8 +495,8 @@ function obterValorSelect(selectElement) {
   return selectedOption.value === "" ? null : selectedOption;
 }
 
-function validarCamposInsumo(opInsumo, quant) {
-  if (!opInsumo || !quant) {
+function validarCamposInsumo(opInsumo, quant, preco) {
+  if (!opInsumo || !quant || !preco) {
     mostrarToast("Preencha todos os campos!", "erro");
     return false;
   }
@@ -494,13 +504,18 @@ function validarCamposInsumo(opInsumo, quant) {
     mostrarToast("A quantidade deve ser maior que 0!", "erro");
     return false;
   }
+  if (preco <= 0) {
+    mostrarToast("O preço deve ser maior que 0!", "erro");
+    return false;
+  }
   return true;
 }
 
-function limparCamposInsumo(campoInsumo, campoQuant, campoFor) {
+function limparCamposInsumo(campoInsumo, campoQuant, campoFor, campoPreco) {
   campoInsumo.value = "";
   campoQuant.value = "";
   campoFor.value = "";
+  campoPreco.value = "";
 }
 
 function valorIdFornecedor(atributo, fornecedor) {
@@ -588,7 +603,22 @@ function svgHash(color) {
 function svgCircle(color) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
 }
-
+function svgDollar(color = "#000") {
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         width="16" 
+         height="16" 
+         viewBox="0 0 24 24" 
+         fill="none" 
+         stroke="${color}" 
+         stroke-width="2" 
+         stroke-linecap="round" 
+         stroke-linejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"></line>
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14.5a3.5 3.5 0 0 1 0 7H6"></path>
+    </svg>
+  `;
+}
 function esc(str) {
   return String(str)
     .replace(/&/g, "&amp;")

@@ -6,7 +6,7 @@
 
 .fundo {
   position: fixed;
-  height: 98vh;
+  height: 100vh;
   margin: 0;
   offset: 0;
   inset: 0;
@@ -15,11 +15,12 @@
   flex-direction: column;
   align-items: center;
   z-index: 99;
+  background-color: rgba(179, 217, 250, 0.5);
   overflow: hidden;
 }
 
 #fundo-fosco {
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(25px);
 }
 
 .iconeCarregando {

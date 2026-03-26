@@ -2,10 +2,19 @@ let timeout;
 let carregando = false;
 document.addEventListener("input", handleInput);
 document.addEventListener("change", handleChange);
+document.addEventListener("click", (e) => {
+  if (
+    e.target.closest(".icone-adicionar-ordem") ||
+    e.target.closest(".botao-criar-ordem")
+  ) {
+    abrirRequisicao();
+  }
+});
 document.addEventListener("DOMContentLoaded", initGerenciarOPs);
-
+function abrirRequisicao() {
+  window.location.href = "../requisicao";
+}
 async function initGerenciarOPs() {
-  console.trace("initGerenciarOPs chamada");
   const { initTelaCarregamento, removeTelaCarregamento } =
     await import("../../telacarregamento/telacarregamento.js");
 
@@ -95,8 +104,11 @@ async function criarCardOP(op, mapaProdutos) {
     criarInfoOrdem("calendar_month", "Data de Fechamento", dataFechamento),
   );
   contentOrdem.appendChild(criarBotaoVerOP(op.idOP));
-
+  if (!!op.datae) {
+    contentOrdem.classList.add("ordem-fechada");
+  }
   cardsOrdens.appendChild(contentOrdem);
+
   return cardsOrdens;
 }
 
@@ -115,6 +127,7 @@ function criarCabecalhoOP(op) {
 
   const statusClass = !op.datae ? "aberta" : "fechada";
   const statusTexto = !op.datae ? "Aberta" : "Fechada";
+  console.log("DATAE: " + op.datae);
 
   const statusOrdem = document.createElement("div");
   statusOrdem.className = `status-ordem ${statusClass}`;
@@ -187,7 +200,7 @@ export async function listarOrdensProducao(
       return;
     }
 
-    const promises = listaOPs.map(op => criarCardOP(op, mapaProdutos));
+    const promises = listaOPs.map((op) => criarCardOP(op, mapaProdutos));
     const cards = await Promise.all(promises);
 
     const fragment = document.createDocumentFragment();
