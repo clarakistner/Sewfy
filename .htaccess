@@ -16,3 +16,7 @@ RewriteRule ^www\.sewfy/editar-tela-inicial/?$ /www.sewfy/home [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^www\.sewfy/.*$ /www.sewfy/home [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ back/api.php/$1 [QSA,L]

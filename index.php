@@ -1,5 +1,5 @@
 <?php
 
-header("Location: www.sewfy/login");
+header("Location: www.sewfy/public/index.php");
 
 ?>
