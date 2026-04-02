@@ -13,7 +13,10 @@ class UsuarioModulosController extends Controller
     public function getModulosUsuario(Request $request)
     {
         $user = $request->user();
-
+        \Log::info('Token abilities:', [
+            'abilities'  => $user->currentAccessToken()->abilities,
+            'token_name' => $user->currentAccessToken()->name,
+        ]);
         // Se for adm impersonando, retorna todos os módulos da empresa
         if ($user instanceof SewfyAdm) {
             $empresa   = $request->empresa;

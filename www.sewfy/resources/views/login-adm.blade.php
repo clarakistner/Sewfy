@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sewfy</title>
-
-    <link rel="stylesheet" href="loginadm.css">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=visibility" />
-</head>
-
-<body>
+@section('titulo', 'Login ADM')
+@push('styles')
+    @vite(['resources/css/loginadm.css'])
+@endpush
+@section('conteudo')
     <div class="pagina">
         <div class="container">
 
@@ -48,7 +41,8 @@
         </div>
 
     </div>
-    <script type="module" src="loginadm.js"></script>
-</body>
+  @endsection
 
-</html>
+@section('scripts')
+@vite('resources/js/loginadm.js')
+@endsection

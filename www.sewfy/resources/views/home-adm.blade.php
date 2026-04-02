@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Sewfy Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    <link rel="stylesheet" href="../menuadm/menuadm.css">
-    <link rel="stylesheet" href="../homeadm/homeadm.css">
-</head>
-<body>
+@extends('layouts.app')
+
+@section('titulo', 'Home ADM')
+@push('styles')
+    @vite(['resources/css/homeadm.css', 'resources/css/menuadm.css'])
+@endpush
+@section('conteudo')
 
     <div class="layout">
         <!-- sidebar injetada pelo JS -->
@@ -50,7 +46,8 @@
         </main>
     </div>
 
-    <script src="../menuadm/menuadm.js"></script>
-    <script type="module" src="../homeadm/homeadm.js"></script>
-</body>
-</html>
+@endsection
+
+@section('scripts')
+@vite('resources/js/homeadm.js')
+@endsection

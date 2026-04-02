@@ -1,3 +1,4 @@
-import { verificarAuth, apiFetch } from "../assets/auth.js";
+import { verificarAuth, apiFetch } from "../js/assets/auth.js";
 
+import "../js/menuadm.js";
 verificarAuth();

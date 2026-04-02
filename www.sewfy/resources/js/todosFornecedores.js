@@ -1,6 +1,12 @@
-import { API } from "/api/front/api.js";
 import { mostrarToast } from "./toast/toast.js";
-import { mascaraTelefone } from "../../assets/mascaras.js";
+import { mascaraTelefone } from "../js/assets/mascaras.js";
+
+
+import "../js/menu.js";
+import "../js/configmenu.js";
+import "../js/cadastroFornecedores.js";
+import "../js/visualizarFornecedor.js";
+import "../js/API_JS/api.js";
 
 if (!window.api) {
     window.api = new API();

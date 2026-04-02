@@ -1,11 +1,11 @@
 import { getListaFornecedores } from './estado.js'
 import { retornaNomeFornecedor } from './banco.js'
-import { mostrarToast } from '../../../toast/toast.js'
+import { mostrarToast } from '../toast/toast.js'
 import { setInsumosInseridos, getInsumosInseridos, setInsumosDeletados, getInsumosDeletados, getListaDOM, setListaDOM } from './estado.js'
 import { verificaCampo } from './validacoes.js'
 import { organizaDivNovoInsumo } from './renderizacao.js'
 import { resgataProdutoPeloID } from './banco.js'
-import { getOrdemProducao} from '../../modal/modalOrdemDeProducao.js'
+import { getOrdemProducao} from '../modalOrdemDeProducao.js'
 import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './renderizacao.js'
 
 // CRIACAO DE ELEMENTOS DOM

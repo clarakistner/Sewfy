@@ -1,10 +1,20 @@
-// CHAMA O MENU
-export function abrirMenu() {
-  const empresaId = sessionStorage.getItem("empresa_id");
 
-  // Busca tudo em paralelo
+import { getCookie, setCookie, deleteCookie, popCookie } from './API_JS/api.js';
+import { API, getBaseUrl } from "./API_JS/api.js";
+
+if (!window.api) {
+    window.BASE_URL = getBaseUrl();
+    window.api = new API();
+}
+export function abrirMenu() {
+  console.log('[MENU] iniciando');
+  console.log('[MENU] token:', getCookie('token'));
+  console.log('[MENU] empresa_id:', getCookie('empresa_id'));
+  const empresaId = getCookie("empresa_id") || null;
+  const urlBase = getBaseUrl() || window.BASE_URL;
+
   Promise.all([
-    fetch("/www.sewfy/menu/index.html").then((res) => res.text()),
+    fetch(`${urlBase}/menu`).then((res) => res.text()),
     window.api.get("/modulos-usuario"),
     empresaId
       ? window.api.get(`/adm/empresa/nome/${empresaId}`)
@@ -12,15 +22,15 @@ export function abrirMenu() {
   ])
     .then(([html, banco, empresaResp]) => {
       document.querySelector(".layout").insertAdjacentHTML("afterbegin", html);
-      // Exibe ícone de trocar empresa se tiver mais de uma
-      const empresasIds = JSON.parse(
-        sessionStorage.getItem("empresas_ids") || "[]",
-      );
+
+      const empresasIdsRaw = getCookie("empresas_ids") || "";
+      const empresasIds = empresasIdsRaw ? empresasIdsRaw.split(",") : [];
+
       const btnTrocar = document.getElementById("btn-trocar-empresa");
       if (btnTrocar && empresasIds.length > 1) {
         btnTrocar.style.display = "flex";
       }
-      // Exibe módulos
+
       document.querySelectorAll(".nav-item").forEach((item) => {
         const modulo = item.dataset.menu;
         if (Array.from(banco.modulos).includes(modulo)) {
@@ -28,7 +38,6 @@ export function abrirMenu() {
         }
       });
 
-      // Exibe nome da empresa
       if (empresaResp) {
         const nomeEmpresa = empresaResp.EMP_NOME ?? "";
         const header = document.querySelector(".sidebar-header");
@@ -37,7 +46,6 @@ export function abrirMenu() {
         }
       }
 
-      // Toggle dos submenus
       document.querySelectorAll(".nav-btn[data-menu]").forEach((btn) => {
         btn.addEventListener("click", () => {
           const item = document.getElementById(btn.dataset.menu);
@@ -51,7 +59,6 @@ export function abrirMenu() {
 
       ativarModuloAtual();
       document.body.classList.add("loaded");
-      
     })
     .catch((e) => console.error("[MENU] Erro ao carregar menu:", e));
 }
@@ -66,36 +73,27 @@ export async function usuarioEhProprietario() {
   }
 }
 
-// NAVEGAÇÃO DOS SUBMENUS
+const urlBase = getBaseUrl() || window.BASE_URL;
+
 const rotas = {
-  // Header
-  "btn-trocar-empresa": "/www.sewfy/selecionar-empresa",
-  // Faturamento
-  "sub-clientes": "/www.sewfy/faturamento/clientes",
-  "sub-pedidos-venda": "/www.sewfy/faturamento/pedidosVenda",
-  "sub-notas-fiscais": "/www.sewfy/faturamento/notasFiscais",
-  "sub-ordens-servico": "/www.sewfy/faturamento/ordensServico",
-  "sub-vendedores": "/www.sewfy/faturamento/vendedores",
-
-  // Financeiro
-  "sub-contas-pagar": "/www.sewfy/contaspagar/todasContas",
-  "sub-contas-receber": "/www.sewfy/financeiro/contasReceber",
-  "sub-caixas-bancos": "/www.sewfy/financeiro/caixasBancos",
-  "sub-remessas": "/www.sewfy/financeiro/remessas",
-  "sub-comissoes": "/www.sewfy/financeiro/comissoes",
-
-  // Produção
-  "sub-cad-produtos": "/www.sewfy/produtos/todosProdutos",
-  "sub-cad-fornecedores": "/www.sewfy/fornecedores/todosFornecedores",
-  "sub-ordens-producao": "/www.sewfy/ordensdeproducao/gerenciar",
-  "sub-estoque": "/www.sewfy/estoque",
-
-  // Relatórios
-  "sub-relatorios": "/www.sewfy/relatorios",
-
-  // Footer
-  "btn-logout": "/www.sewfy/login",
-  logo: "/www.sewfy/home",
+  "btn-trocar-empresa": `${urlBase}/trocar-empresa`,
+  "sub-clientes": `${urlBase}/faturamento/clientes`,
+  "sub-pedidos-venda": `${urlBase}/faturamento/pedidosVenda`,
+  "sub-notas-fiscais": `${urlBase}/faturamento/notasFiscais`,
+  "sub-ordens-servico": `${urlBase}/faturamento/ordensServico`,
+  "sub-vendedores": `${urlBase}/faturamento/vendedores`,
+  "sub-contas-pagar": `${urlBase}/contas`,
+  "sub-contas-receber": `${urlBase}/financeiro/contasReceber`,
+  "sub-caixas-bancos": `${urlBase}/financeiro/caixasBancos`,
+  "sub-remessas": `${urlBase}/financeiro/remessas`,
+  "sub-comissoes": `${urlBase}/financeiro/comissoes`,
+  "sub-cad-produtos": `${urlBase}/produtos`,
+  "sub-cad-fornecedores": `${urlBase}/fornecedores`,
+  "sub-ordens-producao": `${urlBase}/ordensdeproducao`,
+  "sub-estoque": `${urlBase}/estoque`,
+  "sub-relatorios": `${urlBase}/relatorios`,
+  "btn-logout": `${urlBase}/login`,
+  logo: `${urlBase}/home`,
 };
 
 document.addEventListener("click", async (e) => {
@@ -105,7 +103,6 @@ document.addEventListener("click", async (e) => {
   if (rotas[id]) {
     if (id === "btn-logout") {
       await window.api.post("/auth/logout");
-      sessionStorage.removeItem("token");
       window.location.replace(rotas[id]);
     } else {
       window.location.href = rotas[id];
@@ -113,7 +110,6 @@ document.addEventListener("click", async (e) => {
   }
 });
 
-// MARCA O MÓDULO E SUBMENU ATIVO COM BASE NA URL ATUAL
 function ativarModuloAtual() {
   const path = window.location.pathname;
 

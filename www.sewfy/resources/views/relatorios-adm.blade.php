@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatórios - Sewfy Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    <link rel="stylesheet" href="/www.sewfy/menuadm/menuadm.css">
-</head>
-<body>
+@extends('layouts.app')
+
+@section('titulo', 'Relatórios ADM')
+@push('styles')
+    @vite(['resources/css/menuadm.css', 'resources/css/relatoriosadm.css'])
+@endpush
+@section('conteudo')
 
     <div class="layout">
 
@@ -18,7 +15,8 @@
         </main>
     </div>
 
-    <script src="/www.sewfy/menuadm/menuadm.js"></script>
-    <script type="module" src="/www.sewfy/relatoriosadm/relatoriosadm.js"></script>
-</body>
-</html>
+  @endsection
+
+@section('scripts')
+@vite('resources/js/relatoriosadm.js')
+@endsection

@@ -1,5 +1,5 @@
 import { mostrarToast } from "./toast/toast.js";
-import { mascaraTelefone } from "../assets/mascaras.js";
+import { mascaraTelefone } from "../js/assets/mascaras.js";
 
 
 

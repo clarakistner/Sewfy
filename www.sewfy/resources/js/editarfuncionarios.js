@@ -2,7 +2,7 @@ import { mostrarToast } from "./toast/toast.js";
 import {
   aplicarMascaraTelefone,
   mascaraTelefone,
-} from "../../assets/mascaras.js";
+} from "../js/assets/mascaras.js";
 
 // ─── BUSCA E PREENCHE ─────────────────────────────────────────────────────────
 

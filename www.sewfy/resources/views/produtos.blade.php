@@ -1,24 +1,10 @@
+@extends('layouts.app')
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Sewfy</title>
-
-
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-    <link rel="stylesheet" href="todosProdutos.css?v=1.0.2">
-    <link rel="stylesheet" href="../../menu/menu.css?v=1.0.2">
-    <link rel="stylesheet" href="../cadastro/cadastroProdutos.css?v=1.0.2">
-    <link rel="stylesheet" href="../visualizar/visualizarProdutos.css?v=1.0.2">
-    <link rel="stylesheet" href="../../configuracoesmenu/configmenu.css?v=1.0.2">
-
-</head>
-
-<body>
+@section('titulo', 'Produtos')
+@push('styles')
+    @vite(['resources/css/todosProdutos.css', 'resources/css/menu.css', 'resources/css/configmenu.css', 'resources/css/visualizarProdutos.css', 'resources/css/cadastroProdutos.css'])
+@endpush
+@section('conteudo')
 
     <div class="layout">
         <!-- Parte da lista/pesquisa/botão de criação dos produtos -->
@@ -79,13 +65,8 @@
         </main>
     </div>
         
-    <script type="module" src="../../../api/front/api.js" defer></script>
-    <script type="module" src="../../menu/menu.js" defer></script>
-    <script type="module" src="../todosProdutos/todosProdutos.js" defer></script>
-    <script type="module" src="../cadastro/cadastroProdutos.js" defer></script>
-    <script type="module" src="../visualizar/visualizarProdutos.js" defer></script>
-    <script type="module" src="../../configuracoesmenu/configmenu.js"></script>
+ @endsection
 
-</body>
-
-</html>
+@section('scripts')
+@vite('resources/js/todosProdutos.js')
+@endsection

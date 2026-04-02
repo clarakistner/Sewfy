@@ -3,7 +3,7 @@ const API_BASE = 'http://localhost:8000';
 export function verificarAuth() {
     const token = sessionStorage.getItem('token');
     if (!token) {
-        window.location.replace('/www.sewfy/loginadm/index.html');
+        window.location.replace('/loginadm');
     }
 }
 
@@ -49,8 +49,6 @@ export async function logout() {
         }
     }
 
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('email');
-    sessionStorage.removeItem('empresa_id');
-    window.location.replace('/www.sewfy/loginadm/index.html');
+   
+    window.location.replace('/loginadm');
 }

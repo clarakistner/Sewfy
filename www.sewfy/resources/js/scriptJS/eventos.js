@@ -1,4 +1,4 @@
-import { abrirModal as abreModalDetalhes } from '../../modal/modalOrdemDeProducao.js'
+import { abrirModal as abreModalDetalhes } from '../modalOrdemDeProducao.js'
 import { abreModal, fechaModal, fechaModalDetalhes, colocaBlur, removeBlur } from './modal.js'
 import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos, defineDisplayBoxForNovoInsumo } from './renderizacao.js'
 import {salvaAlteracoes } from './persistencia.js'

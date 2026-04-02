@@ -1,5 +1,6 @@
+import "./API_JS/api.js";
 // CHAMA O MENU
-fetch('/www.sewfy/menuadm/index.html')
+fetch(`${window.BASE_URL}/menuadm`)
     .then(response => response.text())
     .then(data => {
         document.querySelector('.layout').insertAdjacentHTML("afterbegin", data)
@@ -32,21 +33,21 @@ document.addEventListener("click", (e) => {
 function irParaPagina(botao) {
     switch (botao) {
         case 0:
-            window.location.href = "/www.sewfy/homeadm/index.html"
+            window.location.href = `${window.BASE_URL}/homeadm`
             break
         case 1:
-            window.location.href = "/www.sewfy/cadastroempresa/index.html"
+            window.location.href = `${window.BASE_URL}/cadastro-empresa`
             break
         case 2:
-            window.location.href = "/www.sewfy/relatoriosadm/index.html"
+            window.location.href = `${window.BASE_URL}/relatoriosadm`
             break
         case 3:
-            window.location.href = "/www.sewfy/configadm/index.html"
+            window.location.href = `${window.BASE_URL}/configadm`
             break
         case 4:
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('email');
-            window.location.replace("/www.sewfy/loginadm/index.html");
+            window.location.replace(`${window.BASE_URL}/loginadm`);
             break
     }
 }

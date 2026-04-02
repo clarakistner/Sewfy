@@ -1,7 +1,10 @@
-import { aplicarMascaraCpfCnpj, aplicarMascaraTelefone, apenasNumeros } from "./../assets/mascaras.js";
-import { validarCNPJ } from "./../assets/validacoes.js";
-import { verificarAuth, apiFetch } from "../assets/auth.js";
+import { aplicarMascaraCpfCnpj, aplicarMascaraTelefone, apenasNumeros } from "../js/assets/mascaras.js";
+import { validarCNPJ } from "../js/assets/validacoes.js";
+import { verificarAuth, apiFetch } from "../js/assets/auth.js";
 import { mostrarToast } from "./toast/toast.js";
+import "../js/menuadm.js";
+import "../css/menuadm.css";
+import "../css/cadastroempresa.css"
 
 // Verifica autenticação ao carregar a página
 verificarAuth();

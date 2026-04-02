@@ -1,6 +1,6 @@
-import { mascaraTelefone } from "../../assets/mascaras.js";
+import { mascaraTelefone } from "../js/assets/mascaras.js";
 import { mostrarToast } from "./toast/toast.js";
-import { aplicarMascaraTelefone } from "../../assets/mascaras.js";
+import { aplicarMascaraTelefone } from "../js/assets/mascaras.js";
 
 let timeout;
 document.addEventListener("input", handleInput);
@@ -104,11 +104,11 @@ document.addEventListener("click", async (e) => {
   e.stopPropagation();
 
   window.funcionarioAtualId = botao.dataset.id;
-  const { carregaJsCssEditarFuncionario } = await import("../editarfuncionarios/editarfuncionarios.js");
+  const { carregaJsCssEditarFuncionario } = await import("../js/editarfuncionarios.js");
   await carregaJsCssEditarFuncionario();
   try {
     const modalHTML = await fetch(
-      "/www.sewfy/funcionarios/editarfuncionarios/index.html",
+      `${window.BASE_URL}/editar-funcionario`
     ).then((r) => r.text());
     const telaGerenciar = document.querySelector(".gerenciarFuncionarios");
     if (!telaGerenciar) return;

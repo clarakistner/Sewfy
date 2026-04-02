@@ -1,20 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Sewfy</title>
+@extends('layouts.app')
 
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-    <link rel="stylesheet" href="todasContas.css?v=1.0.2">
-
-    <link rel="stylesheet" href="../../menu/menu.css?v=1.0.2">
-    <link rel="stylesheet" href="../modalVisualizarContas/visualizarContas.css?v=1.0.2">
-    <link rel="stylesheet" href="../../configuracoesmenu/configmenu.css?v=1.0.2">
-</head>
-
-<body>
+@section('titulo', 'Contas a Pagar')
+@push('styles')
+    @vite(['resources/css/visualizarContas.css','resources/css/todasContas.css', 'resources/css/menu.css', 'resources/css/configmenu.css'])
+@endpush
+@section('conteudo')
     
     <div class="layout">
         <!-- Parte da lista/pesquisa/botão de criação dos produtos -->
@@ -110,9 +100,8 @@
         </main>
     </div>
     
-<script type="module" src="../../menu/menu.js" defer></script>
-<script type="module" src="todasContas.js"></script>
-<script type="module" src="../modalVisualizarContas/visualizarContas.js" defer></script>
-<script type="module" src="../../configuracoesmenu/configmenu.js"></script>
-</body>
-</html>
+@endsection
+
+@section('scripts')
+@vite('resources/js/todasContas.js')
+@endsection

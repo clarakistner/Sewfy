@@ -1,4 +1,5 @@
 import { mostrarToast } from "./toast/toast.js";
+import "../css/confirmarcadastro.css";
 
 const API_BASE = 'http://localhost:8000';
 
@@ -147,7 +148,7 @@ function mostrarMensagemSucesso(tipo) {
         <h2>${cfg.sucesso}</h2>
         <p style="margin: 20px 0; color: #444; font-size: 15px; text-align: center;">
             Acesse o sistema pelo 
-            <a href="/www.sewfy/login/index.html" style="color: #0e59fe; font-weight: bold;">Login</a>.
+            <a href="/login style="color: #0e59fe; font-weight: bold;">Login</a>.
         </p>
     `;
 }

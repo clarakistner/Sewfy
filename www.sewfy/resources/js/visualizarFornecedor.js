@@ -4,14 +4,14 @@ import {
     mascaraTelefone,
     aplicarMascaraCpfCnpj,
     aplicarMascaraTelefone
-} from "../../assets/mascaras.js";
-import { validarCpfCnpj } from "../../assets/validacoes.js";
+} from "../js/assets/mascaras.js";
+import { validarCpfCnpj } from "../js/assets/validacoes.js";
 
 let modalHTMLCache = null;
 
 async function carregarModalHTML() {
     if (modalHTMLCache) return modalHTMLCache;
-    modalHTMLCache = await fetch("/www.sewfy/fornecedores/visualizar/index.html")
+    modalHTMLCache = await fetch(`${window.BASE_URL}/visualizar-fornecedor`)
         .then(res => res.text());
     return modalHTMLCache;
 }

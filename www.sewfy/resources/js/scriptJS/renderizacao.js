@@ -8,11 +8,11 @@ import {
 import {
   getOrdemProducao,
   getInsumosBanco,
-} from "../../modal/modalOrdemDeProducao.js";
-import { retornaNomeProduto } from "../../modal/modalOrdemDeProducao.js";
+} from "../modalOrdemDeProducao.js";
+import { retornaNomeProduto } from "../modalOrdemDeProducao.js";
 import { criarInsumo, criaOptionInsumo } from "./dom.js";
 import { insereOptionsFornecedores } from "./dom.js";
-import { mostrarToast } from "../../../toast/toast.js";
+import { mostrarToast } from "../toast/toast.js";
 
 // RENDERIZACAO DA TELA (organiza e popula os campos do modal)
 

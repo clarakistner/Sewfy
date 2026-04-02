@@ -1,6 +1,6 @@
-import { abrirModal as abreModalDetalhes } from '../../modal/modalOrdemDeProducao.js'
+import { abrirModal as abreModalDetalhes } from '../modalOrdemDeProducao.js'
 import { organizaDadosTela } from './renderizacao.js'
-import { getInsumosBanco } from '../../modal/modalOrdemDeProducao.js'
+import { getInsumosBanco } from '../modalOrdemDeProducao.js'
 import { resgataListaFornecedores, resgataListaProdutos } from './banco.js'
 import { setListaDOM, setInsumosDeletados, setInsumosInseridos } from './estado.js'
 
@@ -12,7 +12,7 @@ var main = document.querySelector(".principal");
 // Abre o modal de edicao: carrega o HTML via fetch, injeta no DOM
 // e dispara o carregamento de todos os dados necessarios para a tela
 export function abreModal() {
-  fetch('/www.sewfy/ordensdeproducao/edicao/edicaoOrdemDeProducao.html')
+  fetch(`${window.BASE_URL}/editar-ordemdeproducao`)
     .then(response => response.text())
     .then(async (data) => {
       document.body.insertAdjacentHTML("afterbegin", data)

@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sewfy</title>
+@section('titulo', 'Redefinir Senha')
 
-    <link rel="stylesheet" href="redefinirsenha.css?v=1.0.2">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=visibility" />
-</head>
+@section('style')
+    @vite('resources/css/redefinirSenha.css')
+@endsection
 
-<body>
+@section('conteudo')
     <div class="pagina">
         <div class="container">
 
@@ -56,6 +51,4 @@
         </div>
 
     </div>
-</body>
-
-</html>
+ @endsection

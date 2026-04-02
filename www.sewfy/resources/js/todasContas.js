@@ -1,6 +1,13 @@
-import { API } from "/api/front/api.js";
+import { API } from "../js/API_JS/api.js";
 import { mostrarToast } from "./toast/toast.js";
-import { formatarData, aplicarMascaraMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js";
+import { formatarData, aplicarMascaraMoeda, converterMoedaParaNumero } from "../js/assets/mascaras.js";
+import "../css/visualizarContas.css";
+import "../css/todasContas.css";
+import "../css/menu.css";
+import "../css/configmenu.css";
+import "../js/visualizarContas.js";
+import "../js/menu.js";
+import "../js/configmenu.js";
 
 if (!window.api) {
     window.api = new API();

@@ -1,5 +1,5 @@
 import { mostrarToast } from "./toast/toast.js";
-import { listarOrdensProducao } from "../gerenciar/gerenciarOrdensDeProducao.js";
+;
 
 let ordemProducao = null;
 let insumosBanco = [];
@@ -33,7 +33,9 @@ async function fecharOrdemProd() {
   try {
     const op = getOrdemProducao();
     window.api.put("/ordemdeproducao/fechar", { opID: op.idOP });
+     const { listarOrdensProducao, invalidarCache } = await import("../js/gerenciarOrdensDeProducao.js");
     fecharModal();
+    invalidarCache();
     listarOrdensProducao(null, null);
   } catch (error) {
     console.log("Erro ao tentar fechar ordem de produção: " + error);
@@ -44,8 +46,8 @@ export async function abrirModal(id) {
   try {
      const [response, { initTelaCarregamento, removeTelaCarregamento }] =
       await Promise.all([
-        fetch("/www.sewfy/ordensdeproducao/modal/modalOrdemDeProducao.html"),
-        import("../../../../../www.sewfy/telacarregamento/telacarregamento.js"),
+        fetch(`${window.BASE_URL}/modal-ordem`),
+        import("../js/telacarregamento.js"),
       ]);
     
 initTelaCarregamento(document.body);

@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Empresa;
 
 class User extends Authenticatable
 {
-    use HasApiTokens; // para autenticação via token
+    use HasApiTokens, HasFactory, Notifiable; // para autenticação via token
 
     protected $table = 'USUARIOS'; // nome da tabela no banco
     protected $primaryKey = 'USU_ID'; // chave primária
@@ -28,9 +30,15 @@ class User extends Authenticatable
     ];
 
     // função para retornar a senha do usuário para autenticação
-    public function getAuthPassword(): string
+    public function getAuthPassword()
     {
         return $this->USU_SENHA;
+    }
+
+    // e o username também
+    public function getAuthIdentifierName()
+    {
+        return 'USU_EMAIL';
     }
 
     // função para relacionar o usuário com os módulos (relação muitos-para-muitos)

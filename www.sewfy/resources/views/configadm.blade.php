@@ -1,24 +1,22 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações - Sewfy Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    <link rel="stylesheet" href="/www.sewfy/menuadm/menuadm.css">
-</head>
-<body>
+@extends('layouts.app')
 
-    <div class="layout">
+@section('titulo', 'Configurar ADM')
+@push('styles')
+    @vite('resources/css/menuadm.css')
+@endpush
+@section('conteudo')
 
-        <main class="content">
+
+<div class="layout">
+
+    <main class="content">
 
 
 
-        </main>
-    </div>
+    </main>
+</div>
+@endsection
 
-    <script src="/www.sewfy/menuadm/menuadm.js"></script>
-    <script type="module" src="/www.sewfy/configadm/configadm.js"></script>
-</body>
-</html>
+@section('scripts')
+@vite('resources/js/configadm.js')
+@endsection

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConviteController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('login');
@@ -37,7 +38,7 @@ Route::get('/configmenu',  function (){
     
     return view('configmenu');
 });
-Route::get('/confirmar-cadastro',  function (){
+Route::get('/confirmar-cadastro',  function (Request $request){
     
     return view('confirmar-cadastro');
 });

@@ -1,9 +1,29 @@
+
+
+import "../js/menu.js";
+import "../js/modalOrdemDeProducao.js";
+import "../js/visualizarContas.js";
+import "../js/configmenu.js";
+import { getCookie, setCookie, deleteCookie, popCookie } from './API_JS/api.js';
+import { API, getBaseUrl } from "./API_JS/api.js";
+
+if (!window.api) {
+    window.BASE_URL = getBaseUrl();
+    window.api = new API();
+}
 window.addEventListener("load", () => {
-  const urlAnterior = localStorage.getItem("urlAnterior");
-  if (urlAnterior && urlAnterior !== window.location.pathname) {
-    localStorage.removeItem("urlAnterior");
-    window.location.replace(urlAnterior);
-  }
+    const urlAnterior = decodeURIComponent(getCookie("url_anterior") ?? "");
+    console.log('[HOME] urlAnterior:', urlAnterior);
+    console.log('[HOME] location.href:', window.location.href);
+    deleteCookie("url_anterior");
+
+    const urlSegura = urlAnterior.startsWith(window.location.origin)
+        ? urlAnterior
+        : "";
+
+    if (urlSegura && urlSegura !== window.location.href) {
+        window.location.replace(urlSegura);
+    }
 });
 
 async function carregarHome() {
@@ -94,7 +114,7 @@ async function renderizarOrdens(main, filtro) {
       `;
 
       card.addEventListener("click", async () => {
-        const { abrirModal } = await import("../ordensdeproducao/modal/modalOrdemDeProducao.js");
+        const { abrirModal } = await import("../js/modalOrdemDeProducao.js");
         await abrirModal(op.idOP);
       });
 
@@ -178,7 +198,7 @@ async function renderizarContasPagar(main, filtro) {
       `;
 
       card.addEventListener("click", async () => {
-          const { } = await import("../contaspagar/modalVisualizarContas/visualizarContas.js");
+          const { } = await import("../js/visualizarContas.js");
       });
 
       lista.appendChild(card);

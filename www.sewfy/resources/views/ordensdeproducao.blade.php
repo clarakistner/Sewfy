@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Sewfy</title>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-    <link rel="stylesheet" href="../../menu/menu.css?v=1.0.2">
-    <link rel="stylesheet" href="../../configuracoesmenu/configmenu.css?v=1.0.2">
-    <link rel="stylesheet" href="../../ordensdeproducao/gerenciar/gerenciarOrdensDeProducao.css?v=1.0.2">
-    <link rel="stylesheet" href="../../ordensdeproducao/modal/modalOrdemDeProducao.css?v=1.0.2">
-    <link rel="stylesheet" href="../../ordensdeproducao/edicao/edicaoOrdemDeProducao.css?v=1.0.2">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-</head>
-
-<body>
+@section('titulo', 'Ordens de Produção')
+@push('styles')
+    @vite(['resources/css/menu.css', 'resources/css/gerenciarOrdensDeProducao.css', 'resources/css/configmenu.css', 'resources/css/modalOrdemDeProducao.css', 'resources/css/edicaoOrdemDeProducao.css'])
+@endpush
+@section('conteudo')
 
     <div class="layout">
         <main class="principal">
@@ -81,15 +69,8 @@
         </main>
     </div>
 
-    <script type="module" src="../../menu/menu.js" defer></script>
-    <script type="module" src="../../configuracoesmenu/configmenu.js"></script>
-    <script type="module" src="../../../api/front/api.js" defer></script>
-    
-    <script type="module" src="../../ordensdeproducao/modal/modalOrdemDeProducao.js" defer></script>
-    <script type="module" src="../../ordensdeproducao/edicao/edicaoOrdemDeProducao.js" defer></script>
-    <script type="module" src="../../ordensdeproducao/gerenciar/gerenciarOrdensDeProducao.js" defer></script>
-    
+ @endsection
 
-</body>
-
-</html>
+@section('scripts')
+@vite('resources/js/gerenciarOrdensDeProducao.js')
+@endsection

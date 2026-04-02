@@ -1,28 +1,44 @@
-import { abrirMenu, usuarioEhProprietario } from "../menu/menu.js";
-import { initCadastroFuncionario } from "../cadastrousuario/cadastrousuario.js";
-import { initGerenciarFuncionarios } from "../funcionarios/gerenciarfuncionarios/gerenciarfuncionarios.js";
-import { initEditarOwner } from "../editarcontaOwner/editarcontaOwner.js";
-import { retiraCssJsEditarFuncionario } from "../funcionarios/editarfuncionarios/editarfuncionarios.js";
-import { initEditarTelaInicial } from "../editartelainicial/editartelainicial.js";
+import { abrirMenu, usuarioEhProprietario } from "../js/menu.js";
+import { initCadastroFuncionario } from "../js/cadastrousuario.js";
+import { initGerenciarFuncionarios } from "../js/gerenciarfuncionarios.js";
+import { initEditarOwner } from "../js/editarcontaOwner.js";
+import { retiraCssJsEditarFuncionario } from "../js/editarfuncionarios.js";
+import { initEditarTelaInicial } from "../js/editartelainicial.js";
+import { getCookie, setCookie, deleteCookie, popCookie } from './API_JS/api.js';
 
 let urlAtual = null;
 document.addEventListener("click", handleClick);
 
 window.addEventListener("load", () => {
-  const urlAnterior = sessionStorage.getItem("urlAnterior");
-  const urlAtual = window.location.pathname;
+     console.log('[CONFIG] load disparou');
+    console.log('[CONFIG] url_anterior cookie:', document.cookie);
+    const urlAnterior = decodeURIComponent(popCookie('url_anterior') ?? '');
+    console.log('[CONFIG] urlAnterior:', urlAnterior);
+    console.log('[CONFIG] location.href:', window.location.href);
 
-  const paginasConfig = [
-    "cadastro-funcionario",
-    "gerenciar-funcionarios",
-    "editar-conta",
-    "editar-tela-inicial",
-  ];
+    if (urlAnterior && urlAnterior !== window.location.href) {
+        const urlSegura = urlAnterior.startsWith(window.location.origin)
+            ? urlAnterior
+            : '';
+        if (urlSegura) {
+            window.location.replace(urlSegura);
+            return;
+        }
+    }
 
-  const estaEmPaginaConfig = paginasConfig.some((p) => urlAtual.includes(p));
-  if (estaEmPaginaConfig) {
-    window.location.replace(urlAnterior || "/www.sewfy/home");
-  }
+    const urlAtual = window.location.pathname;
+
+    const paginasConfig = [
+        "cadastro-funcionario",
+        "gerenciar-funcionarios",
+        "editar-conta",
+        "editar-tela-inicial",
+    ];
+
+    const estaEmPaginaConfig = paginasConfig.some((p) => urlAtual.includes(p));
+    if (estaEmPaginaConfig) {
+        window.location.replace('/home');
+    }
 });
 
 async function handleClick(e) {
@@ -36,24 +52,24 @@ async function handleClick(e) {
   }
 
   if (menuItem?.dataset.menu === "item-cadastros") {
-    await trocarPagina("cadastrousuario", "cadastrousuario", "cadastro-funcionario");
+    await trocarPagina("cadastro-funcionario", "cadastrousuario", "cadastro-funcionario");
     retiraCssJsEditarFuncionario();
     initCadastroFuncionario();
   }
 
   if (menuItem?.dataset.menu === "item-gerenciar") {
-    await trocarPagina("funcionarios/gerenciarfuncionarios", "gerenciarfuncionarios", "gerenciar-funcionarios");
+    await trocarPagina("funcionarios", "gerenciarfuncionarios", "funcionarios");
     initGerenciarFuncionarios();
   }
 
   if (menuItem?.dataset.menu === "item-editar-conta") {
-    await trocarPagina("editarcontaOwner", "editarcontaOwner", "editar-conta");
+    await trocarPagina("editar-proprietario", "editarcontaOwner", "editar-conta");
     retiraCssJsEditarFuncionario();
     initEditarOwner();
   }
 
   if (menuItem?.dataset.menu === "item-tela-inicial") {
-    await trocarPagina("editartelainicial", "editartelainicial", "editar-tela-inicial");
+    await trocarPagina("editar-tela-inicial", "editartelainicial", "editar-tela-inicial");
     retiraCssJsEditarFuncionario();
     initEditarTelaInicial();
   }
@@ -87,10 +103,9 @@ async function trocaModais() {
     retiraCssJsEditarFuncionario();
     document.querySelector("#css-config")?.remove();
 
-    const urlAnterior = sessionStorage.getItem("urlAnterior") || "/www.sewfy/home";
+    const urlAnterior = getCookie("url_anterior") || "/home";
     document.querySelector(".containerConfigOwner")?.remove();
     history.pushState({}, "", urlAnterior);
-    sessionStorage.removeItem("urlAnterior");
     document.querySelector(".principal").style.display = "block";
 
     await abrirMenu();
@@ -105,17 +120,17 @@ async function trocaModais() {
 
 async function abrirConfigMenu() {
   urlAtual = window.location.pathname;
-  sessionStorage.setItem("urlAnterior", urlAtual);
+  document.cookie = `url_anterior=${encodeURIComponent(window.location.href)}; path=/; SameSite=Lax`;
   const configExistente = document.querySelector(".corpoConfigOwner");
   const containerPrincipal = document.querySelector(".principal");
   if (configExistente) configExistente.remove();
 
-  const response = await fetch("/www.sewfy/configuracoesmenu/index.html");
+  const response = await fetch("/configmenu");
   const data = await response.text();
   containerPrincipal.style.display = "none";
   document.querySelector(".layout").insertAdjacentHTML("afterbegin", data);
 
-  const empresaId = sessionStorage.getItem("empresa_id");
+  const empresaId = getCookie("empresa_id") || null;
   if (empresaId) {
     try {
       const resp = await window.api.get(`/adm/empresa/nome/${empresaId}`);
@@ -133,14 +148,14 @@ async function abrirConfigMenu() {
   initCadastroFuncionario();
 }
 
-async function trocarPagina(caminho, nomeArquivo, url) {
+async function trocarPagina(blade, css, url) {
   
   document.querySelector(".containerConfigOwner")?.remove();
   document.querySelector("#css-config")?.remove();
 
   const [responseHTML, responseCSS] = await Promise.all([
-    fetch(`/www.sewfy/${caminho}/index.html`),
-    fetch(`/www.sewfy/${caminho}/${nomeArquivo}.css`),
+    fetch(`/${blade}`),
+    fetch(`/www.sewfy/resources/css/${css}.css`),
   ]);
 
   const [dataContainer, cssText] = await Promise.all([
@@ -155,5 +170,5 @@ async function trocarPagina(caminho, nomeArquivo, url) {
   style.textContent = cssText;
   document.head.appendChild(style);
 
-  if (url) history.pushState({}, "", `/www.sewfy/${url}`);
+  if (url) history.pushState({}, "", `/${url}`);
 }

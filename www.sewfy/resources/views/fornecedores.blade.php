@@ -1,27 +1,10 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Sewfy</title>
+@extends('layouts.app')
 
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    />
-
-    <link rel="stylesheet" href="todosFornecedores.css?v=1.0.2" />
-    <link rel="stylesheet" href="/www.sewfy/menu/menu.css?v=1.0.2" />
-    <link
-      rel="stylesheet"
-      href="/www.sewfy/fornecedores/cadastro/cadastroFornecedores.css?v=1.0.2"
-    />
-    <link
-      rel="stylesheet"
-      href="/www.sewfy/fornecedores/visualizar/visualizarFornecedores.css?v=1.0.2"
-    />
-    <link rel="stylesheet" href="../../configuracoesmenu/configmenu.css?v=1.0.2">
-    
-  </head>
+@section('titulo', 'Fornecedores')
+@push('styles')
+    @vite(['resources/css/todosFornecedores.css', 'resources/css/menu.css', 'resources/css/configmenu.css', 'resources/css/cadastroFornecedores.css', 'resources/css/visualizarFornecedores.css'])
+@endpush
+@section('conteudo')
 
   <body>
     <div class="layout">
@@ -77,21 +60,8 @@
       </main>
     </div>
 
-    <script type="module" src="/api/front/api.js"></script>
+@endsection
 
-    <script type="module" src="/www.sewfy/menu/menu.js"></script>
-    <script
-      type="module"
-      src="/www.sewfy/fornecedores/cadastro/cadastroFornecedores.js"
-    ></script>
-    <script
-      type="module"
-      src="/www.sewfy/fornecedores/visualizar/visualizarFornecedor.js"
-    ></script>
-    <script
-      type="module"
-      src="/www.sewfy/fornecedores/todosFornecedores/todosFornecedores.js"
-    ></script>
-    <script type="module" src="../../configuracoesmenu/configmenu.js"></script>
-  </body>
-</html>
+@section('scripts')
+@vite('resources/js/todosFornecedores.js')
+@endsection

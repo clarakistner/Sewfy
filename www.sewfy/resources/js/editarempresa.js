@@ -1,6 +1,9 @@
-import { mascaraCpfCnpj, mascaraTelefone, apenasNumeros, aplicarMascaraTelefone } from "../assets/mascaras.js";
-import { verificarAuth, apiFetch } from "../assets/auth.js";
+import { mascaraCpfCnpj, mascaraTelefone, apenasNumeros, aplicarMascaraTelefone } from "../js/assets/mascaras.js";
+import { verificarAuth, apiFetch } from "../js/assets/auth.js";
 import { mostrarToast } from "./toast/toast.js";
+
+
+import "../js/menuadm.js";
 
 verificarAuth();
 

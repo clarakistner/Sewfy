@@ -1,6 +1,6 @@
 import { mostrarToast } from "./toast/toast.js";
 
-const API_BASE = 'http://localhost:8000'; // ajuste a porta se necessário
+const API_BASE = 'http://localhost:8000'; 
 
 document.addEventListener('DOMContentLoaded', () => {
 

@@ -1,10 +1,11 @@
-import { mostrarToast } from "../../toast/toast.js";
-import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js";
+import { mostrarToast } from "./toast/toast.js";
+import { formatarMoeda, converterMoedaParaNumero } from "../js/assets/mascaras.js";
+import "./API_JS/api.js";
 
 // ABRIR MODAL
 document.addEventListener("click", (e) => {
     if (e.target.closest(".botao-criar-produto")) {
-        fetch("/www.sewfy/produtos/cadastro/index.html")
+        fetch(window.BASE_URL+"/cadastro-produto")
             .then(res => res.text())
             .then(html => {
                 document.body.insertAdjacentHTML("afterbegin", html);

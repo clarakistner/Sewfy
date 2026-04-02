@@ -1,5 +1,5 @@
 import { setListaInsumos, setListaFornecedores } from './estado.js'
-import { mostrarToast } from '../../../toast/toast.js'
+import { mostrarToast } from '../toast/toast.js'
 
 // BUSCA DE DADOS DO BANCO
 

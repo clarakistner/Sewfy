@@ -1,3 +1,14 @@
+
+import "../js/menu.js";
+import "../js/configmenu.js";
+import "../js/modalOrdemDeProducao.js";
+import "../js/edicaoOrdemDeProducao.js";
+import "../js/API_JS/api.js";
+
+const cacheProdutos = new Map();
+
+let cacheOPs = null;
+let cacheProdutosOPs = null;
 let timeout;
 let carregando = false;
 document.addEventListener("input", handleInput);
@@ -12,11 +23,11 @@ document.addEventListener("click", (e) => {
 });
 document.addEventListener("DOMContentLoaded", initGerenciarOPs);
 function abrirRequisicao() {
-  window.location.href = "../requisicao";
+  window.location.href = "../criar-ordemdeproducao";
 }
 async function initGerenciarOPs() {
   const { initTelaCarregamento, removeTelaCarregamento } =
-    await import("../../../../www.sewfy/telacarregamento/telacarregamento.js");
+    await import("../js/telacarregamento.js");
 
   initTelaCarregamento();
   await listarOrdensProducao(null, null);
@@ -25,9 +36,9 @@ async function initGerenciarOPs() {
 function handleInput(e) {
   if (e.target.closest("#barraPesquisa")) {
     clearTimeout(timeout);
-    timeout = setTimeout(() => {
+    timeout = setTimeout(async () => {
       limparLista();
-      listarOrdensProducao(String(e.target.value), null);
+      await listarOrdensProducao(String(e.target.value), null);
     }, 300);
   }
 }
@@ -177,37 +188,36 @@ function criaCardSemOPs() {
 }
 
 // Função principal
-export async function listarOrdensProducao(
-  valorPesquisa = null,
-  filtro = null,
-) {
+export async function listarOrdensProducao(valorPesquisa = null, filtro = null) {
   if (carregando) return;
   carregando = true;
   try {
     limparLista();
     const listaOrdensDOM = document.querySelector(".lista-ordens");
-    let listaOPs = await buscarEOrganizarOPs();
-    listaOPs = filtrarOPs(listaOPs, valorPesquisa, filtro);
 
+    // Só busca do backend na primeira vez
+    if (!cacheOPs) {
+      cacheOPs = await buscarEOrganizarOPs();
+    }
+
+    let listaOPs = filtrarOPs(cacheOPs, valorPesquisa, filtro);
     const ids = [...new Set(listaOPs.map((op) => op.prodIDOP))];
 
-    const produtos = await window.api.get(`/produtos?ids=${ids.join(",")}`);
+    if (!cacheProdutosOPs || cacheProdutosOPs.size === 0) {
+      const produtos = await window.api.get(`/produtos?ids=${ids.join(",")}`);
+      cacheProdutosOPs = new Map(produtos.map((p) => [p.id, p.nome]));
+    }
 
-    const mapaProdutos = new Map(produtos.map((p) => [p.id, p.nome]));
-
-    if (listaOPs.length == 0) {
+    if (listaOPs.length === 0) {
       listaOrdensDOM.appendChild(criaCardSemOPs());
       return;
     }
 
-    const promises = listaOPs.map((op) => criarCardOP(op, mapaProdutos));
-    const cards = await Promise.all(promises);
-
+    const cards = await Promise.all(listaOPs.map((op) => criarCardOP(op, cacheProdutosOPs)));
     const fragment = document.createDocumentFragment();
-
     cards.forEach((card) => fragment.appendChild(card));
-
     listaOrdensDOM.appendChild(fragment);
+
   } catch (error) {
     console.log(`Erro ao listar as ordens de produção: ${error}`);
   } finally {
@@ -270,4 +280,8 @@ const dados = {
 export function limparLista() {
   const listaOrdensDOM = document.querySelector(".lista-ordens");
   listaOrdensDOM.innerHTML = "";
+}
+export function invalidarCache() {
+  cacheOPs = null;
+  cacheProdutosOPs = null;
 }

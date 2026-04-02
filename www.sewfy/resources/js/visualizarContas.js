@@ -1,12 +1,17 @@
 import { mostrarToast } from './toast/toast.js';
-import { formatarData, formatarMoeda, mascaraTelefone } from '../../assets/mascaras.js';
+import { formatarData, formatarMoeda, mascaraTelefone } from '../js/assets/mascaras.js';
 
+import { getCookie, setCookie, deleteCookie, popCookie } from './API_JS/api.js';
+import { getBaseUrl } from './API_JS/api.js';
 // PRÉ-CARREGA O HTML DO MODAL
 let modalHTMLCache = null;
 
 async function carregarModalHTML() {
+
+    const urlBase = getBaseUrl() || window.BASE_URL;
+    console.log('[MODAL] urlBase:', urlBase);
     if (modalHTMLCache) return modalHTMLCache;
-    modalHTMLCache = await fetch('/www.sewfy/contaspagar/modalVisualizarContas/index.html')
+    modalHTMLCache = await fetch(`${urlBase}/visualizar-conta`)
         .then(res => res.text());
     return modalHTMLCache;
 }

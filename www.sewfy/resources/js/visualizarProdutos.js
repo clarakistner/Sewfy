@@ -1,5 +1,5 @@
-import { mostrarToast } from "../../toast/toast.js";
-import { formatarMoeda, converterMoedaParaNumero } from "../../assets/mascaras.js";
+import { mostrarToast } from "./toast/toast.js";
+import { formatarMoeda, converterMoedaParaNumero } from "../js/assets/mascaras.js";
 
 // HELPERS
 function exibirTipo(tipo) {
@@ -25,7 +25,7 @@ let modalHTMLCache = null;
 
 async function carregarModalHTML() {
     if (modalHTMLCache) return modalHTMLCache;
-    modalHTMLCache = await fetch("/www.sewfy/produtos/visualizar/index.html")
+    modalHTMLCache = await fetch(`${window.BASE_URL}/visualizar-produto`)
         .then(res => res.text());
     return modalHTMLCache;
 }

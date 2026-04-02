@@ -1,4 +1,4 @@
-import { mascaraTelefone } from "../assets/mascaras.js";
+import { mascaraTelefone } from "../js/assets/mascaras.js";
 import { mostrarToast } from "./toast/toast.js";
 
 
@@ -19,7 +19,7 @@ async function carregarOwner() {
 
   try {
     const owner = await buscaOwner(signal);
-    if (signal.aborted) return; // página já trocou, ignora
+    if (signal.aborted) return;
     if (!owner) {
       console.warn("[WARN] Proprietário não encontrado!");
       return;

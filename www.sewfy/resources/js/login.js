@@ -1,115 +1,133 @@
 import { mostrarToast } from "./toast/toast.js";
 import {
-  initTelaCarregamento,
-  removeTelaCarregamento,
-} from "../../../../www.sewfy/telacarregamento/telacarregamento.js";
+    initTelaCarregamento,
+    removeTelaCarregamento,
+} from "./telacarregamento.js";
 
-const API_BASE = "http://localhost:8000";
+import { getCookie, setCookie, deleteCookie, popCookie } from "./API_JS/api.js";
+
+const API_BASE = "http://localhost";
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("[INIT] DOM carregado");
+    console.log("[INIT] DOM carregado");
 
-  const form = document.querySelector("form");
-  const emailInput = document.getElementById("email");
-  const senhaInput = document.getElementById("senha");
+    const form = document.querySelector("form");
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("senha");
 
-  // Toggle visibilidade da senha
-  document.querySelectorAll(".botao-senha").forEach((botao) => {
-    botao.addEventListener("click", () => {
-      const input = botao.previousElementSibling;
-      input.type = input.type === "password" ? "text" : "password";
-    });
-  });
-
-  // Esqueceu a senha
-  document
-    .getElementById("link-redefinir-senha")
-    .addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      const email = emailInput.value.trim();
-
-      if (!email) {
-        mostrarToast("Digite seu email acima para redefinir a senha", "erro");
-        return;
-      }
-
-      try {
-        const toastCarregando = mostrarToast("Enviando email...", "carregando");
-
-        const response = await fetch(`${API_BASE}/api/auth/redefinir-senha`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ email }),
+    // Toggle visibilidade da senha
+    document.querySelectorAll(".botao-senha").forEach((botao) => {
+        botao.addEventListener("click", () => {
+            const input = botao.previousElementSibling;
+            input.type = input.type === "password" ? "text" : "password";
         });
-
-        toastCarregando.remove();
-
-        const data = await response.json();
-        mostrarToast(data.mensagem || "Email enviado!", "sucesso");
-      } catch (erro) {
-        console.error("[ERRO FETCH]", erro);
-        mostrarToast("Erro ao conectar com o servidor", "erro");
-      }
     });
 
-  // Login
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    console.log("[SUBMIT] Formulário enviado");
+    // Esqueceu a senha
+    document
+        .getElementById("link-redefinir-senha")
+        .addEventListener("click", async (e) => {
+            e.preventDefault();
 
-    const email = emailInput.value.trim();
-    const senha = senhaInput.value.trim();
+            const email = emailInput.value.trim();
 
-    if (!email || !senha) {
-      mostrarToast("Preencha todos os campos", "erro");
-      return;
-    }
+            if (!email) {
+                mostrarToast(
+                    "Digite seu email acima para redefinir a senha",
+                    "erro",
+                );
+                return;
+            }
 
-    try {
+            try {
+                const toastCarregando = mostrarToast(
+                    "Enviando email...",
+                    "carregando",
+                );
 
-        initTelaCarregamento();
-      
-      const response = await fetch(`${API_BASE}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ email, senha}),
-      });
-      const data = await response.json();
+                const response = await fetch(
+                    `${API_BASE}/api/auth/redefinir-senha`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Accept: "application/json",
+                        },
+                        body: JSON.stringify({ email }),
+                    },
+                );
 
-      if (response.status === 401) {
-        mostrarToast("Email ou senha incorretos", "erro");
-        removeTelaCarregamento();
-        return;
-      }
+                toastCarregando.remove();
 
-      if (!response.ok) {
-        mostrarToast(data.erro || "Erro ao fazer login", "erro");
-        removeTelaCarregamento();
-        return;
-      }
+                const data = await response.json();
+                mostrarToast(data.mensagem || "Email enviado!", "sucesso");
+            } catch (erro) {
+                console.error("[ERRO FETCH]", erro);
+                mostrarToast("Erro ao conectar com o servidor", "erro");
+            }
+        });
+console.log("[FORM]", form);
+    // Login
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        console.log("[SUBMIT] capturado");
+        const email = emailInput.value.trim();
+        const senha = senhaInput.value.trim();
 
-      sessionStorage.setItem("token", data.token);
-      sessionStorage.setItem("empresas_ids", JSON.stringify(data.empresas_ids));
-      sessionStorage.setItem("usuario_email", email);
+        if (!email || !senha) {
+            mostrarToast("Preencha todos os campos", "erro");
+            return;
+        }
 
-      if (data.empresas_ids?.length === 1) {
-        
-        removeTelaCarregamento();
-        window.location.href = "/www.sewfy/home";
-      } else {
-        removeTelaCarregamento();
-        window.location.href = "/www.sewfy/selecionar-empresa";
-      }
-    } catch (erro) {
-      console.error("[ERRO FETCH]", erro);
-      mostrarToast("Erro ao conectar com o servidor", "erro");
-    }
-  });
+        try {
+            initTelaCarregamento();
+
+            await window.inicializarCsrf();
+            const token = decodeURIComponent(getCookie("token") ?? "");
+            const response = await fetch(`${API_BASE}/api/auth/login`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`,
+                    "X-XSRF-TOKEN": decodeURIComponent(
+                        getCookie("XSRF-TOKEN") ?? "",
+                    ),
+                },
+                body: JSON.stringify({ email, senha }),
+            });
+
+            const data = await response.json();
+
+            if (response.status === 401) {
+                mostrarToast("Email ou senha incorretos", "erro");
+                removeTelaCarregamento();
+                return;
+            }
+
+            if (!response.ok) {
+                mostrarToast(data.erro || "Erro ao fazer login", "erro");
+                removeTelaCarregamento();
+                return;
+            }
+
+            removeTelaCarregamento();
+
+            const urlAnterior = decodeURIComponent(
+                getCookie("url_anterior") ?? "",
+            );
+            deleteCookie("url_anterior");
+
+            const urlSegura = urlAnterior.startsWith(window.location.origin)
+                ? urlAnterior
+                : "/home";
+
+            window.location.replace(urlSegura);
+        } catch (erro) {
+            console.error("[ERRO FETCH]", erro);
+            mostrarToast("Erro ao conectar com o servidor", "erro");
+            removeTelaCarregamento();
+        }
+    });
 });

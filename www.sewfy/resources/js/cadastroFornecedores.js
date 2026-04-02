@@ -1,6 +1,6 @@
 import { mostrarToast } from "./toast/toast.js";
-import { aplicarMascaraCpfCnpj, aplicarMascaraTelefone } from "../../assets/mascaras.js";
-import { validarCpfCnpj } from "../../assets/validacoes.js";
+import { aplicarMascaraCpfCnpj, aplicarMascaraTelefone } from "../js/assets/mascaras.js";
+import { validarCpfCnpj } from "../js/assets/validacoes.js";
 
 // ABRIR MODAL
 document.addEventListener("click", (e) => {

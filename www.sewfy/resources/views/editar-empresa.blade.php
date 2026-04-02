@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Empresa - Sewfy Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    <link rel="stylesheet" href="/www.sewfy/menuadm/menuadm.css">
-    <link rel="stylesheet" href="/www.sewfy/editarempresa/editarempresa.css">
-</head>
-<body>
+@extends('layouts.app')
+
+@section('titulo', 'Editar Empresa')
+@push('styles')
+    @vite(['resources/css/editarempresa.css', 'resources/css/menuadm.css'])
+@endpush
+@section('conteudo')
 
     <div class="layout">
         <!-- sidebar injetada pelo JS -->
@@ -124,7 +120,8 @@
         </main>
     </div>
 
-    <script src="/www.sewfy/menuadm/menuadm.js"></script>
-    <script type="module" src="/www.sewfy/editarempresa/editarempresa.js"></script>
-</body>
-</html>
+   @endsection
+
+@section('scripts')
+@vite('resources/js/editarempresa.js')
+@endsection

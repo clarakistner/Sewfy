@@ -1,5 +1,7 @@
-import { mascaraCpfCnpj, mascaraTelefone } from "../assets/mascaras.js";
-import { verificarAuth, apiFetch } from "../assets/auth.js";
+import { mascaraCpfCnpj, mascaraTelefone } from "../js/assets/mascaras.js";
+import { verificarAuth, apiFetch } from "../js/assets/auth.js";
+
+import "../js/menuadm.js";
 
 verificarAuth();
 
@@ -167,7 +169,7 @@ async function acessarEmpresa(id) {
         sessionStorage.setItem('empresa_nome', data.empresa_nome);
 
         // Redireciona para o painel da empresa
-        window.location.href = '/www.sewfy/home/index.html';
+        window.location.href = '/home';
 
     } catch (erro) {
         console.error('[ERRO]', erro);

@@ -51,9 +51,7 @@ async function selecionarEmpresa(empresaId) {
   try {
     const body = { empresa_id: parseInt(empresaId) };
     const response = await window.api.post("/auth/define-empresa", body);
-    sessionStorage.setItem("token", response.token);
-    sessionStorage.setItem("empresa_id", response.empresa_id);
-    window.location.href = "/www.sewfy/home";
+    window.location.href = `${window.BASE_URL}/home`;
   } catch (error) {
     console.error("Erro ao selecionar empresa:", error);
   }

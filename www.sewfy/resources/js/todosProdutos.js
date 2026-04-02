@@ -1,4 +1,9 @@
-import { mostrarToast } from "../../toast/toast.js";
+import { mostrarToast } from "./toast/toast.js";
+import "../js/visualizarProdutos.js";
+import "../js/cadastroProdutos.js";
+import "../js/menu.js";
+import "../js/configmenu.js";
+import "../js/API_JS/api.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarProdutos();

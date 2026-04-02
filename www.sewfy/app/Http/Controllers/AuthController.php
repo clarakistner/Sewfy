@@ -8,8 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EmpresaUsuarios;
 use App\Models\Empresa;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
-session_start();
+
 class AuthController extends Controller
 {
     // POST /api/auth/login - Login para usuários comuns
@@ -19,12 +24,13 @@ class AuthController extends Controller
             'email' => 'required|email',
             'senha' => 'required|string',
         ]);
-
-        $user = User::where('USU_EMAIL', $request->email)->first();
-
-        if (!$user || !Hash::check($request->senha, $user->USU_SENHA)) {
-            return response()->json(['erro' => 'Credenciais inválidas'], 401);
+        if (!Auth::attempt([
+            'USU_EMAIL' => $request->email,
+            'password'  => $request->senha
+        ])) {
+            return response()->json(['status' => 'erro', 'resposta' => 'Credenciais inválidas'], 401);
         }
+        $user = User::where('USU_EMAIL', $request->email)->first();
 
         if ($user->USU_ATIV === 0) {
             return response()->json(['erro' => 'Conta inativa'], 403);
@@ -39,13 +45,16 @@ class AuthController extends Controller
         $user->tokens()->delete();
         $token = $user->createToken('user-token', $abilities)->plainTextToken;
         return response()->json([
-            'token'   => $token,
             'nome'    => $user->USU_NOME,
             'isOwner' => $user->USU_IS_OWNER,
             'quantidade_empresas' => $quantidadeEmpresas,
             'empresas_ids' => $empresasIds,
             'modulos' => $user->modulos->pluck('MOD_NOME')
-        ]);
+        ])
+            ->cookie('token', $token, 60 * 24 * 30, '/', null, null, false, true, 'lax')
+            ->cookie('user_name', $user->USU_NOME, 60 * 2, null, null, false, true, 'lax')
+            ->cookie('is_owner', $user->USU_IS_OWNER, 60 * 2, null, null, false, true, 'lax')
+            ->cookie('modulos', implode(',', $user->modulos->pluck('MOD_NOME')->toArray()), 60 * 2, null, null, false, true, 'lax');
     }
 
     // POST /api/auth/adm/login - Login para administradores
@@ -66,7 +75,8 @@ class AuthController extends Controller
             return response()->json(['erro' => 'Conta inativa'], 403);
         }
 
-        $_SESSION['adm_id'] = $adm->ADM_ID;
+       
+        $request->session()->put('adm_id', $adm->ADM_ID);
         $token = $adm->createToken('adm-token')->plainTextToken;
 
         return response()->json([
