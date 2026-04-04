@@ -1,4 +1,4 @@
-import '../css/telacarregamento.css';
+
 import { getBaseUrl } from './API_JS/api';
 
 export async function initTelaCarregamento(container = null) {

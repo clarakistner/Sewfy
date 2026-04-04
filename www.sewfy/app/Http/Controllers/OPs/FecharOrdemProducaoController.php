@@ -15,21 +15,31 @@ class FecharOrdemProducaoController extends Controller
     {
         try {
             $request->validate([
-                'opID' => 'required|string'
+                'opID' => 'required|string',
+                'qtde' => 'required|numeric|min:0',
+                'quebra' => 'required|numeric|min:0'
+
             ]);
             $idUsuario = (int) $request->user()->USU_ID;
             $user = $request->user();
             $abilities = $user->currentAccessToken()->abilities;
             $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
             $empresaId = str_replace('empresa_', '', $ability);
-
+            $op = OrdemDeProducao::where('OP_ID', $request->opID)
+                ->where('USU_RESPONSAVEL', $idUsuario)
+                ->where('EMP_ID', $empresaId)
+                ->first();
+            $quebra = (int) $request->quebra;
+            $qtde = (int) $request->qtde;
             OrdemDeProducao::where('USU_RESPONSAVEL', $idUsuario)
                 ->where("EMP_ID", $empresaId)
                 ->where(
                     "OP_ID",
                     $request->opID
                 )
-                ->update(['OP_DATAE' => now(), 'OP_STATUS' => 'fechada']);
+            ->update(['OP_DATAE' => now(), 'OP_STATUS' => 'fechada', 'OP_QTDE' => $qtde, 'OP_QUEBRA' => (float) number_format(($quebra ) / ((int) $op->OP_QTD) * 100, 2, '.', ''), 'OP_CUSTOUR' => $op->OP_CUSTOT / $qtde]);
+
+             
 
             $opins = OPInsumo::where('OP_ID', $request->opID)
                 ->where('NECESSITA_CLIFOR', 1)

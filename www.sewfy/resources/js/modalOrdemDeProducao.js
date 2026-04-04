@@ -1,4 +1,5 @@
 import { mostrarToast } from "./toast/toast.js";
+import { initConfirmarFechamento } from "./confirmar-fechamento.js";
 let ordemProducao = null;
 let insumosBanco = [];
 
@@ -23,24 +24,11 @@ async function handleClick(e) {
         fecharModal();
     }
     if (e.target.closest(".fecharOP")) {
-        fecharOrdemProd();
+        initConfirmarFechamento();
     }
 }
 
-async function fecharOrdemProd() {
-    try {
-        const op = getOrdemProducao();
-        window.api.put("/ordemdeproducao/fechar", { opID: op.idOP });
-        const { listarOrdensProducao, invalidarCache } =
-            await import("../js/gerenciarOrdensDeProducao.js");
-        fecharModal();
-        invalidarCache();
-        listarOrdensProducao(null, null);
-    } catch (error) {
-        console.log("Erro ao tentar fechar ordem de produção: " + error);
-        throw error;
-    }
-}
+
 export async function abrirModal(id) {
     try {
         const response = await fetch(`${window.BASE_URL}/modal-ordem`);
@@ -140,6 +128,13 @@ async function insereDetalhesNaTela() {
     const campoQuant = document.querySelector("#quantProd");
     const campoCustou = document.querySelector("#custou");
     const campoCustot = document.querySelector("#custot");
+    const labelCustou = document.querySelector("#labelcustou");
+    const labelQtd = document.querySelector("#labelquantProd");
+
+    if(getOrdemProducao().status === "fechada"){
+        labelCustou.textContent = "Custo Unitário Real";
+        labelQtd.textContent = "Quantidade Final";
+    }
 
     if (!getOrdemProducao() || !campoNome || !campoQuant) return;
 
@@ -149,11 +144,13 @@ async function insereDetalhesNaTela() {
     ]);
 
     campoNome.textContent = nomeProd;
-    campoQuant.textContent = parseInt(getOrdemProducao().qtdOP).toLocaleString(
+    campoQuant.textContent = parseInt(
+        getOrdemProducao().qtdeOP ? getOrdemProducao().qtdeOP : getOrdemProducao().qtdOP
+    ).toLocaleString(
         "pt-BR",
     );
     campoCustou.textContent = parseFloat(
-        getOrdemProducao().custou,
+        getOrdemProducao().custour ? getOrdemProducao().custour : getOrdemProducao().custou
     ).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",

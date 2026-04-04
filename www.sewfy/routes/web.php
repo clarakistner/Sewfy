@@ -42,6 +42,14 @@ Route::get('/confirmar-cadastro',  function (Request $request){
     
     return view('confirmar-cadastro');
 });
+Route::get('/confirmar-fechamento',  function (){
+    
+    return view('confirmar-fechamento');
+});
+Route::get('/confirmar-fechamento.css',  function (){
+    
+    return response()->file(resource_path('css/confirmar-fechamento.css'));
+});
 Route::get('/contas',  function (){
     
     return view('contas');

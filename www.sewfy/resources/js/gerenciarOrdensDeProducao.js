@@ -101,7 +101,7 @@ async function criarCardOP(op, mapaProdutos) {
     criarInfoOrdem(
       "package_2",
       "Quantidade",
-      parseInt(op.qtdOP).toLocaleString("pt-BR"),
+      op.qtdeOP ? parseInt(op.qtdeOP).toLocaleString("pt-BR") : parseInt(op.qtdOP).toLocaleString("pt-BR"),
     ),
   );
   contentOrdem.appendChild(

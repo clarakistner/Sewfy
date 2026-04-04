@@ -43,6 +43,7 @@ class VisualizarOrdemProducaoController extends Controller
                 'qtdOP'       => $op->OP_QTD,
                 'qtdeOP'      => $op->OP_QTDE,
                 'usuarioIDOP' => $op->USU_ID,
+                'status'      => $op->OP_STATUS,
                 'quebra'      => $op->OP_QUEBRA
             ];
 
