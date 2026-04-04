@@ -24,6 +24,14 @@ async function enviarFechamento() {
             mostrarToast("Quantidade final inválida", "erro");
             return;
         }
+        if(qtdeFinal > parseInt(op.qtdOP)) {
+            mostrarToast("Quantidade final não pode ser maior que a quantidade da OP", "erro");
+            return;
+        }
+        if(qtdeQuebra > parseInt(op.qtdOP) - parseInt(qtdeFinal)) {
+            mostrarToast("Quantidade de quebra não pode ser maior que a diferença entre a quantidade da OP e a quantidade final", "erro");
+            return;
+        }
         if (qtdeQuebra === "" || isNaN(qtdeQuebra) || qtdeQuebra < 0) {
             mostrarToast("Quantidade de quebra inválida", "erro");
             return;
