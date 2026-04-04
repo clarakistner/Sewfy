@@ -30,14 +30,13 @@ class EditarOrdemProducaoController extends Controller
 
             $qtd    = $dados['NovaQtdOP'] ?: (int) $op['qtdOP'];
             $custou = $custot / $qtd;
-            $quebra = $dados['NovaQuebra'] ?: (float) $op['quebra'];
+            
 
             // Atualiza a OP no banco
             OrdemDeProducao::where('OP_ID', $idOP)->update([
                 'OP_QTD'    => $qtd,
                 'OP_CUSTOU' => $custou,
-                'OP_CUSTOT' => $custot,
-                'OP_QUEBRA' => $quebra
+                'OP_CUSTOT' => $custot
             ]);
 
             return response()->json([

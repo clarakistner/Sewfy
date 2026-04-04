@@ -33,8 +33,12 @@ class DeletarInsumoOrdemProducaoController extends Controller
             if (!$opinS || count($opinS) === 0) {
                 return;
             }
+            
 
             foreach ($opinS as $opin) {
+                if(!is_numeric($opin)) {
+                    continue; // Pula IDs inválidos
+                }
                 // Busca o insumo e a OP relacionada
                 $insumo = OPInsumo::find((int) $opin);
                 $op = OrdemDeProducao::where('OP_ID', $insumo->OP_ID)

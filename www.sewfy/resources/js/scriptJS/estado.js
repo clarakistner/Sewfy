@@ -1,6 +1,6 @@
 
 
-export const atualizaOP = { NovaQtdOP: 0, NovaQuebra: 0 }
+export const atualizaOP = { NovaQtdOP: 0}
 export const atualizaOPINs = []
 
 let listaInsumos = []

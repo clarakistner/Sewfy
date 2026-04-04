@@ -1,7 +1,7 @@
 import { mostrarToast } from "../toast/toast.js";
 
 export class API {
-    constructor(url = "http://localhost") {
+    constructor(url = "http://localhost:8000") {
         this.url = url;
         this.csrfInitializado = false;
         this.csrfCarregando = false;
@@ -14,10 +14,6 @@ export class API {
             .split("; ")
             .find((row) => row.startsWith(name + "="));
         if (!match) return null;
-        console.log(
-            `[API] getCookie ${name}:`,
-            decodeURIComponent(match.substring(name.length + 1)),
-        );
         return match.substring(name.length + 1);
     }
 
@@ -69,16 +65,13 @@ export class API {
         const xsrfToken = decodeURIComponent(
             this.getCookie("XSRF-TOKEN") ?? "",
         );
-        const empresaId = this.getCookie("empresa_id");
         const token = decodeURIComponent(this.getCookie("token") ?? "");
-        console.log(`[API] Token: ${token}`);
         const config = {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
                 "X-XSRF-TOKEN": xsrfToken,
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                ...(empresaId ? { "X-Empresa-Id": empresaId } : {}),
                 ...opcoes.headers,
             },
             ...opcoes,
@@ -108,6 +101,7 @@ export class API {
             }
 
             const text = await response.text();
+            console.log(`[API] Resposta de ${url}:`, text);
             const dados = JSON.parse(text);
 
             if (dados.resposta) {

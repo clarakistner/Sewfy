@@ -31,7 +31,11 @@ class CriacaoInsumoController extends Controller
             $empresaId = str_replace('empresa_', '', $ability);
 
             if (!$opinS || count($opinS) === 0) {
-                return;
+                return response()->json([
+                    'sucesso' => false,
+                    'erro' => true,
+                    'mensagem' => 'Lista Vazia!'
+                ]);
             }
 
             foreach ($opinS as $opin) {

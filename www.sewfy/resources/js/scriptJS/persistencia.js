@@ -6,13 +6,17 @@ import { verificaQuantidadesOPOPIN, verificaCampo } from './validacoes.js'
 import { resgataProdutoPeloID } from './banco.js'
 import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './renderizacao.js'
 import { organizaDivNovoInsumo } from './renderizacao.js'
+
 // PERSISTENCIA (salvar, editar e deletar no banco)
 
 // Orquestra o fluxo de salvar: valida, persiste e fecha o modal
 export async function salvaAlteracoes() {
   try {
 
-    const {initTelaCarregamento, removeTelaCarregamento} = await import('../telacarregamento.js')
+   const [{ initTelaCarregamento, removeTelaCarregamento }, { listarOrdensProducao }] = await Promise.all([
+  import('../telacarregamento.js'),
+  import("../gerenciarOrdensDeProducao.js")
+]);
     const container = document.querySelector(".modal-container")
     if (!verificaQuantidadesOPOPIN()) {
       mostrarToast("Os campos de quantidade da Ordem e dos insumos\nnão podem ser vazios ou iguais a 0", "erro")
@@ -23,10 +27,13 @@ export async function salvaAlteracoes() {
       await criaInsumosBanco()
       await editaInsumos()
       await atualizaOPBanco()
+      await listarOrdensProducao(null, null);
       removeTelaCarregamento()
       mostrarToast("Alterações salvas!")
+      
       fechaModal()
       removeBlur()
+      
     }
   } catch (error) {
     console.log(`Erro ao tentar salvar alterações: ${error}`)
@@ -39,23 +46,19 @@ export async function salvaAlteracoes() {
 export function insereDadosOPAtualizados() {
   try {
     const qtdOP = document.querySelector("#qtdOP")
-    const quebraOP = document.querySelector("#quebraOP")
-    if (!verificaCampo(qtdOP) || !verificaCampo(quebraOP)) {
-      console.log("Campos não encontrados")
+    if (!verificaCampo(qtdOP)) {
+      console.log("Campo de quantidade não encontrado")
       return
     }
     const novaQtd = parseInt(qtdOP.value)
-    let novaQuebra = parseInt(quebraOP.value)
+    
     if (isNaN(novaQtd)) {
       console.log("Valor de quantidade inválido")
       mostrarToast("Valor de quantidade inválido", "erro")
       return
     }
-    if(isNaN(novaQuebra)){
-      novaQuebra = null
-    }
+    
     atualizaOP.NovaQtdOP = novaQtd
-    atualizaOP.NovaQuebra = novaQuebra
   } catch (error) {
     console.log(`Erro ao coletar dados atualizados da OP: ${error}`)
     mostrarToast("Erro ao coletar dados da Ordem de Produção", "erro")
@@ -68,7 +71,6 @@ async function atualizaOPBanco() {
     const op = getOrdemProducao()
     const dados = {
       NovaQtdOP: atualizaOP.NovaQtdOP,
-      NovaQuebra: atualizaOP.NovaQuebra,
       OP: op
     }
     await window.api.put("/ordemdeproducao/editar", dados)

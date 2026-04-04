@@ -32,6 +32,7 @@ class EditarInsumoOrdemProducaoController extends Controller
 
             foreach ($opins as $opin) {
                 $idOPIN      = $opin['idOPIN'] ?? null;
+                $idFor = null;
                 if (!$idOPIN) {
                     continue;
                 }

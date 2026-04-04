@@ -7,6 +7,8 @@ import { organizaDivNovoInsumo } from './renderizacao.js'
 import { resgataProdutoPeloID } from './banco.js'
 import { getOrdemProducao} from '../modalOrdemDeProducao.js'
 import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './renderizacao.js'
+import { converterMoedaParaNumero, formatarMoeda } from '../assets/mascaras.js'
+import { atualizaCardsTopo } from './renderizacao.js'
 
 // CRIACAO DE ELEMENTOS DOM
 
@@ -27,28 +29,23 @@ export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, re
   div.innerHTML = `
     <div class="grid-12">
       <div class="col-3">
-        <label>Nome</label>
         <input value="${nome}" data-field="nome" disabled>
       </div>
       <div class="col-2">
-        <label>Quantidade</label>
         <input type="number" value="${quantidade}" class="qtd opin${id}" id="qtd${id}">
       </div>
       <div class="col-2">
-        <label>Preço</label>
-        <input type="number" step="0.01" value="${preco}" class="preco opin${id}" id="preco${id}">
+        <input type="text"  value="${formatarMoeda(preco)}" class="preco opin${id}" id="preco${id}">
       </div>
       <div class="col-2">
-        <label>Unidade</label>
         <input value="${unidade}" data-field="unidade" disabled>
       </div>
       <div class="col-2 boxFornecedor">
-        <label>Fornecedor</label>
         <select class="opin${id}" data-field="fornecedor" id="fornecedor${id}"></select>
       </div>
       <div class="col-1 align-end">
         <button class="delete">
-          <span class="material-symbols-outlined icone-remover" id="delete${id}">delete</span>
+          <span class="material-symbols-outlined icone-remover" id="${id}">delete</span>
         </button>
       </div>
       
@@ -129,6 +126,7 @@ export function deletarInsumoDOM(idOPIN) {
 
     // Recarrega os insumos do DOM para manter o estado sincronizado
     setListaDOM(listaInsumosOP.filter(insumo => {
+      console.log("Comparando ID:", String(insumo.idOPIN), "com", String(idOPIN));
       return String(insumo.idOPIN) !== String(idOPIN)
     }))
     organizaDivNovoInsumo()
@@ -145,6 +143,7 @@ export async function criaNovoInsumoDOM() {
     const insumosDOM = getListaDOM()
     const insumosInseridos = getInsumosInseridos()
     const selectInsumo = document.querySelector("#novoInsumo")
+    const selectUM = document.querySelector("#unidadeNovoInsumo")
     const campoQTD = document.querySelector("#quatidadeNovoInsumo")
     const boxFornecedor = document.querySelector("#boxForNovoInsumo")
     const  campoPreco = document.querySelector("#precoNovoInsumo")
@@ -178,17 +177,18 @@ export async function criaNovoInsumoDOM() {
     }
     dados.prodIdOPIN = parseInt(produto.id)
     dados.opOPIN = op.idOP
-    dados.idOPIN = - (insumosDOM.length + 1)
+    dados.idOPIN = crypto.randomUUID();
     dados.umOPIN = produto.um
     dados.qtdOPIN = parseInt(campoQTD.value)
-    dados.custouOPIN = parseFloat(campoPreco.value)
-    dados.custotOPIN = parseInt(campoQTD.value) * parseFloat(campoPreco.value)
+    dados.custouOPIN = parseFloat(converterMoedaParaNumero(campoPreco.value))
+    dados.custotOPIN = parseInt(campoQTD.value) * parseFloat(converterMoedaParaNumero(campoPreco.value))
 
     setInsumosInseridos([...insumosInseridos, dados])
 
     campoQTD.value = ""
     campoPreco.value = ""
     selectInsumo.value = ""
+    selectUM.value = ""
     if (boxFornecedor) boxFornecedor.style.display = "none"
 
     // Recarrega os insumos do DOM para manter o estado sincronizado
@@ -198,6 +198,7 @@ export async function criaNovoInsumoDOM() {
     limpaSelectInsumos()
     organizaDivNovoInsumo()
     await organizaDadosTela()
+    atualizaCardsTopo()
   } catch (error) {
     console.log(`Erro ao tentar adicionar novo insumo: ${error}`)
     mostrarToast("Erro ao tentar adicionar novo insumo", "erro")

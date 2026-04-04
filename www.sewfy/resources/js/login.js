@@ -6,7 +6,7 @@ import {
 
 import { getCookie, setCookie, deleteCookie, popCookie } from "./API_JS/api.js";
 
-const API_BASE = "http://localhost";
+const API_BASE = "http://localhost:8000";
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("[INIT] DOM carregado");

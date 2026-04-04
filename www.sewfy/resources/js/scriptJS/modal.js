@@ -1,5 +1,5 @@
 import { abrirModal as abreModalDetalhes } from '../modalOrdemDeProducao.js'
-import { organizaDadosTela } from './renderizacao.js'
+import { organizaDadosTela, organizaCardsTopo } from './renderizacao.js'
 import { getInsumosBanco } from '../modalOrdemDeProducao.js'
 import { resgataListaFornecedores, resgataListaProdutos } from './banco.js'
 import { setListaDOM, setInsumosDeletados, setInsumosInseridos } from './estado.js'
@@ -11,22 +11,23 @@ var main = document.querySelector(".principal");
 
 // Abre o modal de edicao: carrega o HTML via fetch, injeta no DOM
 // e dispara o carregamento de todos os dados necessarios para a tela
-export function abreModal() {
-  fetch(`${window.BASE_URL}/editar-ordemdeproducao`)
-    .then(response => response.text())
-    .then(async (data) => {
-      document.body.insertAdjacentHTML("afterbegin", data)
-      document.querySelector(".modal-edicao").classList.add("load")
-      setListaDOM(getInsumosBanco())
-      setInsumosDeletados([])
-      setInsumosInseridos([])
-      await Promise.all([
-        resgataListaFornecedores(),
-        resgataListaProdutos(),
-        organizaDadosTela()
-      ])
-      
-    })
+export async function abreModal() {
+  const response = await fetch(`${window.BASE_URL}/editar-ordemdeproducao`);
+  const data = await response.text();
+
+  document.body.insertAdjacentHTML("afterbegin", data);
+  document.querySelector(".modal-edicao").classList.add("load");
+  setListaDOM(getInsumosBanco());
+  setInsumosDeletados([]);
+  setInsumosInseridos([]);
+
+  await Promise.all([
+    resgataListaFornecedores(),
+    resgataListaProdutos(),
+    organizaDadosTela(),
+  ]);
+
+  organizaCardsTopo();
 }
 
 // Remove o modal de edicao do DOM
