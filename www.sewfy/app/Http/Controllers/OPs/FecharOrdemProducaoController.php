@@ -30,13 +30,7 @@ class FecharOrdemProducaoController extends Controller
                 ->first();
             $quebra = (int) $request->quebra;
             $qtde = (int) $op->OP_QTD - $quebra;
-            OrdemDeProducao::where('USU_RESPONSAVEL', $idUsuario)
-                ->where("EMP_ID", $empresaId)
-                ->where(
-                    "OP_ID",
-                    $request->opID
-                )
-                ->update(['OP_DATAE' => now(), 'OP_STATUS' => 'fechada', 'OP_QTDE' => $qtde, 'OP_QUEBRA' => (float) number_format(($quebra) / ((int) $op->OP_QTD) * 100, 2, '.', ''), 'OP_CUSTOUR' => $op->OP_CUSTOT / $qtde]);
+
 
 
 
@@ -45,16 +39,18 @@ class FecharOrdemProducaoController extends Controller
                 ->get();
             $idOPNumero = preg_replace('/\D/', '', $request->opID);
             $last = ContaPagar::lockForUpdate()
-                ->orderByRaw('CP_ID DESC')
+                ->orderByRaw('"CP_ID" DESC')
                 ->value('CP_ID');
 
             $lastNumber = (int) substr($last ?? '0', strrpos($last ?? '0', '-') + 1);
 
             $dados = $opins->map(fn($opin, $index) => [
                 'EMP_ID'    => $empresaId,
+                'OPIN_ID' => $opin->OPIN_ID,
+                'OP_ID' => $op->OP_ID,
                 'CLIFOR_ID' => $opin->CLIFOR_ID,
                 'CP_VALOR'  => $opin->OPIN_CUSTOT,
-                'CP_DATAE'  => $opin->OPIN_DATAE,
+                'CP_DATAE'  => now(),
                 'CP_DATAV'  => Carbon::parse($opin->OPIN_DATAE)->addMonth()->toDateString(),
                 'CP_STATUS' => 'pendente',
                 'USU_ID'    => $user->USU_ID,
@@ -63,7 +59,13 @@ class FecharOrdemProducaoController extends Controller
 
             ContaPagar::insert($dados);
 
-
+            OrdemDeProducao::where('USU_RESPONSAVEL', $idUsuario)
+                ->where("EMP_ID", $empresaId)
+                ->where(
+                    "OP_ID",
+                    $request->opID
+                )
+                ->update(['OP_DATAE' => now(), 'OP_STATUS' => 'fechada', 'OP_QTDE' => $qtde, 'OP_QUEBRA' => (float) number_format(($quebra) / ((int) $op->OP_QTD) * 100, 2, '.', ''), 'OP_CUSTOUR' => $op->OP_CUSTOT / $qtde]);
             return response()->json([
                 'sucesso'         => true,
                 'erro'            => false,
