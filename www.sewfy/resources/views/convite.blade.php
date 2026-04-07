@@ -134,7 +134,7 @@
                 </div>
 
                 <div class="btn-wrapper">
-                    <a href="http://sewfy.local/confirmar-cadastro?token={{ $token }}" class="btn">
+                    <a href="http://localhost/confirmar-cadastro?token={{ $token }}" class="btn">
                         Confirmar Cadastro
                     </a>
                 </div>
@@ -161,7 +161,7 @@
                 </div>
 
                 <div class="btn-wrapper">
-                    <a href="http://sewfy.local/confirmar-cadastro?token={{ $token }}" class="btn">
+                    <a href="http://localhost/confirmar-cadastro?token={{ $token }}" class="btn">
                         Confirmar Acesso
                     </a>
                 </div>
@@ -176,7 +176,7 @@
                 </div>
 
                 <div class="btn-wrapper">
-                    <a href="http://sewfy.local/confirmar-cadastro?token={{ $token }}" class="btn">
+                    <a href="http://localhost/confirmar-cadastro?token={{ $token }}" class="btn">
                         Confirmar Propriedade
                     </a>
                 </div>
@@ -190,7 +190,7 @@
                 </div>
 
                 <div class="btn-wrapper">
-                    <a href="http://sewfy.local/confirmar-cadastro?token={{ $token }}" class="btn">
+                    <a href="http://localhost/confirmar-cadastro?token={{ $token }}" class="btn">
                         Confirmar Novo Email
                     </a>
                 </div>
@@ -204,7 +204,7 @@
                 </div>
 
                 <div class="btn-wrapper">
-                    <a href="http://sewfy.local/confirmar-cadastro?token={{ $token }}" class="btn">
+                    <a href="http://localhost/confirmar-cadastro?token={{ $token }}" class="btn">
                         Redefinir Senha
                     </a>
                 </div>

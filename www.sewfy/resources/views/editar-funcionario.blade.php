@@ -1,4 +1,11 @@
-<div class="modal" id="modal-editar-funcionario">
+@extends('layouts.app')
+
+@section('titulo', 'Editar Funcionário')
+@push('styles')
+    @vite(['resources/css/editarfuncionario.css','resources/css/configmenu.css'])
+@endpush
+@section('conteudo')
+<div class="modal containerConfigOwner" id="modal-editar-funcionario">
   <div class="modal-container">
 
     <!-- Header -->
@@ -103,3 +110,8 @@
 
   </div>
 </div>
+   @endsection
+
+@section('scripts')
+@vite(['resources/js/editarfuncionario.js' , 'resources/js/configmenu.js'])
+@endsection

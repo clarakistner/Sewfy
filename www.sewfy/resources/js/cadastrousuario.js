@@ -1,5 +1,6 @@
 import { mostrarToast } from "./toast/toast.js";
 import { mascaraTelefone } from "../js/assets/mascaras.js";
+import "./API_JS/api.js";
 
 
 
@@ -15,6 +16,22 @@ const modulosDOM = {
 document.addEventListener("input", handleInput);
 document.addEventListener("click", handleClick);
 
+document.addEventListener("DOMContentLoaded", async() => {
+  await waitForApi();
+  await initCadastroFuncionario();
+});
+
+function waitForApi() {
+    return new Promise((resolve) => {
+        if (window.api) return resolve();
+        const interval = setInterval(() => {
+            if (window.api) {
+                clearInterval(interval);
+                resolve();
+            }
+        }, 50);
+    });
+}
 function handleClick(e) {
   if (e.target.closest(".botaoCadastrar")) {
     cadastrarFuncionario();
@@ -290,6 +307,6 @@ function limparFormulario() {
     .forEach((cb) => (cb.checked = false));
 }
 
-export function initCadastroFuncionario() {
-  exibirModulos();
+export async function initCadastroFuncionario() {
+  await exibirModulos();
 }

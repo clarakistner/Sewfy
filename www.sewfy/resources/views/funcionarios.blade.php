@@ -1,3 +1,10 @@
+@extends('layouts.app')
+
+@section('titulo', 'Funcionários')
+@push('styles')
+    @vite(['resources/css/gerenciarfuncionarios.css','resources/css/configmenu.css'])
+@endpush
+@section('conteudo')
 <div class="containerConfigOwner"> 
   <div class="gerenciarFuncionarios">
     
@@ -57,4 +64,8 @@
   </div>
 </div>
 
-<script type="module" src="/www.sewfy/funcionarios/editarfuncionarios/editarfuncionarios.js"></script>
+   @endsection
+
+@section('scripts')
+@vite(['resources/js/gerenciarfuncionarios.js', 'resources/js/configmenu.js'])
+@endsection

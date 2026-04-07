@@ -12,18 +12,17 @@ if (!window.api) {
     window.api = new API();
 }
 window.addEventListener("load", () => {
-    const urlAnterior = decodeURIComponent(getCookie("url_anterior") ?? "");
-    console.log('[HOME] urlAnterior:', urlAnterior);
-    console.log('[HOME] location.href:', window.location.href);
-    deleteCookie("url_anterior");
+   const urlAnterior = getCookie("url_anterior") ?? "";
 
-    const urlSegura = urlAnterior.startsWith(window.location.origin)
-        ? urlAnterior
-        : "";
+deleteCookie("url_anterior");
 
-    if (urlSegura && urlSegura !== window.location.href) {
-        window.location.replace(urlSegura);
-    }
+const urlSegura = urlAnterior.startsWith(window.location.origin)
+    ? urlAnterior
+    : "";
+
+if (urlSegura && urlSegura !== window.location.href) { 
+    window.location.replace(urlSegura);
+}
 });
 
 async function carregarHome() {

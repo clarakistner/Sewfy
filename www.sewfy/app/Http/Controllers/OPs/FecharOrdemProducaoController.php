@@ -16,7 +16,6 @@ class FecharOrdemProducaoController extends Controller
         try {
             $request->validate([
                 'opID' => 'required|string',
-                'qtde' => 'required|numeric|min:0',
                 'quebra' => 'required|numeric|min:0'
 
             ]);
@@ -30,21 +29,28 @@ class FecharOrdemProducaoController extends Controller
                 ->where('EMP_ID', $empresaId)
                 ->first();
             $quebra = (int) $request->quebra;
-            $qtde = (int) $request->qtde;
+            $qtde = (int) $op->OP_QTD - $quebra;
             OrdemDeProducao::where('USU_RESPONSAVEL', $idUsuario)
                 ->where("EMP_ID", $empresaId)
                 ->where(
                     "OP_ID",
                     $request->opID
                 )
-            ->update(['OP_DATAE' => now(), 'OP_STATUS' => 'fechada', 'OP_QTDE' => $qtde, 'OP_QUEBRA' => (float) number_format(($quebra ) / ((int) $op->OP_QTD) * 100, 2, '.', ''), 'OP_CUSTOUR' => $op->OP_CUSTOT / $qtde]);
+                ->update(['OP_DATAE' => now(), 'OP_STATUS' => 'fechada', 'OP_QTDE' => $qtde, 'OP_QUEBRA' => (float) number_format(($quebra) / ((int) $op->OP_QTD) * 100, 2, '.', ''), 'OP_CUSTOUR' => $op->OP_CUSTOT / $qtde]);
 
-             
+
 
             $opins = OPInsumo::where('OP_ID', $request->opID)
                 ->where('NECESSITA_CLIFOR', 1)
                 ->get();
-            $dados = $opins->map(fn($opin) => [
+            $idOPNumero = preg_replace('/\D/', '', $request->opID);
+            $last = ContaPagar::lockForUpdate()
+                ->orderByRaw('CP_ID DESC')
+                ->value('CP_ID');
+
+            $lastNumber = (int) substr($last ?? '0', strrpos($last ?? '0', '-') + 1);
+
+            $dados = $opins->map(fn($opin, $index) => [
                 'EMP_ID'    => $empresaId,
                 'CLIFOR_ID' => $opin->CLIFOR_ID,
                 'CP_VALOR'  => $opin->OPIN_CUSTOT,
@@ -52,6 +58,7 @@ class FecharOrdemProducaoController extends Controller
                 'CP_DATAV'  => Carbon::parse($opin->OPIN_DATAE)->addMonth()->toDateString(),
                 'CP_STATUS' => 'pendente',
                 'USU_ID'    => $user->USU_ID,
+                'CP_ID'     => 'CP' . $idOPNumero . '-' . str_pad($lastNumber + $index + 1, 6, '0', STR_PAD_LEFT)
             ])->toArray();
 
             ContaPagar::insert($dados);

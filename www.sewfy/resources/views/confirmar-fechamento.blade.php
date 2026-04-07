@@ -5,10 +5,7 @@
         </div>
         <div class="modal-content" id="content-confirmar-fechamento">
             <div class="informacoes">
-                <div id="quantidade-final" class="campos-informacoes">
-                    <label for="quantidadeFinal">Quantidade Final</label>
-                    <input type="number" id="quantidadeFinal" name="quantidadeFinal" />
-                </div>
+                
                 <div id="quantidade-quebra" class="campos-informacoes">
                     <label for="quantidadeQuebra">Quantidade de Quebra</label>
                     <input type="number" id="quantidadeQuebra" name="quantidadeQuebra" />

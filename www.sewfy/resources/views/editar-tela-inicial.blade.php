@@ -1,3 +1,11 @@
+@extends('layouts.app')
+
+@section('titulo', 'Editar Tela Inicial')
+@push('styles')
+    @vite(['resources/css/editartelainicial.css','resources/css/configmenu.css'])
+@endpush
+@section('conteudo')
+
 <div class="containerConfigOwner">
   <div class="editarTelaInicial">
 
@@ -74,3 +82,9 @@
 
   </div>
 </div>
+
+   @endsection
+
+@section('scripts')
+@vite(['resources/js/editartelainicial.js', 'resources/js/configmenu.js'])
+@endsection

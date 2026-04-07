@@ -141,14 +141,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
-
 function mostrarMensagemSucesso(tipo) {
     const cfg = config[tipo] ?? config.owner;
     document.querySelector('.box-confirmacao').innerHTML = `
         <h2>${cfg.sucesso}</h2>
         <p style="margin: 20px 0; color: #444; font-size: 15px; text-align: center;">
             Acesse o sistema pelo 
-            <a href="/login style="color: #0e59fe; font-weight: bold;">Login</a>.
+            <a href="/login" style="color: #0e59fe; font-weight: bold;">Login</a>.
         </p>
     `;
 }

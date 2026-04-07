@@ -9,6 +9,14 @@ document.addEventListener("click", async (e) => {
         await enviarFechamento();
     }
 });
+document.addEventListener("input", (e) => {
+    if (e.target.id === "quantidadeQuebra") {
+        const qtdeQuebra = e.target;
+        const valor = qtdeQuebra.value;
+        valor = valor.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        qtdeQuebra.value = valor;
+    }
+});
 
 async function enviarFechamento() {
     try {
@@ -18,18 +26,10 @@ async function enviarFechamento() {
                 import("./modalOrdemDeProducao.js"),
             ]);
         const op = getOrdemProducao();
-        const qtdeFinal = document.getElementById("quantidadeFinal").value;
-        const qtdeQuebra = document.getElementById("quantidadeQuebra").value;
-        if (!qtdeFinal || isNaN(qtdeFinal) || qtdeFinal <= 0) {
-            mostrarToast("Quantidade final inválida", "erro");
-            return;
-        }
-        if(qtdeFinal > parseInt(op.qtdOP)) {
-            mostrarToast("Quantidade final não pode ser maior que a quantidade da OP", "erro");
-            return;
-        }
-        if(qtdeQuebra > parseInt(op.qtdOP) - parseInt(qtdeFinal)) {
-            mostrarToast("Quantidade de quebra não pode ser maior que a diferença entre a quantidade da OP e a quantidade final", "erro");
+        const qtdeQuebra = parseInt(document.getElementById("quantidadeQuebra").value);
+       
+        if(qtdeQuebra > parseInt(op.qtdOP)) {
+            mostrarToast("Quantidade de quebra não pode ser maior que a quantidade da OP", "erro");
             return;
         }
         if (qtdeQuebra === "" || isNaN(qtdeQuebra) || qtdeQuebra < 0) {
@@ -38,7 +38,6 @@ async function enviarFechamento() {
         }
         window.api.put("/ordemdeproducao/fechar", {
             opID: op.idOP,
-            qtde: qtdeFinal,
             quebra: qtdeQuebra,
         });
 

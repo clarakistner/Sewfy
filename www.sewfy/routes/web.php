@@ -74,7 +74,7 @@ Route::get('/editar-ordemdeproducao',  function (){
     
     return view('editar-ordemdeproducao');
 });
-Route::get('/editar-proprietario',  function (){
+Route::get('/editar-conta',  function (){
     
     return view('editar-proprietario');
 });

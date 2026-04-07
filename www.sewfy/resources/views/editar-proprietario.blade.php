@@ -1,3 +1,10 @@
+@extends('layouts.app')
+
+@section('titulo', 'Editar Conta do Proprietário')
+@push('styles')
+    @vite(['resources/css/editarcontaOwner.css','resources/css/configmenu.css'])
+@endpush
+@section('conteudo')
 <div class="containerConfigOwner">
 
   <div class="editarUsuario">
@@ -35,3 +42,8 @@
     
   </div>
 </div>
+   @endsection
+
+@section('scripts')
+@vite([ 'resources/js/editarcontaOwner.js', 'resources/js/configmenu.js'])
+@endsection
