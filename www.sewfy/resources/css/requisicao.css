@@ -890,6 +890,11 @@ select.input-produto {
   color: var(--gray-900);
 }
 
+.noCliFor{
+  color: #111827;
+  opacity: 0.75;
+}
+
 .lista-insumos-revisao {
   display: flex;
   flex-direction: column;
