@@ -1,20 +1,10 @@
-// Importa funções auxiliares
 import { mostrarToast } from "./toast/toast.js";
 import { formatarMoeda, converterMoedaParaNumero } from "./assets/mascaras.js";
-
-import {
-    atualizarBarraProgresso,
-    inicializarIconesOriginais,
-} from "./progressoEtapas.js";
-
+import { atualizarBarraProgresso, inicializarIconesOriginais } from "./progressoEtapas.js";
 import "../js/API_JS/api.js";
 import "../js/configmenu.js";
 import "../js/menu.js";
 import { getBaseUrl } from "../js/API_JS/api.js";
-
-// ─────────────────────────────────────────
-// ESTADO GLOBAL
-// ─────────────────────────────────────────
 
 const url = getBaseUrl();
 let listaProdutos = null;
@@ -33,9 +23,153 @@ const op = {
 
 const OPINs = [];
 
-// ─────────────────────────────────────────
-// INICIALIZAÇÃO
-// ─────────────────────────────────────────
+const selectProduto = {
+    triggerId: "triggerProduto",
+    dropdownId: "dropdownProduto",
+    listaId: "listaProduto",
+    labelId: "labelProduto",
+    hiddenId: "product",
+    opcoes: [],
+};
+
+const selectInsumo = {
+    triggerId: "triggerInsumo",
+    dropdownId: "dropdownInsumo",
+    listaId: "listaInsumo",
+    labelId: "labelInsumo",
+    hiddenClass: "campoInsumoValor",
+    opcoes: [],
+};
+
+function renderOpcoes(config, filtro = "") {
+    const lista = document.getElementById(config.listaId);
+    if (!lista) return;
+    lista.innerHTML = "";
+
+    const filtradas = config.opcoes.filter((op) =>
+        op.label.toLowerCase().includes(filtro.toLowerCase()),
+    );
+
+    if (filtradas.length === 0) {
+        const li = document.createElement("li");
+        li.className = "select-pesquisa-vazio";
+        li.textContent = "Nenhum item encontrado.";
+        lista.appendChild(li);
+        return;
+    }
+
+    filtradas.forEach((opcao) => {
+        const li = document.createElement("li");
+        li.textContent = opcao.label;
+        li.dataset.id = opcao.id;
+        li.dataset.value = opcao.value;
+        li.addEventListener("click", () => selecionarOpcao(config, opcao));
+        lista.appendChild(li);
+    });
+}
+
+function selecionarOpcao(config, opcao) {
+    const label = document.getElementById(config.labelId);
+    const dropdown = document.getElementById(config.dropdownId);
+
+    if (label) label.textContent = opcao.label;
+    if (dropdown) dropdown.classList.remove("aberto");
+
+    if (config.hiddenId) {
+        const hidden = document.getElementById(config.hiddenId);
+        if (hidden) {
+            hidden.value = opcao.value;
+            hidden.id = config.hiddenId;
+            hidden.dataset.id = opcao.id;
+        }
+    } else if (config.hiddenClass) {
+        const hidden = document.querySelector(`.${config.hiddenClass}`);
+        if (hidden) {
+            hidden.value = opcao.value;
+            hidden.dataset.id = opcao.id;
+        }
+    }
+
+    if (config === selectInsumo) {
+        mudaLabelQuantidadePreco(opcao.id);
+        fornecedorAplicavel(opcao.id);
+    }
+}
+
+function getSelectedInsumo() {
+    const hidden = document.querySelector(`.${selectInsumo.hiddenClass}`);
+    if (!hidden || !hidden.value) return null;
+    return {
+        id: hidden.dataset.id,
+        value: hidden.value,
+        textContent: document.getElementById(selectInsumo.labelId)?.textContent,
+    };
+}
+
+function getSelectedProduto() {
+    const hidden = document.getElementById(selectProduto.hiddenId);
+    if (!hidden || !hidden.value) return null;
+    return {
+        id: hidden.dataset.id,
+        value: hidden.value,
+        textContent: document.getElementById(selectProduto.labelId)?.textContent,
+    };
+}
+
+function inicializarDropdown(config) {
+    const trigger = document.getElementById(config.triggerId);
+    const dropdown = document.getElementById(config.dropdownId);
+    if (!trigger || !dropdown) return;
+
+    const input = dropdown.querySelector(".select-pesquisa-input");
+
+    trigger.addEventListener("click", () => {
+        dropdown.classList.toggle("aberto");
+        if (dropdown.classList.contains("aberto")) {
+            input?.focus();
+            renderOpcoes(config);
+        }
+    });
+
+    input?.addEventListener("input", () => renderOpcoes(config, input.value));
+
+    document.addEventListener("click", (e) => {
+        if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove("aberto");
+        }
+    });
+}
+
+function limparDropdown(config, placeholder) {
+    const label = document.getElementById(config.labelId);
+    const dropdown = document.getElementById(config.dropdownId);
+    const input = dropdown?.querySelector(".select-pesquisa-input");
+
+    if (label) label.textContent = placeholder;
+    if (input) input.value = "";
+
+    if (config.hiddenId) {
+        const hidden = document.getElementById(config.hiddenId);
+        if (hidden) { hidden.value = ""; hidden.dataset.id = ""; }
+    } else if (config.hiddenClass) {
+        const hidden = document.querySelector(`.${config.hiddenClass}`);
+        if (hidden) { hidden.value = ""; hidden.dataset.id = ""; }
+    }
+
+    renderOpcoes(config);
+}
+
+function carregarProdutosFinalNoDropdown(listaProd) {
+    selectProduto.opcoes = listaProd
+        .filter((p) => (p.tipo === PROD_TIPO.FINAL || p.tipo === PROD_TIPO.CONJUNTO) && p.ativo === 1)
+        .map((p) => ({ id: String(p.id), value: p.nome, label: p.nome }));
+}
+
+function carregarProdutosInsumoNoDropdown(listaProd) {
+    selectInsumo.opcoes = listaProd
+        .filter((p) => p.tipo === PROD_TIPO.INSUMO && p.ativo === 1)
+        .map((p) => ({ id: String(p.id), value: p.nome, label: p.nome }));
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     const { initTelaCarregamento, removeTelaCarregamento } =
@@ -43,12 +177,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     initTelaCarregamento();
 
+    inicializarDropdown(selectProduto);
+    inicializarDropdown(selectInsumo);
+
     await iniciaRequisicao();
 
     removeTelaCarregamento();
 });
+
 document.addEventListener("click", handleGlobalClick);
-document.addEventListener("change", handleChange);
 document.addEventListener("input", handleInput);
 
 document.querySelector("#quantity")?.addEventListener("keydown", (e) => {
@@ -61,18 +198,13 @@ document.querySelector("#quantity")?.addEventListener("keydown", (e) => {
         campoFor.disabled = true;
     }
 });
+
 async function iniciaRequisicao() {
     inicializarIconesOriginais();
     atualizarBarraProgresso(1);
-
     await carregarProdutosEmSelect("final");
-
     renderLista();
 }
-
-// ─────────────────────────────────────────
-// HANDLER GLOBAL DE CLIQUES
-// ─────────────────────────────────────────
 
 async function handleGlobalClick(e) {
     if (e.target.closest(".modal-close") || e.target.closest(".cancelar")) {
@@ -126,15 +258,6 @@ async function handleGlobalClick(e) {
     }
 }
 
-function handleChange(e) {
-    if (e.target.closest(".campoInsumo")) {
-        const select = e.target.closest(".campoInsumo");
-        const insumo = select.options[select.selectedIndex];
-        mudaLabelQuantidadePreco(insumo.id);
-        fornecedorAplicavel(insumo.id);
-    }
-}
-
 function handleInput(e) {
     if (e.target.closest("#barraPesquisa")) {
         const valor = e.target.closest("#barraPesquisa").value;
@@ -148,10 +271,6 @@ function handleInput(e) {
     }
 }
 
-// ─────────────────────────────────────────
-// NAVEGAÇÃO
-// ─────────────────────────────────────────
-
 async function fecharModal() {
     OPINs.length = 0;
     listaProdutos = await window.api.get("/produtos");
@@ -161,17 +280,13 @@ async function fecharModal() {
 function navegarParaInsumos(e) {
     e.preventDefault();
 
-    const selectProduto = document.querySelector("select.input-produto");
-    const opcao = selectProduto.options[selectProduto.selectedIndex];
+    const produtoSelecionado = getSelectedProduto();
     const campoQuant = document.querySelector("input.input-produto");
     const quantidade = parseInt(campoQuant.value);
     const campoFor = document.querySelector(".campoFornecedor");
 
-    if (opcao.value === "Produto" || !quantidade) {
-        mostrarToast(
-            "Todos os campos devem ser preenchidos corretamente!",
-            "erro",
-        );
+    if (!produtoSelecionado || !quantidade) {
+        mostrarToast("Todos os campos devem ser preenchidos corretamente!", "erro");
         return;
     }
 
@@ -180,12 +295,11 @@ function navegarParaInsumos(e) {
         return;
     }
 
-    op.PROD_NOME = opcao.value;
-    op.PROD_ID = parseInt(opcao.id);
+    op.PROD_NOME = produtoSelecionado.textContent;
+    op.PROD_ID = parseInt(produtoSelecionado.id);
     op.OP_QTD = quantidade;
 
     listaProdutos = listaProdutos.filter((p) => p.id !== op.PROD_ID);
-    console.log("op.PROD_ID: " + op.PROD_ID);
 
     atualizarBarraProgresso(2);
     irOutraTela(".boxDadosProduto", ".boxDadosInsumos");
@@ -212,43 +326,36 @@ function irOutraTela(atual, proxima) {
     document.querySelector(proxima).style.display = "block";
 }
 
-// ─────────────────────────────────────────
-// INSUMOS — ADICIONAR / RENDERIZAR
-// ─────────────────────────────────────────
-
 async function adicionarInsumo() {
     try {
-        const campoInsumo = document.querySelector(".campoInsumo");
+        const insumoSelecionado = getSelectedInsumo();
         const campoQuant = document.querySelector(".campoQuant");
         const campoFor = document.querySelector(".campoFornecedor");
         const campoPreco = document.querySelector(".campoPreco");
         const labelQuantidade = document.querySelector("#label-quantidade");
         const labelPreco = document.querySelector("#label-preco");
 
-        const opInsumo = obterValorSelect(campoInsumo);
         const quant =
             parseInt(campoQuant.value) <= 0 || isNaN(campoQuant.value)
                 ? 0
                 : parseInt(campoQuant.value);
+
         const fornecedor = obterValorSelect(campoFor);
+
         const preco =
             parseFloat(converterMoedaParaNumero(campoPreco.value)) <= 0 ||
             isNaN(converterMoedaParaNumero(campoPreco.value))
                 ? 0
                 : parseFloat(converterMoedaParaNumero(campoPreco.value));
 
-        if (!validarCamposInsumo(opInsumo, quant, preco)) return;
+        if (!validarCamposInsumo(insumoSelecionado, quant, preco)) return;
 
-        const produto = await window.api.get(
-            `/produtos/${parseInt(opInsumo.id)}`,
-        );
-        if (
-            produto.necessita_clifor &&
-            (!fornecedor || String(fornecedor).trim() === "")
-        ) {
+        const produto = await window.api.get(`/produtos/${parseInt(insumoSelecionado.id)}`);
+        if (produto.necessita_clifor && (!fornecedor || String(fornecedor).trim() === "")) {
             mostrarToast("Selecione um fornecedor!", "erro");
             return;
         }
+
         const custot = preco * quant;
 
         const insumo = {
@@ -257,21 +364,21 @@ async function adicionarInsumo() {
             CUSTOT: custot,
             CUSTOU: preco,
             UM: produto.um,
-            INSUNOME: opInsumo.textContent,
-            INSUID: parseInt(opInsumo.id),
+            INSUNOME: insumoSelecionado.textContent,
+            INSUID: parseInt(insumoSelecionado.id),
         };
 
         OPINs.push(insumo);
 
         listaProdutos = listaProdutos.filter(
-            (p) => parseInt(p.id) !== parseInt(opInsumo.id),
+            (p) => parseInt(p.id) !== parseInt(insumoSelecionado.id),
         );
-        carregarProdutosInsumo(listaProdutos, campoInsumo);
+        carregarProdutosInsumoNoDropdown(listaProdutos);
 
         renderLista();
-        limparCamposInsumo(campoInsumo, campoQuant, campoFor, campoPreco);
-        labelQuantidade.textContent = `Quantidade*`;
-        labelPreco.textContent = `Preço (R$)*`;
+        limparCamposInsumo(campoQuant, campoFor, campoPreco);
+        labelQuantidade.textContent = "Quantidade*";
+        labelPreco.textContent = "Preço (R$)*";
     } catch (error) {
         console.log(`Erro ao adicionar insumo: ${error}`);
     }
@@ -293,9 +400,7 @@ function renderLista(pesquisa = null) {
 
     const termo = pesquisa ? pesquisa.trim().toLowerCase() : null;
     const listaFiltrada = termo
-        ? OPINs.filter((insumo) =>
-              insumo.INSUNOME.toLowerCase().includes(termo),
-          )
+        ? OPINs.filter((insumo) => insumo.INSUNOME.toLowerCase().includes(termo))
         : OPINs;
 
     if (listaFiltrada.length === 0) {
@@ -312,51 +417,27 @@ function renderLista(pesquisa = null) {
         card.className = "insumo-card";
         card.innerHTML =
             '<div class="insumo-card-field">' +
-            '<span class="insumo-card-label">' +
-            svgScissors("#9b59b6") +
-            " INSUMO/SERVIÇO</span>" +
-            '<span class="insumo-card-value">' +
-            esc(insumo.INSUNOME) +
+            '<span class="insumo-card-label">' + svgScissors("#9b59b6") + " INSUMO/SERVIÇO</span>" +
+            '<span class="insumo-card-value">' + esc(insumo.INSUNOME) + "</span>" +
+            "</div>" +
+            '<div class="insumo-card-field">' +
+            '<span class="insumo-card-label">' + svgHash("#6b7280") + " QUANTIDADE</span>" +
+            '<span class="insumo-card-value">' + parseInt(insumo.QTDIN).toLocaleString("pt-BR") + " " + esc(insumo.UM) + "</span>" +
+            "</div>" +
+            '<div class="insumo-card-field">' +
+            '<span class="insumo-card-label">' + svgDollar("#27ae60") + " PREÇO</span>" +
+            '<span class="insumo-card-value">R$ ' +
+            parseFloat(insumo.CUSTOU || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +
             "</span>" +
             "</div>" +
             '<div class="insumo-card-field">' +
-            '<span class="insumo-card-label">' +
-            svgHash("#6b7280") +
-            " QUANTIDADE</span>" +
-            '<span class="insumo-card-value">' +
-            parseInt(insumo.QTDIN).toLocaleString("pt-BR") +
-            " " +
-            esc(insumo.UM) +
-            "</span>" +
-            "</div>" +
-            '<div class="insumo-card-field">' +
-            '<span class="insumo-card-label">' +
-            svgDollar("#27ae60") +
-            " PREÇO</span>" +
-            '<span class="insumo-card-value">' +
-            "R$ " +
-            parseFloat(insumo.CUSTOU || 0).toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-            }) +
-            "</span>" +
-            "</div>" +
-            '<div class="insumo-card-field">' +
-            '<span class="insumo-card-label">' +
-            svgUser("#e74c3c") +
-            " FORNECEDOR</span>" +
-            '<span class="insumo-card-value">' +
-            esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) +
-            "</span>" +
+            '<span class="insumo-card-label">' + svgUser("#e74c3c") + " FORNECEDOR</span>" +
+            '<span class="insumo-card-value">' + esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) + "</span>" +
             "</div>" +
             '<div class="insumo-card-actions">' +
-            '<span class="insumo-card-actions-label">' +
-            svgCircle("#9ca3af") +
-            " AÇÕES</span>" +
+            '<span class="insumo-card-actions-label">' + svgCircle("#9ca3af") + " AÇÕES</span>" +
             "</div>" +
-            '<button type="button" class="btn-remover" data-index="' +
-            index +
-            '">Remover</button>';
+            '<button type="button" class="btn-remover" data-index="' + index + '">Remover</button>';
 
         listaCards.appendChild(card);
     });
@@ -365,9 +446,6 @@ function renderLista(pesquisa = null) {
         btn.addEventListener("click", function (e) {
             e.preventDefault();
             const idx = Number(this.dataset.index);
-            console.log(
-                "Insumo removido: " + JSON.stringify(OPINs[idx], null, 2),
-            );
             listaProdutos.push({
                 nome: OPINs[idx].INSUNOME,
                 id: OPINs[idx].INSUID,
@@ -376,16 +454,11 @@ function renderLista(pesquisa = null) {
                 tipo: PROD_TIPO.INSUMO,
             });
             OPINs.splice(idx, 1);
-            const campoInsumo = document.querySelector(".campoInsumo");
-            carregarProdutosInsumo(listaProdutos, campoInsumo);
+            carregarProdutosInsumoNoDropdown(listaProdutos);
             renderLista();
         });
     });
 }
-
-// ─────────────────────────────────────────
-// CONFIRMAÇÃO DA ORDEM
-// ─────────────────────────────────────────
 
 async function confirmarOrdem() {
     try {
@@ -414,25 +487,17 @@ async function confirmarOrdem() {
     }
 }
 
-// ─────────────────────────────────────────
-// TELA DE CONFIRMAÇÃO (boxDadosOrdem)
-// ─────────────────────────────────────────
-
 function organizaDados() {
     document.querySelector("#nomeProduto").innerHTML = op.PROD_NOME;
-    document.querySelector("#quantidadeProduto").innerHTML = parseInt(
-        op.OP_QTD,
-    ).toLocaleString("pt-BR");
-    document.querySelector("#custot").innerHTML =
-        calculaCustoT().toLocaleString("pt-BR", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    document.querySelector("#custou").innerHTML =
-        calculaCustoU().toLocaleString("pt-BR", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
+    document.querySelector("#quantidadeProduto").innerHTML = parseInt(op.OP_QTD).toLocaleString("pt-BR");
+    document.querySelector("#custot").innerHTML = calculaCustoT().toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+    document.querySelector("#custou").innerHTML = calculaCustoU().toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 
     carregaDadosInsumos();
 }
@@ -445,13 +510,13 @@ function carregaDadosInsumos() {
         const div = document.createElement("div");
         div.className = "insumo-revisao-item";
         div.innerHTML = `
-      <p class="insumo-revisao-nome">
-        ${parseInt(insumo.QTDIN).toLocaleString("pt-BR")} ${insumo.UM} de ${esc(insumo.INSUNOME)}
-      </p>
-      <p class="insumo-revisao-fornecedor">
-        Fornecedor: <span>${esc(valorNomeFornecedor(insumo.IDFORNECEDOR))}</span>
-      </p>
-    `;
+            <p class="insumo-revisao-nome">
+                ${parseInt(insumo.QTDIN).toLocaleString("pt-BR")} ${insumo.UM} de ${esc(insumo.INSUNOME)}
+            </p>
+            <p class="insumo-revisao-fornecedor">
+                Fornecedor: <span>${esc(valorNomeFornecedor(insumo.IDFORNECEDOR))}</span>
+            </p>
+        `;
         tabela.appendChild(div);
     });
 
@@ -460,10 +525,6 @@ function carregaDadosInsumos() {
         placeholder.classList.toggle("hidden", OPINs.length > 0);
     }
 }
-
-// ─────────────────────────────────────────
-// SELECTS — CARREGAR PRODUTOS / FORNECEDORES
-// ─────────────────────────────────────────
 
 const getListaProdutosBanco = async () => {
     if (!listaProdutos) {
@@ -477,38 +538,13 @@ async function carregarProdutosEmSelect(tipo) {
         const lista = await getListaProdutosBanco();
 
         if (tipo === "final") {
-            const selectProduto = document.querySelector(
-                "select.input-produto",
-            );
-            if (selectProduto) carregarProdutosFinal(lista, selectProduto);
+            carregarProdutosFinalNoDropdown(lista);
         } else {
-            const selectInsumo = document.querySelector(".campoInsumo");
-            if (selectInsumo) carregarProdutosInsumo(lista, selectInsumo);
+            carregarProdutosInsumoNoDropdown(lista);
         }
     } catch (error) {
         console.log(`Erro ao buscar produtos: ${error}`);
     }
-}
-
-function carregarProdutosFinal(listaProd, selectProduto) {
-    selectProduto.innerHTML = `<option value="">Produto</option>`;
-    listaProd.forEach((p) => {
-        if (
-            (p.tipo === PROD_TIPO.FINAL || p.tipo === PROD_TIPO.CONJUNTO) &&
-            p.ativo === 1
-        ) {
-            selectProduto.appendChild(criarOptionProduto(p));
-        }
-    });
-}
-
-function carregarProdutosInsumo(listaProd, selectInsumo) {
-    selectInsumo.innerHTML = `<option value="">Insumo</option>`;
-    listaProd.forEach((p) => {
-        if (p.tipo === PROD_TIPO.INSUMO && p.ativo === 1) {
-            selectInsumo.appendChild(criarOptionProduto(p));
-        }
-    });
 }
 
 async function carregaFornecedores(campo) {
@@ -524,17 +560,6 @@ async function carregaFornecedores(campo) {
         console.log(`Erro ao carregar fornecedores: ${error}`);
     }
 }
-
-function criarOptionProduto(produto) {
-    const option = document.createElement("option");
-    option.id = `${produto.id}`;
-    option.innerHTML = `${produto.nome}`;
-    return option;
-}
-
-// ─────────────────────────────────────────
-// UTILITÁRIOS
-// ─────────────────────────────────────────
 
 function obterValorSelect(selectElement) {
     const selectedOption = selectElement.options[selectElement.selectedIndex];
@@ -557,8 +582,8 @@ function validarCamposInsumo(opInsumo, quant, preco) {
     return true;
 }
 
-function limparCamposInsumo(campoInsumo, campoQuant, campoFor, campoPreco) {
-    campoInsumo.value = "";
+function limparCamposInsumo(campoQuant, campoFor, campoPreco) {
+    limparDropdown(selectInsumo, "Selecione um insumo ou serviço");
     campoQuant.value = "";
     campoFor.value = "";
     campoPreco.value = "";
@@ -573,9 +598,7 @@ function valorIdFornecedor(atributo, fornecedor) {
 
 function valorNomeFornecedor(idFornecedor) {
     if (!idFornecedor) return "Sem fornecedor";
-    const option = document.querySelector(
-        `.campoFornecedor option[id="${idFornecedor}"]`,
-    );
+    const option = document.querySelector(`.campoFornecedor option[id="${idFornecedor}"]`);
     return option ? option.textContent : "Sem fornecedor";
 }
 
@@ -591,10 +614,7 @@ function dataFormatada() {
 }
 
 function calculaCustoT() {
-    return OPINs.reduce(
-        (total, insumo) => total + parseFloat(insumo.CUSTOT),
-        0,
-    );
+    return OPINs.reduce((total, insumo) => total + parseFloat(insumo.CUSTOT), 0);
 }
 
 function calculaCustoU() {
@@ -602,13 +622,9 @@ function calculaCustoU() {
 }
 
 async function fornecedorAplicavel(idProd) {
-    console.log("ID do INSUMO: " + idProd);
     const campoFor = document.querySelector(".campoFornecedor");
-    const listaProdutos = await getListaProdutosBanco();
-
-    const produto = listaProdutos.find(
-        (insumo) => insumo.id === parseInt(idProd),
-    );
+    const lista = await getListaProdutosBanco();
+    const produto = lista.find((insumo) => insumo.id === parseInt(idProd));
 
     if (produto && !produto.necessita_clifor) {
         campoFor.value = "";
@@ -617,28 +633,24 @@ async function fornecedorAplicavel(idProd) {
         campoFor.disabled = false;
     }
 }
+
 async function mudaLabelQuantidadePreco(idProd) {
     const labelQtd = document.querySelector("#label-quantidade");
     const labelPreco = document.querySelector("#label-preco");
     const campo = document.querySelector(".campoQuant");
-    const listaProdutos = await getListaProdutosBanco();
-
-    const produto = listaProdutos.find(
-        (insumo) => insumo.id === parseInt(idProd),
-    );
+    const lista = await getListaProdutosBanco();
+    const produto = lista.find((insumo) => insumo.id === parseInt(idProd));
 
     if (produto) {
         labelQtd.textContent = `Quantidade em ${produto.um}*`;
         labelPreco.textContent = `Preço por ${produto.um} (R$)*`;
         campo.disabled = false;
     } else {
-        labelQtd.textContent = `Quantidade*`;
-        labelPreco.textContent = `Preço (R$)*`;
+        labelQtd.textContent = "Quantidade*";
+        labelPreco.textContent = "Preço (R$)*";
         campo.disabled = true;
     }
 }
-
-// ─── SVG helpers ───
 
 function svgScissors(color) {
     return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`;
@@ -655,22 +667,11 @@ function svgHash(color) {
 function svgCircle(color) {
     return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
 }
+
 function svgDollar(color = "#000") {
-    return `
-    <svg xmlns="http://www.w3.org/2000/svg" 
-         width="16" 
-         height="16" 
-         viewBox="0 0 24 24" 
-         fill="none" 
-         stroke="${color}" 
-         stroke-width="2" 
-         stroke-linecap="round" 
-         stroke-linejoin="round">
-      <line x1="12" y1="1" x2="12" y2="23"></line>
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14.5a3.5 3.5 0 0 1 0 7H6"></path>
-    </svg>
-  `;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14.5a3.5 3.5 0 0 1 0 7H6"></path></svg>`;
 }
+
 function esc(str) {
     return String(str)
         .replace(/&/g, "&amp;")

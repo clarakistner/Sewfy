@@ -86,9 +86,19 @@
     <div class="boxDadosProduto step-panel active" id="panel-1">
       <form class="modal-form dadosProduto" id="producao-form" novalidate>
         <div class="field-group">
-          <select name="product" id="product" class="input-produto">
-            <option value="">Produto</option>
-          </select>
+          <div class="select-pesquisa-wrapper">
+            <div class="select-pesquisa-trigger input-produto" id="triggerProduto">
+              <span id="labelProduto">Produto</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+            <div class="select-pesquisa-dropdown" id="dropdownProduto">
+              <input type="text" class="select-pesquisa-input" placeholder="Pesquisar produto..." />
+              <ul class="select-pesquisa-lista" id="listaProduto"></ul>
+            </div>
+            <input type="hidden" name="product" id="product" />
+          </div>
           <p class="field-error hidden" id="error-product">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -196,28 +206,21 @@
           <div class="form-selects">
             <div class="form-group">
               <label class="form-label">Insumo/Serviço *</label>
-              <div class="select-wrapper">
-                <span class="select-icon-left">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#6b7280"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <circle cx="6" cy="6" r="3" />
-                    <circle cx="6" cy="18" r="3" />
-                    <line x1="20" y1="4" x2="8.12" y2="15.88" />
-                    <line x1="14.47" y1="14.48" x2="20" y2="20" />
-                    <line x1="8.12" y1="8.12" x2="12" y2="12" />
-                  </svg>
-                </span>
-                <select class="campoInsumo">
-                  <option value="">Selecione um insumo ou serviço</option>
-                </select>
+              <div class="select-wrapper" id="select-wrapper-insumo">
+                
+                <div class="select-pesquisa-wrapper">
+                  <div class="select-pesquisa-trigger campoInsumo" id="triggerInsumo">
+                    <span id="labelInsumo">Selecione um insumo ou serviço</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </div>
+                  <div class="select-pesquisa-dropdown" id="dropdownInsumo">
+                    <input type="text" class="select-pesquisa-input" placeholder="Pesquisar insumo..." />
+                    <ul class="select-pesquisa-lista" id="listaInsumo"></ul>
+                  </div>
+                  <input type="hidden" class="campoInsumoValor" />
+                </div>
               </div>
             </div>
             <div class="form-group">
@@ -265,7 +268,7 @@
               </p>
             </div>
             <div class="form-group">
-              <label id="label-preco">Preço (R$)*</label>
+              <label class="form-label" id="label-preco">Preço (R$)*</label>
               <div style="position: relative">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -290,7 +293,7 @@
                 <input
                   type="text"
                   name="price"
-                  
+
                   placeholder="Ex: 150.00"
                   class="campoPreco" />
               </div>
@@ -427,24 +430,6 @@
                 </span>
                 <span class="info-field-value status-pendente">Pendente</span>
               </div>
-            </div>
-          </div>
-          <div class="filtros">
-            <div class="input-pesquisa">
-              <svg
-                class="icone-lupa"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-
-              <input
-                type="text"
-                id="barraPesquisa"
-                placeholder="Pesquisar por nome do produto..." />
             </div>
           </div>
           <!-- Box itens adicionados -->
