@@ -192,5 +192,5 @@ export function popCookie(name) {
     deleteCookie(name);
     return value;
 }
-
+window.api = new API();
 window.inicializarCsrf = () => window.api?.inicializarCsrf();

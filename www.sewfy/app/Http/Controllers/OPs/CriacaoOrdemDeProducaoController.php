@@ -55,18 +55,17 @@ class CriacaoOrdemDeProducaoController extends Controller
 
             // Extrai e persiste os insumos da OP
             $insumos = $dados['INSUMOS'] ?? [];
-            foreach ($insumos as $ins) {
-                OPInsumo::create([
-                    'OPIN_UM'                => $ins['UM'],
-                    'OPIN_QTD'               => $ins['QTDIN'],
-                    'OPIN_CUSTOU'            => $ins['CUSTOU'],
-                    'OPIN_CUSTOT'            => $ins['CUSTOT'],
-                    'PROD_ID'       => $ins['INSUID'],
-                    'OP_ID'   => $idOp,
-                    'CLIFOR_ID' => $ins['IDFORNECEDOR'],
-                    'NECESSITA_CLIFOR' => FuncoesAuxiliares::retornaNecessitaCliFor($ins['INSUID'], $empresaId)
-                ]);
-            }
+
+            OPInsumo::insert(array_map(fn($ins) => [
+                'OPIN_UM'          => $ins['UM'],
+                'OPIN_QTD'         => $ins['QTDIN'],
+                'OPIN_CUSTOU'      => $ins['CUSTOU'],
+                'OPIN_CUSTOT'      => $ins['CUSTOT'],
+                'PROD_ID'          => $ins['INSUID'],
+                'OP_ID'            => $idOp,
+                'CLIFOR_ID'        => $ins['IDFORNECEDOR'],
+                'NECESSITA_CLIFOR' => FuncoesAuxiliares::retornaNecessitaCliFor($ins['INSUID'], $empresaId)
+            ], $insumos));
 
             // Retorna resposta de sucesso
             return response()->json([

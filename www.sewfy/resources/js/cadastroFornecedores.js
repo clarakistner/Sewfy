@@ -1,11 +1,14 @@
 import { mostrarToast } from "./toast/toast.js";
 import { aplicarMascaraCpfCnpj, aplicarMascaraTelefone } from "../js/assets/mascaras.js";
 import { validarCpfCnpj } from "../js/assets/validacoes.js";
+import { getBaseUrl } from "./API_JS/api.js";
 
+
+const url = getBaseUrl();
 // ABRIR MODAL
 document.addEventListener("click", (e) => {
     if (e.target.closest(".botao-criar-fornecedor")) {
-        fetch("/www.sewfy/fornecedores/cadastro/index.html")
+        fetch(url+"/cadastro-fornecedor")
             .then(res => res.text())
             .then(html => {
                 document.body.insertAdjacentHTML("afterbegin", html);

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\EmpresaUsuarios;
 use App\Models\SewfyAdm;
 use App\Models\UsuarioModulos;
 use App\Models\Modulo;
+use Psy\Command\WhereamiCommand;
 
 class EmpresaUsuariosController extends Controller
 {
@@ -58,10 +60,10 @@ class EmpresaUsuariosController extends Controller
                 ->where('USU_ID', '!=', $user->USU_ID)
                 ->pluck('USU_ID')
         )->select('USU_NOME', 'USU_EMAIL', 'USU_NUM', 'USU_ATIV', 'USU_ID')
-        ->get();
+            ->get();
 
         return response()->json([
-            'funcionarios'=> $listaFuncionarios,
+            'funcionarios' => $listaFuncionarios,
         ]);
     }
 
@@ -153,5 +155,23 @@ class EmpresaUsuariosController extends Controller
         return response()->json(['mensagem' => 'Funcionário atualizado com sucesso']);
     }
 
+    public function getEmpresasUsuario(Request $request)
+    {
+        
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['erro' => 'Usuário não autenticado'], 401);
+        }
+      
 
+        $idEmpresas = EmpresaUsuarios::where('USU_ID', $user->USU_ID)
+            ->pluck('EMP_ID');
+
+        $empresas = Empresa::whereIn('EMP_ID', $idEmpresas)
+            ->where('EMP_ATIV', 1)
+            ->pluck('EMP_RAZ', 'EMP_ID')
+            ->toArray();
+
+        return response()->json(['empresas' => $empresas]);
+    }
 }

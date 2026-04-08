@@ -41,14 +41,13 @@ class AuthController extends Controller
         $quantidadeEmpresas = $empresasUsuario->count();
         $empresasIds = Empresa::whereIn('EMP_ID', $empresasUsuario->pluck('EMP_ID'))->whereIn('EMP_ATIV', [1])->pluck('EMP_ID')->toArray();
 
-        $abilities = array_map(fn($id) => "empresa_$id", $empresasIds);
+        $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
         $user->tokens()->delete();
         $token = $user->createToken('user-token', $abilities)->plainTextToken;
         return response()->json([
             'nome'    => $user->USU_NOME,
             'isOwner' => $user->USU_IS_OWNER,
             'quantidade_empresas' => $quantidadeEmpresas,
-            'empresas_ids' => $empresasIds,
             'modulos' => $user->modulos->pluck('MOD_NOME')
         ])
             ->cookie('token', $token, 60 * 24 * 30, '/', null, null, false, true, 'lax')
@@ -113,8 +112,8 @@ class AuthController extends Controller
 
         return response()->json([
             'mensagem'   => 'Empresa selecionada com sucesso',
-            'token'      => $token,
-            'empresa_id' => $request->empresa_id
+            'token'      => $token
         ]);
     }
+   
 }

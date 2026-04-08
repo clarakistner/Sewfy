@@ -5,6 +5,6 @@ use App\Http\Controllers\AuthController;
 
 // Rotas de autenticação
 Route::post('/auth/login', [AuthController::class, 'loginUsuario']);
-Route::post('/auth/adm/login', [AuthController::class, 'loginAdm']);
+Route::middleware(['web'])->post('/auth/adm/login', [AuthController::class, 'loginAdm']);
 Route::middleware('auth:sanctum')->post('/auth/define-empresa', [AuthController::class, 'defineEmpresaSelecionada']);
 Route::middleware('auth:sanctum')->post('/auth/logout', [AuthController::class, 'logout']);

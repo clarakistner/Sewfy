@@ -10,11 +10,13 @@ import {
 import "../js/API_JS/api.js";
 import "../js/configmenu.js";
 import "../js/menu.js";
+import { getBaseUrl } from "../js/API_JS/api.js";
 
 // ─────────────────────────────────────────
 // ESTADO GLOBAL
 // ─────────────────────────────────────────
 
+const url = getBaseUrl();
 let listaProdutos = null;
 
 const PROD_TIPO = {
@@ -153,7 +155,7 @@ function handleInput(e) {
 async function fecharModal() {
     OPINs.length = 0;
     listaProdutos = await window.api.get("/produtos");
-    window.location.href = `${window.BASE_URL}/ordensdeproducao`;
+    window.location.href = `${url}/ordensdeproducao`;
 }
 
 function navegarParaInsumos(e) {
@@ -405,7 +407,7 @@ async function confirmarOrdem() {
 
         mostrarToast("Ordem de Produção criada!");
         setTimeout(() => {
-            window.location.href = `${window.BASE_URL}/ordensdeproducao`;
+            window.location.href = `${url}/ordensdeproducao`;
         }, 1000);
     } catch (error) {
         console.log(`Erro ao confirmar ordem: ${error}`);

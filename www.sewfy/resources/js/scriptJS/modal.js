@@ -3,16 +3,18 @@ import { organizaDadosTela, organizaCardsTopo } from './renderizacao.js'
 import { getInsumosBanco } from '../modalOrdemDeProducao.js'
 import { resgataListaFornecedores, resgataListaProdutos } from './banco.js'
 import { setListaDOM, setInsumosDeletados, setInsumosInseridos } from './estado.js'
+import { getBaseUrl } from '../API_JS/api.js'
 
 
 // CONTROLE DO MODAL (abrir, fechar, blur)
 
 var main = document.querySelector(".principal");
 
+const url = getBaseUrl();
 // Abre o modal de edicao: carrega o HTML via fetch, injeta no DOM
 // e dispara o carregamento de todos os dados necessarios para a tela
 export async function abreModal() {
-  const response = await fetch(`${window.BASE_URL}/editar-ordemdeproducao`);
+  const response = await fetch(`${url}/editar-ordemdeproducao`);
   const data = await response.text();
 
   document.body.insertAdjacentHTML("afterbegin", data);

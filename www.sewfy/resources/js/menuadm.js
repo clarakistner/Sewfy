@@ -1,6 +1,8 @@
 import "./API_JS/api.js";
+import { getBaseUrl, deleteCookie} from "./API_JS/api.js";
 // CHAMA O MENU
-fetch(`${window.BASE_URL}/menuadm`)
+const url = getBaseUrl()
+fetch(`${url}/menu-adm`)
     .then(response => response.text())
     .then(data => {
         document.querySelector('.layout').insertAdjacentHTML("afterbegin", data)
@@ -33,21 +35,21 @@ document.addEventListener("click", (e) => {
 function irParaPagina(botao) {
     switch (botao) {
         case 0:
-            window.location.href = `${window.BASE_URL}/homeadm`
+            window.location.href = `${url}/home-adm`
             break
         case 1:
-            window.location.href = `${window.BASE_URL}/cadastro-empresa`
+            window.location.href = `${url}/cadastro-empresa`
             break
         case 2:
-            window.location.href = `${window.BASE_URL}/relatoriosadm`
+            window.location.href = `${url}/relatorios-adm`
             break
         case 3:
-            window.location.href = `${window.BASE_URL}/configadm`
+            window.location.href = `${url}/config-adm`
             break
         case 4:
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('email');
-            window.location.replace(`${window.BASE_URL}/loginadm`);
+            deleteCookie('token');
+            
+            window.location.replace(`${url}/login-adm`);
             break
     }
 }

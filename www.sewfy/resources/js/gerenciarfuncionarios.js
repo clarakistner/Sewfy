@@ -1,6 +1,7 @@
 import { mascaraTelefone } from "../js/assets/mascaras.js";
 import { mostrarToast } from "./toast/toast.js";
 import { aplicarMascaraTelefone } from "../js/assets/mascaras.js";
+import { getBaseUrl } from "./API_JS/api.js";
 
 let timeout;
 document.addEventListener("input", handleInput);
@@ -102,13 +103,13 @@ document.addEventListener("click", async (e) => {
 
   e.preventDefault();
   e.stopPropagation();
-
+const url = getBaseUrl();
   window.funcionarioAtualId = botao.dataset.id;
   const { carregaJsCssEditarFuncionario } = await import("../js/editarfuncionarios.js");
   await carregaJsCssEditarFuncionario();
   try {
     const modalHTML = await fetch(
-      `${window.BASE_URL}/editar-funcionario`
+      `${url}/editar-funcionario`
     ).then((r) => r.text());
     const telaGerenciar = document.querySelector(".gerenciarFuncionarios");
     if (!telaGerenciar) return;

@@ -1,27 +1,31 @@
-const API_BASE = 'http://localhost:8000';
+import { getCookie, deleteCookie } from "../API_JS/api";
+import "../API_JS/api.js";
+const API_BASE = "http://localhost:8000";
 
 export function verificarAuth() {
-    const token = sessionStorage.getItem('token');
+    const token = decodeURIComponent(getCookie("token") ?? "");
     if (!token) {
-        window.location.replace('/loginadm');
+        window.location.replace("/login-adm");
     }
 }
 
 export async function apiFetch(endpoint, options = {}) {
-    const token     = sessionStorage.getItem('token');
-    const empresaId = sessionStorage.getItem('empresa_id');
-
+    const token = decodeURIComponent(getCookie("token") ?? "");
+    await window.inicializarCsrf();
+    const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN") ?? "");
+    console.log("XCSR: " + xsrfToken);
     const headers = {
-        'Content-Type': 'application/json',
-        'Accept':       'application/json',
-        ...(token     ? { 'Authorization': `Bearer ${token}` }   : {}),
-        ...(empresaId ? { 'X-Empresa-Id': empresaId }            : {}),
-        ...(options.headers || {})
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        credentials: "include",
+        "X-XSRF-TOKEN": xsrfToken,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
     };
 
     const response = await fetch(`${API_BASE}${endpoint}`, {
         ...options,
-        headers
+        headers,
     });
 
     if (response.status === 401) {
@@ -33,22 +37,26 @@ export async function apiFetch(endpoint, options = {}) {
 }
 
 export async function logout() {
-    const token = sessionStorage.getItem('token');
-
+    const token = decodeURIComponent(getCookie("token") ?? "");
+    await window.inicializarCsrf();
+    const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN") ?? "");
+    console.log("XCSR: " + xsrfToken);
     if (token) {
         try {
             await fetch(`${API_BASE}/api/auth/logout`, {
-                method: 'POST',
+                method: "POST",
+                credentials: "include",
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept':        'application/json',
-                }
+                    Authorization: `Bearer ${token}`,
+                    Accept: "application/json",
+                },
             });
         } catch (e) {
-            console.warn('[LOGOUT] Erro ao invalidar token no servidor:', e);
+            console.warn("[LOGOUT] Erro ao invalidar token no servidor:", e);
         }
     }
+    deleteCookie("email");
+    deleteCookie("token");
 
-   
-    window.location.replace('/loginadm');
+    window.location.replace("/login-adm");
 }

@@ -1,11 +1,13 @@
 import { mostrarToast } from "./toast/toast.js";
 import { formatarMoeda, converterMoedaParaNumero } from "../js/assets/mascaras.js";
 import "./API_JS/api.js";
+import { getBaseUrl } from "./API_JS/api.js";
 
+const url  =  getBaseUrl()
 // ABRIR MODAL
 document.addEventListener("click", (e) => {
     if (e.target.closest(".botao-criar-produto")) {
-        fetch(window.BASE_URL+"/cadastro-produto")
+        fetch(url+"/cadastro-produto")
             .then(res => res.text())
             .then(html => {
                 document.body.insertAdjacentHTML("afterbegin", html);

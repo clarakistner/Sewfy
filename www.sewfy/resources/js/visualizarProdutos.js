@@ -1,6 +1,9 @@
 import { mostrarToast } from "./toast/toast.js";
 import { formatarMoeda, converterMoedaParaNumero } from "../js/assets/mascaras.js";
+import { getBaseUrl } from "./API_JS/api.js";
 
+
+const url = getBaseUrl();
 // HELPERS
 function exibirTipo(tipo) {
     const mapa = {
@@ -25,7 +28,7 @@ let modalHTMLCache = null;
 
 async function carregarModalHTML() {
     if (modalHTMLCache) return modalHTMLCache;
-    modalHTMLCache = await fetch(`${window.BASE_URL}/visualizar-produto`)
+    modalHTMLCache = await fetch(`${url}/visualizar-produto`)
         .then(res => res.text());
     return modalHTMLCache;
 }

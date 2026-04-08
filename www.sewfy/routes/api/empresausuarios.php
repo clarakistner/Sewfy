@@ -9,4 +9,9 @@ Route::middleware(['auth:sanctum', 'impersonate'])->group(function () {
     Route::get('/empresa-usuarios/funcionarios', [EmpresaUsuariosController::class, 'buscaFuncionariosEmpresa']);
     Route::get('/empresa-usuario/{id}', [EmpresaUsuariosController::class, 'buscaFuncionario']);
     Route::put('/empresa-usuario/{id}', [EmpresaUsuariosController::class, 'atualizarFuncionario']);
+    
+});
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/empresa-usuario/usuario/empresas', [EmpresaUsuariosController::class, 'getEmpresasUsuario']);
 });

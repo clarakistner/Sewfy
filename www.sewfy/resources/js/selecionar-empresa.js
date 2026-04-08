@@ -1,19 +1,18 @@
+import "./API_JS/api.js";
+import { deleteCookie, getBaseUrl, setCookie } from "./API_JS/api.js";
+
+const url = getBaseUrl();
 document.addEventListener("DOMContentLoaded", async () => {
 
   // Exibe o email do usuário
-  const usuarioEmail = sessionStorage.getItem("usuario_email");
-  const emailEl = document.getElementById("usuario-email");
-  if (emailEl && usuarioEmail) {
-    emailEl.textContent = usuarioEmail;
-  }
+  
 
-  const empresasIds = JSON.parse(
-    sessionStorage.getItem("empresas_ids") || "[]",
-  );
+  const data = await window.api.get('/empresa-usuario/usuario/empresas');
+  const empresas = data.empresas;
   const select = document.getElementById("select-empresa");
   if (!select) return;
 
-  if (empresasIds.length === 0) {
+  if (empresas.length === 0) {
     const option = document.createElement("option");
     option.disabled = true;
     option.textContent = "Nenhuma empresa associada a esta conta.";
@@ -22,13 +21,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const promises = empresasIds.map((id) => retornarNomeEmpresa(id));
-    const nomes = await Promise.all(promises);
-
-    empresasIds.forEach((id, index) => {
+   
+    console.log("EMPRESAS: " + JSON.stringify(empresas,null, 2))
+   Object.entries(empresas).forEach((emp) => {
       const option = document.createElement("option");
-      option.value = id;
-      option.textContent = nomes[index];
+      option.value = emp[0];
+      option.textContent = emp[1];
       select.appendChild(option);
     });
   } catch (error) {
@@ -50,19 +48,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function selecionarEmpresa(empresaId) {
   try {
     const body = { empresa_id: parseInt(empresaId) };
-    const response = await window.api.post("/auth/define-empresa", body);
-    window.location.href = `${window.BASE_URL}/home`;
+    const data = await window.api.post("/auth/define-empresa", body);
+    deleteCookie("token");
+    setCookie("token", data.token, 120);
+
+    window.location.href = `${url}/home`;
   } catch (error) {
     console.error("Erro ao selecionar empresa:", error);
   }
 }
 
-async function retornarNomeEmpresa(id) {
-  try {
-    const response = await window.api.get(`/adm/empresa/nome/${parseInt(id)}`);
-    return response.EMP_NOME;
-  } catch (error) {
-    console.error("Erro ao retornar nome da empresa:", error);
-    return "Empresa Desconectada";
-  }
-}

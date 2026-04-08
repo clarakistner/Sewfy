@@ -6,12 +6,13 @@ import {
     aplicarMascaraTelefone
 } from "../js/assets/mascaras.js";
 import { validarCpfCnpj } from "../js/assets/validacoes.js";
+import { getBaseUrl } from "./API_JS/api.js";
 
 let modalHTMLCache = null;
-
+const url = getBaseUrl();
 async function carregarModalHTML() {
     if (modalHTMLCache) return modalHTMLCache;
-    modalHTMLCache = await fetch(`${window.BASE_URL}/visualizar-fornecedor`)
+    modalHTMLCache = await fetch(`${url}/visualizar-fornecedor`)
         .then(res => res.text());
     return modalHTMLCache;
 }

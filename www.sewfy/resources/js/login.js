@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 mostrarToast("Erro ao conectar com o servidor", "erro");
             }
         });
-console.log("[FORM]", form);
+    console.log("[FORM]", form);
     // Login
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -111,19 +111,17 @@ console.log("[FORM]", form);
                 removeTelaCarregamento();
                 return;
             }
-
-            removeTelaCarregamento();
-
-            const urlAnterior = decodeURIComponent(
-                getCookie("url_anterior") ?? "",
-            );
             deleteCookie("url_anterior");
+            removeTelaCarregamento();
+            if (parseInt(data.quantidade_empresas) > 0) {
+                window.location.replace("/selecionar-empresa");
+                return;
+            }
 
-            const urlSegura = urlAnterior.startsWith(window.location.origin)
-                ? urlAnterior
-                : "/home";
+            
+            
 
-            window.location.replace(urlSegura);
+            window.location.replace("/home");
         } catch (erro) {
             console.error("[ERRO FETCH]", erro);
             mostrarToast("Erro ao conectar com o servidor", "erro");

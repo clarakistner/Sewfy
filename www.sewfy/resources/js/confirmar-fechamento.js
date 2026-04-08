@@ -1,6 +1,9 @@
 import "../css/confirmar-fechamento.css";
 import { mostrarToast } from "./toast/toast.js";
 import { getOrdemProducao } from "./modalOrdemDeProducao.js";
+import { getBaseUrl } from "./API_JS/api.js";
+
+const url = getBaseUrl();
 document.addEventListener("click", async (e) => {
     if (e.target.id === "cancelClose") {
         fecharConfirmarFechamento();
@@ -46,6 +49,7 @@ async function enviarFechamento() {
         if (modalDetails) {
             modalDetails.remove();
         }
+        mostrarToast("Ordem de Produção Fechada!");
         invalidarCache();
         listarOrdensProducao(null, null);
     } catch (error) {
@@ -57,8 +61,8 @@ async function enviarFechamento() {
 export async function initConfirmarFechamento() {
     try {
         const [ dataResponse, cssResponse]  = await Promise.all([
-            fetch(`${window.BASE_URL}/confirmar-fechamento`),
-            fetch(`${window.BASE_URL}/confirmar-fechamento.css`),
+            fetch(`${url}/confirmar-fechamento`),
+            fetch(`${url}/confirmar-fechamento.css`),
         ]);
         const html = await dataResponse.text();
         const css = await cssResponse.text();

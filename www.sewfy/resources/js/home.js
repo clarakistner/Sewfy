@@ -1,10 +1,8 @@
-
-
 import "../js/menu.js";
 import "../js/modalOrdemDeProducao.js";
 import "../js/visualizarContas.js";
 import "../js/configmenu.js";
-import { getCookie, setCookie, deleteCookie, popCookie } from './API_JS/api.js';
+import { getCookie, setCookie, deleteCookie, popCookie } from "./API_JS/api.js";
 import { API, getBaseUrl } from "./API_JS/api.js";
 
 if (!window.api) {
@@ -12,79 +10,85 @@ if (!window.api) {
     window.api = new API();
 }
 window.addEventListener("load", () => {
-   const urlAnterior = getCookie("url_anterior") ?? "";
+    const urlAnterior = getCookie("url_anterior") ?? "";
 
-deleteCookie("url_anterior");
+    deleteCookie("url_anterior");
 
-const urlSegura = urlAnterior.startsWith(window.location.origin)
-    ? urlAnterior
-    : "";
+    const urlSegura = urlAnterior.startsWith(window.location.origin)
+        ? urlAnterior
+        : "";
 
-if (urlSegura && urlSegura !== window.location.href) { 
-    window.location.replace(urlSegura);
-}
+    if (urlSegura && urlSegura !== window.location.href) {
+        window.location.replace(urlSegura);
+    }
 });
 
 async function carregarHome() {
-  try {
-    const res = await window.api.get("/home/config");
-    const config = res.config;
-    const main = document.querySelector("main");
-    main.innerHTML = "";
+    try {
+        const res = await window.api.get("/home/config");
+        const config = res.config;
+        const main = document.querySelector("main");
+        main.innerHTML = "";
 
-    if (config.EXIBIR_ORDENS) {
-      await renderizarOrdens(main, config.FILTRO_ORDENS);
+        if (config.EXIBIR_ORDENS) {
+            await renderizarOrdens(main, config.FILTRO_ORDENS);
+        }
+
+        if (config.EXIBIR_CONTAS_PAGAR) {
+            await renderizarContasPagar(main, config.FILTRO_CONTAS_PAGAR);
+        }
+    } catch (error) {
+        console.error("Erro ao carregar home:", error);
     }
-
-    if (config.EXIBIR_CONTAS_PAGAR) {
-      await renderizarContasPagar(main, config.FILTRO_CONTAS_PAGAR);
-    }
-
-  } catch (error) {
-    console.error("Erro ao carregar home:", error);
-  }
 }
 
 async function renderizarOrdens(main, filtro) {
-  const secao = document.createElement("section");
-  secao.classList.add("secao-ordens");
+    const secao = document.createElement("section");
+    secao.classList.add("secao-ordens");
 
-  const titulo = filtro === "aberta"  ? "Ordens de Produção Abertas"
-               : filtro === "fechada" ? "Ordens de Produção Fechadas"
-               : "Ordens de Produção";
+    const titulo =
+        filtro === "aberta"
+            ? "Ordens de Produção Abertas"
+            : filtro === "fechada"
+              ? "Ordens de Produção Fechadas"
+              : "Ordens de Produção";
 
-  secao.innerHTML = `
+    secao.innerHTML = `
     <div class="titulo-secao">
       <div class="barra"></div>
       <h2>${titulo}</h2>
     </div>
     <div class="lista-ordens-home"></div>
   `;
-  main.appendChild(secao);
+    main.appendChild(secao);
 
-  try {
-    const res = await window.api.get("/ordemdeproducao/listar");
-    let ordens = res.ordensProducao ?? [];
+    try {
+        const res = await window.api.get("/ordemdeproducao/listar");
+        let ordens = res.ordensProducao ?? [];
 
-    if (filtro === "aberta")  ordens = ordens.filter(op => !op.datae);
-    if (filtro === "fechada") ordens = ordens.filter(op => !!op.datae);
+        if (filtro === "aberta") ordens = ordens.filter((op) => !op.datae);
+        if (filtro === "fechada") ordens = ordens.filter((op) => !!op.datae);
 
-    const lista = secao.querySelector(".lista-ordens-home");
+        const lista = secao.querySelector(".lista-ordens-home");
 
-    if (ordens.length === 0) {
-      lista.innerHTML = `<div class="vazio">Nenhuma ordem encontrada</div>`;
-      return;
-    }
+        if (ordens.length === 0) {
+            lista.innerHTML = `<div class="vazio">Nenhuma ordem encontrada</div>`;
+            return;
+        }
 
-    for (const op of ordens) {
-      const nomeProduto  = await retornaNomeProduto(op.prodIDOP);
-      const dataAbertura = op.dataa ? new Date(op.dataa).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "-";
-      const statusTexto  = !op.datae ? "Aberta" : "Fechada";
+        for (const op of ordens) {
+            const nomeProduto = await retornaNomeProduto(op.prodIDOP);
+            const dataAbertura = op.dataa
+                ? new Date(op.dataa).toLocaleDateString("pt-BR", {
+                      timeZone: "UTC",
+                  })
+                : "-";
+            const statusTexto = !op.datae ? "Aberta" : "Fechada";
 
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.style.cursor = "pointer";
-      card.innerHTML = `
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.style.cursor = "pointer";
+            card.innerHTML = `
         <div class="linha">
           <div class="ordem">
             <div class="label">Ordem de Produção</div>
@@ -112,60 +116,63 @@ async function renderizarOrdens(main, filtro) {
         </div>
       `;
 
-      card.addEventListener("click", async () => {
-        const { abrirModal } = await import("../js/modalOrdemDeProducao.js");
-        await abrirModal(op.idOP);
-      });
+            card.addEventListener("click", async () => {
+                const { abrirModal } =
+                    await import("../js/modalOrdemDeProducao.js");
+                await abrirModal(op.idOP);
+            });
 
-      lista.appendChild(card);
+            lista.appendChild(card);
+        }
+    } catch (error) {
+        console.error("Erro ao buscar ordens:", error);
     }
-
-  } catch (error) {
-    console.error("Erro ao buscar ordens:", error);
-  }
 }
 
 async function renderizarContasPagar(main, filtro) {
-  const secao = document.createElement("section");
-  secao.classList.add("secao-contas");
+    const secao = document.createElement("section");
+    secao.classList.add("secao-contas");
 
-  const titulo = filtro === "pendente" ? "Contas a Pagar Pendentes"
-               : filtro === "pago"     ? "Contas a Pagar Pagas"
-               : "Contas a Pagar";
+    const titulo =
+        filtro === "pendente"
+            ? "Contas a Pagar Pendentes"
+            : filtro === "pago"
+              ? "Contas a Pagar Pagas"
+              : "Contas a Pagar";
 
-  secao.innerHTML = `
+    secao.innerHTML = `
     <div class="titulo-secao">
       <div class="barra"></div>
       <h2>${titulo}</h2>
     </div>
     <div class="lista-contas-home"></div>
   `;
-  main.appendChild(secao);
+    main.appendChild(secao);
 
-  try {
-    const params = filtro !== "todos" ? `?status=${filtro}` : "";
-    const contas = await window.api.get(`/contas-pagar${params}`);
-    const lista  = secao.querySelector(".lista-contas-home");
+    try {
+        const params = filtro !== "todos" ? `?status=${filtro}` : "";
+        const contas = await window.api.get(`/contas-pagar${params}`);
+        const lista = secao.querySelector(".lista-contas-home");
 
-    if (!Array.isArray(contas) || contas.length === 0) {
-      lista.innerHTML = `<div class="vazio">Nenhuma conta encontrada</div>`;
-      return;
-    }
+        if (!Array.isArray(contas) || contas.length === 0) {
+            lista.innerHTML = `<div class="vazio">Nenhuma conta encontrada</div>`;
+            return;
+        }
 
-    contas.forEach(cp => {
-      const card = document.createElement("div");
-      card.classList.add("card", "botao-visualizar-conta");
-      card.style.cursor = "pointer";
+        contas.forEach((cp) => {
+            const card = document.createElement("div");
+            card.classList.add("card", "botao-visualizar-conta");
+            card.style.cursor = "pointer";
 
-      card.dataset.fornecedor = cp.fornecedor ?? "";
-      card.dataset.status     = cp.status     ?? "";
-      card.dataset.valor      = cp.valor      ?? "";
-      card.dataset.vencimento = cp.vencimento ?? "";
-      card.dataset.pagamento  = cp.pagamento  ?? "";
-      card.dataset.telefone   = cp.telefone   ?? "";
-      card.dataset.op         = cp.op_id      ?? "";
+            card.dataset.fornecedor = cp.fornecedor ?? "";
+            card.dataset.status = cp.status ?? "";
+            card.dataset.valor = cp.valor ?? "";
+            card.dataset.vencimento = cp.vencimento ?? "";
+            card.dataset.pagamento = cp.pagamento ?? "";
+            card.dataset.telefone = cp.telefone ?? "";
+            card.dataset.op = cp.op_id ?? "";
 
-      card.innerHTML = `
+            card.innerHTML = `
         <div class="linha">
           <div class="ordem">
             <div class="label">Ordem de Produção</div>
@@ -196,31 +203,30 @@ async function renderizarContasPagar(main, filtro) {
         </div>
       `;
 
-      card.addEventListener("click", async () => {
-          const { } = await import("../js/visualizarContas.js");
-      });
+            card.addEventListener("click", async () => {
+                const {} = await import("../js/visualizarContas.js");
+            });
 
-      lista.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error("Erro ao buscar contas:", error);
-  }
+            lista.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Erro ao buscar contas:", error);
+    }
 }
 
 async function retornaNomeProduto(id) {
-  try {
-    const produto = await window.api.get(`/produtos/${parseInt(id)}`);
-    return produto.nome;
-  } catch (error) {
-    console.error("Erro ao buscar produto:", error);
-    return "-";
-  }
+    try {
+        const produto = await window.api.get(`/produtos/${parseInt(id)}`);
+        return produto.nome;
+    } catch (error) {
+        console.error("Erro ao buscar produto:", error);
+        return "-";
+    }
 }
 
 function formatarData(data) {
-  if (!data) return "-";
-  return new Date(data).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+    if (!data) return "-";
+    return new Date(data).toLocaleDateString("pt-BR", { timeZone: "UTC" });
 }
 
 document.addEventListener("DOMContentLoaded", carregarHome);

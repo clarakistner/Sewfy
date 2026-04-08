@@ -1,5 +1,6 @@
 import { mostrarToast } from "./toast/toast.js";
 import { initConfirmarFechamento } from "./confirmar-fechamento.js";
+import { getBaseUrl } from "./API_JS/api.js";
 let ordemProducao = null;
 let insumosBanco = [];
 
@@ -27,11 +28,11 @@ async function handleClick(e) {
         initConfirmarFechamento();
     }
 }
-
+const url = getBaseUrl();
 
 export async function abrirModal(id) {
     try {
-        const response = await fetch(`${window.BASE_URL}/modal-ordem`);
+        const response = await fetch(`${url}/modal-ordem`);
 
         await resgataOPCompletaBanco(id);
         const data = await response.text();
