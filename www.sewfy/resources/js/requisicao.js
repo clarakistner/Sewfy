@@ -431,7 +431,7 @@ function renderLista(pesquisa = null) {
             "</span>" +
             "</div>" +
             '<div class="insumo-card-field">' +
-            '<span class="insumo-card-label">' + svgUser(insumo.IDFORNECEDOR ? "#e74c3c" : "#e74c3c", null ) + " FORNECEDOR</span>" +
+            '<span class="insumo-card-label">' + svgUser(insumo.IDFORNECEDOR ? "#e74c3c" : "#9ca3af") + " FORNECEDOR</span>" +
             '<span class="insumo-card-value">' + esc(valorNomeFornecedor(insumo.IDFORNECEDOR)) + "</span>" +
             "</div>" +
             '<div class="insumo-card-actions">' +
@@ -659,9 +659,8 @@ function svgScissors(color) {
     return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`;
 }
 
-function svgUser(color, noFor =null) {
-    const cor = noFor ? color : "#111827";
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${cor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+function svgUser(color) {
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
 }
 
 function svgHash(color) {
