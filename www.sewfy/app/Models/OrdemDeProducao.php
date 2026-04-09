@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\OPInsumo;
 
 class OrdemDeProducao extends Model
 {
@@ -38,4 +39,8 @@ class OrdemDeProducao extends Model
         'EMP_ID'
 
     ];
+    public function insumos()
+{
+    return $this->hasMany(OPInsumo::class, 'OP_ID', 'OP_ID');
+}
 }

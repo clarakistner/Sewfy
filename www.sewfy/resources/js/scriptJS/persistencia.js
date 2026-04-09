@@ -6,6 +6,7 @@ import { verificaQuantidadesOPOPIN, verificaCampo } from './validacoes.js'
 import { resgataProdutoPeloID } from './banco.js'
 import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './renderizacao.js'
 import { organizaDivNovoInsumo } from './renderizacao.js'
+import { converterMoedaParaNumero } from '../assets/mascaras.js'
 
 // PERSISTENCIA (salvar, editar e deletar no banco)
 
@@ -87,6 +88,7 @@ async function editaInsumos() {
     const listaInsumos = getInsumosBanco()
     const listaEdicao = []
     listaInsumos.forEach(insumo => {
+      console.log("Insumo: "+JSON.stringify(insumo, null, 2))
       const campos = document.querySelectorAll(`.opin${insumo.idOPIN}`)
       listaEdicao.push(retornaDadosCamposInsumo(insumo, campos))
     })
@@ -107,6 +109,7 @@ function retornaDadosCamposInsumo(insumo, campos) {
     const dados = {}
     let campoQtd
     let campoFor
+    let campoPreco
     campos.forEach(campo => {
       if (campo.id == `qtd${insumo.idOPIN}`) {
         campoQtd = campo
@@ -114,12 +117,17 @@ function retornaDadosCamposInsumo(insumo, campos) {
       else if (campo.dataset.field == "fornecedor" && campo.closest('.boxFornecedor').style.display !== 'none') {
         campoFor = campo
       }
+      else if (campo.id == `preco${insumo.idOPIN}`) {
+        campoPreco = campo
+      }
     })
-    if (!!campoQtd) {
+    if (!!campoQtd && !!campoPreco) {
       const qtdParsed = parseInt(campoQtd.value)
+      const precoParsed = parseFloat(converterMoedaParaNumero(campoPreco.value))
       dados.qtdInsumo = isNaN(qtdParsed) ? 0 : qtdParsed
       dados.idFor = !campoFor ? null : parseInt(campoFor.value)
       dados.idOPIN = parseInt(insumo.idOPIN)
+      dados.custouOPIN = isNaN(precoParsed) ? 0 : precoParsed
     }
     return dados
   } catch (error) {

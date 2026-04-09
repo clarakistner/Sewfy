@@ -4,7 +4,6 @@ namespace App\Http\Controllers\OPs;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrdemDeProducao;
-use App\Models\OPInsumo;
 use Illuminate\Http\Request;
 
 class VisualizarOrdemProducaoController extends Controller
@@ -12,22 +11,31 @@ class VisualizarOrdemProducaoController extends Controller
     public function visualizarOP(Request $request, $id)
     {
         try {
-            $idUsuario = (int) $request->user()->USU_ID;
-            $user = $request->user();
-        $abilities = $user->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId = str_replace('empresa_', '', $ability);
+            $user      = $request->user();
+            $idUsuario = (int) $user->USU_ID;
+            $abilities = $user->currentAccessToken()->abilities;
+            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
 
-            // Busca a OP pelo ID e usuário
-            $op = OrdemDeProducao::where('OP_ID', $id)
+            if (!$ability) {
+                return response()->json([
+                    'sucesso'          => false,
+                    'erro'             => true,
+                    'mensagem_de_erro' => 'Token inválido'
+                ], 403);
+            }
+
+            $empresaId = str_replace('empresa_', '', $ability);
+
+            $op = OrdemDeProducao::with('insumos')
+                ->where('OP_ID', $id)
                 ->where('USU_RESPONSAVEL', $idUsuario)
                 ->where('EMP_ID', $empresaId)
                 ->first();
 
             if (!$op) {
                 return response()->json([
-                    'sucesso' => false,
-                    'erro'    => true,
+                    'sucesso'          => false,
+                    'erro'             => true,
                     'mensagem_de_erro' => 'Ordem de produção não encontrada'
                 ], 404);
             }
@@ -47,20 +55,17 @@ class VisualizarOrdemProducaoController extends Controller
                 'quebra'      => $op->OP_QUEBRA
             ];
 
-            // Busca os insumos da OP
-            $insumos = OPInsumo::where('OP_ID', $op->OP_ID)->get();
-
             $opinSResposta = [];
-            foreach ($insumos as $opin) {
+            foreach ($op->insumos as $opin) {
                 $opinSResposta[] = [
-                    'idOPIN'     => $opin->OPIN_ID,
-                    'forOPIN'    => $opin->CLIFOR_ID,
-                    'custotOPIN' => $opin->OPIN_CUSTOT,
-                    'custouOPIN' => $opin->OPIN_CUSTOU,
-                    'qtdOPIN'    => $opin->OPIN_QTD,
-                    'umOPIN'     => $opin->OPIN_UM,
-                    'opOPIN'     => $opin->OP_ID,
-                    'prodIdOPIN' => $opin->PROD_ID,
+                    'idOPIN'           => $opin->OPIN_ID,
+                    'forOPIN'          => $opin->CLIFOR_ID,
+                    'custotOPIN'       => $opin->OPIN_CUSTOT,
+                    'custouOPIN'       => $opin->OPIN_CUSTOU,
+                    'qtdOPIN'          => $opin->OPIN_QTD,
+                    'umOPIN'           => $opin->OPIN_UM,
+                    'opOPIN'           => $opin->OP_ID,
+                    'prodIdOPIN'       => $opin->PROD_ID,
                     'necessita_clifor' => $opin->NECESSITA_CLIFOR === 1
                 ];
             }
@@ -75,7 +80,7 @@ class VisualizarOrdemProducaoController extends Controller
             return response()->json([
                 'sucesso'          => false,
                 'erro'             => true,
-                'mensagem de erro' => 'Erro ao tentar visualizar ordem de produção: ' . $e->getMessage()
+                'mensagem_de_erro' => 'Erro ao tentar visualizar ordem de produção: ' . $e->getMessage()
             ], 500);
         }
     }

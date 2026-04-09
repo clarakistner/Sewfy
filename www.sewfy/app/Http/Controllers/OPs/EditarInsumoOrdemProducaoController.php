@@ -48,11 +48,13 @@ class EditarInsumoOrdemProducaoController extends Controller
 
 
                 // Recalcula o custo total do insumo
-                $custot = $insumoBanco->OPIN_CUSTOU * $qtd;
+                $custot = $opin['custouOPIN'] * $qtd;
+                \Log::info($opin['custouOPIN']);
 
                 // Atualiza o insumo no banco
                 $insumoBanco->update([
                     'OPIN_QTD'               => $qtd,
+                    'OPIN_CUSTOU' => $opin['custouOPIN'], 
                     'OPIN_CUSTOT'            => $custot,
                     'CLIFOR_ID' => $idFor
                 ]);

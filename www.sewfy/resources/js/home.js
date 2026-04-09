@@ -111,7 +111,7 @@ async function renderizarOrdens(main, filtro) {
             <div>${dataAbertura}</div>
           </div>
           <div>
-            <button class="btn-verop">Ver Ordem de Produção</button>
+            <button class="btn-verop" id="${op.idOP}">Ver Ordem de Produção</button>
           </div>
         </div>
       `;
