@@ -180,6 +180,9 @@ export function defineDisplayBoxForNovoInsumo(idInsumo) {
         if (!boxForNovoInsumo || !selectUN) return;
         if (!insumo) {
             selectUN.value = "";
+            boxForNovoInsumo.style.display = "none";
+            const select = document.querySelector("#fornecedorNovoInsumo");
+            if (select) select.innerHTML = "";
             return;
         }
         selectUN.value = insumo.um;

@@ -127,8 +127,34 @@ async function criaInsumosBanco() {
     try {
         const listaInseridos = getInsumosInseridos()
         if (listaInseridos.length === 0) return
+
         const listaDeletados = getInsumosDeletados()
-        const listaBanco = listaInseridos.filter(adicionado => !listaDeletados.includes(String(adicionado.idOPIN)))
+        const listaDOM = getListaDOM()
+
+        const listaBanco = listaInseridos
+            .filter(adicionado => !listaDeletados.includes(String(adicionado.idOPIN)))
+            .map(insumo => {
+                const insumoDOM = listaDOM.find(d => String(d.idOPIN) === String(insumo.idOPIN))
+                if (!insumoDOM) return insumo
+
+                const campos = document.querySelectorAll(`.opin${insumo.idOPIN}`)
+                const necessitaClifor = insumoDOM.forOPIN != null
+
+                let campoQtd, campoFor, campoPreco
+                campos.forEach(campo => {
+                    if (campo.id === `qtd${insumo.idOPIN}`) campoQtd = campo
+                    else if (necessitaClifor && campo.dataset.field === "fornecedor" && campo.closest('.boxFornecedor')?.style.display !== 'none') campoFor = campo
+                    else if (campo.id === `preco${insumo.idOPIN}`) campoPreco = campo
+                })
+
+                return {
+                    ...insumo,
+                    qtdOPIN: campoQtd ? (parseInt(campoQtd.value) || insumo.qtdOPIN) : insumo.qtdOPIN,
+                    custouOPIN: campoPreco ? (parseFloat(converterMoedaParaNumero(campoPreco.value)) || insumo.custouOPIN) : insumo.custouOPIN,
+                    forOPIN: necessitaClifor && campoFor ? (parseInt(campoFor.value) || insumo.forOPIN) : insumo.forOPIN,
+                }
+            })
+
         await window.api.post("/insumos/criar", { insumosInseridos: listaBanco })
     } catch (error) {
         console.log(`Erro ao tentar criar insumos: ${error}`)

@@ -64,11 +64,13 @@ export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, re
 
 export function insereOptionsFornecedores(selectID) {
   try {
+    
     const listaFornecedores = getListaFornecedores()
     const selectsFornecedores = document.querySelectorAll(selectID)
     if (selectsFornecedores.length === 0) return
 
     selectsFornecedores.forEach(select => {
+      select.innerHTML=""
       listaFornecedores.forEach(forne => {
         const option = document.createElement("option")
         option.value = forne.id
@@ -90,6 +92,7 @@ export function insereOptionsFornecedores(selectID) {
 export function deletarInsumoDOM(idOPIN) {
   try {
     const listaInsumosOP = getListaDOM()
+    
     const insumosDeletados = getInsumosDeletados()
 
     if (listaInsumosOP.length - 1 == 0) {
