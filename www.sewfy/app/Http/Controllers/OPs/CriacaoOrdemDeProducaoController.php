@@ -37,21 +37,30 @@ class CriacaoOrdemDeProducaoController extends Controller
             $custouOP  = $dados['OP_CUSTOU'] ?? null;
             $custotOP  = $dados['OP_CUSTOT'] ?? null;
 
-            // Gera ID único para a Ordem de Produção
-            $numero = OrdemDeProducao::where('USU_RESPONSAVEL', $usuarioId)->where('EMP_ID', $empresaId)->count() + 1;
+            $numero = OrdemDeProducao::where('USU_RESPONSAVEL', $usuarioId)
+                ->where('EMP_ID', $empresaId)
+                ->max('OP_CONTADOR') + 1;
+
             $idOp = 'OP0' . $usuarioId . '00' . $numero;
 
             // Persiste a Ordem de Produção no banco
-            OrdemDeProducao::create([
-                'OP_ID'            => $idOp,
-                'OP_QTD'           => $qtdProd,
-                'OP_DATAA'         => $dataa,
-                'OP_CUSTOU'        => $custouOP,
-                'OP_CUSTOT'        => $custotOP,
-                'USU_RESPONSAVEL'  => $usuarioId,
-                'PROD_ID' => $produtoId,
-                'EMP_ID' => $empresaId,
+            $op = OrdemDeProducao::create([
+                'OP_ID'           => 'TEMP',
+                'OP_QTD'          => $qtdProd,
+                'OP_DATAA'        => $dataa,
+                'OP_CUSTOU'       => $custouOP,
+                'OP_CUSTOT'       => $custotOP,
+                'USU_RESPONSAVEL' => $usuarioId,
+                'PROD_ID'         => $produtoId,
+                'EMP_ID'          => $empresaId,
             ]);
+
+            $op->refresh();
+
+            $idOp = 'OP0' . $usuarioId . '00' . $op->OP_CONTADOR;
+
+            $op->OP_ID = $idOp;
+            $op->save();
 
             // Extrai e persiste os insumos da OP
             $insumos = $dados['INSUMOS'] ?? [];

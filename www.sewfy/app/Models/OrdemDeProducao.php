@@ -34,6 +34,7 @@ class OrdemDeProducao extends Model
         'OP_QTDE',
         'OP_QUEBRA',
         'USU_RESPONSAVEL',
+        'OP_CONTADOR',
         'PROD_ID',
         'OP_STATUS',
         'EMP_ID'
