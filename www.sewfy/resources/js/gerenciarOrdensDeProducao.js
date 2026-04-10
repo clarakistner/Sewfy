@@ -3,6 +3,7 @@ import "../js/configmenu.js";
 import "../js/modalOrdemDeProducao.js";
 import "../js/edicaoOrdemDeProducao.js";
 import "../js/API_JS/api.js";
+import { mostrarToast } from "./toast/toast.js";
 
 let cacheOPs = null;
 let cacheProdutosOPs = null;
@@ -12,11 +13,21 @@ let carregando = false;
 document.addEventListener("input", handleInput);
 document.addEventListener("change", handleChange);
 document.addEventListener("click", (e) => {
-    if (e.target.closest(".icone-adicionar-ordem") || e.target.closest(".botao-criar-ordem")) {
+    if (
+        e.target.closest(".icone-adicionar-ordem") ||
+        e.target.closest(".botao-criar-ordem")
+    ) {
         window.location.href = "../criar-ordemdeproducao";
     }
 });
-document.addEventListener("DOMContentLoaded", () => listarOrdensProducao(null, null));
+document.addEventListener("DOMContentLoaded", async () => {
+    const toast = sessionStorage.getItem("toast");
+    if (toast) {
+        mostrarToast(toast);
+        sessionStorage.removeItem("toast");
+    }
+    await listarOrdensProducao(null, null);
+});
 
 function handleInput(e) {
     if (e.target.closest("#barraPesquisa")) {
@@ -45,7 +56,9 @@ async function buscarEOrganizarOPs() {
 
 function filtrarOPs(listaOPs, valorPesquisa, filtro) {
     if (valorPesquisa) {
-        listaOPs = listaOPs.filter((op) => op.idOP.includes(String(valorPesquisa)));
+        listaOPs = listaOPs.filter((op) =>
+            op.idOP.includes(String(valorPesquisa)),
+        );
     }
     if (filtro) {
         listaOPs = listaOPs.filter((op) => {
@@ -59,11 +72,17 @@ function filtrarOPs(listaOPs, valorPesquisa, filtro) {
 
 function criarCardOP(op, mapaProdutos) {
     const nomeProduto = mapaProdutos.get(op.prodIDOP) || "Sem Nome";
-    const dataAbertura = new Date(op.dataa).toLocaleDateString("pt-BR", { timeZone: "UTC" });
-    const dataFechamento = op.datae ? new Date(op.datae).toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "------";
+    const dataAbertura = new Date(op.dataa).toLocaleDateString("pt-BR", {
+        timeZone: "UTC",
+    });
+    const dataFechamento = op.datae
+        ? new Date(op.datae).toLocaleDateString("pt-BR", { timeZone: "UTC" })
+        : "------";
     const statusClass = !op.datae ? "aberta" : "fechada";
     const statusTexto = !op.datae ? "Aberta" : "Fechada";
-    const quantidade = op.qtdeOP ? parseInt(op.qtdeOP).toLocaleString("pt-BR") : parseInt(op.qtdOP).toLocaleString("pt-BR");
+    const quantidade = op.qtdeOP
+        ? parseInt(op.qtdeOP).toLocaleString("pt-BR")
+        : parseInt(op.qtdOP).toLocaleString("pt-BR");
     const ordemFechadaClass = op.datae ? "ordem-fechada" : "";
 
     const card = document.createElement("div");
@@ -105,12 +124,16 @@ function criarCardOP(op, mapaProdutos) {
 function criaCardSemOPs() {
     const card = document.createElement("div");
     card.className = "card-ordem";
-    card.style.cssText = "font-size:27px;font-weight:bold;display:flex;justify-content:center;align-items:center;";
+    card.style.cssText =
+        "font-size:27px;font-weight:bold;display:flex;justify-content:center;align-items:center;";
     card.textContent = "Não há Ordens de Produção";
     return card;
 }
 
-export async function listarOrdensProducao(valorPesquisa = null, filtro = null) {
+export async function listarOrdensProducao(
+    valorPesquisa = null,
+    filtro = null,
+) {
     if (carregando) return;
     carregando = true;
     try {
@@ -125,7 +148,9 @@ export async function listarOrdensProducao(valorPesquisa = null, filtro = null) 
 
         if (!cacheProdutosOPs || cacheProdutosOPs.size === 0) {
             const ids = [...new Set(listaOPs.map((op) => op.prodIDOP))];
-            const produtos = await window.api.get(`/produtos?ids=${ids.join(",")}`);
+            const produtos = await window.api.get(
+                `/produtos?ids=${ids.join(",")}`,
+            );
             cacheProdutosOPs = new Map(produtos.map((p) => [p.id, p.nome]));
         }
 
@@ -135,9 +160,10 @@ export async function listarOrdensProducao(valorPesquisa = null, filtro = null) 
         }
 
         const fragment = document.createDocumentFragment();
-        listaOPs.forEach((op) => fragment.appendChild(criarCardOP(op, cacheProdutosOPs)));
+        listaOPs.forEach((op) =>
+            fragment.appendChild(criarCardOP(op, cacheProdutosOPs)),
+        );
         listaOrdensDOM.appendChild(fragment);
-
     } catch (error) {
         console.log(`Erro ao listar as ordens de produção: ${error}`);
     } finally {

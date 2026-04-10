@@ -5,12 +5,18 @@ import {
     atualizaOPINs,
     getInsumosDeletados,
 } from "./estado.js";
-import { getOrdemProducao, getInsumosBanco } from "../modalOrdemDeProducao.js";
-import { retornaNomeProduto } from "../modalOrdemDeProducao.js";
+import { getOrdemProducao, getInsumosBanco, retornaNomeProduto} from "../modalOrdemDeProducao.js";
+import { resgataProdutoPeloID } from "./banco.js";
 import { criarInsumo, criaOptionInsumo } from "./dom.js";
 import { insereOptionsFornecedores } from "./dom.js";
 import { mostrarToast } from "../toast/toast.js";
 import { converterMoedaParaNumero, formatarMoeda } from "../assets/mascaras.js";
+
+const PROD_TIPO = {
+    INSUMO: "insumo",
+    FINAL: "produto acabado",
+    CONJUNTO: "conjunto",
+};
 
 export async function organizaDadosTela() {
     await Promise.all([
@@ -80,7 +86,7 @@ async function defineNomeIdDOM() {
         const nomeProd = await retornaNomeProduto(op.prodIDOP);
         campo.textContent = `${op.idOP} — ${nomeProd}`;
     } catch (error) {
-        console.log(`Erro ao busca nome e código da OP: ${error}`);
+        console.error(`Erro ao busca nome e código da OP: ${error}`);
         mostrarToast("Erro ao busca nome e código da OP", "erro");
     }
 }
@@ -92,9 +98,15 @@ function colocaQuatidadeOP() {
         if (!campoQTD) return;
         campoQTD.value = op.qtdOP;
     } catch (error) {
-        console.log(`Erro ao preencher quantidade da OP: ${error}`);
+        console.error(`Erro ao preencher quantidade da OP: ${error}`);
         mostrarToast("Erro ao preencher quantidade da OP", "erro");
     }
+}
+
+async function getTipoOP() {
+    const op = getOrdemProducao();
+    const produto = await resgataProdutoPeloID(op.prodIDOP);
+    return produto?.tipo ?? null;
 }
 
 async function definiDivsInsumos() {
@@ -123,12 +135,12 @@ async function definiDivsInsumos() {
         });
         campoDivs.appendChild(fragment);
     } catch (error) {
-        console.log(`Erro ao definir divs de insumos: ${error}`);
+        console.error(`Erro ao definir divs de insumos: ${error}`);
         mostrarToast("Erro ao carregar insumos da Ordem de Produção", "erro");
     }
 }
 
-export function organizaDivNovoInsumo() {
+export async function organizaDivNovoInsumo() {
     limpaSelectInsumos();
     try {
         const selectInsumo = document.querySelector("#novoInsumo");
@@ -138,15 +150,23 @@ export function organizaDivNovoInsumo() {
         const insumosDeletados = getInsumosDeletados();
         const listaProdIds = listaDOM.map((idProd) => idProd.prodIdOPIN);
         const listaDeletados = insumosDeletados.map((idDel) => idDel.prodIdOPIN);
+
+        const tipoOP = await getTipoOP();
+        const tipoFiltro = tipoOP === PROD_TIPO.CONJUNTO ? PROD_TIPO.FINAL : PROD_TIPO.INSUMO;
+
         const fragment = document.createDocumentFragment();
         listaDeInsumos.forEach((insumo) => {
-            if (!listaProdIds.includes(insumo.id) && !listaDeletados.includes(insumo.id)) {
+            if (
+                insumo.tipo === tipoFiltro &&
+                !listaProdIds.includes(insumo.id) &&
+                !listaDeletados.includes(insumo.id)
+            ) {
                 fragment.appendChild(criaOptionInsumo(insumo));
             }
         });
         selectInsumo.appendChild(fragment);
     } catch (error) {
-        console.log(`Erro ao organizar div de novo insumo: ${error}`);
+        console.error(`Erro ao organizar div de novo insumo: ${error}`);
         mostrarToast("Erro ao carregar lista de insumos disponíveis", "erro");
     }
 }
@@ -172,7 +192,7 @@ export function defineDisplayBoxForNovoInsumo(idInsumo) {
             if (select) select.innerHTML = "";
         }
     } catch (error) {
-        console.log(`Erro ao definir display do box de fornecedor: ${error}`);
+        console.error(`Erro ao definir display do box de fornecedor: ${error}`);
         mostrarToast("Erro ao carregar fornecedores", "erro");
     }
 }
