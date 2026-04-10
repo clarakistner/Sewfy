@@ -33,6 +33,7 @@ class ListarOrdensProducaoController extends Controller
                 'qtdeOP'   => $op->OP_QTDE,
                 'prodIDOP' => $op->PROD_ID,
                 'quebra'   => $op->OP_QUEBRA,
+                'contador' => $op->OP_CONTADOR
             ]);
 
             return response()->json([

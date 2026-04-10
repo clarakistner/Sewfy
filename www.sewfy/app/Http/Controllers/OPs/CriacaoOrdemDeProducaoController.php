@@ -45,9 +45,10 @@ class CriacaoOrdemDeProducaoController extends Controller
 
             // Persiste a Ordem de Produção no banco
             $op = OrdemDeProducao::create([
-                'OP_ID'           => 'TEMP',
+                'OP_ID'           => $idOp,
                 'OP_QTD'          => $qtdProd,
                 'OP_DATAA'        => $dataa,
+                'OP_CONTADOR' => $numero,
                 'OP_CUSTOU'       => $custouOP,
                 'OP_CUSTOT'       => $custotOP,
                 'USU_RESPONSAVEL' => $usuarioId,
@@ -55,12 +56,6 @@ class CriacaoOrdemDeProducaoController extends Controller
                 'EMP_ID'          => $empresaId,
             ]);
 
-            $op->refresh();
-
-            $idOp = 'OP0' . $usuarioId . '00' . $op->OP_CONTADOR;
-
-            $op->OP_ID = $idOp;
-            $op->save();
 
             // Extrai e persiste os insumos da OP
             $insumos = $dados['INSUMOS'] ?? [];
