@@ -26,4 +26,8 @@ class OPInsumo extends Model
         'CLIFOR_ID',
         'NECESSITA_CLIFOR'
     ];
+    public function produto()
+{
+    return $this->belongsTo(Produto::class, 'PROD_ID', 'PROD_ID');
+}
 }

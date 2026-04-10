@@ -25,4 +25,5 @@ export async function initTelaCarregamento(container = null) {
 
 export function removeTelaCarregamento() {
   document.querySelector(".fundo")?.remove();
+  
 }

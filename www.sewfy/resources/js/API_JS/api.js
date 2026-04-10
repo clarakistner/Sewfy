@@ -101,7 +101,7 @@ export class API {
             }
 
             const text = await response.text();
-            console.log(`[API] Resposta de ${url}:`, text);
+        
             const dados = JSON.parse(text);
 
             if (dados.resposta) {
@@ -191,6 +191,12 @@ export function popCookie(name) {
     const value = decodeURIComponent(getCookie(name) ?? "");
     deleteCookie(name);
     return value;
+}
+export function deleteAllCookies() {
+    document.cookie.split(';').forEach(cookie => {
+        const nome = cookie.split('=')[0].trim()
+        document.cookie = `${nome}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+    })
 }
 window.api = new API();
 window.inicializarCsrf = () => window.api?.inicializarCsrf();

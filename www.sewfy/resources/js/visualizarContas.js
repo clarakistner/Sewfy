@@ -9,7 +9,7 @@ let modalHTMLCache = null;
 async function carregarModalHTML() {
 
     const urlBase = getBaseUrl() || window.BASE_URL;
-    console.log('[MODAL] urlBase:', urlBase);
+
     if (modalHTMLCache) return modalHTMLCache;
     modalHTMLCache = await fetch(`${urlBase}/visualizar-conta`)
         .then(res => res.text());
@@ -31,6 +31,7 @@ document.addEventListener("click", async (e) => {
 
         const d = botao.dataset;
 
+        console.log("Botão: " + d)
         document.getElementById("modal-fornecedor").textContent = d.fornecedor;
         document.getElementById("modal-status").textContent     = d.status === 'pago' ? 'Pago' : 'Pendente';
         document.getElementById("modal-valor").textContent      = formatarMoeda(d.valor);

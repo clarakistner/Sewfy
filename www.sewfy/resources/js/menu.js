@@ -1,4 +1,4 @@
-import { getCookie, setCookie, deleteCookie, popCookie } from "./API_JS/api.js";
+import { getCookie, setCookie, deleteCookie, popCookie, deleteAllCookies } from "./API_JS/api.js";
 import { API, getBaseUrl } from "./API_JS/api.js";
 
 if (!window.api) {
@@ -6,13 +6,11 @@ if (!window.api) {
     window.api = new API();
 }
 export function abrirMenu() {
-    console.log("[MENU] iniciando");
-    console.log("[MENU] token:", getCookie("token"));
-    console.log("[MENU] empresa_id:", getCookie("empresa_id"));
+    
     const empresaId = getCookie("empresa_id") || null;
     const urlBase = getBaseUrl() || window.BASE_URL;
 
-    Promise.all([
+    return Promise.all([
         fetch(`${urlBase}/menu`).then((res) => res.text()),
         window.api.get("/modulos-usuario"),
         empresaId
@@ -63,7 +61,6 @@ export function abrirMenu() {
         })
         .catch((e) => console.error("[MENU] Erro ao carregar menu:", e));
 }
-
 export async function usuarioEhProprietario() {
     try {
         const response = await window.api.get(
@@ -106,6 +103,7 @@ document.addEventListener("click", async (e) => {
     if (rotas[id]) {
         if (id === "btn-logout") {
             await window.api.post("/auth/logout");
+            deleteAllCookies();
             window.location.replace(rotas[id]);
         } else {
             window.location.href = rotas[id];
@@ -162,6 +160,14 @@ function ativarModuloAtual() {
         }
     });
 }
+
+window.addEventListener('pageshow', (event) => {
+    const token = getCookie('token') 
+    
+    if (event.persisted || !token) {
+        window.location.replace(`${getBaseUrl()}/login`)
+    }
+})
 
 window.addEventListener("DOMContentLoaded", () => {
     abrirMenu();

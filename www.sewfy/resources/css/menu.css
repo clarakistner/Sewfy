@@ -17,13 +17,15 @@ body {
 .layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  transition: grid-template-columns 0.6s ease;
+  transition: grid-template-columns 0.3s ease;
 }
 
 .layout.sem-menu {
   grid-template-columns: 0px 1fr;
 }
-
+.containerConfigOwner {
+  animation: none;
+}
 /* Sidebar */
 .sidebar {
   position: sticky;
@@ -34,7 +36,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   scrollbar-width: none;
 }
 .sidebar::-webkit-scrollbar {

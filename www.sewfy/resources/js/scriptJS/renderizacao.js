@@ -12,9 +12,6 @@ import { insereOptionsFornecedores } from "./dom.js";
 import { mostrarToast } from "../toast/toast.js";
 import { converterMoedaParaNumero, formatarMoeda } from "../assets/mascaras.js";
 
-// RENDERIZACAO DA TELA (organiza e popula os campos do modal)
-
-// Ponto central de renderizacao: popula nome/id, quantidades e divs de insumos
 export async function organizaDadosTela() {
     await Promise.all([
         defineNomeIdDOM(),
@@ -28,97 +25,71 @@ export async function organizaDadosTela() {
 export function organizaCardsTopo() {
     const listaInsumosInseridos = getListaDOM();
     const op = getOrdemProducao();
-    console.log(
-        "Reorganizando cards do topo com os insumos atuais:",
-        listaInsumosInseridos,
-    );
     const cardsValor = document.querySelectorAll(".summary-card__value");
     const insumoCount = document.querySelector("#insumosCount");
     if (!cardsValor) return;
+    const total = listaInsumosInseridos.size || listaInsumosInseridos.length || 0;
     cardsValor.forEach((card) => {
-        const id = card.id;
-        switch (id) {
+        switch (card.id) {
             case "cardTotalInsumos":
-                card.textContent =
-                    listaInsumosInseridos.size ||
-                    listaInsumosInseridos.length ||
-                    0;
+                card.textContent = total;
                 break;
             case "cardQtdProd":
                 card.textContent = op.qtdOP;
                 break;
             case "cardCustoTotal":
-                card.textContent = ` ${parseFloat(op.custot).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`;
+                card.textContent = parseFloat(op.custot).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
                 break;
-           
         }
     });
-    if (listaInsumosInseridos.length !== 1) {
-        insumoCount.textContent = `${listaInsumosInseridos.size || listaInsumosInseridos.length || 0} itens`;
-    } else {
-        insumoCount.textContent = `${listaInsumosInseridos.size || listaInsumosInseridos.length || 0} item`;
-    }
+    insumoCount.textContent = `${total} ${total !== 1 ? "itens" : "item"}`;
 }
 
 export function atualizaCardsTopo() {
     const cardsValor = document.querySelectorAll(".summary-card__value");
     const insumoCount = document.querySelector("#insumosCount");
     const precos = document.querySelectorAll(".preco");
-    let qtds = document.querySelectorAll(".qtd");
-    qtds = [...qtds].filter((qtd) => qtd.id !== "qtdOP");
-    const totalAtualizado = Array.from(precos).reduce((total, preco, qtd) => {
-        return total + (parseFloat(converterMoedaParaNumero(preco.value)) * parseInt(qtds[qtd].value))
-       }, 0);
+    let qtds = [...document.querySelectorAll(".qtd")].filter((qtd) => qtd.id !== "qtdOP");
+    const totalAtualizado = Array.from(precos).reduce((total, preco, i) => {
+        return total + (parseFloat(converterMoedaParaNumero(preco.value)) * parseInt(qtds[i].value));
+    }, 0);
     const qtdOP = document.querySelector("#qtdOP");
     const listaInsumosInseridos = getListaDOM();
+    const total = listaInsumosInseridos.size || listaInsumosInseridos.length || 0;
     cardsValor.forEach((card) => {
-        const id = card.id;
-        switch (id) {
+        switch (card.id) {
             case "cardCustoTotal":
-                card.textContent = ` ${isNaN(totalAtualizado) ? 'R$ 0,00' :  totalAtualizado.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`;
+                card.textContent = isNaN(totalAtualizado) ? "R$ 0,00" : totalAtualizado.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
                 break;
             case "cardQtdProd":
-                card.textContent = qtdOP.value ? qtdOP.value : 0;
+                card.textContent = qtdOP.value || 0;
                 break;
-            case "cardTotalInsumos":                card.textContent = listaInsumosInseridos.size || listaInsumosInseridos.length || 0;
+            case "cardTotalInsumos":
+                card.textContent = total;
                 break;
-
         }
     });
-    if (listaInsumosInseridos.length !== 1) {
-        insumoCount.textContent = `${listaInsumosInseridos.size || listaInsumosInseridos.length || 0} itens`;
-    } else {        insumoCount.textContent = `${listaInsumosInseridos.size || listaInsumosInseridos.length || 0} item`;
-    }}
-    
+    insumoCount.textContent = `${total} ${total !== 1 ? "itens" : "item"}`;
+}
 
-
-// Exibe o id e o nome do produto da OP no cabecalho do modal
 async function defineNomeIdDOM() {
     try {
         const campo = document.querySelector("#idNome");
-        if (!campo) {
-            return;
-        }
+        if (!campo) return;
         const op = getOrdemProducao();
         const nomeProd = await retornaNomeProduto(op.prodIDOP);
-        campo.textContent = `
-  ${op.idOP} — ${nomeProd}
-  `;
+        campo.textContent = `${op.idOP} — ${nomeProd}`;
     } catch (error) {
         console.log(`Erro ao busca nome e código da OP: ${error}`);
         mostrarToast("Erro ao busca nome e código da OP", "erro");
     }
 }
 
-// Preenche os campos de quantidade e quebra da OP com os valores atuais
 function colocaQuatidadeOP() {
     try {
         const op = getOrdemProducao();
         const campoQTD = document.querySelector("#qtdOP");
-        if (!campoQTD) {
-            console.log("Campo de quantidade não encontrado");
-            return;
-        }
+        if (!campoQTD) return;
         campoQTD.value = op.qtdOP;
     } catch (error) {
         console.log(`Erro ao preencher quantidade da OP: ${error}`);
@@ -126,113 +97,75 @@ function colocaQuatidadeOP() {
     }
 }
 
-// Cria e insere as divs de cada insumo da OP na area de insumos
 async function definiDivsInsumos() {
     try {
         const campoDivs = document.querySelector("#insumosContainer");
-        if (!campoDivs) {
-            console.log("Div de insumos não encontrada");
-            return;
-        }
+        if (!campoDivs) return;
         const insumosOP = getListaDOM();
-
-        // Limpa o array auxiliar antes de repopular para evitar acumulo em re-renderizacoes
         atualizaOPINs.length = 0;
 
-        // Busca todos os nomes dos produtos em paralelo
-        const promessasInsumos = insumosOP.map((insumo) => {
-            return retornaNomeProduto(insumo.prodIdOPIN);
-        });
-        const nomesInsumos = await Promise.all(promessasInsumos);
+        const nomesInsumos = await Promise.all(insumosOP.map((insumo) => retornaNomeProduto(insumo.prodIdOPIN)));
 
+        const fragment = document.createDocumentFragment();
         insumosOP.forEach((insumo, index) => {
             atualizaOPINs.push(insumo);
-
-            if (insumo.forOPIN == null) {
-                campoDivs.appendChild(
-                    criarInsumo(
-                        insumo.idOPIN,
-                        nomesInsumos[index],
-                        insumo.qtdOPIN,
-                        parseFloat(insumo.custouOPIN),
-                        insumo.umOPIN,
-                        insumo.forOPIN,
-                        false,
-                    ),
-                );
-            } else {
-                campoDivs.appendChild(
-                    criarInsumo(
-                        insumo.idOPIN,
-                        nomesInsumos[index],
-                        insumo.qtdOPIN,
-                        parseFloat(insumo.custouOPIN),
-                        insumo.umOPIN,
-                        insumo.forOPIN,
-                        true,
-                    ),
-                );
-            }
+            fragment.appendChild(
+                criarInsumo(
+                    insumo.idOPIN,
+                    nomesInsumos[index],
+                    insumo.qtdOPIN,
+                    parseFloat(insumo.custouOPIN),
+                    insumo.umOPIN,
+                    insumo.forOPIN,
+                    insumo.forOPIN != null,
+                )
+            );
         });
+        campoDivs.appendChild(fragment);
     } catch (error) {
         console.log(`Erro ao definir divs de insumos: ${error}`);
         mostrarToast("Erro ao carregar insumos da Ordem de Produção", "erro");
     }
 }
 
-// Popula o select de insumos disponiveis para adicionar como novo insumo
 export function organizaDivNovoInsumo() {
-    limpaSelectInsumos()
+    limpaSelectInsumos();
     try {
         const selectInsumo = document.querySelector("#novoInsumo");
-        if (!selectInsumo) {
-            console.log("Select de novo insumo não encontrado");
-            return;
-        }
+        if (!selectInsumo) return;
         const listaDeInsumos = getListaInsumos();
         const listaDOM = getListaDOM();
         const insumosDeletados = getInsumosDeletados();
         const listaProdIds = listaDOM.map((idProd) => idProd.prodIdOPIN);
-        const listaDeletados = insumosDeletados.map(
-            (idDel) => idDel.prodIdOPIN,
-        );
+        const listaDeletados = insumosDeletados.map((idDel) => idDel.prodIdOPIN);
+        const fragment = document.createDocumentFragment();
         listaDeInsumos.forEach((insumo) => {
-            if (
-                !listaProdIds.includes(insumo.id) &&
-                !listaDeletados.includes(insumo.id)
-            ) {
-                const option = criaOptionInsumo(insumo);
-                selectInsumo.appendChild(option);
+            if (!listaProdIds.includes(insumo.id) && !listaDeletados.includes(insumo.id)) {
+                fragment.appendChild(criaOptionInsumo(insumo));
             }
         });
+        selectInsumo.appendChild(fragment);
     } catch (error) {
         console.log(`Erro ao organizar div de novo insumo: ${error}`);
         mostrarToast("Erro ao carregar lista de insumos disponíveis", "erro");
     }
 }
 
-// Exibe ou oculta o campo de fornecedor para o novo insumo conforme o checkbox
-export async function defineDisplayBoxForNovoInsumo(idInsumo) {
+export function defineDisplayBoxForNovoInsumo(idInsumo) {
     try {
         const boxForNovoInsumo = document.querySelector("#boxForNovoInsumo");
         const selectUN = document.querySelector("#unidadeNovoInsumo");
-        const lista = await getListaInsumos();
+        const lista = getListaInsumos();
         const insumo = lista.find((insumo) => insumo.id === idInsumo);
-        if (!boxForNovoInsumo || !selectUN) {
-            console.log(
-                "Box de fornecedor ou unidade para novo insumo não encontrado",
-            );
-            return;
-        }
+        if (!boxForNovoInsumo || !selectUN) return;
         if (!insumo) {
-            console.log("Insumo não encontrado");
             selectUN.value = "";
             return;
         }
         selectUN.value = insumo.um;
         if (insumo.necessita_clifor) {
             boxForNovoInsumo.style.display = "flex";
-            await insereOptionsFornecedores("#fornecedorNovoInsumo");
+            insereOptionsFornecedores("#fornecedorNovoInsumo");
         } else {
             boxForNovoInsumo.style.display = "none";
             const select = document.querySelector("#fornecedorNovoInsumo");
@@ -244,7 +177,6 @@ export async function defineDisplayBoxForNovoInsumo(idInsumo) {
     }
 }
 
-// Limpa todas as divs de insumos (usado antes de re-renderizar apos exclusao)
 export function limpaDivInsumos() {
     const campoDivs = document.querySelector("#insumosContainer");
     if (campoDivs) campoDivs.innerHTML = "";

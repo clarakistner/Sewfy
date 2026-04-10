@@ -10,9 +10,6 @@ import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './render
 import { converterMoedaParaNumero, formatarMoeda } from '../assets/mascaras.js'
 import { atualizaCardsTopo } from './renderizacao.js'
 
-// CRIACAO DE ELEMENTOS DOM
-
-// Cria e retorna uma option para o select de insumos
 export function criaOptionInsumo(insumo) {
   const option = document.createElement("option")
   option.textContent = `${insumo.nome}`
@@ -20,7 +17,6 @@ export function criaOptionInsumo(insumo) {
   return option
 }
 
-// Cria e retorna a div completa de um insumo com seus campos editaveis
 export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, requerFornecedor) {
   const div = document.createElement('div')
   div.className = 'insumo'
@@ -35,7 +31,7 @@ export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, re
         <input type="number" value="${quantidade}" class="qtd opin${id}" id="qtd${id}">
       </div>
       <div class="col-2">
-        <input type="text"  value="${formatarMoeda(preco)}" class="preco opin${id}" id="preco${id}">
+        <input type="text" value="${formatarMoeda(preco)}" class="preco opin${id}" id="preco${id}">
       </div>
       <div class="col-2">
         <input value="${unidade}" data-field="unidade" disabled>
@@ -48,26 +44,16 @@ export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, re
           <span class="material-symbols-outlined icone-remover" id="${id}">delete</span>
         </button>
       </div>
-      
     </div>
   `
 
   const boxFornecedor = div.querySelector('.boxFornecedor')
   const selectFornecedor = div.querySelector(`#fornecedor${id}`)
 
-  const toggleFornecedor = () => {
-    const visivel = requerFornecedor
-    boxFornecedor.style.display = visivel ? '' : 'none'
-  };
-
-  toggleFornecedor()
-
-  // Aguarda o select ser populado antes de definir o valor selecionado
-  // O valor sera atribuido por insereOptionsFornecedores apos a insercao no DOM
+  boxFornecedor.style.display = requerFornecedor ? '' : 'none'
 
   div.querySelector('.delete').addEventListener('click', () => div.remove())
 
-  // Armazena o valor do fornecedor no dataset para ser aplicado apos popular o select
   if (fornecedor != null) {
     selectFornecedor.dataset.valorInicial = fornecedor
     selectFornecedor.value = fornecedor
@@ -76,28 +62,19 @@ export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, re
   return div
 }
 
-// Popula um select com as opcoes de fornecedores disponíveis
-export async function insereOptionsFornecedores(selectID) {
+export function insereOptionsFornecedores(selectID) {
   try {
     const listaFornecedores = getListaFornecedores()
     const selectsFornecedores = document.querySelectorAll(selectID)
-    if (selectsFornecedores.length === 0) {
-      return
-    }
+    if (selectsFornecedores.length === 0) return
 
-    // Busca todos os nomes em paralelo para evitar chamadas sequenciais
-    const promessas = listaFornecedores.map(forne => {
-      return retornaNomeFornecedor(parseInt(forne.id))
-    })
-    const fornecedores = await Promise.all(promessas)
     selectsFornecedores.forEach(select => {
-      listaFornecedores.forEach((forne, index) => {
+      listaFornecedores.forEach(forne => {
         const option = document.createElement("option")
         option.value = forne.id
-        option.textContent = fornecedores[index]
+        option.textContent = forne.nome
         select.appendChild(option)
       })
-      // Aplica o valor inicial do fornecedor agora que as options estao populadas
       if (select.dataset.valorInicial) {
         select.value = select.dataset.valorInicial
         delete select.dataset.valorInicial
@@ -109,26 +86,19 @@ export async function insereOptionsFornecedores(selectID) {
     throw error
   }
 }
-// Remove um insumo da OP no DOM e atualiza o estado em memoria
+
 export function deletarInsumoDOM(idOPIN) {
   try {
     const listaInsumosOP = getListaDOM()
     const insumosDeletados = getInsumosDeletados()
-    
 
-    // Impede remover o ultimo insumo da OP
     if (listaInsumosOP.length - 1 == 0) {
       mostrarToast("Deve haver pelo menos um insumo na Ordem de Produção!", "erro")
       return
     }
 
     setInsumosDeletados([idOPIN, ...insumosDeletados])
-
-    // Recarrega os insumos do DOM para manter o estado sincronizado
-    setListaDOM(listaInsumosOP.filter(insumo => {
-      console.log("Comparando ID:", String(insumo.idOPIN), "com", String(idOPIN));
-      return String(insumo.idOPIN) !== String(idOPIN)
-    }))
+    setListaDOM(listaInsumosOP.filter(insumo => String(insumo.idOPIN) !== String(idOPIN)))
     organizaDivNovoInsumo()
   } catch (error) {
     console.log(`Erro ao tentar deletar insumo: ${error}`)
@@ -137,7 +107,6 @@ export function deletarInsumoDOM(idOPIN) {
   }
 }
 
-// Cria novo insumo no DOM
 export async function criaNovoInsumoDOM() {
   try {
     const insumosDOM = getListaDOM()
@@ -146,13 +115,11 @@ export async function criaNovoInsumoDOM() {
     const selectUM = document.querySelector("#unidadeNovoInsumo")
     const campoQTD = document.querySelector("#quatidadeNovoInsumo")
     const boxFornecedor = document.querySelector("#boxForNovoInsumo")
-    const  campoPreco = document.querySelector("#precoNovoInsumo")
+    const campoPreco = document.querySelector("#precoNovoInsumo")
     const dados = {}
 
-    if (!verificaCampo(selectInsumo) || !verificaCampo(campoQTD) || !verificaCampo(campoPreco)) {
-      console.log("Campos de novo insumo não encontrados")
-      return
-    }
+    if (!verificaCampo(selectInsumo) || !verificaCampo(campoQTD) || !verificaCampo(campoPreco)) return
+
     if (parseInt(campoQTD.value) <= 0 || campoQTD.value.trim() == "") {
       mostrarToast("Para adicionar novo insumo \n a quantidade precisa ser\n maior que 0!", "erro")
       return
@@ -161,7 +128,7 @@ export async function criaNovoInsumoDOM() {
       mostrarToast("Para adicionar novo insumo \n é necessário escolher um dos produtos\n disponíveis", "erro")
       return
     }
-    if(parseFloat(campoPreco.value) <= 0 || campoPreco.value.trim() == ""){
+    if (parseFloat(campoPreco.value) <= 0 || campoPreco.value.trim() == "") {
       mostrarToast("Para adicionar novo insumo \n o preço precisa ser\n maior que 0!", "erro")
       return
     }
@@ -169,19 +136,14 @@ export async function criaNovoInsumoDOM() {
     const produto = await resgataProdutoPeloID(parseInt(selectInsumo.value))
     const op = getOrdemProducao()
 
-    if (produto.necessita_clifor) {
-      const selectFornecedor = document.querySelector("#fornecedorNovoInsumo")
-      dados.forOPIN = parseInt(selectFornecedor.value)
-    } else {
-      dados.forOPIN = null
-    }
+    dados.forOPIN = produto.necessita_clifor ? parseInt(document.querySelector("#fornecedorNovoInsumo").value) : null
     dados.prodIdOPIN = parseInt(produto.id)
     dados.opOPIN = op.idOP
-    dados.idOPIN = crypto.randomUUID();
+    dados.idOPIN = crypto.randomUUID()
     dados.umOPIN = produto.um
     dados.qtdOPIN = parseInt(campoQTD.value)
     dados.custouOPIN = parseFloat(converterMoedaParaNumero(campoPreco.value))
-    dados.custotOPIN = parseInt(campoQTD.value) * parseFloat(converterMoedaParaNumero(campoPreco.value))
+    dados.custotOPIN = dados.qtdOPIN * dados.custouOPIN
 
     setInsumosInseridos([...insumosInseridos, dados])
 
@@ -191,7 +153,6 @@ export async function criaNovoInsumoDOM() {
     selectUM.value = ""
     if (boxFornecedor) boxFornecedor.style.display = "none"
 
-    // Recarrega os insumos do DOM para manter o estado sincronizado
     setListaDOM([...insumosDOM, dados])
 
     limpaDivInsumos()

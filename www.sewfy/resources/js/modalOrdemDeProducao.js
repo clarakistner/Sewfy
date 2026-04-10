@@ -50,10 +50,7 @@ function ordemAbertah() {
     const btnFecharOP = document.querySelector(".fecharOP");
     const op = getOrdemProducao();
 
-    if (!btnEditar || !btnFecharOP) {
-        console.log("Botões não encontrados");
-        return;
-    }
+    if (!btnEditar || !btnFecharOP) return;
     if (!!op.datae) {
         btnEditar.remove();
         btnFecharOP.remove();
@@ -79,52 +76,39 @@ async function resgataOPCompletaBanco(id) {
 
 export async function retornaNomeProduto(id) {
     if (cacheNomes.has(id)) return cacheNomes.get(id);
-    try {
-        const produto = await window.api.get(`/produtos/${id}`);
-        cacheNomes.set(id, produto.nome);
-        return produto.nome;
-    } catch (error) {
-        console.log(`Erro ao buscar produto: ${error}`);
-        mostrarToast("Erro ao buscar produto", "erro");
-        throw error;
-    }
+    const promise = window.api.get(`/produtos/${id}`).then(p => {
+        cacheNomes.set(id, p.nome);
+        return p.nome;
+    });
+    cacheNomes.set(id, promise);
+    return promise;
 }
 
-async function insereInsumosTabela() {
+async function insereInsumosTabela(nomes) {
     const tabelaDOM = document.querySelector(".tabelaInsumos");
     if (!tabelaDOM) return;
 
-    try {
-        const nomes = await Promise.all(
-            getInsumosBanco().map((insumo) => retornaNomeProduto(insumo.prodIdOPIN))
-        );
+    const fragment = document.createDocumentFragment();
 
-        const fragment = document.createDocumentFragment();
+    getInsumosBanco().forEach((insumo, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>
+              <div class="detalhes-insumo-card">
+                <div>
+                  <p class="detalhes-insumo-nome">${nomes[index]}</p>
+                  <p class="detalhes-insumo-qtd">${insumo.qtdOPIN} ${insumo.umOPIN}</p>
+                </div>
+                <p class="detalhes-insumo-valor">
+                  ${parseFloat(insumo.custotOPIN).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                </p>
+              </div>
+            </td>
+        `;
+        fragment.appendChild(tr);
+    });
 
-        getInsumosBanco().forEach((insumo, index) => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>
-                  <div class="detalhes-insumo-card">
-                    <div>
-                      <p class="detalhes-insumo-nome">${nomes[index]}</p>
-                      <p class="detalhes-insumo-qtd">${insumo.qtdOPIN} ${insumo.umOPIN}</p>
-                    </div>
-                    <p class="detalhes-insumo-valor">
-                      ${parseFloat(insumo.custotOPIN).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                    </p>
-                  </div>
-                </td>
-            `;
-            fragment.appendChild(tr);
-        });
-
-        tabelaDOM.appendChild(fragment);
-    } catch (error) {
-        console.log(`Erro ao inserir insumos na tabela: ${error}`);
-        mostrarToast("Erro ao inserir insumos na tabela", "erro");
-        throw error;
-    }
+    tabelaDOM.appendChild(fragment);
 }
 
 async function insereDetalhesNaTela() {
@@ -143,10 +127,19 @@ async function insereDetalhesNaTela() {
         labelQtd.textContent = "Quantidade Final";
     }
 
-    const [nomeProd] = await Promise.all([
-        retornaNomeProduto(parseInt(op.prodIDOP)),
-        insereInsumosTabela(),
-    ]);
+    const todosIds = [parseInt(op.prodIDOP), ...getInsumosBanco().map(i => i.prodIdOPIN)];
+    const nomesMap = new Map();
+
+    await Promise.all(todosIds.map(async (id) => {
+        if (!nomesMap.has(id)) {
+            nomesMap.set(id, await retornaNomeProduto(id));
+        }
+    }));
+
+    const nomeProd = nomesMap.get(parseInt(op.prodIDOP));
+    const nomesInsumos = getInsumosBanco().map(i => nomesMap.get(i.prodIdOPIN));
+
+    await insereInsumosTabela(nomesInsumos);
 
     campoNome.textContent = nomeProd;
     campoQuant.textContent = parseInt(op.qtdeOP ?? op.qtdOP).toLocaleString("pt-BR");

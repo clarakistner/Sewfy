@@ -19,10 +19,7 @@ document.addEventListener("click", handleClick);
 
 window.addEventListener("load", () => {
     const urlAnterior = popCookie('url_anterior') ?? '';
-console.log('[CONFIG] load disparou');
-console.log('[CONFIG] url_anterior cookie:', document.cookie);
-console.log('[CONFIG] urlAnterior:', urlAnterior);
-console.log('[CONFIG] location.href:', window.location.href);
+    deleteCookie('url_anterior')
     if (urlAnterior && urlAnterior !== window.location.href) {
         const urlSegura = urlAnterior.startsWith(window.location.origin)
             ? urlAnterior
@@ -97,48 +94,64 @@ export default async function trocaModais() {
     const layout = document.querySelector(".layout");
 
     if (!configMenu && menu) {
-        // Save previous page BEFORE opening config menu
-        if (!getCookie("url_anterior")) {
-            document.cookie = `url_anterior=${window.location.href}; path=/; SameSite=Lax`;
-        }
+    const principal = document.querySelector(".principal");
+    if (principal) principal.style.visibility = "hidden";
 
-        menu.classList.add("fechado");
-        layout.classList.add("sem-menu");
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        menu.remove();
+    if (!getCookie("url_anterior")) {
+        document.cookie = `url_anterior=${window.location.href}; path=/; SameSite=Lax`;
+    }
 
-        await abrirConfigMenu();
+    menu.classList.add("fechado");
+    layout.classList.add("sem-menu");
+    await new Promise((resolve) => layout.addEventListener("transitionend", resolve, { once: true }));
+    menu.remove();
 
-        layout.classList.remove("sem-menu");
-        const novoConfig = document.querySelector(".corpoConfigOwner");
-        novoConfig?.classList.add("aberto");
-        initCadastroFuncionario();
+    await abrirConfigMenu();
 
-    } else if (configMenu) {
+    const novoConfig = document.querySelector(".corpoConfigOwner");
+    const container = document.querySelector(".containerConfigOwner");
+
+    if (novoConfig) novoConfig.style.visibility = "hidden";
+    if (container) container.style.visibility = "hidden";
+
+    layout.classList.remove("sem-menu");
+    await new Promise((resolve) => layout.addEventListener("transitionend", resolve, { once: true }));
+
+    if (novoConfig) novoConfig.style.visibility = "visible";
+    if (container) container.style.visibility = "visible";
+    novoConfig?.classList.add("aberto");
+    initCadastroFuncionario();
+} else if (configMenu) {
+        const principal = document.querySelector(".principal");
+        if (principal) principal.style.visibility = "hidden";
+
         configMenu.classList.remove("aberto");
         configMenu.classList.add("fechado");
         layout.classList.add("sem-menu");
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        await new Promise((resolve) => layout.addEventListener("transitionend", resolve, { once: true }));
         configMenu.remove();
 
         retiraCssJsEditarFuncionario();
         document.querySelector("#css-config")?.remove();
+        document.querySelector(".containerConfigOwner")?.remove();
 
         const urlAnterior = getCookie("url_anterior") || "/home";
-        document.querySelector(".containerConfigOwner")?.remove();
         history.pushState({}, "", urlAnterior);
-        document.querySelector(".principal").style.display = "block";
+        deleteCookie('url_anterior')
+        principal.style.display = "block";
 
         await abrirMenu();
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                layout.classList.remove("sem-menu");
-            });
-        });
+        const novoMenu = document.querySelector(".corpoMenu");
+        if (novoMenu) novoMenu.style.visibility = "hidden";
+
+        layout.classList.remove("sem-menu");
+        await new Promise((resolve) => layout.addEventListener("transitionend", resolve, { once: true }));
+
+        principal.style.visibility = "visible";
+        if (novoMenu) novoMenu.style.visibility = "visible";
     }
 }
-
 async function abrirConfigMenu() {
     urlAtual = window.location.pathname;
 
@@ -150,6 +163,9 @@ async function abrirConfigMenu() {
     const data = await response.text();
     containerPrincipal.style.display = "none";
     document.querySelector(".layout").insertAdjacentHTML("afterbegin", data);
+
+    const novoConfig = document.querySelector(".corpoConfigOwner");
+    if (novoConfig) novoConfig.style.visibility = "hidden";
 
     const empresaId = getCookie("empresa_id") || null;
     if (empresaId) {

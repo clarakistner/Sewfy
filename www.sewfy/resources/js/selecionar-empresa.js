@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
    
-    console.log("EMPRESAS: " + JSON.stringify(empresas,null, 2))
+    
    Object.entries(empresas).forEach((emp) => {
       const option = document.createElement("option");
       option.value = emp[0];

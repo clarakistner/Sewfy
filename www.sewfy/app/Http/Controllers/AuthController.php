@@ -41,7 +41,13 @@ class AuthController extends Controller
         $quantidadeEmpresas = $empresasUsuario->count();
         $empresasIds = Empresa::whereIn('EMP_ID', $empresasUsuario->pluck('EMP_ID'))->whereIn('EMP_ATIV', [1])->pluck('EMP_ID')->toArray();
 
-        $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
+        if(count($empresasIds) > 1){
+$abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
+        }else{
+            $abilities = array_map(fn($id) => "empresa_$id", $empresasIds);
+        }
+
+        
         $user->tokens()->delete();
         $token = $user->createToken('user-token', $abilities)->plainTextToken;
         return response()->json([
@@ -86,10 +92,22 @@ class AuthController extends Controller
 
     // POST /api/auth/logout - Logout para ambos os tipos de usuários
     public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['mensagem' => 'Logout realizado com sucesso']);
+{
+    $request->user()->currentAccessToken()->delete();
+
+    $response = response()->json(['mensagem' => 'Logout realizado com sucesso'])
+        ->withHeaders([
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Expires' => 'Sat, 01 Jan 2000 00:00:00 GMT',
+        ]);
+
+    foreach ($request->cookies->all() as $nome => $valor) {
+        $response = $response->withoutCookie($nome); 
     }
+
+    return $response;
+}
     public function defineEmpresaSelecionada(Request $request)
     {
         $request->validate([
@@ -114,6 +132,7 @@ class AuthController extends Controller
             'mensagem'   => 'Empresa selecionada com sucesso',
             'token'      => $token
         ]);
+        
     }
    
 }

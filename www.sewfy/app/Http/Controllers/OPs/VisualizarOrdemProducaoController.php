@@ -26,10 +26,14 @@ class VisualizarOrdemProducaoController extends Controller
 
             $empresaId = str_replace('empresa_', '', $ability);
 
-            $op = OrdemDeProducao::with('insumos')
+            $op = OrdemDeProducao::with(['insumos' => fn($q) => $q
+                ->select('OPIN_ID', 'CLIFOR_ID', 'OPIN_CUSTOT', 'OPIN_CUSTOU', 'OPIN_QTD', 'OPIN_UM', 'OP_ID', 'PROD_ID', 'NECESSITA_CLIFOR')
+                ->whereHas('produto', fn($q) => $q->where('PROD_ATIV', 1))
+            ])
                 ->where('OP_ID', $id)
                 ->where('USU_RESPONSAVEL', $idUsuario)
                 ->where('EMP_ID', $empresaId)
+                ->select('OP_ID', 'PROD_ID', 'OP_DATAA', 'OP_DATAE', 'OP_CUSTOT', 'OP_CUSTOU', 'OP_CUSTOUR', 'OP_QTD', 'OP_QTDE', 'USU_RESPONSAVEL', 'OP_STATUS', 'OP_QUEBRA')
                 ->first();
 
             if (!$op) {
@@ -41,34 +45,31 @@ class VisualizarOrdemProducaoController extends Controller
             }
 
             $opResposta = [
-                'idOP'        => $op->OP_ID,
-                'prodIDOP'    => $op->PROD_ID,
-                'dataa'       => $op->OP_DATAA,
-                'datae'       => $op->OP_DATAE,
-                'custot'      => $op->OP_CUSTOT,
-                'custou'      => $op->OP_CUSTOU,
-                'custour'     => $op->OP_CUSTOUR,
-                'qtdOP'       => $op->OP_QTD,
-                'qtdeOP'      => $op->OP_QTDE,
-                'usuarioIDOP' => $op->USU_ID,
-                'status'      => $op->OP_STATUS,
-                'quebra'      => $op->OP_QUEBRA
+                'idOP'            => $op->OP_ID,
+                'prodIDOP'        => $op->PROD_ID,
+                'dataa'           => $op->OP_DATAA,
+                'datae'           => $op->OP_DATAE,
+                'custot'          => $op->OP_CUSTOT,
+                'custou'          => $op->OP_CUSTOU,
+                'custour'         => $op->OP_CUSTOUR,
+                'qtdOP'           => $op->OP_QTD,
+                'qtdeOP'          => $op->OP_QTDE,
+                'responsavelIDOP' => $op->USU_RESPONSAVEL,
+                'status'          => $op->OP_STATUS,
+                'quebra'          => $op->OP_QUEBRA
             ];
 
-            $opinSResposta = [];
-            foreach ($op->insumos as $opin) {
-                $opinSResposta[] = [
-                    'idOPIN'           => $opin->OPIN_ID,
-                    'forOPIN'          => $opin->CLIFOR_ID,
-                    'custotOPIN'       => $opin->OPIN_CUSTOT,
-                    'custouOPIN'       => $opin->OPIN_CUSTOU,
-                    'qtdOPIN'          => $opin->OPIN_QTD,
-                    'umOPIN'           => $opin->OPIN_UM,
-                    'opOPIN'           => $opin->OP_ID,
-                    'prodIdOPIN'       => $opin->PROD_ID,
-                    'necessita_clifor' => $opin->NECESSITA_CLIFOR === 1
-                ];
-            }
+            $opinSResposta = $op->insumos->map(fn($opin) => [
+                'idOPIN'           => $opin->OPIN_ID,
+                'forOPIN'          => $opin->CLIFOR_ID,
+                'custotOPIN'       => $opin->OPIN_CUSTOT,
+                'custouOPIN'       => $opin->OPIN_CUSTOU,
+                'qtdOPIN'          => $opin->OPIN_QTD,
+                'umOPIN'           => $opin->OPIN_UM,
+                'opOPIN'           => $opin->OP_ID,
+                'prodIdOPIN'       => $opin->PROD_ID,
+                'necessita_clifor' => $opin->NECESSITA_CLIFOR === 1
+            ]);
 
             return response()->json([
                 'sucesso' => true,

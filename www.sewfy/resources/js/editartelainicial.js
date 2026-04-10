@@ -1,6 +1,6 @@
 import { mostrarToast } from "./toast/toast.js";
 
-console.log("Editando tela inicial...");
+
 
 document.addEventListener("click", (e) => {
   const container = document.querySelector(".editarTelaInicial");

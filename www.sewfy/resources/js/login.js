@@ -80,9 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            initTelaCarregamento();
-
             await window.inicializarCsrf();
+            initTelaCarregamento();
             const token = decodeURIComponent(getCookie("token") ?? "");
             const response = await fetch(`${API_BASE}/api/auth/login`, {
                 method: "POST",
@@ -113,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             deleteCookie("url_anterior");
             removeTelaCarregamento();
-            if (parseInt(data.quantidade_empresas) > 0) {
+            if (parseInt(data.quantidade_empresas) > 1) {
                 window.location.replace("/selecionar-empresa");
                 return;
             }

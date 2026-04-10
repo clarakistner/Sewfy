@@ -12,7 +12,6 @@ class EditarInsumoOrdemProducaoController extends Controller
     {
         try {
             $dados = $request->json()->all();
-            \Log::info($dados);
 
             if (!$dados) {
                 return response()->json([
@@ -30,33 +29,25 @@ class EditarInsumoOrdemProducaoController extends Controller
                 ]);
             }
 
+            $ids = collect($opins)->pluck('idOPIN')->filter()->values();
+            $insumosBanco = OPInsumo::whereIn('OPIN_ID', $ids)->get()->keyBy('OPIN_ID');
+
             foreach ($opins as $opin) {
-                $idOPIN      = $opin['idOPIN'] ?? null;
-                $idFor = null;
-                if (!$idOPIN) {
-                    continue;
-                }
-                $insumoBanco = OPInsumo::find($idOPIN) ?? null;
-                if (!$insumoBanco) {
-                    continue;
-                }
+                $idOPIN = $opin['idOPIN'] ?? null;
+                if (!$idOPIN) continue;
 
-                $qtd   = $opin['qtdInsumo'] ?? $insumoBanco->OPIN_QTD;
-                if ($insumoBanco->NECESSITA_CLIFOR === 1) {
-                    $idFor = $opin['idFor'] ?? $insumoBanco->CLIFOR_ID;
-                }
+                $insumoBanco = $insumosBanco->get($idOPIN);
+                if (!$insumoBanco) continue;
 
-
-                // Recalcula o custo total do insumo
+                $qtd    = $opin['qtdInsumo'] ?? $insumoBanco->OPIN_QTD;
+                $idFor  = $insumoBanco->NECESSITA_CLIFOR === 1 ? ($opin['idFor'] ?? $insumoBanco->CLIFOR_ID) : null;
                 $custot = $opin['custouOPIN'] * $qtd;
-                \Log::info($opin['custouOPIN']);
 
-                // Atualiza o insumo no banco
                 $insumoBanco->update([
-                    'OPIN_QTD'               => $qtd,
-                    'OPIN_CUSTOU' => $opin['custouOPIN'], 
-                    'OPIN_CUSTOT'            => $custot,
-                    'CLIFOR_ID' => $idFor
+                    'OPIN_QTD'    => $qtd,
+                    'OPIN_CUSTOU' => $opin['custouOPIN'],
+                    'OPIN_CUSTOT' => $custot,
+                    'CLIFOR_ID'   => $idFor
                 ]);
             }
 
