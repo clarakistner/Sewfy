@@ -17,7 +17,7 @@
   <div class="card-header">
     <h1 class="card-title">Escolha a empresa</h1>
     <p class="card-subtitle">
-      Bem-vindo(a) de volta, <strong id="usuario-email"></strong>!<br />
+      Bem-vindo(a) de volta, <strong id="usuario-nome"></strong>!<br />
       Por favor escolha a empresa que você deseja acessar.
     </p>
   </div>

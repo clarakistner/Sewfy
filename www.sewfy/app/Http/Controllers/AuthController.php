@@ -41,13 +41,11 @@ class AuthController extends Controller
         $quantidadeEmpresas = $empresasUsuario->count();
         $empresasIds = Empresa::whereIn('EMP_ID', $empresasUsuario->pluck('EMP_ID'))->whereIn('EMP_ATIV', [1])->pluck('EMP_ID')->toArray();
 
-        if(count($empresasIds) > 1){
-$abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
-        }else{
+        if (count($empresasIds) > 1) {
+            $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
+        } else {
             $abilities = array_map(fn($id) => "empresa_$id", $empresasIds);
         }
-
-        
         $user->tokens()->delete();
         $token = $user->createToken('user-token', $abilities)->plainTextToken;
         return response()->json([
@@ -57,7 +55,6 @@ $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
             'modulos' => $user->modulos->pluck('MOD_NOME')
         ])
             ->cookie('token', $token, 60 * 24 * 30, '/', null, null, false, true, 'lax')
-            ->cookie('user_name', $user->USU_NOME, 60 * 2, null, null, false, true, 'lax')
             ->cookie('is_owner', $user->USU_IS_OWNER, 60 * 2, null, null, false, true, 'lax')
             ->cookie('modulos', implode(',', $user->modulos->pluck('MOD_NOME')->toArray()), 60 * 2, null, null, false, true, 'lax');
     }
@@ -80,7 +77,7 @@ $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
             return response()->json(['erro' => 'Conta inativa'], 403);
         }
 
-       
+
         $request->session()->put('adm_id', $adm->ADM_ID);
         $token = $adm->createToken('adm-token')->plainTextToken;
 
@@ -132,7 +129,5 @@ $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
             'mensagem'   => 'Empresa selecionada com sucesso',
             'token'      => $token
         ]);
-        
     }
-   
 }

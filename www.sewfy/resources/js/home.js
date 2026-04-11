@@ -171,6 +171,7 @@ async function renderizarContasPagar(main, filtro) {
             card.dataset.pagamento = cp.pagamento ?? "";
             card.dataset.telefone = cp.telefone ?? "";
             card.dataset.op = cp.op_id ?? "";
+            card.dataset.servico = cp.servico ?? null;
 
             card.innerHTML = `
         <div class="linha">
@@ -180,7 +181,7 @@ async function renderizarContasPagar(main, filtro) {
           </div>
           <div>
             <div class="label">Serviço</div>
-            <div>${cp.produto ?? "-"}</div>
+            <div>${cp.servico ?? "-"}</div>
           </div>
           <div>
             <div class="label">Fornecedor</div>

@@ -1,11 +1,13 @@
 import "./API_JS/api.js";
-import { deleteCookie, getBaseUrl, setCookie } from "./API_JS/api.js";
+import { deleteCookie, getBaseUrl, getCookie, setCookie } from "./API_JS/api.js";
 
 const url = getBaseUrl();
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // Exibe o email do usuário
-  
+  // Exibe o nome do usuário
+  const campoNome = document.querySelector("#usuario-nome");
+  const nomeUser = decodeURIComponent(getCookie("user_name"));
+  campoNome.textContent = `${nomeUser}`;
 
   const data = await window.api.get('/empresa-usuario/usuario/empresas');
   const empresas = data.empresas;

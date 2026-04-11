@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Contas;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ContaPagar;
+use App\Models\OPInsumo;
+use App\Models\OrdemDeProducao;
+use App\Models\Produto;
 
 class ContaPagarController extends Controller
 {
@@ -63,19 +66,26 @@ class ContaPagarController extends Controller
 
         $contas = $query->orderBy('CP_DATAV', 'asc')->get();
 
-        return response()->json($contas->map(function ($conta) {
-            return [
-                'id'         => $conta->CP_ID,
-                'status'     => $conta->CP_STATUS,
-                'fornecedor' => $conta->clifor->CLIFOR_NOME ?? '—',
-                'telefone'   => $conta->clifor->CLIFOR_NUM  ?? '',
-                'op_id'      => $conta->OP_ID,
-                'valor'      => $conta->CP_VALOR,
-                'vencimento' => $conta->CP_DATAV,
-                'emissao'    => $conta->CP_DATAE,
-                'pagamento'  => $conta->CP_DATAP,
-            ];
-        }));
+       return response()->json($contas->map(function ($conta) {
+    $idProd = OPInsumo::where('OPIN_ID', $conta->OPIN_ID)
+        ->value('PROD_ID');
+
+    $servico = Produto::where('PROD_ID', $idProd)
+        ->value('PROD_NOME');
+
+    return [
+        'id'         => $conta->CP_ID,
+        'status'     => $conta->CP_STATUS,
+        'fornecedor' => $conta->clifor->CLIFOR_NOME ?? '—',
+        'telefone'   => $conta->clifor->CLIFOR_NUM  ?? '',
+        'op_id'      => $conta->OP_ID,
+        'servico'    => $servico,
+        'valor'      => $conta->CP_VALOR,
+        'vencimento' => $conta->CP_DATAV,
+        'emissao'    => $conta->CP_DATAE,
+        'pagamento'  => $conta->CP_DATAP,
+    ];
+}));
     }
 
     // BUSCAR POR ID - Detalhes de uma conta a pagar específica
