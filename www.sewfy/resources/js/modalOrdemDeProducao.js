@@ -6,10 +6,14 @@ let ordemProducao = null;
 let insumosBanco = [];
 const cacheNomes = new Map();
 
-const setOrdemProducao = (op) => { ordemProducao = op; };
+const setOrdemProducao = (op) => {
+    ordemProducao = op;
+};
 export const getOrdemProducao = () => ordemProducao;
 
-export const setInsumosBanco = (insumos) => { insumosBanco = insumos; };
+export const setInsumosBanco = (insumos) => {
+    insumosBanco = insumos;
+};
 export const getInsumosBanco = () => insumosBanco;
 
 document.addEventListener("click", handleClick);
@@ -27,7 +31,7 @@ export async function abrirModal(id) {
     try {
         const [response] = await Promise.all([
             fetch(`${url}/modal-ordem`),
-            resgataOPCompletaBanco(id)
+            resgataOPCompletaBanco(id),
         ]);
 
         const data = await response.text();
@@ -76,7 +80,7 @@ async function resgataOPCompletaBanco(id) {
 
 export async function retornaNomeProduto(id) {
     if (cacheNomes.has(id)) return cacheNomes.get(id);
-    const promise = window.api.get(`/produtos/${id}`).then(p => {
+    const promise = window.api.get(`/produtos/${id}`).then((p) => {
         cacheNomes.set(id, p.nome);
         return p.nome;
     });
@@ -116,34 +120,59 @@ async function insereDetalhesNaTela() {
     const campoNome = document.querySelector("#nomeProd");
     const campoQuant = document.querySelector("#quantProd");
     const campoCustou = document.querySelector("#custou");
+    const campoQuebra = document.querySelector("#quebraProd");
+    const campoQuante = document.querySelector("#quanteProd");
+    const campoCustoR = document.querySelector("#custour");
     const campoCustot = document.querySelector("#custot");
     const labelCustou = document.querySelector("#labelcustou");
     const labelQtd = document.querySelector("#labelquantProd");
+    const noneds = document.querySelectorAll(".noned");
 
     if (!op || !campoNome || !campoQuant) return;
 
     if (op.status === "fechada") {
-        labelCustou.textContent = "Custo Unitário Real";
-        labelQtd.textContent = "Quantidade Final";
+        labelCustou.textContent = "Custo Unitário Inicial:";
+        labelQtd.textContent = "Quantidade Inicial:";
+        campoCustoR.textContent = `${parseFloat(op.custour).toLocaleString(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL",
+            },
+        )}`;
+        campoQuante.textContent = `${parseInt(op.qtdeOP).toLocaleString("pt-BR")}`;
+        campoQuebra.textContent = `${parseFloat(op.quebra)}%`;
+        noneds.forEach((noned) => (noned.style.display = "flex"));
+    } else {
+        labelCustou.textContent = "Custo Unitário:";
+        labelQtd.textContent = "Quantidade:";
+        noneds.forEach((noned) => (noned.style.display = "none"));
     }
 
-    const todosIds = [parseInt(op.prodIDOP), ...getInsumosBanco().map(i => i.prodIdOPIN)];
+    const todosIds = [
+        parseInt(op.prodIDOP),
+        ...getInsumosBanco().map((i) => i.prodIdOPIN),
+    ];
     const nomesMap = new Map();
 
-    await Promise.all(todosIds.map(async (id) => {
-        if (!nomesMap.has(id)) {
-            nomesMap.set(id, await retornaNomeProduto(id));
-        }
-    }));
+    await Promise.all(
+        todosIds.map(async (id) => {
+            if (!nomesMap.has(id)) {
+                nomesMap.set(id, await retornaNomeProduto(id));
+            }
+        }),
+    );
 
     const nomeProd = nomesMap.get(parseInt(op.prodIDOP));
-    const nomesInsumos = getInsumosBanco().map(i => nomesMap.get(i.prodIdOPIN));
+    const nomesInsumos = getInsumosBanco().map((i) =>
+        nomesMap.get(i.prodIdOPIN),
+    );
 
     await insereInsumosTabela(nomesInsumos);
 
     campoNome.textContent = nomeProd;
-    campoQuant.textContent = parseInt(op.qtdeOP ?? op.qtdOP).toLocaleString("pt-BR");
-    campoCustou.textContent = parseFloat(op.custour ?? op.custou).toLocaleString("pt-BR", {
+    campoQuant.textContent = parseInt(op.qtdOP).toLocaleString("pt-BR");
+    campoCustou.textContent = parseFloat(op.custou).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
     });

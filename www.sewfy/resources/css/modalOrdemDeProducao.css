@@ -138,7 +138,7 @@
 /* TABELA */
 .boxTabela {
     width: 100%;
-  max-height: 50%;
+  max-height: 50vh;
   overflow-y: auto;
   scroll-behavior: smooth;
 }
@@ -231,4 +231,28 @@
 
 #detailsModal .botao.fecharOP:hover {
   opacity: 0.88;
+}
+
+.camposQtdQtdeQuebra{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+
+}
+
+.camposCustouRCustou{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+
+.noned{
+  display: none;
 }

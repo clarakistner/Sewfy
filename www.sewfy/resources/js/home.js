@@ -117,8 +117,6 @@ async function renderizarOrdens(main, filtro) {
       `;
 
             card.addEventListener("click", async () => {
-                const { abrirModal } =
-                    await import("../js/modalOrdemDeProducao.js");
                 await abrirModal(op.idOP);
             });
 

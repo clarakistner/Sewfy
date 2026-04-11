@@ -3,11 +3,11 @@
 
     <div class="modal-header">
       <h2>Detalhes da Ordem</h2>
-      <button type="button" class="ver-modal-close" >
+      <button type="button" class="ver-modal-close">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
     </div>
@@ -15,7 +15,7 @@
     <div id="detailsContent" class="modal-content">
       <div class="detalhes-tela-grid">
 
-      
+
         <div class="detalhes-tela-col-esquerda">
 
           <div class="detalhes-tela-campo">
@@ -23,14 +23,30 @@
             <h3 class="detalhes-tela-valor-grande" id="nomeProd"></h3>
           </div>
 
-          <div class="detalhes-tela-campo">
-            <label class="detalhes-tela-label" id="labelquantProd">Quantidade:</label>
-            <h3 class="detalhes-tela-valor-medio" id="quantProd"></h3>
+          <div class="camposQtdQtdeQuebra">
+            <div class="detalhes-tela-campo noned ">
+              <label class="detalhes-tela-label noned" id="labelquanteProd">Quantidade Final:</label>
+              <h3 class="detalhes-tela-valor-medio noned" id="quanteProd"></h3>
+            </div>
+            <div class="detalhes-tela-campo noned ">
+              <label class="detalhes-tela-label noned" id="labelquebraProd">Percentual de Quebra:</label>
+              <h3 class="detalhes-tela-valor-medio noned" id="quebraProd"></h3>
+            </div>
+            <div class="detalhes-tela-campo ">
+              <label class="detalhes-tela-label" id="labelquantProd">Quantidade:</label>
+              <h3 class="detalhes-tela-valor-medio" id="quantProd"></h3>
+            </div>
           </div>
 
-          <div class="detalhes-tela-campo detalhes-tela-divider">
-            <label class="detalhes-tela-label" id="labelcustou">Custo Unitário:</label>
-            <h3 class="detalhes-tela-valor-pequeno" id="custou"></h3>
+          <div class="camposCustouRCustou ">
+            <div class="detalhes-tela-campo detalhes-tela-divider noned ">
+              <label class="detalhes-tela-label noned" id="labelcustour">Custo Unitário Real:</label>
+              <h3 class="detalhes-tela-valor-pequeno noned" id="custour"></h3>
+            </div>
+            <div class="detalhes-tela-campo detalhes-tela-divider ">
+              <label class="detalhes-tela-label" id="labelcustou">Custo Unitário:</label>
+              <h3 class="detalhes-tela-valor-pequeno" id="custou"></h3>
+            </div>
           </div>
 
           <div class="detalhes-tela-campo detalhes-tela-divider">
@@ -40,7 +56,7 @@
 
         </div>
 
-       
+
         <div class="detalhes-tela-col-direita">
           <h3 class="detalhes-tela-subtitulo" id="tituloTabela">Insumos</h3>
           <div class="boxTabela">
@@ -50,7 +66,7 @@
 
       </div>
 
-    
+
       <div class="box-botoes">
         <button type="button" class="botao fecharOP">Fechar Ordem de Produção</button>
         <button type="button" class="botao editar">Editar</button>

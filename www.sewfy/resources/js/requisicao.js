@@ -526,6 +526,7 @@ function renderLista(pesquisa = null) {
                 id: OPINs[idx].INSUID,
                 um: OPINs[idx].UM,
                 ativo: 1,
+                necessita_clifor: !OPINs[idx].IDFORNECEDOR ? 0 : 1,
                 tipo: tipoInsumo,
             });
             OPINs.splice(idx, 1);

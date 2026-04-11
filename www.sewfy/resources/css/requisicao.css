@@ -241,6 +241,7 @@ body.loaded {
   height: 55.706px;
 }
 
+
 .input-produto {
   width: 100%;
   padding: 0.9rem 1rem;
@@ -899,6 +900,9 @@ select.input-produto {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 50vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 .insumo-revisao-item {
