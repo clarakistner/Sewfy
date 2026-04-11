@@ -1,5 +1,5 @@
 import { mostrarToast } from "./toast/toast.js";
-import { carregarHome } from "./home.js";
+
 
 
 document.addEventListener("click", (e) => {
@@ -77,6 +77,7 @@ async function salvarConfig() {
   try {
     const toast = mostrarToast("Salvando...", "carregando");
     await window.api.put("/home/config", dados);
+    const { carregarHome }  =  await import("./home.js");
     toast.remove();
     mostrarToast("Configuração salva com sucesso!");
     carregarHome();
