@@ -144,3 +144,6 @@ button {
 button:hover {
     opacity: 0.9;
 }
+.ordem-fechada{
+opacity: 0.5;
+}

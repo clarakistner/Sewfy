@@ -1,5 +1,5 @@
 import { mostrarToast } from "./toast/toast.js";
-
+import { carregarHome } from "./home.js";
 
 
 document.addEventListener("click", (e) => {
@@ -79,6 +79,7 @@ async function salvarConfig() {
     await window.api.put("/home/config", dados);
     toast.remove();
     mostrarToast("Configuração salva com sucesso!");
+    carregarHome();
   } catch (error) {
     console.error("Erro ao salvar configuração:", error);
     mostrarToast("Erro ao salvar configuração", "erro");

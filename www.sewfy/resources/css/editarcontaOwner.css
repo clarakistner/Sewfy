@@ -29,6 +29,7 @@
 .editarUsuario p {
     font-size: 15px;
     color: #6b7280;
+    text-align: start;
     margin: 0;
 }
 

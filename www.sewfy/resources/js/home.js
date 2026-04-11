@@ -23,7 +23,7 @@ window.addEventListener("load", () => {
     }
 });
 
-async function carregarHome() {
+export async function carregarHome() {
     try {
         const res = await window.api.get("/home/config");
         const config = res.config;
@@ -87,6 +87,7 @@ async function renderizarOrdens(main, filtro) {
 
             const card = document.createElement("div");
             card.classList.add("card");
+            if (!!op.datae) card.classList.add("ordem-fechada");
             card.style.cursor = "pointer";
             card.innerHTML = `
         <div class="linha">
