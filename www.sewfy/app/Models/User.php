@@ -37,9 +37,9 @@ class User extends Authenticatable
 
     // e o username também
     public function getAuthIdentifierName()
-    {
-        return 'USU_EMAIL';
-    }
+{
+    return 'USU_EMAIL';
+}
 
     // função para relacionar o usuário com os módulos (relação muitos-para-muitos)
     public function modulos()

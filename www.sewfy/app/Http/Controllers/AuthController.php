@@ -30,7 +30,8 @@ class AuthController extends Controller
         ])) {
             return response()->json(['status' => 'erro', 'resposta' => 'Credenciais inválidas'], 401);
         }
-        $user = Auth::user();
+
+        $user = User::where('USU_EMAIL', $request->email)->first();
 
         if ($user->USU_ATIV === 0) {
             return response()->json(['erro' => 'Conta inativa'], 403);
