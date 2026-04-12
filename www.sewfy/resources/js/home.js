@@ -2,6 +2,7 @@ import "../js/menu.js";
 import "../js/modalOrdemDeProducao.js";
 import "../js/visualizarContas.js";
 import "../js/configmenu.js";
+import "../js/edicaoOrdemDeProducao.js";
 import { getCookie, setCookie, deleteCookie, popCookie } from "./API_JS/api.js";
 import { API, getBaseUrl } from "./API_JS/api.js";
 
@@ -30,6 +31,13 @@ export async function carregarHome() {
         const main = document.querySelector("main");
         main.innerHTML = "";
 
+        if(config.EXIBIR_ORDENS && config.EXIBIR_CONTAS_PAGAR){
+          await Promise.all([
+            renderizarOrdens(main, config.FILTRO_ORDENS),
+            renderizarContasPagar(main, config.FILTRO_CONTAS_PAGAR)
+          ]);
+          return;
+        }
         if (config.EXIBIR_ORDENS) {
             await renderizarOrdens(main, config.FILTRO_ORDENS);
         }
@@ -75,9 +83,9 @@ async function renderizarOrdens(main, filtro) {
             lista.innerHTML = `<div class="vazio">Nenhuma ordem encontrada</div>`;
             return;
         }
+        
 
-        for (const op of ordens) {
-            const nomeProduto = await retornaNomeProduto(op.prodIDOP);
+        ordens.forEach((op) => {
             const dataAbertura = op.dataa
                 ? new Date(op.dataa).toLocaleDateString("pt-BR", {
                       timeZone: "UTC",
@@ -101,7 +109,7 @@ async function renderizarOrdens(main, filtro) {
           </div>
           <div>
             <div class="label">Produto</div>
-            <div>${nomeProduto ?? "-"}</div>
+            <div>${op.nome_produto ?? "-"}</div>
           </div>
           <div>
             <div class="label">Quantidade</div>
@@ -122,7 +130,7 @@ async function renderizarOrdens(main, filtro) {
             });
 
             lista.appendChild(card);
-        }
+        })
     } catch (error) {
         console.error("Erro ao buscar ordens:", error);
     }

@@ -1,7 +1,7 @@
 import { setInsumosInseridos, getInsumosInseridos, setInsumosDeletados, getInsumosDeletados, getListaDOM, atualizaOP, atualizaOPINs, setListaDOM } from './estado.js'
 import { getOrdemProducao, getInsumosBanco, setInsumosBanco } from '../modalOrdemDeProducao.js'
 import { mostrarToast } from '../toast/toast.js'
-import { fechaModal, removeBlur } from './modal.js'
+import { fechaModal} from './modal.js'
 import { verificaQuantidadesOPOPIN, verificaCampo, verificaPrecosOPOPIN } from './validacoes.js'
 import { resgataProdutoPeloID } from './banco.js'
 import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './renderizacao.js'
@@ -36,7 +36,6 @@ export async function salvaAlteracoes() {
         removeTelaCarregamento()
         mostrarToast("Alterações salvas!")
         fechaModal()
-        removeBlur()
     } catch (error) {
         console.log(`Erro ao tentar salvar alterações: ${error}`)
         mostrarToast("Erro ao tentar salvar alterações", "erro")
@@ -93,7 +92,7 @@ function retornaDadosCamposInsumo(insumo, campos) {
         let campoQtd, campoFor, campoPreco
         campos.forEach(campo => {
             if (campo.id == `qtd${insumo.idOPIN}`) campoQtd = campo
-            else if (campo.dataset.field == "fornecedor" && campo.closest('.boxFornecedor').style.display !== 'none') campoFor = campo
+            else if (campo.dataset.field == "fornecedor" && campo.style.visibility !== 'hidden') campoFor = campo
             else if (campo.id == `preco${insumo.idOPIN}`) campoPreco = campo
         })
         if (!!campoQtd && !!campoPreco) {

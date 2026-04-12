@@ -38,12 +38,3 @@ export async function fechaModalDetalhes() {
     document.querySelector("#detailsModal")?.remove();
 }
 
-export function colocaBlur() {
-    main.style.filter = "blur(25px)";
-    document.querySelector(".sidebar").style.filter = "blur(25px)";
-}
-
-export function removeBlur() {
-    main.style.filter = "blur(0)";
-    document.querySelector(".sidebar").style.filter = "blur(0)";
-}

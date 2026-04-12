@@ -88,19 +88,19 @@ export async function retornaNomeProduto(id) {
     return promise;
 }
 
-async function insereInsumosTabela(nomes) {
+async function insereInsumosTabela() {
     const tabelaDOM = document.querySelector(".tabelaInsumos");
     if (!tabelaDOM) return;
 
     const fragment = document.createDocumentFragment();
 
-    getInsumosBanco().forEach((insumo, index) => {
+    getInsumosBanco().forEach((insumo) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>
               <div class="detalhes-insumo-card">
                 <div>
-                  <p class="detalhes-insumo-nome">${nomes[index]}</p>
+                  <p class="detalhes-insumo-nome">${insumo.nome_insumo}</p>
                   <p class="detalhes-insumo-qtd">${insumo.qtdOPIN} ${insumo.umOPIN}</p>
                 </div>
                 <p class="detalhes-insumo-valor">
@@ -149,28 +149,9 @@ async function insereDetalhesNaTela() {
         noneds.forEach((noned) => (noned.style.display = "none"));
     }
 
-    const todosIds = [
-        parseInt(op.prodIDOP),
-        ...getInsumosBanco().map((i) => i.prodIdOPIN),
-    ];
-    const nomesMap = new Map();
+    
 
-    await Promise.all(
-        todosIds.map(async (id) => {
-            if (!nomesMap.has(id)) {
-                nomesMap.set(id, await retornaNomeProduto(id));
-            }
-        }),
-    );
-
-    const nomeProd = nomesMap.get(parseInt(op.prodIDOP));
-    const nomesInsumos = getInsumosBanco().map((i) =>
-        nomesMap.get(i.prodIdOPIN),
-    );
-
-    await insereInsumosTabela(nomesInsumos);
-
-    campoNome.textContent = nomeProd;
+    campoNome.textContent = op.nome_produto || "Sem Nome";
     campoQuant.textContent = parseInt(op.qtdOP).toLocaleString("pt-BR");
     campoCustou.textContent = parseFloat(op.custou).toLocaleString("pt-BR", {
         style: "currency",
@@ -180,4 +161,5 @@ async function insereDetalhesNaTela() {
         style: "currency",
         currency: "BRL",
     });
+    await insereInsumosTabela();
 }

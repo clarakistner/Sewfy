@@ -111,17 +111,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 removeTelaCarregamento();
                 return;
             }
-            
+
             deleteCookie("url_anterior");
             setCookie("user_name", data.nome, 120);
             removeTelaCarregamento();
             if (parseInt(data.quantidade_empresas) > 1) {
+                setCookie("empresas_ids", data.empresas_ids, 120);
                 window.location.replace("/selecionar-empresa");
                 return;
             }
 
-            
-            
+            setCookie("empresa_id", data.empresas_ids[0], 120);
 
             window.location.replace("/home");
         } catch (erro) {

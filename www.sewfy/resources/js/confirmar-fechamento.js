@@ -15,7 +15,7 @@ document.addEventListener("click", async (e) => {
 document.addEventListener("input", (e) => {
     if (e.target.id === "quantidadeQuebra") {
         const qtdeQuebra = e.target;
-        const valor = qtdeQuebra.value;
+        let valor = qtdeQuebra.value;
         valor = valor.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         qtdeQuebra.value = valor;
     }

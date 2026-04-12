@@ -70,8 +70,7 @@ function filtrarOPs(listaOPs, valorPesquisa, filtro) {
     return listaOPs;
 }
 
-function criarCardOP(op, mapaProdutos) {
-    const nomeProduto = mapaProdutos.get(op.prodIDOP) || "Sem Nome";
+function criarCardOP(op) {
     const dataAbertura = new Date(op.dataa).toLocaleDateString("pt-BR", {
         timeZone: "UTC",
     });
@@ -99,7 +98,7 @@ function criarCardOP(op, mapaProdutos) {
             </div>
             <div class="info-ordem">
                 <span class="material-symbols-outlined icone">package_2</span>
-                <div><div class="label-info">Produto</div><div class="valor-info">${nomeProduto}</div></div>
+                <div><div class="label-info">Produto</div><div class="valor-info">${op.nome_produto || "Sem Nome"}</div></div>
             </div>
             <div class="info-ordem">
                 <span class="material-symbols-outlined icone">package_2</span>
@@ -146,13 +145,7 @@ export async function listarOrdensProducao(
 
         let listaOPs = filtrarOPs(cacheOPs, valorPesquisa, filtro);
 
-        if (!cacheProdutosOPs || cacheProdutosOPs.size === 0) {
-            const ids = [...new Set(listaOPs.map((op) => op.prodIDOP))];
-            const produtos = await window.api.get(
-                `/produtos?ids=${ids.join(",")}`,
-            );
-            cacheProdutosOPs = new Map(produtos.map((p) => [p.id, p.nome]));
-        }
+        
 
         if (listaOPs.length === 0) {
             listaOrdensDOM.appendChild(criaCardSemOPs());
@@ -161,7 +154,7 @@ export async function listarOrdensProducao(
 
         const fragment = document.createDocumentFragment();
         listaOPs.forEach((op) =>
-            fragment.appendChild(criarCardOP(op, cacheProdutosOPs)),
+            fragment.appendChild(criarCardOP(op)),
         );
         listaOrdensDOM.appendChild(fragment);
     } catch (error) {

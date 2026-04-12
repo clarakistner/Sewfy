@@ -2,10 +2,10 @@
 
 @section('titulo', 'Editar Funcionário')
 @push('styles')
-    @vite(['resources/css/editarfuncionario.css','resources/css/configmenu.css'])
+    @vite(['resources/css/editarfuncionarios.css','resources/css/configmenu.css'])
 @endpush
 @section('conteudo')
-<div class="modal containerConfigOwner" id="modal-editar-funcionario">
+<div class="modal" id="modal-editar-funcionario">
   <div class="modal-container">
 
     <!-- Header -->

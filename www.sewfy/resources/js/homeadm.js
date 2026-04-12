@@ -180,6 +180,6 @@ window.acessarEmpresa = acessarEmpresa;
 
 function editarEmpresa(id) {
     sessionStorage.setItem("listaEmpresas_origem", window.location.href);
-    window.location.href = `/www.sewfy/editarempresa/index.html?id=${id}`;
+    window.location.href = `/editar-empresa?id=${id}`;
 }
 window.editarEmpresa = editarEmpresa;

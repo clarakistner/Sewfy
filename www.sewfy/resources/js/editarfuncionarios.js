@@ -155,7 +155,7 @@ export async function carregaJsCssEditarFuncionario() {
   observer.observe(target, { childList: true });
   try {
     const responseCSS = await fetch(
-      "/www.sewfy/funcionarios/editarfuncionarios/editarfuncionarios.css",
+      "http://localhost:5173/resources/css/editarfuncionarios.css",
     );
 
     const cssText = await responseCSS.text();
@@ -168,7 +168,7 @@ export async function carregaJsCssEditarFuncionario() {
     scriptEditar.id = "js-editar-funcionario";
     scriptEditar.type = "module";
     scriptEditar.src =
-      "/www.sewfy/funcionarios/editarfuncionarios/editarfuncionarios.js";
+      "http://localhost:5173/resources/js/editarfuncionarios.js";
 
     document.body.appendChild(scriptEditar);
     document.head.appendChild(style);

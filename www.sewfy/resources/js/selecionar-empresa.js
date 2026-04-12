@@ -53,7 +53,7 @@ async function selecionarEmpresa(empresaId) {
     const data = await window.api.post("/auth/define-empresa", body);
     deleteCookie("token");
     setCookie("token", data.token, 120);
-
+    setCookie("empresa_id", data.empresa_id, 120);
     window.location.href = `${url}/home`;
   } catch (error) {
     console.error("Erro ao selecionar empresa:", error);

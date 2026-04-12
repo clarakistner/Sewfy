@@ -41,12 +41,14 @@ body.loaded {
   opacity: 1;
 }
 
-.modal-container {
+.modal-edicao .modal-container {
   background: #fff;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   max-width: 1100px;
   max-height: 90vh;
-  overflow-y: auto;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   animation: scaleIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -115,8 +117,11 @@ body.loaded {
   transform: rotate(90deg);
 }
 
-.modal-body {
+.modal-edicao .modal-body {
   padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 section {
@@ -209,8 +214,9 @@ h3 {
 .section-heading {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
+  width: 100%;
   margin-bottom: 16px;
 }
 .section-heading .field{
@@ -237,6 +243,7 @@ h3 {
 .field {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .field label {
@@ -306,22 +313,7 @@ select:hover { border-color: #9ca3af; }
   gap: 24px;
 }
 
-.grid-12 {
-  display: flex;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-}
 
-.grid-12 > div { width: auto; }
-
-.col-2 {  display: flex; flex-direction: column; }
-.col-3 { display: flex; flex-direction: column; }
-.col-4 {  display: flex; flex-direction: column; }
-
-.align-end { display: flex; align-items: flex-end; }
-.center    { display: flex; align-items: center; }
 
 .price-wrap {
   position: relative;
@@ -347,18 +339,16 @@ select:hover { border-color: #9ca3af; }
 
 .table-header,
 .insumo {
-  display: flex;
-  padding: 10px 8px;
-  border-radius: 8px;
-  transition: background 0.15s;
-  animation: rowIn 0.25s ease both;
-  gap: 16px;
-  align-items: center;
-  justify-content: center;
-  min-width: 600px;
-  justify-content: space-between;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 10px 8px;
+    min-width: 600px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    animation: rowIn 0.25s ease both;
 }
-
 .table-header {
   padding-bottom: 12px;
   border-bottom: 2px solid #e5e7eb;

@@ -3,8 +3,6 @@ import {
     abreModal,
     fechaModal,
     fechaModalDetalhes,
-    colocaBlur,
-    removeBlur,
 } from "./modal.js";
 import {
     organizaDadosTela,
@@ -46,7 +44,6 @@ document.addEventListener("input", (e) => {
 
 async function handleClick(e) {
     if (e.target.closest(".editar")) {
-        colocaBlur();
         await fechaModalDetalhes();
         await initTelaCarregamento();
         await abreModal();
@@ -55,15 +52,13 @@ async function handleClick(e) {
 
     if (e.target.closest(".close-btn")) {
         fechaModal();
-        removeBlur();
     }
 
     if (e.target.closest(".cancel")) {
         const op = getOrdemProducao();
         await fechaModal();
-        setTimeout(() => {
-            abreModalDetalhes(op.idOP);
-        }, 50);
+        abreModalDetalhes(op.idOP);
+       
     }
 
     if (e.target.closest(".save")) {

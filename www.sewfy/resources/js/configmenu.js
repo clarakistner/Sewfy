@@ -191,7 +191,7 @@ async function trocarPagina(blade, css, url) {
 
     const [responseHTML, responseCSS] = await Promise.all([
         fetch(`/${blade}`),
-        fetch(`/www.sewfy/resources/css/${css}.css`),
+        fetch(`http://localhost:5173/resources/css/${css}.css`),
     ]);
 
     const [dataContainer, cssText] = await Promise.all([
