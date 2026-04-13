@@ -35,6 +35,12 @@ export class API {
     }
 
     async inicializarCsrf() {
+        // Se o cookie já existe, não precisa buscar de novo
+        if (this.getCookie("XSRF-TOKEN")) {
+            this.csrfInitializado = true;
+            return;
+        }
+
         if (this.csrfInitializado) return;
         if (this.csrfCarregando) return;
 
@@ -55,7 +61,7 @@ export class API {
             this.csrfCarregando = false;
         }
     }
-
+    
     async request(caminho, opcoes = {}) {
         if (this.redirecionando) return;
 
