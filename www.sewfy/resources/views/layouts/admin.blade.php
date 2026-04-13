@@ -18,7 +18,7 @@
 <body>
 
     <div class="layout">
-        @include('menu', ['modulosAtivos' => $modulosAtivos ?? [], 'nomeEmpresa' => $nomeEmpresa ?? ''])
+        @include('menu-adm')
         @yield('conteudo')
     </div>
 

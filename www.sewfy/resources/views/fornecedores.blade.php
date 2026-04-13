@@ -7,7 +7,6 @@
 @section('conteudo')
 
   <body>
-    <div class="layout">
       <!-- Parte da lista/pesquisa/botão de criação dos fornecedores -->
       <main class="principal">
         <div class="cabecalho-principal">
@@ -58,7 +57,7 @@
           </table>
         </div>
       </main>
-    </div>
+    
 
 @endsection
 

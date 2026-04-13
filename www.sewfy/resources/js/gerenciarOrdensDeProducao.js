@@ -48,10 +48,18 @@ function handleChange(e) {
 
 async function buscarEOrganizarOPs() {
     const listaOPsBanco = await window.api.get("/ordemdeproducao/listar");
-    return listaOPsBanco.ordensProducao.sort((a, b) => {
+    const listaOPs = listaOPsBanco.ordensProducao.sort((a, b) => {
         const getNum = (str) => parseInt(str.match(/(\d+)$/)[1], 10);
         return getNum(a.idOP) - getNum(b.idOP);
     });
+
+    const ids = [...new Set(listaOPs.map((op) => op.prodIDOP))];
+    const produtos = ids.length > 0
+        ? await window.api.get(`/produtos?ids=${ids.join(",")}`)
+        : [];
+    const mapaProdutos = new Map(produtos.map((p) => [p.id, p.nome]));
+
+    return { listaOPs, mapaProdutos };
 }
 
 function filtrarOPs(listaOPs, valorPesquisa, filtro) {
@@ -70,7 +78,8 @@ function filtrarOPs(listaOPs, valorPesquisa, filtro) {
     return listaOPs;
 }
 
-function criarCardOP(op) {
+function criarCardOP(op, mapaProdutos) {
+    const nomeProduto = mapaProdutos.get(op.prodIDOP) || "Sem Nome";
     const dataAbertura = new Date(op.dataa).toLocaleDateString("pt-BR", {
         timeZone: "UTC",
     });
@@ -98,7 +107,7 @@ function criarCardOP(op) {
             </div>
             <div class="info-ordem">
                 <span class="material-symbols-outlined icone">package_2</span>
-                <div><div class="label-info">Produto</div><div class="valor-info">${op.nome_produto || "Sem Nome"}</div></div>
+                <div><div class="label-info">Produto</div><div class="valor-info">${nomeProduto}</div></div>
             </div>
             <div class="info-ordem">
                 <span class="material-symbols-outlined icone">package_2</span>
@@ -139,13 +148,13 @@ export async function listarOrdensProducao(
         limparLista();
         const listaOrdensDOM = document.querySelector(".lista-ordens");
 
-        if (!cacheOPs) {
-            cacheOPs = await buscarEOrganizarOPs();
+        if (!cacheOPs || !cacheProdutosOPs) {
+            const resultado = await buscarEOrganizarOPs();
+            cacheOPs = resultado.listaOPs;
+            cacheProdutosOPs = resultado.mapaProdutos;
         }
 
         let listaOPs = filtrarOPs(cacheOPs, valorPesquisa, filtro);
-
-        
 
         if (listaOPs.length === 0) {
             listaOrdensDOM.appendChild(criaCardSemOPs());
@@ -154,7 +163,7 @@ export async function listarOrdensProducao(
 
         const fragment = document.createDocumentFragment();
         listaOPs.forEach((op) =>
-            fragment.appendChild(criarCardOP(op)),
+            fragment.appendChild(criarCardOP(op, cacheProdutosOPs)),
         );
         listaOrdensDOM.appendChild(fragment);
     } catch (error) {

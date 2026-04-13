@@ -6,7 +6,6 @@
 @endpush
 @section('conteudo')
 
-    <div class="layout">
         <!-- Parte da lista/pesquisa/botão de criação dos produtos -->
         <main class="principal">
             <div class="cabecalho-principal">
@@ -63,7 +62,7 @@
                 </table>
             </div>
         </main>
-    </div>
+    
         
  @endsection
 

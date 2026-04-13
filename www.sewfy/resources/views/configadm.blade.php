@@ -1,20 +1,12 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('titulo', 'Configurar ADM')
 @push('styles')
     @vite('resources/css/menuadm.css')
 @endpush
+
 @section('conteudo')
-
-
-<div class="layout">
-
-    <main class="content">
-
-
-
-    </main>
-</div>
+    <main class="content"></main>
 @endsection
 
 @section('scripts')

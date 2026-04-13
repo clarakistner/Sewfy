@@ -13,10 +13,7 @@ class UsuarioModulosController extends Controller
     public function getModulosUsuario(Request $request)
     {
         $user = $request->user();
-        \Log::info('Token abilities:', [
-            'abilities'  => $user->currentAccessToken()->abilities,
-            'token_name' => $user->currentAccessToken()->name,
-        ]);
+
         // Se for adm impersonando, retorna todos os módulos da empresa
         if ($user instanceof SewfyAdm) {
             $empresa   = $request->empresa;
@@ -29,15 +26,15 @@ class UsuarioModulosController extends Controller
         $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
         $empresaId = str_replace('empresa_', '', $ability);
 
-        $modulosUsuario = UsuarioModulos::where('USU_ID', $user->USU_ID)
-            ->where('EMP_ID', $empresaId)
-            ->pluck('MOD_ID')
-            ->toArray();
+       $resultado = UsuarioModulos::join('MODULOS', 'USUARIO_MODULOS.MOD_ID', '=', 'MODULOS.MOD_ID')
+            ->where('USUARIO_MODULOS.USU_ID', $user->USU_ID)
+            ->where('USUARIO_MODULOS.EMP_ID', $empresaId)
+            ->select('MODULOS.MOD_ID', 'MODULOS.MOD_NOME')
+            ->get();
 
-        $nomesModulos = Modulo::whereIn('MOD_ID', $modulosUsuario)
-            ->pluck('MOD_NOME')
-            ->toArray();
-
-        return response()->json(['modulos' => $nomesModulos, 'idsModulos' => $modulosUsuario]);
+        return response()->json([
+            'modulos'    => $resultado->pluck('MOD_NOME')->toArray(),
+            'idsModulos' => $resultado->pluck('MOD_ID')->toArray(),
+        ]);
     }
 }

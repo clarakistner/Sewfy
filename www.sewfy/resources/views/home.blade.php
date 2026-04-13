@@ -4,12 +4,9 @@
 @push('styles')
     @vite(['resources/css/menu.css', 'resources/css/modalOrdemDeProducao.css', 'resources/css/visualizarContas.css', 'resources/css/configmenu.css', 'resources/css/home.css', 'resources/css/edicaoOrdemDeProducao.css'])
 @endpush
+
 @section('conteudo')
-
-    <div class="layout">
-        <main class="principal"></main>
-    </div>
-
+    <main class="principal"></main>
 @endsection
 
 @section('scripts')

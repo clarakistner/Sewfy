@@ -48,15 +48,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function selecionarEmpresa(empresaId) {
-  try {
-    const body = { empresa_id: parseInt(empresaId) };
-    const data = await window.api.post("/auth/define-empresa", body);
-    deleteCookie("token");
-    setCookie("token", data.token, 120);
-    setCookie("empresa_id", data.empresa_id, 120);
-    window.location.href = `${url}/home`;
-  } catch (error) {
-    console.error("Erro ao selecionar empresa:", error);
-  }
+    try {
+        const body = { empresa_id: parseInt(empresaId) };
+        const data = await window.api.post("/auth/define-empresa", body);
+        // Remove o setCookie("token") — o Laravel já seta via cookie httpOnly
+        setCookie("empresa_id", data.empresa_id, 120);
+        window.location.href = `${url}/home`;
+    } catch (error) {
+        console.error("Erro ao selecionar empresa:", error);
+    }
 }
 

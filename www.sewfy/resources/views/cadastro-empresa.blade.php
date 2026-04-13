@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('titulo', 'Cadastrar Empresa')
+@section('titulo', 'Cadastro Empresa')
 @push('styles')
-    @vite(['resources/css/menuadm.css','resources/css/cadastroempresa.css'])
+    @vite(['resources/css/cadastroempresa.css', 'resources/css/menuadm.css'])
 @endpush
+
 @section('conteudo')
-<div class="layout">
     <main class="content">
 
         <div class="page-header">
@@ -42,30 +42,12 @@
         <div class="secao-card">
             <h2 class="secao-titulo">Módulos do Sistema</h2>
             <div class="modulos-grid">
-                <label class="modulo-item">
-                    <input type="checkbox" value="2"/>
-                    <span>Faturamento</span>
-                </label>
-                <label class="modulo-item">
-                    <input type="checkbox" value="1"/>
-                    <span>Financeiro</span>
-                </label>
-                <label class="modulo-item">
-                    <input type="checkbox" value="5"/>
-                    <span>Compras</span>
-                </label>
-                <label class="modulo-item">
-                    <input type="checkbox" value="4"/>
-                    <span>Produção</span>
-                </label>
-                <label class="modulo-item">
-                    <input type="checkbox" value="6"/>
-                    <span>Relatórios</span>
-                </label>
-                <label class="modulo-item">
-                    <input type="checkbox" value="3"/>
-                    <span>Recursos Humanos</span>
-                </label>
+                <label class="modulo-item"><input type="checkbox" value="2"/><span>Faturamento</span></label>
+                <label class="modulo-item"><input type="checkbox" value="1"/><span>Financeiro</span></label>
+                <label class="modulo-item"><input type="checkbox" value="5"/><span>Compras</span></label>
+                <label class="modulo-item"><input type="checkbox" value="4"/><span>Produção</span></label>
+                <label class="modulo-item"><input type="checkbox" value="6"/><span>Relatórios</span></label>
+                <label class="modulo-item"><input type="checkbox" value="3"/><span>Recursos Humanos</span></label>
             </div>
         </div>
 
@@ -91,14 +73,11 @@
             </div>
         </div>
 
-        <button class="btn-cadastrar" id="btn-cadastrar-empresa">
-            Cadastrar Empresa
-        </button>
+        <button class="btn-cadastrar" id="btn-cadastrar-empresa">Cadastrar Empresa</button>
 
     </main>
-</div>
 @endsection
 
 @section('scripts')
-    @vite('resources/js/cadastroempresa.js')
+@vite('resources/js/cadastroempresa.js')
 @endsection

@@ -1,67 +1,46 @@
 import { mascaraCpfCnpj, mascaraTelefone } from "../js/assets/mascaras.js";
 import { verificarAuth, apiFetch } from "../js/assets/auth.js";
-
 import "../js/menuadm.js";
 
 verificarAuth();
 
 document.addEventListener("DOMContentLoaded", () => {
+    ativarBotaoAtual();
+    document.body.classList.add('loaded');
     carregarEmpresas();
 
-    document
-        .getElementById("input-busca")
-        ?.addEventListener("input", aplicarFiltros);
-
-    document
-        .getElementById("select-status")
-        ?.addEventListener("change", aplicarFiltros);
+    document.getElementById("input-busca")?.addEventListener("input", aplicarFiltros);
+    document.getElementById("select-status")?.addEventListener("change", aplicarFiltros);
 });
 
 let todasEmpresas = [];
 
 async function carregarEmpresas() {
     try {
-        const response = await apiFetch('/api/adm/empresas', {
-            method: 'GET'
-        });
-
+        const response = await apiFetch('/api/adm/empresas', { method: 'GET' });
         if (!response || !response.ok) throw new Error('Erro ao buscar empresas');
-
         todasEmpresas = await response.json();
         aplicarFiltros();
-
     } catch (error) {
         console.error('Erro ao carregar empresas:', error);
     }
 }
 
 function aplicarFiltros() {
-    const busca = (
-        document.getElementById("input-busca")?.value || ""
-    ).toLowerCase();
-
-    const statusFiltro =
-        document.getElementById("select-status")?.value || "todas";
+    const busca       = (document.getElementById("input-busca")?.value || "").toLowerCase();
+    const statusFiltro = document.getElementById("select-status")?.value || "todas";
 
     const filtradas = todasEmpresas.filter(emp => {
-
         const nome  = (emp.nome || "").toLowerCase();
         const raz   = (emp.raz  || "").toLowerCase();
         const cnpj  = (emp.cnpj || "").toLowerCase();
         const ativo = Number(emp.ativo);
 
-        const correspondeBusca =
-            nome.includes(busca) ||
-            raz.includes(busca)  ||
-            cnpj.includes(busca);
+        const correspondeBusca = nome.includes(busca) || raz.includes(busca) || cnpj.includes(busca);
 
         let correspondeStatus = true;
-
-        if (statusFiltro === "ativa") {
-            correspondeStatus = ativo === 1;
-        } else if (statusFiltro === "inativa") {
-            correspondeStatus = ativo === 0;
-        }
+        if (statusFiltro === "ativa")   correspondeStatus = ativo === 1;
+        if (statusFiltro === "inativa") correspondeStatus = ativo === 0;
 
         return correspondeBusca && correspondeStatus;
     });
@@ -70,8 +49,8 @@ function aplicarFiltros() {
 }
 
 function renderizarEmpresas(empresas) {
-    const container      = document.getElementById("empresas-lista");
-    const semResultados  = document.getElementById("sem-resultados");
+    const container     = document.getElementById("empresas-lista");
+    const semResultados = document.getElementById("sem-resultados");
 
     container.innerHTML = "";
 
@@ -83,16 +62,14 @@ function renderizarEmpresas(empresas) {
     semResultados.style.display = "none";
 
     empresas.forEach(empresa => {
-
         const ativo = Number(empresa.ativo);
         const ativa = ativo === 1;
 
-        const statusClasse = ativa ? "ativa"         : "inativa";
-        const statusTexto  = ativa ? "Ativa"          : "Inativa";
-        const statusIcone  = ativa ? "check_circle"   : "cancel";
+        const statusClasse = ativa ? "ativa"       : "inativa";
+        const statusTexto  = ativa ? "Ativa"        : "Inativa";
+        const statusIcone  = ativa ? "check_circle" : "cancel";
 
-        const modulos = Array.isArray(empresa.modulos) ? empresa.modulos : [];
-
+        const modulos    = Array.isArray(empresa.modulos) ? empresa.modulos : [];
         const modulosHTML = modulos.length > 0
             ? modulos.map(mod => `<span class="modulo-tag">${mod}</span>`).join("")
             : `<span class="modulo-tag">Sem módulos</span>`;
@@ -123,12 +100,10 @@ function renderizarEmpresas(empresas) {
                     <span class="info-label">CNPJ</span>
                     <span class="info-valor">${cnpjFormatado}</span>
                 </div>
-
                 <div class="info-grupo">
                     <span class="info-label">Telefone</span>
                     <span class="info-valor">${telefoneFormatado || "—"}</span>
                 </div>
-
                 <div class="info-grupo">
                     <span class="info-label">Email</span>
                     <span class="info-valor">${empresa.email || ""}</span>
@@ -137,9 +112,7 @@ function renderizarEmpresas(empresas) {
 
             <div class="empresa-modulos">
                 <span class="info-label">Módulos Ativos</span>
-                <div class="modulos-lista">
-                    ${modulosHTML}
-                </div>
+                <div class="modulos-lista">${modulosHTML}</div>
             </div>
 
             <button class="btn-editar" onclick="editarEmpresa(${empresa.id})">
@@ -151,11 +124,21 @@ function renderizarEmpresas(empresas) {
     });
 }
 
+function ativarBotaoAtual() {
+    const path    = window.location.pathname;
+    const botoes  = ["btn-home", "btn-cadastro", "btn-relatorio", "btn-config"];
+    const paths   = ["home-adm", "cadastro", "relatorio", "config"];
+
+    paths.forEach((p, i) => {
+        if (path.includes(p)) {
+            document.getElementById(botoes[i])?.classList.add("active");
+        }
+    });
+}
+
 async function acessarEmpresa(id) {
     try {
-        const response = await apiFetch(`/api/adm/empresas/${id}/acessar`, {
-            method: 'POST'
-        });
+        const response = await apiFetch(`/api/adm/empresas/${id}/acessar`, { method: 'POST' });
 
         if (!response || !response.ok) {
             mostrarToast('Erro ao acessar empresa', 'erro');
@@ -163,14 +146,9 @@ async function acessarEmpresa(id) {
         }
 
         const data = await response.json();
-
-        // Salva o empresa_id no sessionStorage para o header X-Empresa-Id
         sessionStorage.setItem('empresa_id', data.empresa_id);
         sessionStorage.setItem('empresa_nome', data.empresa_nome);
-
-        // Redireciona para o painel da empresa
         window.location.href = '/home';
-
     } catch (erro) {
         console.error('[ERRO]', erro);
         mostrarToast('Erro ao conectar com o servidor', 'erro');

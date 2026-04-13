@@ -5,7 +5,6 @@
 @vite(['resources/css/requisicao.css', 'resources/css/menu.css', 'resources/css/configmenu.css'])
 @endpush
 @section('conteudo')
-<div class="layout">
   <main class="principal">
     <div class="modal-header">
       <h2>Nova Ordem</h2>
@@ -625,7 +624,6 @@
     </div>
     <!-- /.boxDadosOrdem -->
   </main>
-</div>
 @endsection
 
 @section('scripts')

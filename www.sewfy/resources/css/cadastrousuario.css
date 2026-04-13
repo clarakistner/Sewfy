@@ -35,6 +35,8 @@ body.loaded {
     justify-content: flex-start;
     height: 100%;
     padding: 32px 16px;
+    flex: 1; /* ← adiciona isso */
+    width: 100%; /* ← e isso */
 }
 
 .cadastrarUsuario {

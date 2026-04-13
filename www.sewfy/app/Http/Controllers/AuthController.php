@@ -24,41 +24,50 @@ class AuthController extends Controller
             'email' => 'required|email',
             'senha' => 'required|string',
         ]);
-        if (!Auth::attempt([
-            'USU_EMAIL' => $request->email,
-            'password'  => $request->senha
-        ])) {
+
+        // Auth::attempt já busca o usuário — mas não retorna ele
+        if (!Auth::attempt(['USU_EMAIL' => $request->email, 'password' => $request->senha])) {
             return response()->json(['status' => 'erro', 'resposta' => 'Credenciais inválidas'], 401);
         }
 
-        $user = User::where('USU_EMAIL', $request->email)->first();
+        // Usa o usuário já autenticado + eager load de modulos numa query só
+        $user = User::with('modulos')
+            ->where('USU_EMAIL', $request->email)
+            ->first();
 
         if ($user->USU_ATIV === 0) {
             return response()->json(['erro' => 'Conta inativa'], 403);
         }
 
-        $empresasUsuario = EmpresaUsuarios::where('USU_ID', $user->USU_ID)->get();
+        // Uma query só com JOIN em vez de duas separadas
+        $empresasIds = Empresa::join('EMPRESA_USUARIOS', 'EMPRESAS.EMP_ID', '=', 'EMPRESA_USUARIOS.EMP_ID')
+            ->where('EMPRESA_USUARIOS.USU_ID', $user->USU_ID)
+            ->where('EMPRESAS.EMP_ATIV', 1)
+            ->pluck('EMPRESAS.EMP_ID')
+            ->toArray();
 
-
-        $empresasIds = Empresa::whereIn('EMP_ID', $empresasUsuario->pluck('EMP_ID'))->whereIn('EMP_ATIV', [1])->pluck('EMP_ID')->toArray();
         $quantidadeEmpresas = count($empresasIds);
-        if (count($empresasIds) > 1) {
-            $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
-        } else {
-            $abilities = array_map(fn($id) => "empresa_$id", $empresasIds);
-        }
+        $abilities = $quantidadeEmpresas > 1
+            ? array_map(fn($id) => "empresas_$id", $empresasIds)
+            : array_map(fn($id) => "empresa_$id", $empresasIds);
+
         $user->tokens()->delete();
         $token = $user->createToken('user-token', $abilities)->plainTextToken;
+
+        $nomesModulos = $user->modulos->pluck('MOD_NOME')->toArray();
+        $idsModulos   = $user->modulos->pluck('MOD_ID')->toArray();
+
         return response()->json([
-            'nome'    => $user->USU_NOME,
-            'isOwner' => $user->USU_IS_OWNER,
-            'empresas_ids' => $empresasIds,
+            'nome'                => $user->USU_NOME,
+            'isOwner'             => $user->USU_IS_OWNER,
+            'empresas_ids'        => $empresasIds,
             'quantidade_empresas' => $quantidadeEmpresas,
-            'modulos' => $user->modulos->pluck('MOD_NOME')
+            'modulos'             => $nomesModulos,
+            'ids_modulos'         => $idsModulos,  // ← adiciona isso
         ])
-            ->cookie('token', $token, 60 * 24 * 30, '/', null, null, false, true, 'lax')
-            ->cookie('is_owner', $user->USU_IS_OWNER, 60 * 2, null, null, false, true, 'lax')
-            ->cookie('modulos', implode(',', $user->modulos->pluck('MOD_NOME')->toArray()), 60 * 2, null, null, false, true, 'lax');
+        ->cookie('token', $token, 60 * 24 * 30, '/', null, null, false, true, 'lax')
+        ->cookie('is_owner', $user->USU_IS_OWNER, 60 * 2, null, null, false, true, 'lax')
+        ->cookie('modulos', implode(',', $nomesModulos), 60 * 2, null, null, false, true, 'lax');
     }
 
     // POST /api/auth/adm/login - Login para administradores
@@ -113,7 +122,6 @@ class AuthController extends Controller
             'empresa_id' => 'required|integer|exists:EMPRESAS,EMP_ID',
         ]);
 
-        // Verifica se o usuário realmente pertence à empresa no banco
         $pertenceAEmpresa = EmpresaUsuarios::where('USU_ID', $request->user()->USU_ID)
             ->where('EMP_ID', $request->empresa_id)
             ->where('USU_ATIV', 1)
@@ -126,10 +134,11 @@ class AuthController extends Controller
         $empresaIdToken = "empresa_{$request->empresa_id}";
         $request->user()->currentAccessToken()->delete();
         $token = $request->user()->createToken('user-token', [$empresaIdToken])->plainTextToken;
+
         return response()->json([
             'mensagem'   => 'Empresa selecionada com sucesso',
             'empresa_id' => $request->empresa_id,
-            'token'      => $token
-        ]);
+            // remove 'token' do body
+        ])->cookie('token', $token, 60 * 24 * 30, '/', null, null, false, true, 'lax');
     }
 }

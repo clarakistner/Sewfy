@@ -7,6 +7,7 @@ use App\Models\SewfyAdm;
 use App\Models\Empresa;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ImpersonateEmpresa // Middleware para permitir que um usuário admin do Sewfy possa se "impersonar" como uma empresa específica, usando um header customizado para identificar a empresa
 {
@@ -22,7 +23,7 @@ class ImpersonateEmpresa // Middleware para permitir que um usuário admin do Se
             $ability    = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
             $empresaId  = str_replace('empresa_', '', $ability ?? '');
 
-            $empresa = Empresa::find($empresaId);
+            $empresa = Cache::remember("empresa_{$empresaId}", 600, fn() => Empresa::find($empresaId));
             if (!$empresa) {
                 return response()->json(['erro' => 'Empresa não encontrada'], 404);
             }

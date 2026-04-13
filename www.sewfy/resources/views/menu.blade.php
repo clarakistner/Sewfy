@@ -1,7 +1,12 @@
 <aside class="sidebar corpoMenu aberto">
     <div class="sidebar-header">
         <div class="sidebar-header-top">
-            <h1 class="sidebar-logo" id="logo">Sewfy</h1>
+            <div class="sidebar-brand">
+                <h1 class="sidebar-logo" id="logo">Sewfy</h1>
+                @if($nomeEmpresa)
+                    <p class="sidebar-subtitle">{{ $nomeEmpresa }}</p>
+                @endif
+            </div>
             <button class="btn-trocar-empresa" id="btn-trocar-empresa" title="Trocar empresa" style="display:none">
                 <span class="material-symbols-outlined">switch_account</span>
             </button>
@@ -11,80 +16,82 @@
     <nav class="nav">
 
         <!-- Faturamento -->
-        <div class="nav-item" id="item-faturamento" data-menu="faturamento">
+        <div class="nav-item" id="item-faturamento" data-menu="faturamento"
+            style="{{ in_array('faturamento', $modulosAtivos) ? 'display:flex' : 'display:none' }}">
             <button class="nav-btn" data-menu="item-faturamento">
                 <span class="nav-btn-label">Faturamento</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
             </button>
             <div class="submenu">
-                    <button class="submenu-btn" id="sub-clientes" data-path="clientes">Clientes</button>
-                    <button class="submenu-btn" id="sub-pedidos-venda" data-path="pedidosVenda">Pedidos de Venda</button>
-                    <button class="submenu-btn" id="sub-notas-fiscais" data-path="notasFiscais">Notas Fiscais</button>
-                    <button class="submenu-btn" id="sub-ordens-servico" data-path="ordensServico">Ordens de Serviço</button>
-                    <button class="submenu-btn" id="sub-vendedores" data-path="vendedores">Cadastro de Vendedores</button>
+                <button class="submenu-btn" id="sub-clientes" data-path="clientes">Clientes</button>
+                <button class="submenu-btn" id="sub-pedidos-venda" data-path="pedidosVenda">Pedidos de Venda</button>
+                <button class="submenu-btn" id="sub-notas-fiscais" data-path="notasFiscais">Notas Fiscais</button>
+                <button class="submenu-btn" id="sub-ordens-servico" data-path="ordensServico">Ordens de Serviço</button>
+                <button class="submenu-btn" id="sub-vendedores" data-path="vendedores">Cadastro de Vendedores</button>
             </div>
         </div>
 
         <!-- Financeiro -->
-        <div class="nav-item" id="item-financeiro" data-menu="financeiro">
+        <div class="nav-item" id="item-financeiro" data-menu="financeiro"
+            style="{{ in_array('financeiro', $modulosAtivos) ? 'display:flex' : 'display:none' }}">
             <button class="nav-btn" data-menu="item-financeiro">
                 <span class="nav-btn-label">Financeiro</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
             </button>
             <div class="submenu">
-                    <button class="submenu-btn" id="sub-contas-pagar" data-path="contaspagar">Contas a Pagar</button>
-                    <button class="submenu-btn" id="sub-contas-receber" data-path="contasReceber">Contas a Receber</button>
-                    <button class="submenu-btn" id="sub-caixas-bancos" data-path="caixasBancos">Caixas e Bancos</button>
-                    <button class="submenu-btn" id="sub-remessas" data-path="remessas">Remessas e Retornos</button>
-                    <button class="submenu-btn" id="sub-comissoes" data-path="comissoes">Comissões</button>
+                <button class="submenu-btn" id="sub-contas-pagar" data-path="contaspagar">Contas a Pagar</button>
+                <button class="submenu-btn" id="sub-contas-receber" data-path="contasReceber">Contas a Receber</button>
+                <button class="submenu-btn" id="sub-caixas-bancos" data-path="caixasBancos">Caixas e Bancos</button>
+                <button class="submenu-btn" id="sub-remessas" data-path="remessas">Remessas e Retornos</button>
+                <button class="submenu-btn" id="sub-comissoes" data-path="comissoes">Comissões</button>
             </div>
         </div>
 
         <!-- Compras -->
-        <div class="nav-item" id="item-compras" data-menu="compras">
+        <div class="nav-item" id="item-compras" data-menu="compras"
+            style="{{ in_array('compras', $modulosAtivos) ? 'display:flex' : 'display:none' }}">
             <button class="nav-btn" data-menu="item-compras">
                 <span class="nav-btn-label">Compras</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
             </button>
-            <div class="submenu">
-                    <!-- submenus futuros -->
-            </div>
+            <div class="submenu"></div>
         </div>
 
         <!-- Produção -->
-        <div class="nav-item" id="item-producao" data-menu="producao">
+        <div class="nav-item" id="item-producao" data-menu="producao"
+            style="{{ in_array('producao', $modulosAtivos) ? 'display:flex' : 'display:none' }}">
             <button class="nav-btn" data-menu="item-producao">
                 <span class="nav-btn-label">Produção</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
             </button>
             <div class="submenu">
-                    <button class="submenu-btn" id="sub-cad-produtos" data-path="produtos">Produtos</button>
-                    <button class="submenu-btn" id="sub-cad-fornecedores" data-path="fornecedores">Fornecedores</button>
-                    <button class="submenu-btn" id="sub-ordens-producao" data-path="ordensdeproducao">Ordens de Produção</button>
-                    <button class="submenu-btn" id="sub-estoque" data-path="estoque">Estoque</button>
+                <button class="submenu-btn" id="sub-cad-produtos" data-path="produtos">Produtos</button>
+                <button class="submenu-btn" id="sub-cad-fornecedores" data-path="fornecedores">Fornecedores</button>
+                <button class="submenu-btn" id="sub-ordens-producao" data-path="ordensdeproducao">Ordens de Produção</button>
+                <button class="submenu-btn" id="sub-estoque" data-path="estoque">Estoque</button>
             </div>
         </div>
 
         <!-- Relatórios -->
-        <div class="nav-item" id="item-relatorios" data-menu="relatorios">
+        <div class="nav-item" id="item-relatorios" data-menu="relatorios"
+            style="{{ in_array('relatorios', $modulosAtivos) ? 'display:flex' : 'display:none' }}">
             <button class="nav-btn" data-menu="item-relatorios">
                 <span class="nav-btn-label">Relatórios</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
             </button>
             <div class="submenu">
-                    <button class="submenu-btn" id="sub-relatorios" data-path="relatorios">Customização de Relatórios</button>
+                <button class="submenu-btn" id="sub-relatorios" data-path="relatorios">Customização de Relatórios</button>
             </div>
         </div>
 
         <!-- Recursos Humanos -->
-        <div class="nav-item" id="item-rh" data-menu="rh">
+        <div class="nav-item" id="item-rh" data-menu="rh"
+            style="{{ in_array('rh', $modulosAtivos) ? 'display:flex' : 'display:none' }}">
             <button class="nav-btn" data-menu="item-rh">
                 <span class="nav-btn-label">Recursos Humanos</span>
                 <span class="material-symbols-outlined nav-chevron">chevron_right</span>
             </button>
-            <div class="submenu">
-                    <!-- submenus futuros -->
-            </div>
+            <div class="submenu"></div>
         </div>
 
     </nav>
@@ -92,7 +99,7 @@
     <div class="sidebar-footer">
         <nav class="nav">
             <button id="btn-config" class="nav-btn">
-                <span class="material-symbols-outlined " id="icon-config">settings</span>
+                <span class="material-symbols-outlined">settings</span>
                 Configurações
             </button>
             <button id="btn-logout" class="nav-btn">
