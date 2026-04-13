@@ -410,7 +410,9 @@ select:hover { border-color: #9ca3af; }
   justify-content: center;
   opacity: 0;
 }
-
+.icone-remover{
+  color:#24272c;
+}
 .insumo:hover .delete { opacity: 1; }
 
 .delete svg {
