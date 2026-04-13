@@ -23,34 +23,28 @@ export function criarInsumo(id, nome, quantidade, preco, unidade, fornecedor, re
   div.id = id
 
   div.innerHTML = `
-    <div class="grid-12">
-      <div class="col-3">
+      
         <input value="${nome}" data-field="nome" disabled>
-      </div>
-      <div class="col-2">
+     
         <input type="number" value="${quantidade}" class="qtd opin${id}" id="qtd${id}">
-      </div>
-      <div class="col-2">
+      
         <input type="text" value="${formatarMoeda(preco)}" class="preco opin${id}" id="preco${id}">
-      </div>
-      <div class="col-2">
+      
         <input value="${unidade}" data-field="unidade" disabled>
-      </div>
-      <div class="col-2 boxFornecedor">
+      
         <select class="opin${id}" data-field="fornecedor" id="fornecedor${id}"></select>
-      </div>
-      <div class="col-1 align-end">
+      
         <button class="delete">
           <span class="material-symbols-outlined icone-remover" id="${id}">delete</span>
         </button>
-      </div>
-    </div>
+      
+   
   `
 
-  const boxFornecedor = div.querySelector('.boxFornecedor')
+  
   const selectFornecedor = div.querySelector(`#fornecedor${id}`)
 
-  boxFornecedor.style.display = requerFornecedor ? '' : 'none'
+  selectFornecedor.style.visibility = requerFornecedor ? 'visible' : 'hidden'
 
   div.querySelector('.delete').addEventListener('click', () => div.remove())
 
@@ -144,6 +138,7 @@ export async function criaNovoInsumoDOM() {
     dados.opOPIN = op.idOP
     dados.idOPIN = crypto.randomUUID()
     dados.umOPIN = produto.um
+    dados.nome_insumo = produto.nome
     dados.qtdOPIN = parseInt(campoQTD.value)
     dados.custouOPIN = parseFloat(converterMoedaParaNumero(campoPreco.value))
     dados.custotOPIN = dados.qtdOPIN * dados.custouOPIN

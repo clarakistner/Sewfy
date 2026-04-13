@@ -83,8 +83,7 @@ async function defineNomeIdDOM() {
         const campo = document.querySelector("#idNome");
         if (!campo) return;
         const op = getOrdemProducao();
-        const nomeProd = await retornaNomeProduto(op.prodIDOP);
-        campo.textContent = `${op.idOP} — ${nomeProd}`;
+        campo.textContent = `${op.idOP} — ${op.nome_produto}`;
     } catch (error) {
         console.error(`Erro ao busca nome e código da OP: ${error}`);
         mostrarToast("Erro ao busca nome e código da OP", "erro");
@@ -116,15 +115,15 @@ async function definiDivsInsumos() {
         const insumosOP = getListaDOM();
         atualizaOPINs.length = 0;
 
-        const nomesInsumos = await Promise.all(insumosOP.map((insumo) => retornaNomeProduto(insumo.prodIdOPIN)));
+        
 
         const fragment = document.createDocumentFragment();
-        insumosOP.forEach((insumo, index) => {
+        insumosOP.forEach((insumo) => {
             atualizaOPINs.push(insumo);
             fragment.appendChild(
                 criarInsumo(
                     insumo.idOPIN,
-                    nomesInsumos[index],
+                    insumo.nome_insumo,
                     insumo.qtdOPIN,
                     parseFloat(insumo.custouOPIN),
                     insumo.umOPIN,

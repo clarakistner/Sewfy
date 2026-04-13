@@ -22,7 +22,7 @@ export function abrirMenu() {
                 .querySelector(".layout")
                 .insertAdjacentHTML("afterbegin", html);
 
-            const empresasIdsRaw = getCookie("empresas_ids") || "";
+            const empresasIdsRaw =decodeURIComponent(getCookie("empresas_ids")) || "";
             const empresasIds = empresasIdsRaw ? empresasIdsRaw.split(",") : [];
 
             const btnTrocar = document.getElementById("btn-trocar-empresa");
@@ -76,7 +76,7 @@ export async function usuarioEhProprietario() {
 const urlBase = getBaseUrl() || window.BASE_URL;
 
 const rotas = {
-    "btn-trocar-empresa": `${urlBase}/trocar-empresa`,
+    "btn-trocar-empresa": `${urlBase}/selecionar-empresa`,
     "sub-clientes": `${urlBase}/faturamento/clientes`,
     "sub-pedidos-venda": `${urlBase}/faturamento/pedidosVenda`,
     "sub-notas-fiscais": `${urlBase}/faturamento/notasFiscais`,

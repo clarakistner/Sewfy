@@ -181,6 +181,7 @@
   font-weight: 600;
   color: #111827;
   margin: 0;
+  text-align: start;
 }
 
 .detalhes-insumo-valor {

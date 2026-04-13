@@ -10,7 +10,7 @@ verificarAuth();
 const empId = new URLSearchParams(window.location.search).get("id");
 
 if (!empId) {
-    window.location.href = "/www.sewfy/listaempresas/listaempresas.html";
+    window.location.href = "/home-adm";
 }
 
 let emailOwnerOriginal = null;
@@ -48,7 +48,7 @@ function fecharModal() {
         sessionStorage.removeItem("listaEmpresas_origem");
         window.location.href = origem;
     } else {
-        window.location.href = "/www.sewfy/listaempresas/listaempresas.html";
+        window.location.href = "/home-adm";
     }
 }
 

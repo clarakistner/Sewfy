@@ -105,7 +105,7 @@ document.addEventListener("click", async (e) => {
   e.stopPropagation();
 const url = getBaseUrl();
   window.funcionarioAtualId = botao.dataset.id;
-  const { carregaJsCssEditarFuncionario } = await import("../js/editarfuncionarios.js");
+  const { carregaJsCssEditarFuncionario } = await import("http://localhost:5173/resources/js/editarfuncionarios.js");
   await carregaJsCssEditarFuncionario();
   try {
     const modalHTML = await fetch(

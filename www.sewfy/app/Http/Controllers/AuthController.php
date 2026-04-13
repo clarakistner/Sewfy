@@ -30,6 +30,7 @@ class AuthController extends Controller
         ])) {
             return response()->json(['status' => 'erro', 'resposta' => 'Credenciais inválidas'], 401);
         }
+
         $user = User::where('USU_EMAIL', $request->email)->first();
 
         if ($user->USU_ATIV === 0) {
@@ -38,9 +39,9 @@ class AuthController extends Controller
 
         $empresasUsuario = EmpresaUsuarios::where('USU_ID', $user->USU_ID)->get();
 
-        $quantidadeEmpresas = $empresasUsuario->count();
-        $empresasIds = Empresa::whereIn('EMP_ID', $empresasUsuario->pluck('EMP_ID'))->whereIn('EMP_ATIV', [1])->pluck('EMP_ID')->toArray();
 
+        $empresasIds = Empresa::whereIn('EMP_ID', $empresasUsuario->pluck('EMP_ID'))->whereIn('EMP_ATIV', [1])->pluck('EMP_ID')->toArray();
+        $quantidadeEmpresas = count($empresasIds);
         if (count($empresasIds) > 1) {
             $abilities = array_map(fn($id) => "empresas_$id", $empresasIds);
         } else {
@@ -51,6 +52,7 @@ class AuthController extends Controller
         return response()->json([
             'nome'    => $user->USU_NOME,
             'isOwner' => $user->USU_IS_OWNER,
+            'empresas_ids' => $empresasIds,
             'quantidade_empresas' => $quantidadeEmpresas,
             'modulos' => $user->modulos->pluck('MOD_NOME')
         ])
@@ -89,22 +91,22 @@ class AuthController extends Controller
 
     // POST /api/auth/logout - Logout para ambos os tipos de usuários
     public function logout(Request $request)
-{
-    $request->user()->currentAccessToken()->delete();
+    {
+        $request->user()->currentAccessToken()->delete();
 
-    $response = response()->json(['mensagem' => 'Logout realizado com sucesso'])
-        ->withHeaders([
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-            'Pragma' => 'no-cache',
-            'Expires' => 'Sat, 01 Jan 2000 00:00:00 GMT',
-        ]);
+        $response = response()->json(['mensagem' => 'Logout realizado com sucesso'])
+            ->withHeaders([
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma' => 'no-cache',
+                'Expires' => 'Sat, 01 Jan 2000 00:00:00 GMT',
+            ]);
 
-    foreach ($request->cookies->all() as $nome => $valor) {
-        $response = $response->withoutCookie($nome); 
+        foreach ($request->cookies->all() as $nome => $valor) {
+            $response = $response->withoutCookie($nome);
+        }
+
+        return $response;
     }
-
-    return $response;
-}
     public function defineEmpresaSelecionada(Request $request)
     {
         $request->validate([
@@ -124,9 +126,9 @@ class AuthController extends Controller
         $empresaIdToken = "empresa_{$request->empresa_id}";
         $request->user()->currentAccessToken()->delete();
         $token = $request->user()->createToken('user-token', [$empresaIdToken])->plainTextToken;
-
         return response()->json([
             'mensagem'   => 'Empresa selecionada com sucesso',
+            'empresa_id' => $request->empresa_id,
             'token'      => $token
         ]);
     }

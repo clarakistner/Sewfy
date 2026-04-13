@@ -5,9 +5,18 @@ namespace App\Http\Controllers\OPs;
 use App\Http\Controllers\Controller;
 use App\Models\OrdemDeProducao;
 use Illuminate\Http\Request;
+use App\Models\Produto;
+
 
 class ListarOrdensProducaoController extends Controller
 {
+
+    public function retornaNome($id)
+    {
+        $prod = Produto::find($id);
+        return $prod->PROD_NOME;
+    }
+
     public function listarOPs(Request $request)
     {
         try {
@@ -32,6 +41,7 @@ class ListarOrdensProducaoController extends Controller
                 'qtdOP'    => $op->OP_QTD,
                 'qtdeOP'   => $op->OP_QTDE,
                 'prodIDOP' => $op->PROD_ID,
+                'nome_produto' => $this->retornaNome($op->PROD_ID),
                 'quebra'   => $op->OP_QUEBRA,
                 'contador' => $op->OP_CONTADOR
             ]);

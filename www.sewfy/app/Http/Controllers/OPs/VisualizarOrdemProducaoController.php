@@ -5,9 +5,15 @@ namespace App\Http\Controllers\OPs;
 use App\Http\Controllers\Controller;
 use App\Models\OrdemDeProducao;
 use Illuminate\Http\Request;
+use App\Models\Produto;
 
 class VisualizarOrdemProducaoController extends Controller
 {
+    public function retornaNome($id)
+    {
+        $prod = Produto::find($id);
+        return $prod->PROD_NOME;
+    }
     public function visualizarOP(Request $request, $id)
     {
         try {
@@ -53,6 +59,7 @@ class VisualizarOrdemProducaoController extends Controller
                 'custou'          => $op->OP_CUSTOU,
                 'custour'         => $op->OP_CUSTOUR,
                 'qtdOP'           => $op->OP_QTD,
+                'nome_produto'    => $this->retornaNome($op->PROD_ID),
                 'qtdeOP'          => $op->OP_QTDE,
                 'responsavelIDOP' => $op->USU_RESPONSAVEL,
                 'status'          => $op->OP_STATUS,
@@ -67,6 +74,7 @@ class VisualizarOrdemProducaoController extends Controller
                 'qtdOPIN'          => $opin->OPIN_QTD,
                 'umOPIN'           => $opin->OPIN_UM,
                 'opOPIN'           => $opin->OP_ID,
+                'nome_insumo'    => $this->retornaNome($opin->PROD_ID),
                 'prodIdOPIN'       => $opin->PROD_ID,
                 'necessita_clifor' => $opin->NECESSITA_CLIFOR === 1
             ]);
