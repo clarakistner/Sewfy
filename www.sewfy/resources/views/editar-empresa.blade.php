@@ -1,13 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('titulo', 'Editar Empresa')
 @push('styles')
     @vite(['resources/css/editarempresa.css', 'resources/css/menuadm.css'])
 @endpush
-@section('conteudo')
 
-    <div class="layout">
-        <!-- sidebar injetada pelo JS -->
+@section('conteudo')
 
         <main class="content">
 
@@ -118,10 +116,9 @@
             </button>
 
         </main>
-    </div>
 
-   @endsection
+ @endsection
 
 @section('scripts')
-@vite('resources/js/editarempresa.js')
+@vite(['resources/js/homeadm.js', 'resources/js/editarempresa.js'])
 @endsection
