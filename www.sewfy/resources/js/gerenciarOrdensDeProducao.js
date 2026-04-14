@@ -54,9 +54,10 @@ async function buscarEOrganizarOPs() {
     });
 
     const ids = [...new Set(listaOPs.map((op) => op.prodIDOP))];
-    const produtos = ids.length > 0
-        ? await window.api.get(`/produtos?ids=${ids.join(",")}`)
-        : [];
+    const produtos =
+        ids.length > 0
+            ? await window.api.get(`/produtos?ids=${ids.join(",")}`)
+            : [];
     const mapaProdutos = new Map(produtos.map((p) => [p.id, p.nome]));
 
     return { listaOPs, mapaProdutos };
@@ -147,7 +148,12 @@ export async function listarOrdensProducao(
     try {
         limparLista();
         const listaOrdensDOM = document.querySelector(".lista-ordens");
-
+        listaOrdensDOM.innerHTML = `
+        <div class="card-ordem" id="card-mensagem-vazia">
+            <span colspan="5" class="mensagem-vazia">Carregando...</span>
+        </div>
+    `;
+        
         if (!cacheOPs || !cacheProdutosOPs) {
             const resultado = await buscarEOrganizarOPs();
             cacheOPs = resultado.listaOPs;
@@ -165,6 +171,7 @@ export async function listarOrdensProducao(
         listaOPs.forEach((op) =>
             fragment.appendChild(criarCardOP(op, cacheProdutosOPs)),
         );
+        limparLista();
         listaOrdensDOM.appendChild(fragment);
     } catch (error) {
         console.log(`Erro ao listar as ordens de produção: ${error}`);
