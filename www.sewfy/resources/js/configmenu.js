@@ -4,7 +4,7 @@ import { initGerenciarFuncionarios } from "../js/gerenciarfuncionarios.js";
 import { initEditarOwner } from "../js/editarcontaOwner.js";
 import { retiraCssJsEditarFuncionario } from "../js/editarfuncionarios.js";
 import { initEditarTelaInicial } from "../js/editartelainicial.js";
-import { getCookie, deleteCookie, popCookie } from './API_JS/api.js';
+import { getCookie, setCookie, deleteCookie, popCookie, getBaseUrl } from './API_JS/api.js';
 
 const paginasConfig = [
     "cadastro-funcionario",
@@ -13,13 +13,16 @@ const paginasConfig = [
     "editar-tela-inicial",
 ];
 
-let urlAtual = null;
+
+function getCssBaseUrl() {
+    const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    return isDev ? "http://localhost:5173/resources/css" : "/resources/css";
+}
 
 document.addEventListener("click", handleClick);
 
 window.addEventListener("load", () => {
     const urlAnterior = popCookie('url_anterior') ?? '';
-    deleteCookie('url_anterior');
 
     if (urlAnterior && urlAnterior !== window.location.href) {
         const urlSegura = urlAnterior.startsWith(window.location.origin) ? urlAnterior : '';
@@ -49,23 +52,18 @@ async function handleClick(e) {
         const icon = document.getElementById("icon-config");
         icon?.classList.add("girando");
         setTimeout(() => icon?.classList.remove("girando"), 300);
-    }
-
-    if (menuItem?.dataset.menu === "item-cadastros") {
+    } else if (menuItem?.dataset.menu === "item-cadastros") {
         await trocarPagina("cadastro-funcionario", "cadastrousuario", "cadastro-funcionario");
         retiraCssJsEditarFuncionario();
         initCadastroFuncionario();
-    }
-    if (menuItem?.dataset.menu === "item-gerenciar") {
+    } else if (menuItem?.dataset.menu === "item-gerenciar") {
         await trocarPagina("funcionarios", "gerenciarfuncionarios", "funcionarios");
         initGerenciarFuncionarios();
-    }
-    if (menuItem?.dataset.menu === "item-editar-conta") {
+    } else if (menuItem?.dataset.menu === "item-editar-conta") {
         await trocarPagina("editar-conta", "editarcontaOwner", "editar-conta");
         retiraCssJsEditarFuncionario();
         initEditarOwner();
-    }
-    if (menuItem?.dataset.menu === "item-tela-inicial") {
+    } else if (menuItem?.dataset.menu === "item-tela-inicial") {
         await trocarPagina("editar-tela-inicial", "editartelainicial", "editar-tela-inicial");
         retiraCssJsEditarFuncionario();
         initEditarTelaInicial();
@@ -82,7 +80,7 @@ export default async function trocaModais() {
         if (principal) principal.style.visibility = "hidden";
 
         if (!getCookie("url_anterior")) {
-            document.cookie = `url_anterior=${window.location.href}; path=/; SameSite=Lax`;
+            setCookie("url_anterior", window.location.href);
         }
 
         menu.classList.add("fechado");
@@ -110,8 +108,9 @@ export default async function trocaModais() {
         document.querySelector(".containerConfigOwner")?.remove();
 
         const urlAnterior = getCookie("url_anterior") || "/home";
-        history.pushState({}, "", urlAnterior);
         deleteCookie('url_anterior');
+
+        history.pushState({}, "", urlAnterior);
 
         const menuBlade = document.querySelector(".corpoMenu");
         if (menuBlade) {
@@ -129,8 +128,6 @@ export default async function trocaModais() {
 }
 
 async function abrirConfigMenu() {
-    urlAtual = window.location.pathname;
-
     document.querySelector(".corpoConfigOwner")?.remove();
     document.querySelector("#css-configmenu")?.remove();
 
@@ -143,13 +140,35 @@ async function abrirConfigMenu() {
     const response = await fetch("/configmenu");
     const data     = await response.text();
 
-    document.querySelector(".layout").insertAdjacentHTML("afterbegin", data);
+    const parser  = new DOMParser();
+    const doc     = parser.parseFromString(data, "text/html");
+    const corpo   = doc.querySelector(".corpoConfigOwner");
 
-    // Carrega CSS via <link> — funciona tanto em dev (Vite) quanto em prod
+    if (corpo) {
+        document.querySelector(".layout").insertAdjacentHTML("afterbegin", corpo.outerHTML);
+    }
+
+    const nomeEmpresaEl  = document.querySelector(".corpoMenu .sidebar-subtitle");
+    const nomeEmpresa    = nomeEmpresaEl?.textContent || "";
+    const empresasIdsRaw = decodeURIComponent(getCookie("empresas_ids") || "");
+    const empresasIds    = empresasIdsRaw ? empresasIdsRaw.split(",") : [];
+    const urlBase        = getBaseUrl() || window.BASE_URL;
+
+    const configNomeEl = document.getElementById("config-nome-empresa");
+    if (configNomeEl && nomeEmpresa) configNomeEl.textContent = nomeEmpresa;
+
+    const btnTrocar = document.getElementById("btn-trocar-empresa-config");
+    if (btnTrocar && empresasIds.length > 1) {
+        btnTrocar.style.display = "flex";
+        btnTrocar.addEventListener("click", () => {
+            window.location.href = `${urlBase}/selecionar-empresa`;
+        });
+    }
+
     const link  = document.createElement("link");
     link.id     = "css-configmenu";
     link.rel    = "stylesheet";
-    link.href   = "http://localhost:5173/resources/css/configmenu.css";
+    link.href   = `${getCssBaseUrl()}/configmenu.css`;
     document.head.appendChild(link);
 
     const novoConfig = document.querySelector(".corpoConfigOwner");
@@ -163,6 +182,16 @@ async function trocarPagina(blade, css, url) {
     document.querySelector(".containerConfigOwner")?.remove();
     document.querySelector("#css-config")?.remove();
 
+    await new Promise((resolve) => {
+        const link   = document.createElement("link");
+        link.id      = "css-config";
+        link.rel     = "stylesheet";
+        link.href    = `${getCssBaseUrl()}/${css}.css`;
+        link.onload  = resolve;
+        link.onerror = resolve;
+        document.head.appendChild(link);
+    });
+
     const responseHTML  = await fetch(`/${blade}`);
     const dataContainer = await responseHTML.text();
 
@@ -173,13 +202,6 @@ async function trocarPagina(blade, css, url) {
     if (conteudo) {
         document.querySelector(".layout").insertAdjacentHTML("beforeend", conteudo.outerHTML);
     }
-
-    // Carrega CSS via <link>
-    const link  = document.createElement("link");
-    link.id     = "css-config";
-    link.rel    = "stylesheet";
-    link.href   = `http://localhost:5173/resources/css/${css}.css`;
-    document.head.appendChild(link);
 
     if (url) history.pushState({}, "", `/${url}`);
 }

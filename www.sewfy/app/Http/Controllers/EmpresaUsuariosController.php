@@ -169,7 +169,7 @@ class EmpresaUsuariosController extends Controller
 
         $empresas = Empresa::whereIn('EMP_ID', $idEmpresas)
             ->where('EMP_ATIV', 1)
-            ->pluck('EMP_NOME', 'EMP_ID') //no selecionar-empresa serão exibidos os nomes das empresas ao invés da razão social 
+            ->pluck('EMP_NOME', 'EMP_ID') //no selecionar-empresa serão exibidos os nomes das empresas ao invés da razão
             ->toArray();
 
         return response()->json(['empresas' => $empresas]);

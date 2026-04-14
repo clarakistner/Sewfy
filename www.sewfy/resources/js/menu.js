@@ -31,7 +31,6 @@ export function abrirMenu() {
     });
 
     ativarModuloAtual();
-    document.body.classList.add("loaded");
 }
 
 export async function usuarioEhProprietario() {
@@ -87,7 +86,7 @@ function ativarModuloAtual() {
 
     const mapa = [
         { modulo: "item-faturamento", paths: ["faturamento", "clientes", "pedidosVenda", "notasFiscais", "ordensServico", "vendedores"] },
-        { modulo: "item-financeiro",  paths: ["financeiro", "contaspagar", "contasReceber", "caixasBancos", "remessas", "comissoes"] },
+        { modulo: "item-financeiro",  paths: ["financeiro", "contas", "contasReceber", "caixasBancos", "remessas", "comissoes"] },
         { modulo: "item-compras",     paths: ["compras"] },
         { modulo: "item-producao",    paths: ["produtos", "fornecedores", "ordensdeproducao", "estoque"] },
         { modulo: "item-relatorios",  paths: ["relatorios"] },

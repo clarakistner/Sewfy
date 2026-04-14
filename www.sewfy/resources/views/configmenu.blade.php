@@ -1,7 +1,16 @@
 <aside class="sidebar corpoConfigOwner fechado">
     <div class="sidebar-header">
-        <h1 class="sidebar-logo" id="logo">Sewfy</h1>
+        <div class="sidebar-header-top">
+            <div class="sidebar-brand">
+                <h1 class="sidebar-logo" id="logo">Sewfy</h1>
+                <p class="sidebar-subtitle" id="config-nome-empresa"></p>
+            </div>
+            <button class="btn-trocar-empresa" id="btn-trocar-empresa-config" title="Trocar empresa" style="display:none">
+                <span class="material-symbols-outlined">switch_account</span>
+            </button>
+        </div>
     </div>
+
 
     <nav class="nav">
         <h3 id="subtitulo">Configurações</h3>

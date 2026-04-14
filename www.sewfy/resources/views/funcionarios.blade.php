@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('titulo', 'Funcionários')
+@section('titulo', 'Gerenciar Funcionários')
 @push('styles')
     @vite(['resources/css/gerenciarfuncionarios.css','resources/css/configmenu.css'])
 @endpush
