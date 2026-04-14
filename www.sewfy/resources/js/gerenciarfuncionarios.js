@@ -81,7 +81,15 @@ function renderizaFuncionarios(funcionarios) {
             <td class="table-cell">${funcionario.USU_EMAIL}</td>
             <td class="table-cell">${mascaraTelefone(funcionario.USU_NUM)}</td>
             <td class="table-cell">
-                <button type="button" class="botao-visualizar-funcionario" data-id="${funcionario.USU_ID}">
+                <button
+                    type="button"
+                    class="botao-visualizar-funcionario"
+                    data-id="${funcionario.USU_ID}"
+                    data-nome="${funcionario.USU_NOME}"
+                    data-email="${funcionario.USU_EMAIL}"
+                    data-telefone="${funcionario.USU_NUM}"
+                    data-ativo="${funcionario.USU_ATIV}"
+                >
                     <span class="material-symbols-outlined icone-visualizar-funcionario">visibility</span>
                 </button>
             </td>`;
@@ -120,11 +128,13 @@ document.addEventListener("click", async (e) => {
         if (!telaGerenciar) return;
         telaGerenciar.insertAdjacentHTML("afterbegin", modal.outerHTML);
 
-        // 4. Carrega dados do funcionário diretamente (sem depender do observer)
-        const { carregarDadosFuncionarioExterno } = await import("http://localhost:5173/resources/js/editarfuncionarios.js");
-        if (carregarDadosFuncionarioExterno) {
-            await carregarDadosFuncionarioExterno();
-        }
+        // 4. Preenche os campos básicos imediatamente com os dados do dataset
+        //    (igual ao padrão de produtos — sem esperar a requisição)
+        const { preencherCamposBasicos, carregarDadosFuncionarioExterno } = await import("http://localhost:5173/resources/js/editarfuncionarios.js");
+        preencherCamposBasicos(botao.dataset);
+
+        // 5. Busca apenas os módulos via API (o que não está no dataset)
+        await carregarDadosFuncionarioExterno();
 
     } catch (erro) {
         console.error(erro);
