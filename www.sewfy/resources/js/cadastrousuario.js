@@ -241,27 +241,10 @@ function verificaCampos(nome, email, telefone, modulosSelecionados) {
 }
 
 async function criaMapaModulos() {
-    try {
-        // Usa cache do cookie para evitar requisição ao banco
-        const cacheRaw = getCookie("modulos_cache");
-        if (cacheRaw) {
-            const data = JSON.parse(decodeURIComponent(cacheRaw));
-            if (data.modulos && data.idsModulos) {
-                return Object.fromEntries(
-                    data.modulos.map((modulo, i) => [modulo, data.idsModulos[i]])
-                );
-            }
-        }
-
-        // Fallback: busca no banco se não tiver cache
-        const data = await window.api.get("/modulos-usuario");
-        return Object.fromEntries(
-            data.modulos.map((modulo, i) => [modulo, data.idsModulos[i]])
-        );
-    } catch (error) {
-        console.error("Erro ao criar mapa de módulos:", error);
-        throw error;
-    }
+    const data = await window.api.get("/modulos-usuario");
+    return Object.fromEntries(
+        data.modulos.map((modulo, i) => [modulo, data.idsModulos[i]])
+    );
 }
 
 function criaModuloItem(nomeModulo, idModulo) {
