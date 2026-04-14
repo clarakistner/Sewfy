@@ -107,7 +107,7 @@ export default async function trocaModais() {
         document.querySelector("#css-configmenu")?.remove();
         document.querySelector(".containerConfigOwner")?.remove();
 
-        const urlAnterior = getCookie("url_anterior") || "/home";
+        const urlAnterior = decodeURIComponent(getCookie("url_anterior")) || "/home";
         deleteCookie('url_anterior');
 
         history.pushState({}, "", urlAnterior);
