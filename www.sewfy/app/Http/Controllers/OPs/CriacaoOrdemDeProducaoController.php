@@ -41,7 +41,7 @@ class CriacaoOrdemDeProducaoController extends Controller
                 ->where('EMP_ID', $empresaId)
                 ->max('OP_CONTADOR') + 1;
 
-            $idOp = 'OP0' . $usuarioId . '00' . $numero;
+            $idOp = 'OP0' . $usuarioId .'0'.$empresaId. '00' . $numero;
 
             // Persiste a Ordem de Produção no banco
             $op = OrdemDeProducao::create([
