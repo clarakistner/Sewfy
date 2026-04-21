@@ -563,19 +563,19 @@ async function confirmarOrdem() {
 
 function organizaDados() {
     document.querySelector("#nomeProduto").innerHTML = op.PROD_NOME;
-    document.querySelector("#quantidadeProduto").innerHTML = parseInt(
-        op.OP_QTD,
-    ).toLocaleString("pt-BR");
-    document.querySelector("#custot").innerHTML =
-        calculaCustoT().toLocaleString("pt-BR", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    document.querySelector("#custou").innerHTML =
-        calculaCustoU().toLocaleString("pt-BR", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
+    document.querySelector("#quantidadeProduto").innerHTML = parseInt(op.OP_QTD).toLocaleString("pt-BR");
+    document.querySelector("#custot").innerHTML = calculaCustoT().toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+    document.querySelector("#custou").innerHTML = calculaCustoU().toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 
     carregaDadosInsumos();
 }
@@ -721,20 +721,30 @@ async function fornecedorAplicavel(idProd) {
 }
 
 async function mudaLabelQuantidadePreco(idProd) {
-    const labelQtd = document.querySelector("#label-quantidade");
+    const labelQtd  = document.querySelector("#label-quantidade");
     const labelPreco = document.querySelector("#label-preco");
-    const campo = document.querySelector(".campoQuant");
-    const lista = await getListaProdutosBanco();
-    const produto = lista.find((insumo) => insumo.id === parseInt(idProd));
+    const campo     = document.querySelector(".campoQuant");
+    const campoPreco = document.querySelector(".campoPreco"); // ── ADICIONE
+    const lista     = await getListaProdutosBanco();
+    const produto   = lista.find((insumo) => insumo.id === parseInt(idProd));
 
     if (produto) {
-        labelQtd.textContent = `Quantidade em ${produto.um}*`;
+        labelQtd.textContent  = `Quantidade em ${produto.um}*`;
         labelPreco.textContent = `Preço por ${produto.um} (R$)*`;
         campo.disabled = false;
+
+        // ── ADICIONE: preenche o preço cadastrado do produto, se existir ──
+        if (campoPreco) {
+            campoPreco.value = produto.preco != null
+                ? formatarMoeda(parseFloat(produto.preco))
+                : "";
+        }
     } else {
-        labelQtd.textContent = "Quantidade*";
+        labelQtd.textContent  = "Quantidade*";
         labelPreco.textContent = "Preço (R$)*";
         campo.disabled = true;
+
+        if (campoPreco) campoPreco.value = ""; // ── ADICIONE
     }
 }
 

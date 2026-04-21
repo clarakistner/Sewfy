@@ -42,7 +42,6 @@ class DeletarInsumoOrdemProducaoController extends Controller
                 // Busca o insumo e a OP relacionada
                 $insumo = OPInsumo::find((int) $opin);
                 $op = OrdemDeProducao::where('OP_ID', $insumo->OP_ID)
-                    ->where('USU_RESPONSAVEL', $idUsuario)
                     ->where('EMP_ID', $empresaId)
                     ->first();
 

@@ -23,7 +23,7 @@
                 <div class="form-grid">
                     <div class="campo campo-full">
                         <label>Nome *</label>
-                        <input type="text" placeholder="Nome do funcionário" id="nome"/>
+                        <input type="text" placeholder="Nome do Usuário" id="nome"/>
                     </div>                    
                     <div class="campo campo-full">
                         <label>Telefone *</label>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="campo campo-full">
                         <label>Email *</label>
-                        <input type="email" placeholder="funcionario@gmail.com" id="email"/>
+                        <input type="email" placeholder="proprietario@gmail.com" id="email"/>
                     </div>
                 </div>
       </div>

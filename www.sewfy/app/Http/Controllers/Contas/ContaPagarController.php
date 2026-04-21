@@ -114,4 +114,34 @@ class ContaPagarController extends Controller
             'pagamento'  => $conta->CP_DATAP,
         ]);
     }
+
+    // ATUALIZAR CONTA
+    public function atualizarConta(Request $request, $id)
+    {
+        $empId = $this->getEmpresaId($request);
+
+        $conta = ContaPagar::where('CP_ID', $id)
+            ->where('EMP_ID', $empId)
+            ->first();
+
+        if ($conta->CP_STATUS === 'pago') {
+            return response()->json(['erro' => 'Conta já paga não pode ser editada'], 422);
+        }
+
+        if (!$conta) {
+            return response()->json(['erro' => 'Conta não encontrada'], 404);
+        }
+
+        $request->validate([
+            'vencimento' => 'nullable|date',
+            'pagamento'  => 'nullable|date',
+        ]);
+
+        $conta->CP_DATAV  = $request->vencimento ?? $conta->CP_DATAV;
+        $conta->CP_DATAP  = $request->pagamento  ?? null;
+        $conta->CP_STATUS = $request->filled('pagamento') ? 'pago' : 'pendente';
+        $conta->save();
+
+        return response()->json(['mensagem' => 'Conta atualizada com sucesso']);
+    }
 }

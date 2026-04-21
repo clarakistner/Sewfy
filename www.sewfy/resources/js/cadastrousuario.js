@@ -7,8 +7,8 @@ const modulosDOM = {
     financeiro:  "Financeiro",
     rh:          "Recursos Humanos",
     faturamento: "Faturamento",
-    producao:    "Producao",
-    relatorios:  "Relatorios",
+    producao:    "Produção",
+    relatorios:  "Relatórios",
     compras:     "Compras",
 };
 

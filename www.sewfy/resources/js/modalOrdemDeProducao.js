@@ -19,8 +19,8 @@ export const getInsumosBanco = () => insumosBanco;
 document.addEventListener("click", handleClick);
 
 async function handleClick(e) {
-    const botao = e.target.closest(".btn-verop, .verop");
-    if (botao) abrirModal(botao.id);
+    const botao = e.target.closest(".btn-verop");
+    if (botao) abrirModal(botao.dataset.id);
     if (e.target.closest(".ver-modal-close")) fecharModal();
     if (e.target.closest(".fecharOP")) initConfirmarFechamento();
 }
@@ -95,6 +95,13 @@ async function insereInsumosTabela() {
     const fragment = document.createDocumentFragment();
 
     getInsumosBanco().forEach((insumo) => {
+        const custou = parseFloat(insumo.custouOPIN);
+        const custot = parseFloat(insumo.custotOPIN);
+        const artigo = insumo.umOPIN === "UN" ? "a" : "o";
+        const custoUnitLabel = !isNaN(custou) && custou > 0
+            ? `${custou.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} ${artigo} ${insumo.umOPIN}`
+            : null;
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>
@@ -103,9 +110,12 @@ async function insereInsumosTabela() {
                   <p class="detalhes-insumo-nome">${insumo.nome_insumo}</p>
                   <p class="detalhes-insumo-qtd">${insumo.qtdOPIN} ${insumo.umOPIN}</p>
                 </div>
-                <p class="detalhes-insumo-valor">
-                  ${parseFloat(insumo.custotOPIN).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                </p>
+                <div class="detalhes-insumo-valores">
+                  <p class="detalhes-insumo-valor">
+                    ${custot.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                  </p>
+                  ${custoUnitLabel ? `<p class="detalhes-insumo-custo-unit">${custoUnitLabel}</p>` : ""}
+                </div>
               </div>
             </td>
         `;
@@ -127,12 +137,13 @@ async function insereDetalhesNaTela() {
     const labelCustou = document.querySelector("#labelcustou");
     const labelQtd = document.querySelector("#labelquantProd");
     const noneds = document.querySelectorAll(".noned");
+    const campoIdOP = document.querySelector("#modal-idOP");
+
+    if (campoIdOP) campoIdOP.textContent = op.idOP;
 
     if (!op || !campoNome || !campoQuant) return;
 
     if (op.status === "fechada") {
-        labelCustou.textContent = "Custo Unitário Inicial:";
-        labelQtd.textContent = "Quantidade Inicial:";
         campoCustoR.textContent = `${parseFloat(op.custour).toLocaleString(
             "pt-BR",
             {
@@ -144,8 +155,6 @@ async function insereDetalhesNaTela() {
         campoQuebra.textContent = `${parseFloat(op.quebra)}%`;
         noneds.forEach((noned) => (noned.style.display = "flex"));
     } else {
-        labelCustou.textContent = "Custo Unitário:";
-        labelQtd.textContent = "Quantidade:";
         noneds.forEach((noned) => (noned.style.display = "none"));
     }
 

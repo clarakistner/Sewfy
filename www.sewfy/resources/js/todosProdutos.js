@@ -108,7 +108,12 @@ function renderizarTabela(produtos) {
         return;
     }
 
-    produtos.forEach(produto => {
+    // Ativos primeiro, depois inativos — dentro de cada grupo mantém a ordem original
+    const produtosOrdenados = [...produtos].sort((a, b) => {
+        return Number(b.ativo) - Number(a.ativo);
+    });
+
+    produtosOrdenados.forEach(produto => {
         const tr = document.createElement("tr");
         tr.classList.add("table-row");
 

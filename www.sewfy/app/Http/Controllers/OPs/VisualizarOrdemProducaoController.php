@@ -37,8 +37,7 @@ class VisualizarOrdemProducaoController extends Controller
                 ->whereHas('produto', fn($q) => $q->where('PROD_ATIV', 1))
             ])
                 ->where('OP_ID', $id)
-                ->where('USU_RESPONSAVEL', $idUsuario)
-                ->where('EMP_ID', $empresaId)
+                ->where('EMP_ID', $empresaId)  // ── removido USU_RESPONSAVEL
                 ->select('OP_ID', 'PROD_ID', 'OP_DATAA', 'OP_DATAE', 'OP_CUSTOT', 'OP_CUSTOU', 'OP_CUSTOUR', 'OP_QTD', 'OP_QTDE', 'USU_RESPONSAVEL', 'OP_STATUS', 'OP_QUEBRA')
                 ->first();
 

@@ -37,11 +37,10 @@ class CriacaoOrdemDeProducaoController extends Controller
             $custouOP  = $dados['OP_CUSTOU'] ?? null;
             $custotOP  = $dados['OP_CUSTOT'] ?? null;
 
-            $numero = OrdemDeProducao::where('USU_RESPONSAVEL', $usuarioId)
-                ->where('EMP_ID', $empresaId)
+            $numero = OrdemDeProducao::where('EMP_ID', $empresaId)
                 ->max('OP_CONTADOR') + 1;
 
-            $idOp = 'OP0' . $usuarioId .'0'.$empresaId. '00' . $numero;
+            $idOp = 'OP' . $empresaId . str_pad($numero, 4, '0', STR_PAD_LEFT);
 
             // Persiste a Ordem de Produção no banco
             $op = OrdemDeProducao::create([

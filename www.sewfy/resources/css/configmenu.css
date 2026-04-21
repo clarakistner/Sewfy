@@ -1,48 +1,130 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+margin: 0;
+padding: 0;
+box-sizing: border-box;
 }
 
-html,
-body {
-  height: 100vh;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
-  background-color: #f9fafb;
+html, body {
+height: 100%;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+background-color: #f9fafb;
 }
 
 /* Layout */
 .layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  transition: grid-template-columns 0.3s ease;
+display: grid;
+grid-template-columns: 260px 1fr;
 }
 
 .layout.sem-menu {
-  grid-template-columns: 0px 1fr;
+grid-template-columns: 0px 1fr;
 }
 
 /* Sidebar */
 .sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  background: linear-gradient(160deg, #03008a 0%, #0e59fe 100%);
-  padding: 28px 18px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  scrollbar-width: none;
+position: sticky;
+top: 0;
+height: 100vh;
+background: linear-gradient(160deg, #03008a 0%, #0e59fe 100%);
+padding: 28px 18px;
+display: flex;
+flex-direction: column;
+overflow-y: auto;
+overflow-x: hidden;
+scrollbar-width: none;
 }
 
-.sidebar-empresa {
-    color: rgba(180, 195, 255, 0.75);
-    font-size: 13px;
-    font-weight: 400;
-    
-  text-align: center;
+.sidebar::-webkit-scrollbar {
+display: none;
+}
+
+.sidebar-logo {
+    font-size: 40px;
+    font-family: "Times New Roman", Times, serif;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.sidebar-subtitle {
+    color: rgba(180, 195, 255, 0.75) !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 20px; /* ← altura fixa */
+}
+
+/* Efeito de luz sutil */
+.sidebar::before {
+content: "";
+position: absolute;
+top: -60px;
+right: -60px;
+width: 200px;
+height: 200px;
+background: radial-gradient(
+  circle,
+  rgba(255, 255, 255, 0.08) 0%,
+  transparent 70%
+);
+pointer-events: none;
+}
+
+/* Header */
+.sidebar-header-top {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    padding-right: 0; /* ← remove */
+}
+
+.sidebar-header {
+    margin-bottom: 36px;
+    padding-left: 8px;
+    padding-right: 0; /* ← move para cá — sempre reserva espaço */
+    flex-shrink: 0;
+    position: relative;
+}
+
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    height: 68px; /* ← logo(48) + subtitle(20) */
+}
+
+.btn-trocar-empresa {
+    display: none;
+    position: absolute; /* ← posição absoluta */
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%); /* ← centraliza verticalmente */
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 6px;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.btn-trocar-empresa:hover {
+opacity: 0.9;
+}
+
+.btn-trocar-empresa:focus {
+outline: none;
+}
+
+.btn-trocar-empresa .material-symbols-outlined {
+font-size: 20px;
 }
 
 .corpoConfigOwner {

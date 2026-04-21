@@ -4,14 +4,18 @@ import { getBaseUrl } from "./API_JS/api.js";
 
 let timeout;
 document.addEventListener("input", handleInput);
+document.addEventListener("change", handleChange);
+
+function handleChange(e) {
+    if (e.target.closest("#status-filtro")) {
+        aplicarFiltros();
+    }
+}
 
 function handleInput(e) {
     if (e.target.closest("#barrapesquisa")) {
         clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            limparLista();
-            pesquisaFuncionarios(String(e.target.value));
-        }, 300);
+        timeout = setTimeout(() => aplicarFiltros(), 300);
     }
 }
 
@@ -48,14 +52,32 @@ function aplicaPesquisa(listaFun, valorPesquisa) {
     );
 }
 
-async function pesquisaFuncionarios(valorPesquisa = null) {
+async function aplicarFiltros() {
     try {
         limparLista();
+        const valorPesquisa = document.getElementById("barrapesquisa")?.value ?? "";
+        const statusFiltro  = document.getElementById("status-filtro")?.value ?? "";
+
         let listaFuns = await buscaTodosFuncionariosEmpresa();
-        listaFuns = aplicaPesquisa(listaFuns, valorPesquisa);
+
+        // Filtra por texto
+        if (valorPesquisa.trim()) {
+            listaFuns = listaFuns.filter(fun =>
+                fun.USU_NOME.trim().toLowerCase().includes(valorPesquisa.trim().toLowerCase()) ||
+                fun.USU_EMAIL.trim().toLowerCase().includes(valorPesquisa.trim().toLowerCase())
+            );
+        }
+
+        // Filtra por status
+        if (statusFiltro === "ativo") {
+            listaFuns = listaFuns.filter(fun => fun.USU_ATIV === 1);
+        } else if (statusFiltro === "inativo") {
+            listaFuns = listaFuns.filter(fun => fun.USU_ATIV === 0);
+        }
+
         renderizaFuncionarios(listaFuns);
     } catch (error) {
-        console.log(`Erro ao listar os funcionarios pesquisados: ${error}`);
+        console.log(`Erro ao filtrar funcionários: ${error}`);
     }
 }
 
@@ -124,9 +146,7 @@ document.addEventListener("click", async (e) => {
         if (!modal) return;
 
         // 3. Insere o modal
-        const telaGerenciar = document.querySelector(".gerenciarFuncionarios");
-        if (!telaGerenciar) return;
-        telaGerenciar.insertAdjacentHTML("afterbegin", modal.outerHTML);
+        document.body.insertAdjacentHTML("beforeend", modal.outerHTML);
 
         // 4. Preenche os campos básicos imediatamente com os dados do dataset
         //    (igual ao padrão de produtos — sem esperar a requisição)

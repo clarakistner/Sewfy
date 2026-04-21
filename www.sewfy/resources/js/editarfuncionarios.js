@@ -26,8 +26,18 @@ export function preencherCamposBasicos(dataset) {
 
 export async function carregarDadosFuncionarioExterno() {
     try {
-        const response = await window.api.get(`/empresa-usuario/${window.funcionarioAtualId}`);
-        preencherModulos(response);
+        const [resFuncionario, resEmpresa] = await Promise.all([
+            window.api.get(`/empresa-usuario/${window.funcionarioAtualId}`),
+            window.api.get("/modulos-usuario")  // mesma rota que o cadastro usa
+        ]);
+
+        console.log("Funcionário:", resFuncionario);
+        console.log("Módulos empresa:", resEmpresa);
+
+        // Normaliza para o formato que preencherModulos espera
+        resFuncionario.modulosEmpresa = resEmpresa.modulos ?? [];
+
+        preencherModulos(resFuncionario);
         registrarEventos();
     } catch (erro) {
         console.error(erro);
@@ -36,22 +46,49 @@ export async function carregarDadosFuncionarioExterno() {
 }
 
 // ─── PREENCHER MÓDULOS ────────────────────────────────────────────────────────
+const modulosLabels = {
+    financeiro:  "Financeiro",
+    rh:          "Recursos Humanos",
+    faturamento: "Faturamento",
+    producao:    "Produção",
+    relatorios:  "Relatórios",
+    compras:     "Compras",
+};
 
 function preencherModulos(funcionario) {
     const modulosFuncionario = new Set(funcionario.modulos        ?? []);
-    const modulosEmpresa     = new Set(funcionario.modulosEmpresa ?? []);
+    const modulosEmpresa     =         funcionario.modulosEmpresa ?? [];
 
-    document.querySelectorAll(".modulo-check").forEach((cb) => {
-        const nomeModulo       = cb.dataset.modulo;
-        const empresaTemModulo = modulosEmpresa.size === 0 || modulosEmpresa.has(nomeModulo);
-        const item             = cb.closest(".modulo-item");
+    const grid = document.getElementById("modulos-grid-editar");
+    if (!grid) return;
 
-        // Exibe apenas módulos que a empresa tem — oculta os demais
-        if (item) item.style.display = empresaTemModulo ? "" : "none";
+    grid.innerHTML = "";
 
-        // Marca apenas se a empresa tiver o módulo E o funcionário já tiver acesso
-        cb.checked  = empresaTemModulo && modulosFuncionario.has(nomeModulo);
-        cb.disabled = !empresaTemModulo;
+    // Renderiza apenas os módulos que a empresa tem acesso
+    modulosEmpresa.forEach((nomeModulo) => {
+        const label = document.createElement("label");
+        label.classList.add("modulo-item");
+
+        const input = document.createElement("input");
+        input.type            = "checkbox";
+        input.classList.add("modulo-check");
+        input.dataset.modulo  = nomeModulo;
+        input.checked         = modulosFuncionario.has(nomeModulo);
+
+        const box = document.createElement("span");
+        box.classList.add("modulo-box");
+
+        const icon = document.createElement("span");
+        icon.classList.add("modulo-check-icon", "material-symbols-outlined");
+        icon.textContent = "check";
+        box.appendChild(icon);
+
+        const nome = document.createElement("span");
+        nome.classList.add("modulo-nome");
+        nome.textContent = modulosLabels[nomeModulo] ?? nomeModulo;
+
+        label.append(input, box, nome);
+        grid.appendChild(label);
     });
 }
 
@@ -84,6 +121,7 @@ function registrarEventos() {
 
 function substituirListener(id, fn) {
     const el = document.getElementById(id);
+    console.log(`substituirListener: buscando #${id} →`, el); // 👈
     if (!el) return;
     const clone = el.cloneNode(true);
     el.replaceWith(clone);

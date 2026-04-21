@@ -6,6 +6,21 @@
     <meta name="base-url" content="http://localhost">
     <title>@yield('titulo', 'Sewfy Admin')</title>
 
+    {{-- Esconde a página imediatamente se for reload de página de config, evitando flash --}}
+    <script>
+        (function() {
+            const paginasConfig = [
+                "cadastro-funcionario", "funcionarios",
+                "editar-conta", "editar-tela-inicial"
+            ];
+            const pagina = window.location.pathname.split("/").pop();
+            const temReabrirConfig = document.cookie.split(";").some(c => c.trim().startsWith("reabrirConfig="));
+            if (paginasConfig.includes(pagina) || temReabrirConfig) {
+                document.documentElement.style.visibility = "hidden";
+            }
+        })();
+    </script>
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -33,6 +33,7 @@ export async function salvaAlteracoes() {
 
         const { listarOrdensProducao } = await import("../gerenciarOrdensDeProducao.js");
         await listarOrdensProducao(null, null);
+        window.atualizarListaOrdens?.();
         removeTelaCarregamento()
         mostrarToast("Alterações salvas!")
         fechaModal()

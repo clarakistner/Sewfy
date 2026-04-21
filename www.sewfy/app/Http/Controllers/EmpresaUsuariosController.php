@@ -141,7 +141,7 @@ class EmpresaUsuariosController extends Controller
         UsuarioModulos::where('USU_ID', $id)->where('EMP_ID', $empresaId)->delete();
 
         foreach ($request->modulos ?? [] as $nomeModulo) {
-            $modulo = Modulo::whereRaw('LOWER(MOD_NOME) = ?', [strtolower($nomeModulo)])->first();
+            $modulo = Modulo::whereRaw('LOWER("MOD_NOME") = ?', [strtolower($nomeModulo)])->first();
             if ($modulo) {
                 UsuarioModulos::create([
                     'USU_ID'        => $id,

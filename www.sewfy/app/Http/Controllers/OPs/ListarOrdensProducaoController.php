@@ -26,10 +26,9 @@ class ListarOrdensProducaoController extends Controller
             $ability = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
             $empresaId = str_replace('empresa_', '', $ability);
 
-            $ops = OrdemDeProducao::where('USU_RESPONSAVEL', $idUsuario)
-                ->where('EMP_ID', $empresaId)
-                ->select('OP_ID', 'OP_DATAA', 'OP_DATAE', 'OP_CUSTOT', 'OP_CUSTOU', 'OP_CUSTOUR', 'OP_QTD', 'OP_QTDE', 'PROD_ID', 'OP_QUEBRA')
-                ->get();
+            $ops = OrdemDeProducao::where('EMP_ID', $empresaId)
+            ->select('OP_ID', 'OP_DATAA', 'OP_DATAE', 'OP_CUSTOT', 'OP_CUSTOU', 'OP_CUSTOUR', 'OP_QTD', 'OP_QTDE', 'PROD_ID', 'OP_QUEBRA')
+            ->get();
 
             $listaResposta = $ops->map(fn($op) => [
                 'idOP'     => $op->OP_ID,

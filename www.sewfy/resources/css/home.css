@@ -20,94 +20,224 @@ main {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .secao-ordens {
-    margin-bottom: 60px;
+    margin-bottom: 48px;
+}
+
+.secao-contas {
+    margin-bottom: 48px;
 }
 
 .barra {
     width: 4px;
-    height: 32px;
+    height: 22px;
     background: #082db2;
-    border-radius: 4px;
+    border-radius: 2px;
 }
 
 h2 {
-    font-size: 22px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.lista-ordens-home,
+.lista-contas-home {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .card {
     background: white;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    margin-bottom: 12px;
+    border-radius: 16px;
+    border: 0.5px solid #e5e7eb;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
-    border: 2px solid #0e59fe;
-    box-shadow: 0 8px 24px rgba(14, 89, 254, 0.12);
-    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.linha {
+.card-inner {
+    display: grid;
+    grid-template-columns: 6px 1fr;
+}
+
+.card-barra { background: #082db2; }
+.card-barra.aberta   { background: #f97316; }
+.card-barra.fechada  { background: #22c55e; }
+.card-barra.pendente { background: #e6a817; }
+.card-barra.pago     { background: #22c55e; }
+
+/* ── ORDENS ── */
+
+.card-conteudo {
+    padding: 20px 24px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    gap: 24px;
 }
 
-.label {
-    font-size: 12px;
+.card-identificacao {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 240px;
+    flex-shrink: 0;
+}
+
+.card-codigo {
+    font-size: 22px;
+    font-weight: 500;
+    color: #111827;
+    margin: 0;
+}
+
+.card-sublabel {
+    font-size: 13px;
     color: #6b7280;
+    margin: 3px 0 0;
 }
 
-.codigoOP {
-    font-weight: bold;
+.card-divisor {
+    width: 1px;
+    height: 48px;
+    background: #e5e7eb;
+    flex-shrink: 0;
 }
 
-.status {
-    margin-top: 6px;
-    background: #ffedd5;
-    color: #9a3412;
+.card-infos {
+    display: flex;
+    gap: 36px;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.card-info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.card-info-item.centralizado {
+    align-items: center;
+}
+
+.card-info-item p:first-child {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0 0 3px;
+}
+
+.card-info-item p:last-child {
+    font-size: 15px;
+    font-weight: 500;
+    color: #111827;
+    margin: 0;
+}
+
+.card-badge {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: bold;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
-.icone-ampulheta {
-    font-size: 16px;
+.card-badge.aberta {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
 }
 
-.pendente {
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.pago {
-    background: #dcfce7;
+.card-badge.fechada {
+    background: #f0fdf4;
     color: #15803d;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-weight: bold;
-    display: flex;
+    border: 1px solid #bbf7d0;
+}
+
+/* ── CONTAS ── */
+
+.card-conteudo-conta {
+    display: grid;
+    grid-template-columns: 110px 1fr 1fr 130px 130px 110px;
     align-items: center;
-    gap: 6px;
+    gap: 16px;
+    padding: 20px 24px;
+}
+
+.card-conta-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.card-conta-op {
+    align-items: center;
+    text-align: center;
+}
+
+.card-op-label {
+    font-size: 13px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 3px;
+}
+
+.card-op-codigo {
+    font-size: 20px;
+    font-weight: 500;
+    color: #111827;
+    margin: 0;
+}
+
+.card-info-label {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0 0 3px;
+}
+
+.card-info-valor {
+    font-size: 15px;
+    font-weight: 500;
+    color: #111827;
+    margin: 0;
+}
+
+.card-badge-status {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 10px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.card-badge-status.pendente {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.card-badge-status.pago {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* ── GERAL ── */
+
+.ordem-fechada {
+    opacity: 0.65;
 }
 
 .vazio {
@@ -115,30 +245,6 @@ h2 {
     color: #6b7280;
     padding: 24px;
     background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-}
-
-.ordem {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-button {
-    background: #082db2;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-.ordem-fechada{
-opacity: 0.5;
+    border-radius: 16px;
+    border: 0.5px solid #e5e7eb;
 }

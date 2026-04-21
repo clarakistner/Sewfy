@@ -134,10 +134,10 @@ body {
 
 /* Larguras das colunas */
 .tabela th:nth-child(1), .tabela td:nth-child(1) { width: 14%; } /* Status */
-.tabela th:nth-child(2), .tabela td:nth-child(2) { width: 14%; } /* Código */
+.tabela th:nth-child(2), .tabela td:nth-child(2) { width: 18%; } /* Código */
 .tabela th:nth-child(3), .tabela td:nth-child(3) { width: 26%; } /* Fornecedor */
-.tabela th:nth-child(4), .tabela td:nth-child(4) { width: 16%; } /* Vencimento */
-.tabela th:nth-child(5), .tabela td:nth-child(5) { width: 16%; } /* Pagamento */
+.tabela th:nth-child(4), .tabela td:nth-child(4) { width: 14%; } /* Vencimento */
+.tabela th:nth-child(5), .tabela td:nth-child(5) { width: 14%; } /* Pagamento */
 .tabela th:nth-child(6), .tabela td:nth-child(6) { width: 14%; } /* Ações */
 
 /* Cabeçalho da tabela */
@@ -246,6 +246,7 @@ body {
 .dropdown-filtros {
   position: absolute;
   top: 110%;
+  font-size: 14px;
   right: 0;
   background: white;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);

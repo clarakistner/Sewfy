@@ -51,7 +51,9 @@ async function handleClick(e) {
     }
 
     if (e.target.closest(".close-btn")) {
-        fechaModal();
+        const op = getOrdemProducao();
+        await fechaModal();
+        abreModalDetalhes(op.idOP);
     }
 
     if (e.target.closest(".cancel")) {

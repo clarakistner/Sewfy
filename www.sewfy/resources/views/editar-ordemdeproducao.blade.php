@@ -17,7 +17,9 @@
       <div class="summary-grid">
         <div class="summary-card summary-card--blue">
           <div class="summary-card__top">
-            <span class="summary-card__icon">🛍</span>
+            <span class="summary-card__icon">
+              <span class="material-symbols-outlined" style="font-size:20px;">box</span>
+            </span>
             <span class="summary-card__badge badge--blue">Produção</span>
           </div>
           <div class="summary-card__value" id="cardQtdProd">0</div>
@@ -26,7 +28,9 @@
 
         <div class="summary-card summary-card--purple">
           <div class="summary-card__top">
-            <span class="summary-card__icon">◈</span>
+            <span class="summary-card__icon">
+              <span class="material-symbols-outlined" style="font-size:20px;">inventory_2</span>
+            </span>
             <span class="summary-card__badge badge--purple">Insumos</span>
           </div>
           <div class="summary-card__value" id="cardTotalInsumos">0</div>
@@ -46,7 +50,9 @@
       <!-- INFORMAÇÕES -->
       <section>
         <div class="section-heading">
-          <div class="section-heading__icon section-heading__icon--blue">📦</div>
+          <div class="section-heading__icon section-heading__icon--blue">
+              <span class="material-symbols-outlined" style="font-size:20px;">box</span>
+          </div>
           <h3>Informações da Ordem</h3>
         </div>
 
@@ -65,7 +71,9 @@
       <section>
         <div class="divInsumos">
           <div class="section-heading">
-            <div class="section-heading__icon section-heading__icon--purple">◈</div>
+            <div class="section-heading__icon section-heading__icon--purple">
+              <span class="material-symbols-outlined" style="font-size:20px;">inventory_2</span>
+            </div>
             <h3>Insumos e Serviços</h3>
             <span class="insumos-count" id="insumosCount">0 itens</span>
           </div>

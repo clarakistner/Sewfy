@@ -54,10 +54,9 @@ class CriacaoInsumoController extends Controller
                 ]);
 
                 // Recalcula e atualiza os custos da OP
-                $op       = OrdemDeProducao::where('OP_ID', $idOP)
-                    ->where('USU_RESPONSAVEL', $idUsuario)
-                    ->where('EMP_ID', $empresaId)
-                    ->first();
+                $op = OrdemDeProducao::where('OP_ID', $idOP)
+                ->where('EMP_ID', $empresaId)
+                ->first();
 
                 $custotOP = FuncoesAuxiliares::retornaCustotOP($idOP);
                 $custouOP = $custotOP / $op->OP_QTD;

@@ -99,7 +99,11 @@ function renderizarTabela(fornecedores) {
         return;
     }
 
-    fornecedores.forEach(fornecedor => {
+     const fornecedoresOrdenados = [...fornecedores].sort((a, b) => {
+        return Number(b.ativo) - Number(a.ativo);
+    });
+
+    fornecedoresOrdenados.forEach(fornecedor => {
         const tr = document.createElement("tr");
         tr.classList.add("table-row");
 

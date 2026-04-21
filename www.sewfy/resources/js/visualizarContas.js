@@ -1,18 +1,15 @@
 import { mostrarToast } from './toast/toast.js';
 import { formatarData, formatarMoeda, mascaraTelefone } from '../js/assets/mascaras.js';
-
-import { getCookie, setCookie, deleteCookie, popCookie } from './API_JS/api.js';
 import { getBaseUrl } from './API_JS/api.js';
-// PRÉ-CARREGA O HTML DO MODAL
+
+const urlBase = getBaseUrl() || window.BASE_URL;
+
 let modalHTMLCache = null;
+let contaAtualId   = null;
 
 async function carregarModalHTML() {
-
-    const urlBase = getBaseUrl() || window.BASE_URL;
-
     if (modalHTMLCache) return modalHTMLCache;
-    modalHTMLCache = await fetch(`${urlBase}/visualizar-conta`)
-        .then(res => res.text());
+    modalHTMLCache = await fetch(`${urlBase}/visualizar-conta`).then(res => res.text());
     return modalHTMLCache;
 }
 
@@ -20,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     carregarModalHTML();
 });
 
-// ABRIR MODAL
+// ── ABRIR MODAL ───────────────────────────────────────────────────────────────
 document.addEventListener("click", async (e) => {
     const botao = e.target.closest(".botao-visualizar-conta");
     if (!botao) return;
@@ -30,15 +27,20 @@ document.addEventListener("click", async (e) => {
         document.body.insertAdjacentHTML("afterbegin", modalHTML);
 
         const d = botao.dataset;
+        contaAtualId = d.id;
 
-        console.log("Botão: " + d)
-        document.getElementById("modal-fornecedor").textContent = d.fornecedor;
+        document.getElementById("modal-fornecedor").textContent = d.fornecedor  ?? '—';
         document.getElementById("modal-status").textContent     = d.status === 'pago' ? 'Pago' : 'Pendente';
         document.getElementById("modal-valor").textContent      = formatarMoeda(d.valor);
         document.getElementById("modal-vencimento").textContent = formatarData(d.vencimento);
         document.getElementById("modal-pagamento").textContent  = formatarData(d.pagamento || null);
-        document.getElementById("modal-telefone").textContent   = d.telefone ? mascaraTelefone(d.telefone) : '';
-        document.getElementById("modal-op").textContent         = d.op || '';
+        document.getElementById("modal-telefone").textContent   = d.telefone ? mascaraTelefone(d.telefone) : '—';
+        document.getElementById("modal-op").textContent         = d.op        ?? '—';
+
+        // ── Esconde o botão de editar se a conta já estiver paga ──
+        if (d.status === 'pago') {
+            document.querySelector("#conta-modal .btn-submit")?.remove();
+        }
 
     } catch (erro) {
         console.error("[ERRO]", erro);
@@ -46,14 +48,15 @@ document.addEventListener("click", async (e) => {
     }
 });
 
-// FECHAR MODAL
+// ── FECHAR MODAL ──────────────────────────────────────────────────────────────
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("modal-fecha")) {
         document.querySelector("#conta-modal")?.remove();
+        contaAtualId = null;
     }
 });
 
-// BOTÃO EDITAR / SALVAR
+// ── EDITAR / SALVAR ───────────────────────────────────────────────────────────
 document.addEventListener("click", (e) => {
     const btn = e.target.closest(".btn-submit");
     if (!btn) return;
@@ -72,55 +75,84 @@ function ativarModoEdicao() {
         const field = span.dataset.field;
         if (!camposEditaveis.includes(field)) return;
 
-        const el = document.createElement("input");
-        el.type = "date";
-        el.classList.add("input-edicao");
-        el.dataset.field = field;
-        el.id = span.id;
-        el.dataset.valorOriginal = span.textContent.trim();
+        const input          = document.createElement("input");
+        input.type           = "date";
+        input.classList.add("input-edicao");
+        input.dataset.field  = field;
+        input.id             = span.id;
+        input.dataset.valorOriginal = span.textContent.trim();
 
+        // Converte dd/mm/yyyy → yyyy-mm-dd para o input date
         const partes = span.textContent.trim().split("/");
         if (partes.length === 3) {
-            el.value = `${partes[2]}-${partes[1]}-${partes[0]}`;
+            input.value = `${partes[2]}-${partes[1]}-${partes[0]}`;
         }
 
-        span.replaceWith(el);
+        span.replaceWith(input);
     });
 
-    const btn = document.querySelector("#conta-modal .btn-submit");
-    btn.textContent = "Salvar alterações";
-    btn.dataset.modo = "salvar";
+    const btn          = document.querySelector("#conta-modal .btn-submit");
+    btn.textContent    = "Salvar alterações";
+    btn.dataset.modo   = "salvar";
 }
 
 async function salvarConta() {
-    const inputs = document.querySelectorAll("#conta-modal .input-edicao");
-
-    for (const input of inputs) {
-        if (!input.value) {
-            mostrarToast("Preencha todas as datas antes de salvar", "erro");
-            return;
-        }
+    if (!contaAtualId) {
+        mostrarToast("ID da conta não encontrado", "erro");
+        return;
     }
 
-    // TODO: chamar API para salvar quando o endpoint estiver pronto
+    const inputVencimento = document.querySelector("#conta-modal .input-edicao[data-field='dataVencimento']");
+    const inputPagamento  = document.querySelector("#conta-modal .input-edicao[data-field='dataPagamento']");
 
-    inputs.forEach(input => {
-        const span = document.createElement("span");
-        span.classList.add("value");
-        span.dataset.field = input.dataset.field;
-        span.id = input.id;
+    if (!inputVencimento?.value) {
+        mostrarToast("A data de vencimento é obrigatória", "erro");
+        return;
+    }
 
-        const partes = input.value.split("-");
-        span.textContent = partes.length === 3
-            ? `${partes[2]}/${partes[1]}/${partes[0]}`
-            : input.dataset.valorOriginal;
+    const toastCarregando = mostrarToast("Salvando...", "carregando");
 
-        input.replaceWith(span);
-    });
+    try {
+        await window.api.put(`/contas-pagar/${contaAtualId}`, {
+            vencimento: inputVencimento.value,
+            pagamento:  inputPagamento?.value || null,
+        });
 
-    const btn = document.querySelector("#conta-modal .btn-submit");
-    btn.textContent = "Editar Conta";
-    btn.dataset.modo = "editar";
+        toastCarregando.remove();
+        mostrarToast("Conta atualizada com sucesso!", "sucesso");
 
-    mostrarToast("Alterações salvas com sucesso!", "sucesso");
+        // Atualiza os spans com os novos valores
+        [inputVencimento, inputPagamento].forEach(input => {
+            if (!input) return;
+            const span           = document.createElement("span");
+            span.classList.add("value");
+            span.dataset.field   = input.dataset.field;
+            span.id              = input.id;
+
+            const partes = input.value?.split("-");
+            span.textContent = partes?.length === 3
+                ? `${partes[2]}/${partes[1]}/${partes[0]}`
+                : input.dataset.valorOriginal ?? '—';
+
+            input.replaceWith(span);
+        });
+
+        // Atualiza o status no modal se pagamento foi preenchido
+        const statusEl = document.getElementById("modal-status");
+        if (statusEl) {
+            statusEl.textContent = inputPagamento?.value ? 'Pago' : 'Pendente';
+        }
+
+        const btn        = document.querySelector("#conta-modal .btn-submit");
+        btn.textContent  = "Editar Conta";
+        btn.dataset.modo = "editar";
+
+        // Atualiza a lista de contas se a função existir
+        window.atualizarListaContas?.();
+
+    } catch (erro) {
+        toastCarregando?.remove();
+        console.error("[ERRO]", erro);
+        mostrarToast("Erro ao salvar conta", "erro");
+    }
 }
