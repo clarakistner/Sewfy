@@ -201,15 +201,16 @@ export async function renderizarContasPagar(main, filtro) {
             if (cp.status === "pago") card.style.opacity = "0.75";
             card.style.cursor = "pointer";
 
-            card.dataset.id         = cp.id          ?? "";
-            card.dataset.fornecedor = cp.fornecedor ?? "";
-            card.dataset.status     = cp.status     ?? "";
-            card.dataset.valor      = cp.valor      ?? "";
-            card.dataset.vencimento = cp.vencimento ?? "";
-            card.dataset.pagamento  = cp.pagamento  ?? "";
-            card.dataset.telefone   = cp.telefone   ?? "";
-            card.dataset.op         = cp.op_id      ?? "";
-            card.dataset.servico    = cp.servico    ?? "";
+           card.dataset.id         = cp.id          ?? "";
+            card.dataset.fornecedor = cp.fornecedor  ?? "";
+            card.dataset.status     = cp.status      ?? "";
+            card.dataset.valor      = cp.valor       ?? "";
+            card.dataset.vencimento = cp.vencimento  ?? "";
+            card.dataset.pagamento  = cp.pagamento   ?? "";
+            card.dataset.emissao    = cp.emissao     ?? ""; // ── ADICIONE
+            card.dataset.telefone   = cp.telefone    ?? "";
+            card.dataset.op         = cp.op_id       ?? "";
+            card.dataset.servico    = cp.servico     ?? "";
 
             card.innerHTML = `     
                 <div class="card-inner">

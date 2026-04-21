@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         .querySelector(".modal-close")
         ?.addEventListener("click", fecharModal);
 
-    // CNPJ somente leitura
     const campoCnpj = document.getElementById("cnpj");
     if (campoCnpj) {
         campoCnpj.setAttribute("readonly", true);
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         campoCnpj.style.cursor  = "not-allowed";
     }
 
-    // Máscaras
     const telefoneInput = document.getElementById("telefone");
     if (telefoneInput) aplicarMascaraTelefone(telefoneInput);
 
@@ -111,7 +109,6 @@ function preencherFormulario(empresa) {
     });
 }
 
-// Normaliza string para comparação: minúsculas e sem acentos
 function normalizar(str = "") {
     return str
         .toLowerCase()
@@ -164,20 +161,26 @@ async function salvarEmpresa() {
     const toastCarregando = mostrarToast("Salvando alterações...", "carregando");
 
     try {
+        const body = {
+            EMP_NOME:     nome,
+            EMP_RAZ:      razao,
+            EMP_CNPJ:     apenasNumeros(cnpj),
+            EMP_EMAIL:    email,
+            EMP_NUM:      apenasNumeros(telefone),
+            EMP_ATIV:     Number(status),
+            modulos:      modulos,
+            usuarioEmail: emailOwnerOriginal,
+            usuarioNum:   apenasNumeros(usuarioNum) || null,
+        };
+
+        // ── Só envia o nome se não for uma transferência de proprietário ──
+        if (usuarioEmail === emailOwnerOriginal) {
+            body.usuarioNome = usuarioNome;
+        }
+
         const response = await apiFetch(`/api/adm/empresas/${empId}`, {
             method: "PUT",
-            body: JSON.stringify({
-                EMP_NOME:     nome,
-                EMP_RAZ:      razao,
-                EMP_CNPJ:     apenasNumeros(cnpj),
-                EMP_EMAIL:    email,
-                EMP_NUM:      apenasNumeros(telefone),
-                EMP_ATIV:     Number(status),
-                modulos:      modulos,
-                usuarioNome:  usuarioNome,
-                usuarioEmail: emailOwnerOriginal,
-                usuarioNum:   apenasNumeros(usuarioNum) || null,
-            })
+            body: JSON.stringify(body)
         });
 
         toastCarregando.remove();

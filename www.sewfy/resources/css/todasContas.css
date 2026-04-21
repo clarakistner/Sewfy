@@ -29,7 +29,7 @@ body {
   font-weight: 550;
 }
 
-.filtros {
+.principal .filtros {
   background-color: #ffffff;
   padding: 24px;
   border-radius: 16px;
@@ -40,25 +40,25 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.linha-filtros-topo {
+.principal .linha-filtros-topo {
   display: flex;
   gap: 16px;
   align-items: center;
   height: 48px;
 }
 
-#container-filtros {
+.principal #container-filtros {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.input-pesquisa {
+.principal .input-pesquisa {
   position: relative;
   flex: 1;
 }
 
-.input-pesquisa input {
+.principal .input-pesquisa input {
   width: 100%;
   height: 48px;
   padding: 0 16px 0 44px;
@@ -67,7 +67,7 @@ body {
   font-size: 16px;
 }
 
-.icone-lupa {
+.principal .icone-lupa {
   position: absolute;
   left: 14px;
   top: 50%;
@@ -78,17 +78,17 @@ body {
   pointer-events: none;
 }
 
-.filtros input:focus {
+.principal .filtros input:focus {
   border: 2px solid #0e59fe;
   outline: none;
 }
 
-#tipos-filtro:focus {
+.principal #tipos-filtro:focus {
   border: 2px solid #0e59fe;
   outline: none;
 }
 
-.filtros select {
+.principal .filtros select {
   padding: 0 16px;
   height: 48px;
   border-radius: 8px;
@@ -97,26 +97,108 @@ body {
   min-width: 200px;
 }
 
-.box-filtro {
+.principal .box-filtro {
   display: flex;
   align-items: center;
   gap: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.icone-filtro {
+.principal .icone-filtro {
   font-size: 28px;
   color: #6B7280;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-#tipos-filtro {
+.principal #tipos-filtro {
   background-color: #fff;
   border: 1px solid #d1d5db;
   min-width: 170px;
 }
 
-/* Container da lista */
+.principal .mais-filtros {
+  position: relative;
+}
+
+.principal .btn-filtro-extra {
+  background: linear-gradient(90deg, #0e59fe, #020066);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.principal .btn-filtro-extra:hover {
+  background: linear-gradient(90deg, #020066, #0e59fe);
+}
+
+.principal .dropdown-filtros {
+  position: absolute;
+  top: 110%;
+  font-size: 14px;
+  right: 0;
+  background: white;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 250px;
+  z-index: 10;
+}
+
+.principal .dropdown-filtros button {
+  background: none;
+  border: none;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.principal .dropdown-filtros button:hover {
+  background: #f3f4f6;
+}
+
+.principal .filtro-extra {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  padding: 0;
+}
+
+.principal .btn-remover-filtronovo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6B7280;
+}
+
+.principal .btn-remover-filtronovo:hover {
+  color: #000000;
+}
+
+.principal .input-data-inicial,
+.principal .input-data-final,
+.principal .input-valor-min,
+.principal .input-valor-max {
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Elementos sem escopo (não vazam) ── */
 .lista-contas {
   background-color: #ffffff;
   border-radius: 8px;
@@ -125,22 +207,19 @@ body {
   margin-top: 20px;
 }
 
-/* Tabela */
 .tabela {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-/* Larguras das colunas */
-.tabela th:nth-child(1), .tabela td:nth-child(1) { width: 14%; } /* Status */
-.tabela th:nth-child(2), .tabela td:nth-child(2) { width: 18%; } /* Código */
-.tabela th:nth-child(3), .tabela td:nth-child(3) { width: 26%; } /* Fornecedor */
-.tabela th:nth-child(4), .tabela td:nth-child(4) { width: 14%; } /* Vencimento */
-.tabela th:nth-child(5), .tabela td:nth-child(5) { width: 14%; } /* Pagamento */
-.tabela th:nth-child(6), .tabela td:nth-child(6) { width: 14%; } /* Ações */
+.tabela th:nth-child(1), .tabela td:nth-child(1) { width: 14%; }
+.tabela th:nth-child(2), .tabela td:nth-child(2) { width: 18%; }
+.tabela th:nth-child(3), .tabela td:nth-child(3) { width: 26%; }
+.tabela th:nth-child(4), .tabela td:nth-child(4) { width: 14%; }
+.tabela th:nth-child(5), .tabela td:nth-child(5) { width: 14%; }
+.tabela th:nth-child(6), .tabela td:nth-child(6) { width: 14%; }
 
-/* Cabeçalho da tabela */
 .table-head {
   background-color: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
@@ -177,19 +256,13 @@ body {
   text-align: left;
 }
 
-/* Colunas 3, 4, 5 e 6 centralizadas */
-.tabela td:nth-child(3),
-.tabela th:nth-child(3),
-.tabela td:nth-child(4),
-.tabela th:nth-child(4),
-.tabela td:nth-child(5),
-.tabela th:nth-child(5),
-.tabela td:nth-child(6),
-.tabela th:nth-child(6) {
+.tabela td:nth-child(3), .tabela th:nth-child(3),
+.tabela td:nth-child(4), .tabela th:nth-child(4),
+.tabela td:nth-child(5), .tabela th:nth-child(5),
+.tabela td:nth-child(6), .tabela th:nth-child(6) {
   text-align: center;
 }
 
-/* Badge pago */
 .badge-pa {
   background-color: #dcfce7;
   color: #166534;
@@ -198,7 +271,6 @@ body {
   font-weight: 500;
 }
 
-/* Badge pendente */
 .badge-pe {
   background-color: #fef3c7;
   color: #92400e;
@@ -207,7 +279,6 @@ body {
   font-weight: 500;
 }
 
-/* Botão de visualizar conta */
 .botao-visualizar-conta {
   background: none;
   border: none;
@@ -226,66 +297,12 @@ body {
   transform: scale(1.1);
 }
 
-.mais-filtros {
-  position: relative;
-}
-
-.btn-filtro-extra {
-  background: linear-gradient(90deg, #0e59fe, #020066);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.btn-filtro-extra:hover {
-  background: linear-gradient(90deg, #020066, #0e59fe);
-}
-
-.dropdown-filtros {
-  position: absolute;
-  top: 110%;
-  font-size: 14px;
-  right: 0;
-  background: white;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  border-radius: 12px;
-  padding: 10px;
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 250px;
-  z-index: 10;
-}
-
-.dropdown-filtros button {
-  background: none;
-  border: none;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.dropdown-filtros button:hover {
-  background: #f3f4f6;
-}
-
 .icone-calendario, .icone-dinheiro {
   color: #0e59fe;
 }
 
-.filtro-extra {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: #ffffff;
-  border-radius: 12px;
-  width: 100%;
-  padding: 0;
+.icone-novo-calendario, .icone-novo-dinheiro {
+  color: #0e59fe;
 }
 
 .btn-remover-filtro {
@@ -295,31 +312,6 @@ body {
   font-size: 18px;
   cursor: pointer;
   margin-left: auto;
-}
-
-.icone-novo-calendario, .icone-novo-dinheiro {
-  color: #0e59fe;
-}
-
-.btn-remover-filtronovo {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #6B7280;
-}
-
-.btn-remover-filtronovo:hover {
-  color: #000000;
-}
-
-.input-data-inicial, .input-data-final, .input-valor-min, .input-valor-max {
-  height: 48px;
-  padding: 0 16px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  flex: 1;
-  min-width: 0;
 }
 
 .mensagem-vazia {

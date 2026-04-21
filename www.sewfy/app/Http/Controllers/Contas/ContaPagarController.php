@@ -124,12 +124,19 @@ class ContaPagarController extends Controller
             ->where('EMP_ID', $empId)
             ->first();
 
+        // ── Verifica existência PRIMEIRO ──
+        if (!$conta) {
+            return response()->json(['erro' => 'Conta não encontrada'], 404);
+        }
+
         if ($conta->CP_STATUS === 'pago') {
             return response()->json(['erro' => 'Conta já paga não pode ser editada'], 422);
         }
 
-        if (!$conta) {
-            return response()->json(['erro' => 'Conta não encontrada'], 404);
+        if ($request->filled('pagamento') && $request->pagamento < $conta->CP_DATAE) {
+            return response()->json([
+                'erro' => 'A data de pagamento não pode ser anterior à data de emissão da conta'
+            ], 422);
         }
 
         $request->validate([

@@ -26,8 +26,10 @@ document.addEventListener("click", async (e) => {
         const modalHTML = await carregarModalHTML();
         document.body.insertAdjacentHTML("afterbegin", modalHTML);
 
-        const d = botao.dataset;
+        const d = botao.dataset; // ── d precisa ser declarado ANTES
         contaAtualId = d.id;
+
+        document.querySelector("#conta-modal").dataset.emissao = d.emissao ?? ""; // ── agora pode usar d
 
         document.getElementById("modal-fornecedor").textContent = d.fornecedor  ?? '—';
         document.getElementById("modal-status").textContent     = d.status === 'pago' ? 'Pago' : 'Pendente';
@@ -37,7 +39,6 @@ document.addEventListener("click", async (e) => {
         document.getElementById("modal-telefone").textContent   = d.telefone ? mascaraTelefone(d.telefone) : '—';
         document.getElementById("modal-op").textContent         = d.op        ?? '—';
 
-        // ── Esconde o botão de editar se a conta já estiver paga ──
         if (d.status === 'pago') {
             document.querySelector("#conta-modal .btn-submit")?.remove();
         }
@@ -110,6 +111,12 @@ async function salvarConta() {
         return;
     }
 
+    const dataEmissao = document.querySelector("#conta-modal")?.dataset.emissao;
+    if (inputPagamento?.value && dataEmissao && inputPagamento.value < dataEmissao) {
+        mostrarToast("A data de pagamento não pode ser anterior à data de emissão da conta", "erro");
+        return;
+    }
+
     const toastCarregando = mostrarToast("Salvando...", "carregando");
 
     try {
@@ -143,11 +150,17 @@ async function salvarConta() {
             statusEl.textContent = inputPagamento?.value ? 'Pago' : 'Pendente';
         }
 
-        const btn        = document.querySelector("#conta-modal .btn-submit");
-        btn.textContent  = "Editar Conta";
-        btn.dataset.modo = "editar";
+        // Remove o botão se ficou pago, senão restaura o texto
+        if (inputPagamento?.value) {
+            document.querySelector("#conta-modal .btn-submit")?.remove();
+        } else {
+            const btn = document.querySelector("#conta-modal .btn-submit");
+            if (btn) {
+                btn.textContent  = "Editar Conta";
+                btn.dataset.modo = "editar";
+            }
+        }
 
-        // Atualiza a lista de contas se a função existir
         window.atualizarListaContas?.();
 
     } catch (erro) {

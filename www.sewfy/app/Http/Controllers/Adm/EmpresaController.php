@@ -116,15 +116,26 @@ class EmpresaController extends Controller
                 ->value('USU_ID');
 
             if ($usuarioId) {
-                $dadosUpdate = ['USU_NOME' => trim($request->usuarioNome)];
+                // ── Verifica se há convite de troca de owner pendente para essa empresa ──
+                $convitePendente = DB::table('CONVITES')
+                    ->where('EMP_ID', $id)
+                    ->where('CONV_TIPO', 'troca_owner')
+                    ->where('CONV_USADO', 0)
+                    ->where('CONV_EXPIRA', '>', now())
+                    ->exists();
 
-                if ($request->filled('usuarioNum')) {
-                    $dadosUpdate['USU_NUM'] = trim($request->usuarioNum);
+                // ── Só atualiza o nome se não houver transferência pendente ──
+                if (!$convitePendente) {
+                    $dadosUpdate = ['USU_NOME' => trim($request->usuarioNome)];
+
+                    if ($request->filled('usuarioNum')) {
+                        $dadosUpdate['USU_NUM'] = trim($request->usuarioNum);
+                    }
+
+                    DB::table('USUARIOS')
+                        ->where('USU_ID', $usuarioId)
+                        ->update($dadosUpdate);
                 }
-
-                DB::table('USUARIOS')
-                    ->where('USU_ID', $usuarioId)
-                    ->update($dadosUpdate);
             }
         }
 

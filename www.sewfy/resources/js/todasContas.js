@@ -76,6 +76,11 @@ async function carregarContas() {
 
     try {
         const contas = await window.api.get("/contas-pagar");
+        contas.sort((a, b) => {
+            if (a.status === "pendente" && b.status !== "pendente") return -1;
+            if (a.status !== "pendente" && b.status === "pendente") return 1;
+            return 0;
+        });
         renderizarTabela(contas);
     } catch (erro) {
         console.error("[ERRO] Falha ao carregar contas:", erro);
@@ -108,6 +113,11 @@ async function pesquisarContas({ termo, status, dataInicial, dataFinal, valorMin
         if (valorMax)    params.append("valor_max",    valorMax);
 
         const contas = await window.api.get(`/contas-pagar?${params.toString()}`);
+        contas.sort((a, b) => {
+            if (a.status === "pendente" && b.status !== "pendente") return -1;
+            if (a.status !== "pendente" && b.status === "pendente") return 1;
+            return 0;
+        });
         renderizarTabela(contas);
     } catch (erro) {
         console.error("[ERRO BUSCA]", erro);
@@ -154,6 +164,7 @@ function renderizarTabela(contas) {
                     data-valor="${conta.valor}"
                     data-vencimento="${conta.vencimento}"
                     data-pagamento="${conta.pagamento ?? ''}"
+                    data-emissao="${conta.emissao ?? ''}"
                     data-telefone="${conta.telefone ?? ''}"
                     data-op="${conta.op_id ?? ''}">
                     <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
