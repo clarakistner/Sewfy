@@ -64,5 +64,5 @@
    @endsection
 
 @section('scripts')
-@vite(['resources/js/editarfuncionario.js' , 'resources/js/configmenu.js'])
+@vite(['resources/js/editarfuncionarios.js' , 'resources/js/configmenu.js'])
 @endsection

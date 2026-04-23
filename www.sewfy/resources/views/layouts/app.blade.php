@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="base-url" content="http://localhost">
+    <meta name="base-url" content="{{ config('app.url') }}">
     <title>@yield('titulo', 'Sewfy Admin')</title>
 
     {{-- Esconde a página imediatamente se for reload de página de config, evitando flash --}}

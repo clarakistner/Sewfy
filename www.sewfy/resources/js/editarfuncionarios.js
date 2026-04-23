@@ -193,11 +193,22 @@ function fecharModal() {
 export async function carregaJsCssEditarFuncionario() {
     document.querySelector("#css-editar-funcionario")?.remove();
 
+    // Busca o caminho correto via manifesto em produção
+    let cssHref = "/resources/css/editarfuncionarios.css";
+    const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    if (!isDev) {
+        try {
+            const manifest = await fetch("/build/manifest.json").then(r => r.json());
+            const entry = manifest["resources/css/editarfuncionarios.css"];
+            if (entry) cssHref = `/build/${entry.file}`;
+        } catch (e) {}
+    }
+
     await new Promise((resolve) => {
         const link   = document.createElement("link");
         link.id      = "css-editar-funcionario";
         link.rel     = "stylesheet";
-        link.href    = "http://localhost:5173/resources/css/editarfuncionarios.css";
+        link.href    = cssHref;
         link.onload  = resolve;
         link.onerror = resolve;
         document.head.appendChild(link);

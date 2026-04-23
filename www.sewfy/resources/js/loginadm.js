@@ -1,7 +1,7 @@
 import { mostrarToast } from "./toast/toast.js";
 import { getCookie, setCookie } from "./API_JS/api";
 import "./API_JS/api.js";
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://www.sewfy.com.br";
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector("form");

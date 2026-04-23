@@ -34,10 +34,22 @@ const mapaConfig = {
 };
 
 let cssExternos = [];
+let manifestCache = null;
 
-function getCssBaseUrl() {
+async function getCssUrl(cssName) {
     const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    return isDev ? "http://localhost:5173/resources/css" : "/resources/css";
+    if (isDev) return `http://localhost:5173/resources/css/${cssName}.css`;
+
+    if (!manifestCache) {
+        const res = await fetch("/build/manifest.json");
+        manifestCache = await res.json();
+    }
+
+    const chave = `resources/css/${cssName}.css`;
+    const entry = manifestCache[chave];
+    if (entry) return `/build/${entry.file}`;
+
+    return `/resources/css/${cssName}.css`;
 }
 
 document.addEventListener("click", handleClick);
@@ -200,6 +212,8 @@ async function abrirConfigMenu(paginaInicial = "cadastro-funcionario") {
     const menuBlade = document.querySelector(".corpoMenu");
     if (menuBlade) menuBlade.style.display = "none";
 
+	const cssUrl = await getCssUrl("configmenu");
+
     // Carrega HTML do menu e CSS em paralelo para reduzir delay
     const [respostaMenu] = await Promise.all([
         fetch("/configmenu").then(r => r.text()),
@@ -207,7 +221,7 @@ async function abrirConfigMenu(paginaInicial = "cadastro-funcionario") {
             const link   = document.createElement("link");
             link.id      = "css-configmenu";
             link.rel     = "stylesheet";
-            link.href    = `${getCssBaseUrl()}/configmenu.css`;
+            link.href    = cssUrl;
             link.onload  = resolve;
             link.onerror = resolve;
             document.head.appendChild(link);
@@ -251,6 +265,8 @@ async function trocarPagina(blade, css, url) {
     document.querySelector(".containerConfigOwner")?.remove();
     document.querySelector("#css-config")?.remove();
 
+	const cssUrl = await getCssUrl(css);
+
     // Carrega CSS e HTML em paralelo para reduzir delay
     const [dataContainer] = await Promise.all([
         fetch(`/${blade}`).then(r => r.text()),
@@ -258,7 +274,7 @@ async function trocarPagina(blade, css, url) {
             const link   = document.createElement("link");
             link.id      = "css-config";
             link.rel     = "stylesheet";
-            link.href    = `${getCssBaseUrl()}/${css}.css`;
+            link.href    = cssUrl;
             link.onload  = resolve;
             link.onerror = resolve;
             document.head.appendChild(link);

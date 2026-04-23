@@ -1,6 +1,6 @@
 import { getCookie, deleteCookie } from "../API_JS/api";
 import "../API_JS/api.js";
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://www.sewfy.com.br";
 
 export function verificarAuth() {
     const token = decodeURIComponent(getCookie("token") ?? "");

@@ -6,7 +6,7 @@ import {
 
 import { getCookie, setCookie, deleteCookie } from "./API_JS/api.js";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://www.sewfy.com.br";
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("[INIT] DOM carregado");

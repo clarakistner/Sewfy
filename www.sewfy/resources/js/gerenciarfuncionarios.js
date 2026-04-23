@@ -1,6 +1,7 @@
 import { mascaraTelefone } from "../js/assets/mascaras.js";
 import { mostrarToast } from "./toast/toast.js";
 import { getBaseUrl } from "./API_JS/api.js";
+import { carregaJsCssEditarFuncionario, preencherCamposBasicos, carregarDadosFuncionarioExterno } from "./editarfuncionarios.js";
 
 let timeout;
 document.addEventListener("input", handleInput);
@@ -18,8 +19,6 @@ function handleInput(e) {
         timeout = setTimeout(() => aplicarFiltros(), 300);
     }
 }
-
-// ─── BUSCA / LISTAGEM ────────────────────────────────────────────────────────
 
 async function buscaTodosFuncionariosEmpresa() {
     try {
@@ -60,7 +59,6 @@ async function aplicarFiltros() {
 
         let listaFuns = await buscaTodosFuncionariosEmpresa();
 
-        // Filtra por texto
         if (valorPesquisa.trim()) {
             listaFuns = listaFuns.filter(fun =>
                 fun.USU_NOME.trim().toLowerCase().includes(valorPesquisa.trim().toLowerCase()) ||
@@ -68,7 +66,6 @@ async function aplicarFiltros() {
             );
         }
 
-        // Filtra por status
         if (statusFiltro === "ativo") {
             listaFuns = listaFuns.filter(fun => fun.USU_ATIV === 1);
         } else if (statusFiltro === "inativo") {
@@ -120,8 +117,6 @@ function renderizaFuncionarios(funcionarios) {
     });
 }
 
-// ─── ABRIR MODAL ──────────────────────────────────────────────────────────────
-
 document.addEventListener("click", async (e) => {
     const botao = e.target.closest(".botao-visualizar-funcionario");
     if (!botao) return;
@@ -133,11 +128,8 @@ document.addEventListener("click", async (e) => {
     window.funcionarioAtualId = botao.dataset.id;
 
     try {
-        // 1. Carrega CSS
-        const { carregaJsCssEditarFuncionario } = await import("http://localhost:5173/resources/js/editarfuncionarios.js");
         await carregaJsCssEditarFuncionario();
 
-        // 2. Busca e extrai só o modal do HTML completo
         const htmlCompleto = await fetch(`${url}/editar-funcionario`).then((r) => r.text());
         const parser = new DOMParser();
         const doc    = parser.parseFromString(htmlCompleto, "text/html");
@@ -145,15 +137,10 @@ document.addEventListener("click", async (e) => {
 
         if (!modal) return;
 
-        // 3. Insere o modal
         document.body.insertAdjacentHTML("beforeend", modal.outerHTML);
 
-        // 4. Preenche os campos básicos imediatamente com os dados do dataset
-        //    (igual ao padrão de produtos — sem esperar a requisição)
-        const { preencherCamposBasicos, carregarDadosFuncionarioExterno } = await import("http://localhost:5173/resources/js/editarfuncionarios.js");
         preencherCamposBasicos(botao.dataset);
 
-        // 5. Busca apenas os módulos via API (o que não está no dataset)
         await carregarDadosFuncionarioExterno();
 
     } catch (erro) {
@@ -161,8 +148,6 @@ document.addEventListener("click", async (e) => {
         mostrarToast("Erro ao abrir modal", "erro");
     }
 });
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
 
 export function initGerenciarFuncionarios() {
     carregarFuncionarios();

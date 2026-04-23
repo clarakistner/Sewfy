@@ -204,5 +204,5 @@ export function deleteAllCookies() {
         document.cookie = `${nome}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
     })
 }
-window.api = new API();
+window.api = new API(import.meta.env.VITE_API_BASE || window.location.origin);
 window.inicializarCsrf = () => window.api?.inicializarCsrf();

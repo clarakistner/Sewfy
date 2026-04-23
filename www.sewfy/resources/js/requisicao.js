@@ -7,6 +7,7 @@ import {
 import "../js/configmenu.js";
 import "../js/menu.js";
 import { getBaseUrl } from "../js/API_JS/api.js";
+import { initTelaCarregamento, removeTelaCarregamento } from "./telacarregamento.js";
 
 const url = getBaseUrl();
 let listaProdutos = null;
@@ -194,8 +195,6 @@ function carregarProdutosInsumoNoDropdown(
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const { initTelaCarregamento, removeTelaCarregamento } =
-        await import("../js/telacarregamento.js");
 
     initTelaCarregamento();
 
@@ -546,10 +545,6 @@ async function confirmarOrdem() {
             PROD_ID: op.PROD_ID,
             INSUMOS: [...OPINs],
         };
-
-        OPINs.length = 0;
-        const { initTelaCarregamento, removeTelaCarregamento } =
-            await import("../js/telacarregamento.js");
         initTelaCarregamento();
         await window.api.post("/ordemdeproducao/criar", dados);
         removeTelaCarregamento();

@@ -8,6 +8,7 @@ import { organizaDadosTela, limpaDivInsumos, limpaSelectInsumos } from './render
 import { organizaDivNovoInsumo } from './renderizacao.js'
 import { converterMoedaParaNumero } from '../assets/mascaras.js'
 import { initTelaCarregamento, removeTelaCarregamento } from '../telacarregamento.js'
+import { listarOrdensProducao, invalidarCache } from "../gerenciarOrdensDeProducao.js";
 
 
 export async function salvaAlteracoes() {
@@ -31,7 +32,6 @@ export async function salvaAlteracoes() {
             atualizaOPBanco(),
         ]);
 
-        const { listarOrdensProducao } = await import("../gerenciarOrdensDeProducao.js");
         await listarOrdensProducao(null, null);
         window.atualizarListaOrdens?.();
         removeTelaCarregamento()

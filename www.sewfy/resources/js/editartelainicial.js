@@ -77,10 +77,10 @@ async function salvarConfig() {
   try {
     const toast = mostrarToast("Salvando...", "carregando");
     await window.api.put("/home/config", dados);
-    const { carregarHome }  =  await import("./home.js");
     toast.remove();
     mostrarToast("Configuração salva com sucesso!");
-    carregarHome();
+    window.atualizarListaContas?.();
+    window.atualizarListaOrdens?.();
   } catch (error) {
     console.error("Erro ao salvar configuração:", error);
     mostrarToast("Erro ao salvar configuração", "erro");

@@ -1,7 +1,7 @@
 import { mostrarToast } from "./toast/toast.js";
 import "../css/confirmarcadastro.css";
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://www.sewfy.com.br';
 
 const params = new URLSearchParams(window.location.search);
 const token  = params.get('token');

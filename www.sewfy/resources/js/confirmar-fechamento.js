@@ -2,6 +2,7 @@ import "../css/confirmar-fechamento.css";
 import { mostrarToast } from "./toast/toast.js";
 import { getOrdemProducao } from "./modalOrdemDeProducao.js";
 import { getBaseUrl } from "./API_JS/api.js";
+import { listarOrdensProducao, invalidarCache } from "./gerenciarOrdensDeProducao.js";
 
 const url = getBaseUrl();
 
@@ -25,13 +26,8 @@ document.addEventListener("input", (e) => {
 
 async function enviarFechamento() {
     try {
-        const [{ listarOrdensProducao, invalidarCache }, { getOrdemProducao }] =
-            await Promise.all([
-                import("./gerenciarOrdensDeProducao.js"),
-                import("./modalOrdemDeProducao.js"),
-            ]);
-        const op = getOrdemProducao();
         const qtdeQuebra = parseInt(document.getElementById("quantidadeQuebra").value);
+        const op = getOrdemProducao();
 
         if (qtdeQuebra > parseInt(op.qtdOP)) {
             mostrarToast("Quantidade de quebra não pode ser maior que a quantidade da OP", "erro");
@@ -42,7 +38,7 @@ async function enviarFechamento() {
             return;
         }
 
-        window.api.put("/ordemdeproducao/fechar", {
+        await window.api.put("/ordemdeproducao/fechar", {
             opID: op.idOP,
             quebra: qtdeQuebra,
         });
@@ -51,7 +47,7 @@ async function enviarFechamento() {
         document.querySelector("#detailsModal")?.remove();
         mostrarToast("Ordem de Produção Fechada!");
         invalidarCache();
-        listarOrdensProducao(null, null);
+        await listarOrdensProducao(null, null);
         window.atualizarListaOrdens?.();
     } catch (error) {
         console.error("Erro ao enviar fechamento:", error);
