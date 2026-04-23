@@ -4,6 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import obfuscatorPlugin from "vite-plugin-javascript-obfuscator";
 import fs from 'fs';
 
+const isLocal = process.env.APP_ENV === 'local';
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -94,7 +96,7 @@ export default defineConfig({
         }),
         tailwindcss(),
         obfuscatorPlugin({
-            exclude: [/api\.js/], 
+            exclude: [/api\.js/],
             apply: 'build',
             debugProtection: false,
             options: {
@@ -123,49 +125,46 @@ export default defineConfig({
                 entryFileNames: "assets/[hash].js",
                 chunkFileNames: "assets/[hash].js",
                 assetFileNames: "assets/[hash][extname]",
-
                 compact: true,
             },
         },
     },
-
     esbuild: {
         legalComments: "none",
         minifyIdentifiers: true,
         minifySyntax: true,
         minifyWhitespace: true,
     },
-    server: {
-        host: "sewfy.local",
-        port: 5173,
 
-        https: {
-            key: fs.readFileSync("C:/certs/sewfy.local+1-key.pem"),
-            cert: fs.readFileSync("C:/certs/sewfy.local+1.pem"),
-        },
-
-        origin: "https://sewfy.local:5173",
-
-        watch: {
-            ignored: ["**/storage/framework/views/**"],
-        },
-
-        cors: {
-            origin: "https://sewfy.local",
-            credentials: true,
-        },
-
-        proxy: {
-            '/api': {
-                target: 'https://api.sewfy.local',
-                changeOrigin: true,
-                secure: false,
+    // Configurações apenas para desenvolvimento local
+    ...(isLocal && {
+        server: {
+            host: "sewfy.local",
+            port: 5173,
+            https: {
+                key: fs.readFileSync("C:/certs/sewfy.local+1-key.pem"),
+                cert: fs.readFileSync("C:/certs/sewfy.local+1.pem"),
             },
-            '/sanctum': {
-                target: 'https://api.sewfy.local',
-                changeOrigin: true,
-                secure: false,
+            origin: "https://sewfy.local:5173",
+            watch: {
+                ignored: ["**/storage/framework/views/**"],
+            },
+            cors: {
+                origin: "https://sewfy.local",
+                credentials: true,
+            },
+            proxy: {
+                '/api': {
+                    target: 'https://api.sewfy.local',
+                    changeOrigin: true,
+                    secure: false,
+                },
+                '/sanctum': {
+                    target: 'https://api.sewfy.local',
+                    changeOrigin: true,
+                    secure: false,
+                },
             },
         },
-    }
+    }),
 });
