@@ -1,7 +1,7 @@
 import { mostrarToast } from "./toast/toast.js";
 import "../css/confirmarcadastro.css";
 
-const API_BASE = 'https://www.sewfy.com.br';
+const API_BASE = import.meta.env.VITE_API_BASE ?? "https://www.sewfy.com.br";
 
 const params = new URLSearchParams(window.location.search);
 const token  = params.get('token');

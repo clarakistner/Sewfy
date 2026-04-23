@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:80', 'http://localhost', 'http://sewfy.local'],
+    'allowed_origins' => [
+        'https://sewfy.local',
+        'https://sewfy.local:5173'
+    ],
 
     'allowed_origins_patterns' => [],
 

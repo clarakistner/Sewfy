@@ -6,7 +6,7 @@ import {
 
 import { getCookie, setCookie, deleteCookie } from "./API_JS/api.js";
 
-const API_BASE = "https://www.sewfy.com.br";
+const API_BASE = import.meta.env.VITE_API_BASE ?? "https://www.sewfy.com.br";
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("[INIT] DOM carregado");
@@ -63,14 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             initTelaCarregamento();
 
-            const token = decodeURIComponent(getCookie("token") ?? "");
             const response = await fetch(`${API_BASE}/api/auth/login`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
-                    Authorization: `Bearer ${token}`,
                     "X-XSRF-TOKEN": decodeURIComponent(getCookie("XSRF-TOKEN") ?? ""),
                 },
                 body: JSON.stringify({ email, senha }),

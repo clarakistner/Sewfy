@@ -136,21 +136,36 @@ export default defineConfig({
         minifyWhitespace: true,
     },
     server: {
-        // https: {
-         //   key: fs.readFileSync('C:/mkcert/localhost+1-key.pem'),
-         //   cert: fs.readFileSync('C:/mkcert/localhost+1.pem'),
-       // },
+        host: "sewfy.local",
+        port: 5173,
+
+        https: {
+            key: fs.readFileSync("C:/certs/sewfy.local+1-key.pem"),
+            cert: fs.readFileSync("C:/certs/sewfy.local+1.pem"),
+        },
+
+        origin: "https://sewfy.local:5173",
+
         watch: {
             ignored: ["**/storage/framework/views/**"],
         },
-        host: "localhost",
-        port: 5173,
+
         cors: {
-            origin: "http://localhost",
+            origin: "https://sewfy.local",
+            credentials: true,
         },
+
         proxy: {
-        '/api': 'http://localhost:8000',
-        '/sanctum': 'http://localhost:8000',
-    },
-    },
+            '/api': {
+                target: 'https://api.sewfy.local',
+                changeOrigin: true,
+                secure: false,
+            },
+            '/sanctum': {
+                target: 'https://api.sewfy.local',
+                changeOrigin: true,
+                secure: false,
+            },
+        },
+    }
 });

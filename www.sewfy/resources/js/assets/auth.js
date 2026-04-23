@@ -1,6 +1,6 @@
 import { getCookie, deleteCookie } from "../API_JS/api";
 import "../API_JS/api.js";
-const API_BASE = "https://www.sewfy.com.br";
+const API_BASE = import.meta.env.VITE_API_BASE ?? "https://www.sewfy.com.br";
 
 export function verificarAuth() {
     const token = decodeURIComponent(getCookie("token") ?? "");
