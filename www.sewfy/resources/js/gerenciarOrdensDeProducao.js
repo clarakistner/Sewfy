@@ -269,6 +269,7 @@ export async function listarOrdensProducao(
 
     try {
         const listaOrdensDOM = document.querySelector(".lista-ordens");
+          if (!listaOrdensDOM) return;
         listaOrdensDOM.innerHTML = `
             <div class="linha-vazia">
                 <span class="mensagem-vazia">Carregando...</span>

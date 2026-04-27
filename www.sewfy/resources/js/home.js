@@ -129,7 +129,7 @@ export async function renderizarOrdens(main, filtro) {
                             </div>
                             <div class="card-info-item centralizado">
                                 <p>Quantidade</p>
-                                <p>${parseInt(op.qtdOP).toLocaleString("pt-BR")}</p>
+                                <p>${parseInt(op.datae ? (op.qtdeOP ?? op.qtdOP) : op.qtdOP).toLocaleString("pt-BR")}</p>
                             </div>
                             <div class="card-info-item">
                                 <p>Data de abertura</p>
@@ -185,7 +185,6 @@ export async function renderizarContasPagar(main, filtro) {
             return;
         }
 
-        // Pendentes primeiro, pagas por último
         contas.sort((a, b) => {
             if (a.status === "pendente" && b.status !== "pendente") return -1;
             if (a.status !== "pendente" && b.status === "pendente") return 1;
@@ -193,37 +192,67 @@ export async function renderizarContasPagar(main, filtro) {
         });
 
         contas.forEach((cp) => {
-            const statusClass = cp.status === "pendente" ? "pendente" : "pago";
-            const statusTexto = cp.status === "pendente" ? "Pendente" : "Pago";
+            const statusClass = cp.status === "pendente" ? "pendente" : cp.status === "atrasada" ? "atrasada" : "pago";
+            const statusTexto = cp.status === "pendente" ? "Pendente" : cp.status === "atrasada" ? "Atrasada" : "Pago";
 
             const card = document.createElement("div");
             card.classList.add("card", "botao-visualizar-conta");
             if (cp.status === "pago") card.style.opacity = "0.75";
             card.style.cursor = "pointer";
 
-           card.dataset.id         = cp.id          ?? "";
+            // dataset completo
+            card.dataset.id         = cp.id          ?? "";
             card.dataset.fornecedor = cp.fornecedor  ?? "";
             card.dataset.status     = cp.status      ?? "";
             card.dataset.valor      = cp.valor       ?? "";
             card.dataset.vencimento = cp.vencimento  ?? "";
             card.dataset.pagamento  = cp.pagamento   ?? "";
-            card.dataset.emissao    = cp.emissao     ?? ""; // ── ADICIONE
+            card.dataset.emissao    = cp.emissao     ?? "";
             card.dataset.telefone   = cp.telefone    ?? "";
             card.dataset.op         = cp.op_id       ?? "";
-            card.dataset.servico    = cp.servico     ?? "";
+            card.dataset.servico    = cp.servico      ?? "";
+            card.dataset.historico  = cp.historico   ?? "";
+            card.dataset.grupo      = cp.grupo_id    ?? "";
+            card.dataset.ocorrencia = cp.ocorrencia  ?? "";
+            card.dataset.parcelaNum = cp.parcela_num ?? "";
+            card.dataset.parcelaTot = cp.parcela_tot ?? "";
 
-            card.innerHTML = `     
+            // Define o tipo e monta as colunas variáveis
+            const ehOP          = !!cp.op_id;
+            const ehRecorrente  = !!cp.grupo_id && !cp.op_id;
+
+            let colunasVariaveis = "";
+
+            if (ehOP) {
+                colunasVariaveis = `
+                    <div class="card-conta-col card-conta-op">
+                        <p class="card-op-label">OP</p>
+                        <p class="card-op-codigo">${cp.op_id}</p>
+                    </div>
+                    <div class="card-conta-col">
+                        <p class="card-info-label">Serviço</p>
+                        <p class="card-info-valor">${cp.servico ?? "-"}</p>
+                    </div>
+                `;
+            } else if (ehRecorrente) {
+                colunasVariaveis = `
+                    <div class="card-conta-col card-conta-op">
+                        <p class="card-op-label">Parcela</p>
+                        <p class="card-op-codigo">${cp.parcela_num} / ${cp.parcela_tot}</p>
+                    </div>
+                    <div class="card-conta-col">
+                        <p class="card-info-label">Ocorrência</p>
+                        <p class="card-info-valor">${cp.ocorrencia ?? "-"}</p>
+                    </div>
+                `;
+            }
+            // avulsa: colunasVariaveis fica vazio, card mais simples
+
+            card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-barra ${statusClass}"></div>
                     <div class="card-conteudo card-conteudo-conta">
-                        <div class="card-conta-col card-conta-op">
-                            <p class="card-op-label">OP</p>
-                            <p class="card-op-codigo">${cp.op_id ?? "-"}</p>
-                        </div>
-                        <div class="card-conta-col">
-                            <p class="card-info-label">Serviço</p>
-                            <p class="card-info-valor">${cp.servico ?? "-"}</p>
-                        </div>
+                        ${colunasVariaveis}
                         <div class="card-conta-col">
                             <p class="card-info-label">Fornecedor</p>
                             <p class="card-info-valor">${cp.fornecedor ?? "-"}</p>

@@ -9,6 +9,11 @@
     <main class="principal">
         <div class="cabecalho-principal">
             <h1>Contas a Pagar</h1>
+
+            <button class="botao-criar-conta-pagar">
+                <span class="material-symbols-outlined icone-adicionar-conta">add</span>
+                Nova Conta
+            </button>
         </div>
 
         <div class="filtros" id="filtros">
@@ -24,9 +29,10 @@
                 <div class="box-filtro">
                     <span class="material-symbols-outlined icone-filtro">filter_alt</span>
                     <select id="tipos-filtro">
-                        <option value="todas">Todos os Tipos</option>
+                        <option value="todas">Todos os Status</option>
                         <option value="pendente">Pendentes</option>
-                        <option value="pago">Pagas</option>
+                        <option value="atrasada">Atrasadas</option>
+                        <option value="paga">Pagas</option>
                     </select>
                 </div>
 
@@ -68,4 +74,20 @@
 
 @section('scripts')
 @vite('resources/js/todasContas.js')
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("blur", (e) => {
+        if (e.target.matches(".input-valor-min, .input-valor-max")) {
+            window.executarBuscaComFiltros?.();
+        }
+    }, true);
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.matches(".input-valor-min, .input-valor-max")) {
+            e.target.blur();
+            window.executarBuscaComFiltros?.();
+        }
+    });
+});
+</script>
 @endsection

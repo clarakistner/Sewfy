@@ -30,6 +30,9 @@ Route::get('/cadastro-produto',  function (){
     
     return view('cadastro-produto');
 });
+Route::get('/cadastro-conta-pagar', function () {
+    return view('cadastro-conta-pagar');
+});
 Route::get('/configadm',  function (){
     
     return view('configadm');
@@ -154,4 +157,7 @@ Route::get('/visualizar-fornecedor',  function (){
 Route::get('/visualizar-produto',  function (){
     
     return view('visualizar-produto');
+});
+Route::get('/modal-modo-edicao', function () {
+    return view('modalModoEdicao');
 });

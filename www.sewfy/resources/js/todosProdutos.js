@@ -4,6 +4,8 @@ import "../js/cadastroProdutos.js";
 import "../js/menu.js";
 import "../js/configmenu.js";
 import "../js/API_JS/api.js";
+import "../css/modalordemdeproducao.css";
+import "../css/edicaoOrdemDeProducao.css";
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarProdutos();
@@ -143,7 +145,8 @@ function renderizarTabela(produtos) {
                     data-um="${produto.um}"
                     data-preco="${produto.preco ?? ''}"
                     data-ativo="${produto.ativo}"
-                    data-desc="${produto.desc ?? ''}">
+                    data-desc="${produto.desc ?? ''}"
+                    data-clifor="${produto.necessita_clifor ? '1' : '0'}">
                     <span class="material-symbols-outlined icone-visualizar-produto">visibility</span>
                 </button>
             </td>

@@ -148,13 +148,14 @@ class ProdutoController extends Controller
     public function update(Request $request, int $id)
     {
         $request->validate([
-            'PROD_COD'   => 'required|string',
-            'PROD_NOME'  => 'required|string',
-            'PROD_TIPO'  => 'required|string|in:insumo,produto acabado,conjunto',
-            'PROD_UM'    => 'required|string|in:UN,KG,MT',
-            'PROD_DESC'  => 'nullable|string',
-            'PROD_PRECO' => 'nullable|numeric',
-            'PROD_ATIV'  => 'required|boolean'
+            'PROD_COD'         => 'required|string',
+            'PROD_NOME'        => 'required|string',
+            'PROD_TIPO'        => 'required|string|in:insumo,produto acabado,conjunto',
+            'PROD_UM'          => 'required|string|in:UN,KG,MT',
+            'PROD_DESC'        => 'nullable|string',
+            'PROD_PRECO'       => 'nullable|numeric',
+            'PROD_ATIV'        => 'required|boolean',
+            'NECESSITA_CLIFOR' => 'required|boolean'
         ]);
 
         $empresaId = $this->getEmpresaId($request);
@@ -166,7 +167,7 @@ class ProdutoController extends Controller
         $existe = Produto::where('EMP_ID', $empresaId)
             ->where(function ($q) use ($request) {
                 $q->where('PROD_COD', trim($request->PROD_COD))
-                  ->orWhere('PROD_NOME', trim($request->PROD_NOME));
+                ->orWhere('PROD_NOME', trim($request->PROD_NOME));
             })
             ->where('PROD_ID', '!=', $id)
             ->exists();
@@ -176,13 +177,14 @@ class ProdutoController extends Controller
         }
 
         $produto->update([
-            'PROD_COD'   => trim($request->PROD_COD),
-            'PROD_NOME'  => trim($request->PROD_NOME),
-            'PROD_TIPO'  => $request->PROD_TIPO,
-            'PROD_UM'    => trim($request->PROD_UM),
-            'PROD_DESC'  => $request->PROD_DESC ?? null,
-            'PROD_PRECO' => $request->PROD_PRECO ? (float) $request->PROD_PRECO : null,
-            'PROD_ATIV'  => $request->PROD_ATIV
+            'PROD_COD'         => trim($request->PROD_COD),
+            'PROD_NOME'        => trim($request->PROD_NOME),
+            'PROD_TIPO'        => $request->PROD_TIPO,
+            'PROD_UM'          => trim($request->PROD_UM),
+            'PROD_DESC'        => $request->PROD_DESC ?? null,
+            'PROD_PRECO'       => $request->PROD_PRECO ? (float) $request->PROD_PRECO : null,
+            'PROD_ATIV'        => $request->PROD_ATIV,
+            'NECESSITA_CLIFOR' => $request->NECESSITA_CLIFOR ? 1 : 0
         ]);
 
         return response()->json(['mensagem' => 'Produto atualizado com sucesso']);

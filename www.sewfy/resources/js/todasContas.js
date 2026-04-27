@@ -5,13 +5,21 @@ import "../css/visualizarContas.css";
 import "../css/todasContas.css";
 import "../css/menu.css";
 import "../css/configmenu.css";
+import "../css/cadastrocontapagar.css";
 import "../js/visualizarContas.js";
 import "../js/menu.js";
 import "../js/configmenu.js";
+import "../js/cadastrocontapagar.js";
+import "../css/modalModoEdicao.css";
+import "../css/modalordemdeproducao.css";
+import "../css/edicaoOrdemDeProducao.css";
 
 if (!window.api) {
     window.api = new API();
 }
+
+// cache das contas para filtrar localmente
+let cacheContas = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarContas();
@@ -41,14 +49,18 @@ function inicializarPesquisa() {
         const valorMin    = valorMinRaw ? converterMoedaParaNumero(valorMinRaw) : "";
         const valorMax    = valorMaxRaw ? converterMoedaParaNumero(valorMaxRaw) : "";
 
-        const temFiltro = termo || status || dataInicial || dataFinal || valorMin || valorMax;
+        const temFiltro = termo || status || dataInicial || dataFinal || valorMin !== "" || valorMax !== "";
 
         if (!temFiltro) {
-            carregarContas();
+            if (cacheContas) {
+                renderizarTabela(cacheContas);
+            } else {
+                carregarContas();
+            }
             return;
         }
 
-        pesquisarContas({ termo, status, dataInicial, dataFinal, valorMin, valorMax });
+        filtrarContas({ termo, status, dataInicial, dataFinal, valorMin, valorMax });
     };
 
     inputPesquisa.addEventListener("input", () => {
@@ -59,7 +71,7 @@ function inicializarPesquisa() {
     selectTipo.addEventListener("change", window.executarBuscaComFiltros);
 }
 
-// LISTAR TODAS
+// LISTAR TODAS — busca do backend e salva no cache
 async function carregarContas() {
     const tbody = document.getElementById("contas-table");
 
@@ -77,10 +89,10 @@ async function carregarContas() {
     try {
         const contas = await window.api.get("/contas-pagar");
         contas.sort((a, b) => {
-            if (a.status === "pendente" && b.status !== "pendente") return -1;
-            if (a.status !== "pendente" && b.status === "pendente") return 1;
-            return 0;
+            const ordem = { atrasada: 0, pendente: 1, paga: 2 };
+            return (ordem[a.status] ?? 1) - (ordem[b.status] ?? 1);
         });
+        cacheContas = contas;
         renderizarTabela(contas);
     } catch (erro) {
         console.error("[ERRO] Falha ao carregar contas:", erro);
@@ -93,8 +105,8 @@ async function carregarContas() {
     }
 }
 
-// PESQUISAR
-async function pesquisarContas({ termo, status, dataInicial, dataFinal, valorMin, valorMax }) {
+// FILTRAR — termo e status vão ao backend, valor e data filtram localmente no cache
+async function filtrarContas({ termo, status, dataInicial, dataFinal, valorMin, valorMax }) {
     const tbody = document.getElementById("contas-table");
 
     tbody.innerHTML = `
@@ -104,21 +116,27 @@ async function pesquisarContas({ termo, status, dataInicial, dataFinal, valorMin
     `;
 
     try {
+        // busca no backend apenas por termo e status (não têm problema de timing)
         const params = new URLSearchParams();
-        if (termo)       params.append("termo",        termo);
-        if (status)      params.append("status",       status);
+        if (termo)  params.append("termo",  termo);
+        if (status) params.append("status", status);
         if (dataInicial) params.append("data_inicial", dataInicial);
         if (dataFinal)   params.append("data_final",   dataFinal);
-        if (valorMin)    params.append("valor_min",    valorMin);
-        if (valorMax)    params.append("valor_max",    valorMax);
 
-        const contas = await window.api.get(`/contas-pagar?${params.toString()}`);
-        contas.sort((a, b) => {
-            if (a.status === "pendente" && b.status !== "pendente") return -1;
-            if (a.status !== "pendente" && b.status === "pendente") return 1;
-            return 0;
+        const url = params.toString() ? `/contas-pagar?${params.toString()}` : "/contas-pagar";
+        const contas = await window.api.get(url);
+
+        // filtra valor localmente — sem depender de timing de máscara
+        let resultado = contas;
+        if (valorMin !== "") resultado = resultado.filter(c => parseFloat(c.valor) >= valorMin);
+        if (valorMax !== "") resultado = resultado.filter(c => parseFloat(c.valor) <= valorMax);
+
+        resultado.sort((a, b) => {
+            const ordem = { atrasada: 0, pendente: 1, paga: 2 };
+            return (ordem[a.status] ?? 1) - (ordem[b.status] ?? 1);
         });
-        renderizarTabela(contas);
+
+        renderizarTabela(resultado);
     } catch (erro) {
         console.error("[ERRO BUSCA]", erro);
         mostrarToast("Erro ao pesquisar contas", "erro");
@@ -145,8 +163,34 @@ function renderizarTabela(contas) {
 
         const badgeClass = {
             'pendente': 'badge-pe',
-            'pago':     'badge-pa',
+            'paga':     'badge-pa',
+            'atrasada': 'badge-at',
         }[conta.status] ?? 'badge-pe';
+
+        const td = document.createElement("td");
+        td.className = "table-cell";
+
+        const btn = document.createElement("button");
+        btn.type      = "button";
+        btn.className = "botao-visualizar-conta";
+
+        btn.dataset.id          = conta.id          ?? '';
+        btn.dataset.fornecedor  = conta.fornecedor   ?? '';
+        btn.dataset.status      = conta.status       ?? '';
+        btn.dataset.valor       = conta.valor        ?? '';
+        btn.dataset.vencimento  = conta.vencimento   ?? '';
+        btn.dataset.pagamento   = conta.pagamento    ?? '';
+        btn.dataset.emissao     = conta.emissao      ?? '';
+        btn.dataset.telefone    = conta.telefone     ?? '';
+        btn.dataset.op          = conta.op_id        ?? '';
+        btn.dataset.historico   = conta.historico    ?? '';
+        btn.dataset.ocorrencia  = conta.ocorrencia   ?? '';
+        btn.dataset.grupo       = conta.grupo_id     ?? '';
+        btn.dataset.parcelaNum  = conta.parcela_num  ?? '';
+        btn.dataset.parcelaTot  = conta.parcela_tot  ?? '';
+
+        btn.innerHTML = `<span class="material-symbols-outlined icone-visualizar-conta">visibility</span>`;
+        td.appendChild(btn);
 
         tr.innerHTML = `
             <td class="table-cell">
@@ -156,28 +200,18 @@ function renderizarTabela(contas) {
             <td class="table-cell">${conta.fornecedor}</td>
             <td class="table-cell">${formatarData(conta.vencimento)}</td>
             <td class="table-cell">${formatarData(conta.pagamento)}</td>
-            <td class="table-cell">
-                <button type="button" class="botao-visualizar-conta"
-                    data-id="${conta.id}"
-                    data-fornecedor="${conta.fornecedor}"
-                    data-status="${conta.status}"
-                    data-valor="${conta.valor}"
-                    data-vencimento="${conta.vencimento}"
-                    data-pagamento="${conta.pagamento ?? ''}"
-                    data-emissao="${conta.emissao ?? ''}"
-                    data-telefone="${conta.telefone ?? ''}"
-                    data-op="${conta.op_id ?? ''}">
-                    <span class="material-symbols-outlined icone-visualizar-conta">visibility</span>
-                </button>
-            </td>
         `;
-
+        tr.appendChild(td);
         tbody.appendChild(tr);
     });
 }
 
-// FILTROS EXTRAS (tempo e valor)
+let filtrosInicializados = false;
+
 function inicializarFiltrosExtras() {
+    if (filtrosInicializados) return;
+    filtrosInicializados = true;
+
     const btnMaisFiltros   = document.getElementById("btn-mais-filtros");
     const dropdown         = document.getElementById("dropdown-filtros");
     const containerFiltros = document.getElementById("container-filtros");
@@ -187,20 +221,20 @@ function inicializarFiltrosExtras() {
         return;
     }
 
-    dropdown.style.display = "none";
-
     btnMaisFiltros.addEventListener("click", (e) => {
         e.stopPropagation();
-        dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+        dropdown.classList.toggle("aberto");
     });
 
     document.addEventListener("click", (e) => {
-        if (!e.target.closest(".mais-filtros")) {
-            dropdown.style.display = "none";
+        if (!e.target.closest("#btn-mais-filtros")) {
+            dropdown.classList.remove("aberto");
         }
     });
 
     dropdown.addEventListener("click", (e) => {
+        e.stopPropagation();
+
         const botao = e.target.closest("button");
         if (!botao) return;
 
@@ -208,7 +242,7 @@ function inicializarFiltrosExtras() {
         if (tipoFiltro === "tempo") inserirFiltroTempo(containerFiltros);
         if (tipoFiltro === "valor") inserirFiltroValor(containerFiltros);
 
-        dropdown.style.display = "none";
+        dropdown.classList.remove("aberto");
     });
 }
 
@@ -228,11 +262,11 @@ function inserirFiltroTempo(container) {
 
     container.appendChild(filtro);
 
-    filtro.querySelector(".input-data-inicial").addEventListener("change", window.executarBuscaComFiltros);
-    filtro.querySelector(".input-data-final").addEventListener("change", window.executarBuscaComFiltros);
+    filtro.querySelector(".input-data-inicial").addEventListener("change", () => window.executarBuscaComFiltros?.());
+    filtro.querySelector(".input-data-final").addEventListener("change",   () => window.executarBuscaComFiltros?.());
     filtro.querySelector(".btn-remover-filtronovo").addEventListener("click", () => {
         filtro.remove();
-        window.executarBuscaComFiltros();
+        window.executarBuscaComFiltros?.();
     });
 }
 
@@ -258,15 +292,18 @@ function inserirFiltroValor(container) {
     aplicarMascaraMoeda(inputMin);
     aplicarMascaraMoeda(inputMax);
 
-    inputMin.addEventListener("change", window.executarBuscaComFiltros);
-    inputMax.addEventListener("change", window.executarBuscaComFiltros);
+    // usa blur — dispara quando o usuário sai do campo, com o valor já formatado pela máscara
+    inputMin.addEventListener("blur", () => window.executarBuscaComFiltros?.());
+    inputMax.addEventListener("blur", () => window.executarBuscaComFiltros?.());
+
     filtro.querySelector(".btn-remover-filtronovo").addEventListener("click", () => {
         filtro.remove();
-        window.executarBuscaComFiltros();
+        window.executarBuscaComFiltros?.();
     });
 }
 
 // FUNÇÃO GLOBAL
 window.atualizarListaContas = () => {
+    cacheContas = null;
     carregarContas();
 };

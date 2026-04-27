@@ -183,4 +183,21 @@ class ClienteFornecedorController extends Controller
 
         return response()->json($clifor);
     }
+
+    // GET /api/clifor/fornecedores - Retorna apenas fornecedores e ambos ativos
+    public function fornecedores(Request $request)
+    {
+        $empresaId = $this->getEmpresaId($request);
+
+        $clifor = ClienteFornecedor::where('EMP_ID', $empresaId)
+            ->where('CLIFOR_ATIV', 1)
+            ->whereIn('CLIFOR_TIPO', ['fornecedor', 'ambos'])
+            ->get()
+            ->map(fn($item) => [
+                'id'   => $item->CLIFOR_ID,
+                'nome' => $item->CLIFOR_NOME,
+            ]);
+
+        return response()->json($clifor);
+    }
 }

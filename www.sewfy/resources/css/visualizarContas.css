@@ -11,22 +11,26 @@
                Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Container */
 .modal-container {
   background: #fff;
   width: 100%;
   max-width: 700px;
   border-radius: 16px;
   box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-/* Header */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
   border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
 }
 
 .modal-titulo {
@@ -35,7 +39,6 @@
   color: #0f172a;
 }
 
-/* Close button */
 .modal-fecha {
   background: none;
   border: none;
@@ -48,23 +51,32 @@
   color: #4b5563;
 }
 
-/* Content */
 .modal-conteudo {
   padding: 28px;
 }
 
-/* Grid */
+/* Grid de 6 colunas — permite dividir linhas em 2 ou 3 */
 .grid-detalhes {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px 40px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 28px 24px;
 }
 
-.col-span-2 {
+/* Ocupa metade da linha (3 de 6) */
+.col-half {
+  grid-column: span 3;
+}
+
+/* Ocupa um terço da linha (2 de 6) */
+.col-third {
   grid-column: span 2;
 }
 
-/* detalhe */
+/* Ocupa a linha inteira (6 de 6) */
+.col-full {
+  grid-column: span 6;
+}
+
 .detalhe {
   display: flex;
   flex-direction: column;
@@ -85,7 +97,7 @@
   font-weight: 700;
 }
 
-/* Badge = balão colorido ao redor do texto */
+/* Badge */
 .badge {
   display: inline-block;
   padding: 6px 14px;
@@ -100,40 +112,68 @@
   color: #92400e;
 }
 
-/* Input */
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Input edição */
 .input-edicao {
   padding: 12px 14px;
   font-size: 18px;
   border-radius: 12px;
   border: 1px solid #cbd5f5;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input-edicao:focus {
   border: 2px solid #2563eb;
 }
 
-/* Submit button */
-.btn-submit {
-  display: block;
-    margin-left: auto;
-    padding: 10px 18px;
-    width: fit-content;
-
-    background: linear-gradient(90deg, #0e59fe, #020066);
-    border-radius: 8px;
-    border: none;
-
-    font-size: 15px;
-    font-weight: 500;
-    color: #ffffff;
-
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+/* Ações — botão alinhado à direita */
+.modal-acoes {
+  grid-column: span 6;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 4px;
 }
 
-/* Hover */
+.btn-submit {
+  padding: 10px 18px;
+  width: fit-content;
+  background: linear-gradient(90deg, #0e59fe, #020066);
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
 .btn-submit:hover {
   box-shadow: 0 14px 28px rgba(8, 45, 178, 0.35);
   background: linear-gradient(90deg, #020066, #0e59fe);
+}
+
+/* OP clicável */
+.op-link {
+  cursor: pointer;
+  color: #000000;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.op-link:hover {
+  color: #0e59fe;
 }

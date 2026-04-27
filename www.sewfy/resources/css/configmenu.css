@@ -403,3 +403,15 @@ max-width: 0;
     transform: rotate(360deg);
   }
 }
+
+
+/* Garante que modais não herdam grid do layout */
+.modal form {
+  display: block !important;
+}
+
+.modal .modal-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 16px;
+}

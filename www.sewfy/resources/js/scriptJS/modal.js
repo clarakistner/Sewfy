@@ -4,8 +4,7 @@ import { getInsumosBanco } from '../modalOrdemDeProducao.js'
 import { resgataListaFornecedores, resgataListaProdutos } from './banco.js'
 import { setListaDOM, setInsumosDeletados, setInsumosInseridos } from './estado.js'
 import { getBaseUrl } from '../API_JS/api.js'
-
-var main = document.querySelector(".principal");
+import { pushModal, popModal } from '../assets/modalstack.js' // ✅
 
 const url = getBaseUrl();
 
@@ -13,8 +12,12 @@ export async function abreModal() {
     const response = await fetch(`${url}/editar-ordemdeproducao`);
     const data = await response.text();
 
-    document.body.insertAdjacentHTML("afterbegin", data);
-    document.querySelector(".modal-edicao").classList.add("load");
+    document.body.insertAdjacentHTML("beforeend", data); // ✅ beforeend
+    
+    const modal = document.querySelector(".modal-edicao");
+    modal.classList.add("load");
+    pushModal(modal); // ✅ empilha
+
     setListaDOM(getInsumosBanco());
     setInsumosDeletados([]);
     setInsumosInseridos([]);
@@ -29,12 +32,9 @@ export async function abreModal() {
 }
 
 export function fechaModal() {
-    document.querySelector(".modal-edicao")?.classList.remove("load");
-    document.querySelector(".modal-edicao")?.remove();
+    popModal(); 
 }
 
 export async function fechaModalDetalhes() {
-    document.querySelector("#detailsModal")?.classList.remove("load");
-    document.querySelector("#detailsModal")?.remove();
+    popModal(); 
 }
-

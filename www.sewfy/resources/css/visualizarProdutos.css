@@ -6,7 +6,6 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  z-index: 100;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
                Roboto, Helvetica, Arial, sans-serif;
 }
@@ -81,46 +80,156 @@
 }
 
 .btn-editar-produto {
-    display: block;
-    margin-left: auto;
-    padding: 10px 18px;
-    width: fit-content;
-
-    background: linear-gradient(90deg, #0e59fe, #020066);
-    border-radius: 8px;
-    border: none;
-
-    font-size: 15px;
-    font-weight: 500;
-    color: #ffffff;
-
-    cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: block;
+  margin-left: auto;
+  padding: 10px 18px;
+  width: fit-content;
+  background: linear-gradient(90deg, #0e59fe, #020066);
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .btn-editar-produto:focus {
-    outline: none;
+  outline: none;
 }
 
 .btn-editar-produto:hover {
   background: linear-gradient(90deg, #020066, #0e59fe);
 }
 
-
 .input-edicao {
-    width: 100%;
-    padding: 14px 8px;
-
-    font-size: 15px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-
-    outline: none;
+  width: 100%;
+  padding: 14px 8px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  outline: none;
 }
 
 .input-edicao:focus {
-    outline: none;
-    border: 2px solid #0e59fe;
+  outline: none;
+  border: 2px solid #0e59fe;
 }
 
+/* ── Select com pesquisa — OPs ── */
+.select-pesquisa-wrapper {
+  position: relative;
+  width: 100%;
+}
 
+.select-pesquisa-trigger {
+  width: 100%;
+  padding: 12px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #64748b;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  user-select: none;
+}
+
+.select-pesquisa-trigger:hover {
+  border-color: #9ca3af;
+}
+
+.select-pesquisa-trigger:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.select-pesquisa-trigger.aberto {
+  border-color: #d1d5db;
+  box-shadow: none;
+  border-radius: 8px 8px 0 0;
+}
+
+.select-pesquisa-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.select-pesquisa-dropdown.aberto {
+  display: block;
+}
+
+.select-pesquisa-input-wrapper {
+  position: relative;
+}
+
+.select-pesquisa-input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.select-pesquisa-input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #111827;
+  background: #f9fafb;
+  outline: none;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.select-pesquisa-input:focus {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  box-shadow: none;
+}
+
+.select-pesquisa-lista {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 6px 0;
+  margin: 0;
+}
+
+.select-pesquisa-lista li {
+  padding: 9px 14px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.select-pesquisa-lista li:hover {
+  background: #f0f4ff;
+  color: #0e59fe;
+}
+
+.select-pesquisa-lista li.selecionado {
+  background: #eff6ff;
+  color: #0e59fe;
+  font-weight: 600;
+}

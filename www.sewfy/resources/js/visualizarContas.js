@@ -1,11 +1,15 @@
 import { mostrarToast } from './toast/toast.js';
-import { formatarData, formatarMoeda, mascaraTelefone } from '../js/assets/mascaras.js';
+import { formatarData, formatarMoeda, converterMoedaParaNumero, mascaraTelefone } from '../js/assets/mascaras.js';
 import { getBaseUrl } from './API_JS/api.js';
+import { mostrarModalModo } from './modalModoEdicao.js';
+import { abrirModal as abrirModalOP } from './modalOrdemDeProducao.js';
+import { pushModal, popModal } from './assets/modalstack.js';
 
 const urlBase = getBaseUrl() || window.BASE_URL;
 
 let modalHTMLCache = null;
 let contaAtualId   = null;
+let contaAtualDado = null;
 
 async function carregarModalHTML() {
     if (modalHTMLCache) return modalHTMLCache;
@@ -24,24 +28,53 @@ document.addEventListener("click", async (e) => {
 
     try {
         const modalHTML = await carregarModalHTML();
-        document.body.insertAdjacentHTML("afterbegin", modalHTML);
+        document.body.insertAdjacentHTML("beforeend", modalHTML); // ✅
 
-        const d = botao.dataset; // ── d precisa ser declarado ANTES
-        contaAtualId = d.id;
+        const d        = botao.dataset;
+        contaAtualId   = d.id;
+        contaAtualDado = d;
 
-        document.querySelector("#conta-modal").dataset.emissao = d.emissao ?? ""; // ── agora pode usar d
+        document.querySelector("#conta-modal").dataset.emissao = d.emissao ?? "";
 
-        document.getElementById("modal-fornecedor").textContent = d.fornecedor  ?? '—';
-        document.getElementById("modal-status").textContent     = d.status === 'pago' ? 'Pago' : 'Pendente';
-        document.getElementById("modal-valor").textContent      = formatarMoeda(d.valor);
-        document.getElementById("modal-vencimento").textContent = formatarData(d.vencimento);
-        document.getElementById("modal-pagamento").textContent  = formatarData(d.pagamento || null);
+        document.getElementById("modal-fornecedor").textContent = d.fornecedor ?? '—';
         document.getElementById("modal-telefone").textContent   = d.telefone ? mascaraTelefone(d.telefone) : '—';
-        document.getElementById("modal-op").textContent         = d.op        ?? '—';
+        document.getElementById("modal-valor").textContent      = formatarMoeda(d.valor);
+        document.getElementById("modal-emissao").textContent    = formatarData(d.emissao    || null);
+        document.getElementById("modal-vencimento").textContent = formatarData(d.vencimento || null);
+        document.getElementById("modal-pagamento").textContent  = formatarData(d.pagamento  || null);
+        document.getElementById("modal-historico").textContent  = d.historico || '';
 
-        if (d.status === 'pago') {
+        const badgeMap = {
+            'pendente': '<span class="badge badge-warning">Pendente</span>',
+            'atrasada': '<span class="badge badge-danger">Atrasada</span>',
+            'paga':     '<span class="badge badge-success">Paga</span>',
+        };
+        document.getElementById("modal-status").innerHTML = badgeMap[d.status] ?? d.status;
+
+        if (d.op) {
+            const opEl      = document.getElementById("modal-op");
+            const detalheOp = document.getElementById("detalhe-op");
+            opEl.textContent        = d.op;
+            detalheOp.style.display = "";
+        }
+
+        const temRecorrencia = d.grupo && !d.op;
+        if (temRecorrencia) {
+            document.getElementById("modal-ocorrencia").textContent     = d.ocorrencia || '';
+            document.getElementById("detalhe-ocorrencia").style.display = "";
+
+            if (d.parcelaNum && d.parcelaTot) {
+                document.getElementById("modal-parcela").textContent     = `${d.parcelaNum} / ${d.parcelaTot}`;
+                document.getElementById("detalhe-parcela").style.display = "";
+            }
+        }
+
+        if (d.status === 'paga') {
             document.querySelector("#conta-modal .btn-submit")?.remove();
         }
+
+        const modal = document.querySelector("#conta-modal");
+        pushModal(modal); 
 
     } catch (erro) {
         console.error("[ERRO]", erro);
@@ -49,11 +82,25 @@ document.addEventListener("click", async (e) => {
     }
 });
 
+// ── CLIQUE NA OP — fecha modal de conta e abre modal da OP ───────────────────
+document.addEventListener("click", (e) => {
+    const opLink = e.target.closest(".op-link");
+    if (!opLink) return;
+
+    const opId = contaAtualDado?.op;
+    if (!opId) return;
+
+    abrirModalOP(opId); 
+});
+
+
 // ── FECHAR MODAL ──────────────────────────────────────────────────────────────
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("modal-fecha")) {
-        document.querySelector("#conta-modal")?.remove();
-        contaAtualId = null;
+        popModal(); 
+        contaAtualId   = null;
+        contaAtualDado = null;
+        modalHTMLCache = null;
     }
 });
 
@@ -61,43 +108,66 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
     const btn = e.target.closest(".btn-submit");
     if (!btn) return;
+    if (["btn-modo-esta", "btn-modo-futuras", "btn-fechar-modo"].includes(btn.id)) return;
 
     if (btn.dataset.modo === "salvar") {
-        salvarConta();
+        iniciarFluxoSalvar();
     } else {
         ativarModoEdicao();
     }
 });
 
 function ativarModoEdicao() {
-    const camposEditaveis = ["dataVencimento", "dataPagamento"];
+    const camposEditaveis = {
+        dataVencimento: { tipo: "date" },
+        dataPagamento:  { tipo: "date" },
+        valor:          { tipo: "text" },
+        historico:      { tipo: "text" },
+    };
 
-    document.querySelectorAll("#conta-modal .value").forEach(span => {
+    document.querySelectorAll("#conta-modal .value[data-field]").forEach(span => {
         const field = span.dataset.field;
-        if (!camposEditaveis.includes(field)) return;
+        if (!camposEditaveis[field]) return;
 
-        const input          = document.createElement("input");
-        input.type           = "date";
+        const { tipo } = camposEditaveis[field];
+        const input    = document.createElement("input");
+
+        input.type                  = tipo;
         input.classList.add("input-edicao");
-        input.dataset.field  = field;
-        input.id             = span.id;
+        input.dataset.field         = field;
+        input.id                    = span.id;
         input.dataset.valorOriginal = span.textContent.trim();
 
-        // Converte dd/mm/yyyy → yyyy-mm-dd para o input date
-        const partes = span.textContent.trim().split("/");
-        if (partes.length === 3) {
-            input.value = `${partes[2]}-${partes[1]}-${partes[0]}`;
+        if (tipo === "date") {
+            const partes = span.textContent.trim().split("/");
+            if (partes.length === 3) {
+                input.value = `${partes[2]}-${partes[1]}-${partes[0]}`;
+            }
+            input.dataset.valorOriginal = input.value;
+        } else if (field === "valor") {
+            input.value = span.textContent.trim();
+            input.addEventListener("input", (e) => {
+                let v = e.target.value.replace(/\D/g, "");
+                v = (Number(v) / 100).toFixed(2);
+                e.target.value = formatarMoeda(v);
+            });
+        } else if (field === "historico") {
+            input.value       = span.textContent.trim();
+            input.placeholder = "Adicionar histórico...";
+        } else {
+            input.value = span.textContent.trim();
         }
 
         span.replaceWith(input);
     });
 
-    const btn          = document.querySelector("#conta-modal .btn-submit");
-    btn.textContent    = "Salvar alterações";
-    btn.dataset.modo   = "salvar";
+    const btn        = document.querySelector("#conta-modal .btn-submit");
+    btn.textContent  = "Salvar alterações";
+    btn.dataset.modo = "salvar";
 }
 
-async function salvarConta() {
+// ── FLUXO DE SALVAR ───────────────────────────────────────────────────────────
+function iniciarFluxoSalvar() {
     if (!contaAtualId) {
         mostrarToast("ID da conta não encontrado", "erro");
         return;
@@ -105,53 +175,106 @@ async function salvarConta() {
 
     const inputVencimento = document.querySelector("#conta-modal .input-edicao[data-field='dataVencimento']");
     const inputPagamento  = document.querySelector("#conta-modal .input-edicao[data-field='dataPagamento']");
+    const inputValor      = document.querySelector("#conta-modal .input-edicao[data-field='valor']");
+    const inputHistorico  = document.querySelector("#conta-modal .input-edicao[data-field='historico']");
+
+    const dataEmissao = document.querySelector("#conta-modal")?.dataset.emissao;
+    const hoje        = new Date().toISOString().split("T")[0];
 
     if (!inputVencimento?.value) {
         mostrarToast("A data de vencimento é obrigatória", "erro");
         return;
     }
 
-    const dataEmissao = document.querySelector("#conta-modal")?.dataset.emissao;
-    if (inputPagamento?.value && dataEmissao && inputPagamento.value < dataEmissao) {
-        mostrarToast("A data de pagamento não pode ser anterior à data de emissão da conta", "erro");
+    if (inputVencimento?.value && dataEmissao && inputVencimento.value < dataEmissao) {
+        mostrarToast("A data de vencimento não pode ser anterior à data de emissão", "erro");
         return;
     }
 
+    if (inputPagamento?.value && dataEmissao && inputPagamento.value < dataEmissao) {
+        mostrarToast("A data de pagamento não pode ser anterior à data de emissão", "erro");
+        return;
+    }
+
+    if (inputPagamento?.value && inputPagamento.value > hoje) {
+        mostrarToast("A data de pagamento não pode ser uma data futura", "erro");
+        return;
+    }
+
+    const grupoId            = contaAtualDado?.grupo;
+    const vencimentoOriginal = inputVencimento?.dataset.valorOriginal ?? '';
+    const valorOriginal      = inputValor?.dataset.valorOriginal      ?? '';
+    const historicoOriginal  = inputHistorico?.dataset.valorOriginal  ?? '';
+
+    const editouPropagavel =
+        (inputVencimento && inputVencimento.value !== vencimentoOriginal) ||
+        (inputValor      && inputValor.value      !== valorOriginal)      ||
+        (inputHistorico  && inputHistorico.value  !== historicoOriginal);
+
+    if (grupoId && editouPropagavel) {
+        mostrarModalModo(
+            () => salvarConta(inputVencimento, inputPagamento, inputValor, inputHistorico, "esta"),
+            () => salvarConta(inputVencimento, inputPagamento, inputValor, inputHistorico, "esta_e_futuras")
+        );
+    } else {
+        salvarConta(inputVencimento, inputPagamento, inputValor, inputHistorico, "esta");
+    }
+}
+
+// ── SALVAR ────────────────────────────────────────────────────────────────────
+async function salvarConta(inputVencimento, inputPagamento, inputValor, inputHistorico, modo) {
     const toastCarregando = mostrarToast("Salvando...", "carregando");
 
     try {
         await window.api.put(`/contas-pagar/${contaAtualId}`, {
-            vencimento: inputVencimento.value,
-            pagamento:  inputPagamento?.value || null,
+            vencimento: inputVencimento?.value || null,
+            pagamento:  inputPagamento?.value  || null,
+            valor:      inputValor?.value ? converterMoedaParaNumero(inputValor.value) : null,
+            historico:  inputHistorico?.value  || null,
+            modo,
         });
 
-        toastCarregando.remove();
+        toastCarregando?.remove();
         mostrarToast("Conta atualizada com sucesso!", "sucesso");
 
-        // Atualiza os spans com os novos valores
         [inputVencimento, inputPagamento].forEach(input => {
             if (!input) return;
-            const span           = document.createElement("span");
+            const span         = document.createElement("span");
             span.classList.add("value");
-            span.dataset.field   = input.dataset.field;
-            span.id              = input.id;
-
-            const partes = input.value?.split("-");
-            span.textContent = partes?.length === 3
-                ? `${partes[2]}/${partes[1]}/${partes[0]}`
-                : input.dataset.valorOriginal ?? '—';
-
+            span.dataset.field = input.dataset.field;
+            span.id            = input.id;
+            if (input.value) {
+                const partes     = input.value.split("-");
+                span.textContent = partes.length === 3
+                    ? `${partes[2]}/${partes[1]}/${partes[0]}`
+                    : '';
+            } else {
+                span.textContent = '';
+            }
             input.replaceWith(span);
         });
 
-        // Atualiza o status no modal se pagamento foi preenchido
-        const statusEl = document.getElementById("modal-status");
-        if (statusEl) {
-            statusEl.textContent = inputPagamento?.value ? 'Pago' : 'Pendente';
+        if (inputValor) {
+            const span         = document.createElement("span");
+            span.classList.add("value", "strong");
+            span.dataset.field = "valor";
+            span.id            = inputValor.id;
+            span.textContent   = inputValor.value || '';
+            inputValor.replaceWith(span);
         }
 
-        // Remove o botão se ficou pago, senão restaura o texto
-        if (inputPagamento?.value) {
+        if (inputHistorico) {
+            const span         = document.createElement("span");
+            span.classList.add("value");
+            span.dataset.field = "historico";
+            span.id            = "modal-historico";
+            span.textContent   = inputHistorico.value || '';
+            inputHistorico.replaceWith(span);
+        }
+
+        const statusEl = document.getElementById("modal-status");
+        if (statusEl && inputPagamento?.value) {
+            statusEl.innerHTML = '<span class="badge badge-success">Paga</span>';
             document.querySelector("#conta-modal .btn-submit")?.remove();
         } else {
             const btn = document.querySelector("#conta-modal .btn-submit");

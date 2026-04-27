@@ -166,6 +166,15 @@ h2 {
     border: 1px solid #bbf7d0;
 }
 
+.card-barra.atrasada {
+    background: #ef4444;
+}
+
+.card-badge-status.atrasada {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
 /* ── CONTAS ── */
 
 .card-conteudo-conta {

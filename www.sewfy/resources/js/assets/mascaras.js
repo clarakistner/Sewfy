@@ -97,3 +97,24 @@ export function formatarData(data) {
     const [ano, mes, dia] = data.split('-');
     return `${dia}/${mes}/${ano}`;
 }
+
+// Retorna a data local atual no formato yyyy-mm-dd
+export function dataHoje() {
+    const hoje = new Date();
+    return [
+        hoje.getFullYear(),
+        String(hoje.getMonth() + 1).padStart(2, '0'),
+        String(hoje.getDate()).padStart(2, '0')
+    ].join('-');
+}
+
+// Retorna a data local com N meses adicionados, no formato yyyy-mm-dd
+export function dataHojeMais(meses = 1) {
+    const data = new Date();
+    data.setMonth(data.getMonth() + meses);
+    return [
+        data.getFullYear(),
+        String(data.getMonth() + 1).padStart(2, '0'),
+        String(data.getDate()).padStart(2, '0')
+    ].join('-');
+}

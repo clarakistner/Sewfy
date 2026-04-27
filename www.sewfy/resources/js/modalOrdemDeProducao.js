@@ -1,6 +1,7 @@
 import { mostrarToast } from "./toast/toast.js";
 import { initConfirmarFechamento } from "./confirmar-fechamento.js";
 import { getBaseUrl } from "./API_JS/api.js";
+import { pushModal, popModal } from "./assets/modalstack.js";
 
 let ordemProducao = null;
 let insumosBanco = [];
@@ -35,11 +36,12 @@ export async function abrirModal(id) {
         ]);
 
         const data = await response.text();
-        document.body.insertAdjacentHTML("afterbegin", data);
+        document.body.insertAdjacentHTML("beforeend", data);
         await insereDetalhesNaTela();
-
+        
         const modal = document.querySelector("#detailsModal");
         modal.classList.add("load");
+        pushModal(modal);
 
         ordemAbertah();
     } catch (error) {
@@ -62,8 +64,7 @@ function ordemAbertah() {
 }
 
 export function fecharModal() {
-    document.querySelector("#detailsModal")?.classList.remove("load");
-    document.querySelector("#detailsModal")?.remove();
+    popModal();
 }
 
 async function resgataOPCompletaBanco(id) {

@@ -3,6 +3,7 @@ import { mostrarToast } from "./toast/toast.js";
 import { getOrdemProducao } from "./modalOrdemDeProducao.js";
 import { getBaseUrl } from "./API_JS/api.js";
 import { listarOrdensProducao, invalidarCache } from "./gerenciarOrdensDeProducao.js";
+import { pushModal, popModal } from "./assets/modalstack.js"; // ✅ importa pushModal também
 
 const url = getBaseUrl();
 
@@ -43,8 +44,8 @@ async function enviarFechamento() {
             quebra: qtdeQuebra,
         });
 
-        fecharConfirmarFechamento();
-        document.querySelector("#detailsModal")?.remove();
+        fecharConfirmarFechamento(); // fecha o modal de confirmação
+        popModal();                  // ✅ remove a OP da pilha, voltando para o produto
         mostrarToast("Ordem de Produção Fechada!");
         invalidarCache();
         await listarOrdensProducao(null, null);
@@ -65,16 +66,17 @@ export async function initConfirmarFechamento() {
         const css  = await cssResponse.text();
 
         if (!document.getElementById("confirmar-fechamento-style")) {
-            const style     = document.createElement("style");
-            style.id        = "confirmar-fechamento-style";
+            const style      = document.createElement("style");
+            style.id         = "confirmar-fechamento-style";
             style.textContent = css;
             document.head.appendChild(style);
         }
 
-        document.body.insertAdjacentHTML("afterbegin", html);
+        document.body.insertAdjacentHTML("beforeend", html); // ✅ beforeend
 
         const modal = document.querySelector("#modal-confirmar-fechamento");
         setTimeout(() => modal.classList.add("load"), 10);
+        pushModal(modal); // ✅ empilha a confirmação
     } catch (error) {
         console.error("Erro ao inicializar confirmação de fechamento:", error);
         mostrarToast("Erro ao abrir confirmação de fechamento", "erro");

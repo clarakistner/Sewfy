@@ -29,6 +29,36 @@ body {
   font-weight: 550;
 }
 
+.botao-criar-conta-pagar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(90deg, #0e59fe, #020066);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 200px;
+  font-size: 16px;
+}
+
+.botao-criar-conta-pagar:focus {
+  outline: none;
+}
+  
+.botao-criar-conta-pagar:hover {
+  background: linear-gradient(90deg, #020066, #0e59fe);
+}
+
+.icone-adicionar-produto {
+  font-size: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
 .principal .filtros {
   background-color: #ffffff;
   padding: 24px;
@@ -142,11 +172,15 @@ body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   border-radius: 12px;
   padding: 10px;
-  display: none;
+  display: none; /* ✅ oculto por padrão */
   flex-direction: column;
   gap: 6px;
   min-width: 250px;
   z-index: 10;
+}
+
+.principal .dropdown-filtros.aberto {
+  display: flex; 
 }
 
 .principal .dropdown-filtros button {
@@ -274,6 +308,14 @@ body {
 .badge-pe {
   background-color: #fef3c7;
   color: #92400e;
+  border-radius: 10px;
+  padding: 2px 10px;
+  font-weight: 500;
+}
+
+.badge-at {
+  background-color: #fee2e2;
+  color: #991b1b;
   border-radius: 10px;
   padding: 2px 10px;
   font-weight: 500;

@@ -1,0 +1,84 @@
+.modo-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.modo-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modo-fechar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modo-fechar:hover {
+  color: #374151;
+}
+
+.modo-titulo {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.modo-descricao {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.modo-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modo-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.modo-btn-secundario {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.modo-btn-secundario:hover {
+  background: #d1d5db;
+}
+
+.modo-btn-primario {
+  background: linear-gradient(90deg, #0e59fe, #020066);
+  color: #fff;
+}
+
+.modo-btn-primario:hover {
+  background: linear-gradient(90deg, #020066, #0e59fe);
+  box-shadow: 0 8px 20px rgba(8, 45, 178, 0.35);
+}
