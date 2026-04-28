@@ -35,7 +35,6 @@ export class API {
     }
 
     async inicializarCsrf() {
-        // Se o cookie já existe, não precisa buscar de novo
         if (this.getCookie("XSRF-TOKEN")) {
             this.csrfInitializado = true;
             return;
@@ -61,23 +60,24 @@ export class API {
             this.csrfCarregando = false;
         }
     }
-    
+
     async request(caminho, opcoes = {}) {
         if (this.redirecionando) return;
 
         await this.inicializarCsrf();
 
-        const url = `${this.url}/api${caminho}`;
-        const xsrfToken = decodeURIComponent(
-            this.getCookie("XSRF-TOKEN") ?? "",
-        );
-        const token = decodeURIComponent(this.getCookie("token") ?? "");
+        const url        = `${this.url}/api${caminho}`;
+        const xsrfToken  = decodeURIComponent(this.getCookie("XSRF-TOKEN") ?? "");
+        const token      = decodeURIComponent(this.getCookie("token") ?? "");
+        const empresaId  = decodeURIComponent(this.getCookie("empresa_id") ?? "");
+
         const config = {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
                 "X-XSRF-TOKEN": xsrfToken,
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                ...(token     ? { Authorization:  `Bearer ${token}` } : {}),
+                ...(empresaId ? { "X-Empresa-Id": empresaId          } : {}),
                 ...opcoes.headers,
             },
             ...opcoes,
@@ -106,8 +106,7 @@ export class API {
                 return this.request(caminho, opcoes);
             }
 
-            const text = await response.text();
-        
+            const text  = await response.text();
             const dados = JSON.parse(text);
 
             if (dados.resposta) {
@@ -198,11 +197,13 @@ export function popCookie(name) {
     deleteCookie(name);
     return value;
 }
+
 export function deleteAllCookies() {
     document.cookie.split(';').forEach(cookie => {
-        const nome = cookie.split('=')[0].trim()
-        document.cookie = `${nome}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
-    })
+        const nome = cookie.split('=')[0].trim();
+        document.cookie = `${nome}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    });
 }
+
 window.api = new API(import.meta.env.VITE_API_BASE || window.location.origin);
 window.inicializarCsrf = () => window.api?.inicializarCsrf();

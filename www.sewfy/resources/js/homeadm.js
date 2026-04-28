@@ -1,5 +1,6 @@
 import { mascaraCpfCnpj, mascaraTelefone } from "../js/assets/mascaras.js";
 import { verificarAuth, apiFetch } from "../js/assets/auth.js";
+import { setCookie } from "../js/API_JS/api.js";
 import "../js/menuadm.js";
 
 verificarAuth();
@@ -27,7 +28,7 @@ async function carregarEmpresas() {
 }
 
 function aplicarFiltros() {
-    const busca       = (document.getElementById("input-busca")?.value || "").toLowerCase();
+    const busca        = (document.getElementById("input-busca")?.value || "").toLowerCase();
     const statusFiltro = document.getElementById("select-status")?.value || "todas";
 
     const filtradas = todasEmpresas.filter(emp => {
@@ -65,11 +66,11 @@ function renderizarEmpresas(empresas) {
         const ativo = Number(empresa.ativo);
         const ativa = ativo === 1;
 
-        const statusClasse = ativa ? "ativa"       : "inativa";
-        const statusTexto  = ativa ? "Ativa"        : "Inativa";
-        const statusIcone  = ativa ? "check_circle" : "cancel";
+        const statusClasse = ativa ? "ativa"        : "inativa";
+        const statusTexto  = ativa ? "Ativa"         : "Inativa";
+        const statusIcone  = ativa ? "check_circle"  : "cancel";
 
-        const modulos    = Array.isArray(empresa.modulos) ? empresa.modulos : [];
+        const modulos     = Array.isArray(empresa.modulos) ? empresa.modulos : [];
         const modulosHTML = modulos.length > 0
             ? modulos.map(mod => `<span class="modulo-tag">${mod}</span>`).join("")
             : `<span class="modulo-tag">Sem módulos</span>`;
@@ -125,9 +126,9 @@ function renderizarEmpresas(empresas) {
 }
 
 function ativarBotaoAtual() {
-    const path    = window.location.pathname;
-    const botoes  = ["btn-home", "btn-cadastro", "btn-relatorio", "btn-config"];
-    const paths   = ["home-adm", "cadastro", "relatorio", "config"];
+    const path   = window.location.pathname;
+    const botoes = ["btn-home", "btn-cadastro", "btn-relatorio", "btn-config"];
+    const paths  = ["home-adm", "cadastro", "relatorio", "config"];
 
     paths.forEach((p, i) => {
         if (path.includes(p)) {
@@ -146,8 +147,11 @@ async function acessarEmpresa(id) {
         }
 
         const data = await response.json();
-        sessionStorage.setItem('empresa_id', data.empresa_id);
-        sessionStorage.setItem('empresa_nome', data.empresa_nome);
+
+        // Salva em cookie para que o header X-Empresa-Id seja enviado automaticamente
+        setCookie('empresa_id',   String(data.empresa_id),   120);
+        setCookie('empresa_nome', String(data.empresa_nome), 120);
+
         window.location.href = '/home';
     } catch (erro) {
         console.error('[ERRO]', erro);

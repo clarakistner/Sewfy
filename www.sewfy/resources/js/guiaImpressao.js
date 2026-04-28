@@ -146,5 +146,5 @@ async function iniciarImpressao() {
     const ops = [...opsSelecionadas].join(",");
     const url = `/api/ordemdeproducao/guias/imprimir?ops=${ops}&token=${encodeURIComponent(token)}`;
 
-    window.open(url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
 }
