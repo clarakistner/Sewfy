@@ -2,9 +2,12 @@ import "../js/menu.js";
 import "../js/configmenu.js";
 import "../js/modalOrdemDeProducao.js";
 import "../js/edicaoOrdemDeProducao.js";
+import { adicionarCheckboxAoCard } from "../js/guiaImpressao.js";
+import "../css/guiasimpressao.css";
 import "../js/API_JS/api.js";
 import { mostrarToast } from "./toast/toast.js";
 import { aplicarMascaraMoeda, converterMoedaParaNumero } from "../js/assets/mascaras.js";
+
 
 let cacheOPs         = null;
 let cacheProdutosOPs = null;
@@ -251,6 +254,7 @@ function criarCardOP(op, mapaProdutos) {
             </div>
         </div>
     `;
+    adicionarCheckboxAoCard(card, op.idOP);
     return card;
 }
 

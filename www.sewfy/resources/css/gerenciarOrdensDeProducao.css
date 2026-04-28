@@ -283,15 +283,14 @@ opacity: 0.5;
 
 .card-ordem-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 12px;
     align-items: center;
     margin-bottom: 16px;
 }
 
 .card-ordem-identificacao {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    flex:1;
 }
 
 .label-ordem {

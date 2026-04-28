@@ -70,6 +70,7 @@ export function fecharModal() {
 async function resgataOPCompletaBanco(id) {
     try {
         const busca = await window.api.get(`/ordemdeproducao/detalhes/${id}`);
+        console.log("insumos recebidos:", busca.opinS); // <-- adiciona isso
         setInsumosBanco(busca.opinS);
         setOrdemProducao(busca.op);
     } catch (error) {
@@ -92,7 +93,7 @@ export async function retornaNomeProduto(id) {
 async function insereInsumosTabela() {
     const tabelaDOM = document.querySelector(".tabelaInsumos");
     if (!tabelaDOM) return;
-
+    tabelaDOM.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
     getInsumosBanco().forEach((insumo) => {

@@ -3,7 +3,9 @@ import { mostrarToast } from "./toast/toast.js";
 import { getOrdemProducao } from "./modalOrdemDeProducao.js";
 import { getBaseUrl } from "./API_JS/api.js";
 import { listarOrdensProducao, invalidarCache } from "./gerenciarOrdensDeProducao.js";
-import { pushModal, popModal } from "./assets/modalstack.js"; // ✅ importa pushModal também
+import { pushModal, popModal } from "./assets/modalstack.js"; //  importa pushModal também
+import { abrirModal } from "./modalOrdemDeProducao.js"; // adiciona
+
 
 const url = getBaseUrl();
 
@@ -39,17 +41,19 @@ async function enviarFechamento() {
             return;
         }
 
-        await window.api.put("/ordemdeproducao/fechar", {
-            opID: op.idOP,
-            quebra: qtdeQuebra,
-        });
+        const opID = op.idOP;
 
-        fecharConfirmarFechamento(); // fecha o modal de confirmação
-        popModal();                  // ✅ remove a OP da pilha, voltando para o produto
+        await window.api.put("/ordemdeproducao/fechar", { opID, quebra: qtdeQuebra });
+
+        fecharConfirmarFechamento();
+        popModal();
         mostrarToast("Ordem de Produção Fechada!");
         invalidarCache();
-        await listarOrdensProducao(null, null);
-        window.atualizarListaOrdens?.();
+
+        await Promise.all([
+            abrirModal(opID),
+            listarOrdensProducao(null, null).then(() => window.atualizarListaOrdens?.()),
+        ]);
     } catch (error) {
         console.error("Erro ao enviar fechamento:", error);
         mostrarToast("Erro ao enviar fechamento", "erro");

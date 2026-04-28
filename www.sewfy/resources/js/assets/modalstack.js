@@ -13,6 +13,14 @@ export function popModal() {
     if (anterior) anterior.style.display = 'flex';
 }
 
+// Desempilha sem remover do DOM — para modais que usam classe CSS para esconder (ex: hidden)
+export function hideModal() {
+    const topo = stack.pop();
+    if (topo) topo.classList.add("hidden");
+    const anterior = stack[stack.length - 1];
+    if (anterior) anterior.style.display = 'flex';
+}
+
 export function clearStack() {
     stack.forEach(m => m.remove());
     stack.length = 0;
