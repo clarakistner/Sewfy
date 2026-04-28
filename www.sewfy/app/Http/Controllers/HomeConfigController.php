@@ -11,9 +11,8 @@ class HomeConfigController extends Controller
     // GET /api/home/config - Retorna a config da home da empresa atual
     public function show(Request $request)
     {
-        $abilities  = $request->user()->currentAccessToken()->abilities;
-        $ability    = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId  = (int) str_replace('empresa_', '', $ability);
+        $empresa   = $request->empresa;
+        $empresaId = $empresa->EMP_ID;
 
         $config = HomeConfig::firstOrCreate(
             ['EMP_ID' => $empresaId],
@@ -42,19 +41,20 @@ class HomeConfigController extends Controller
             'FILTRO_ORDENS'         => 'required|string|in:aberta,fechada,todas',
         ]);
 
-        $abilities  = $request->user()->currentAccessToken()->abilities;
-        $ability    = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId  = (int) str_replace('empresa_', '', $ability);
+        $empresa   = $request->empresa;
+        $empresaId = $empresa->EMP_ID;
 
-        // Verifica se o usuário é proprietário da empresa
-        $eProprietario = DB::table('EMPRESA_USUARIOS')
-            ->where('EMP_ID', $empresaId)
-            ->where('USU_ID', $request->user()->USU_ID)
-            ->where('USU_E_PROPRIETARIO', 1)
-            ->exists();
+        // Apenas proprietário pode editar — adm Sewfy impersonando pode sempre
+        if (!$request->is_adm_impersonating) {
+            $eProprietario = DB::table('EMPRESA_USUARIOS')
+                ->where('EMP_ID', $empresaId)
+                ->where('USU_ID', $request->user()->USU_ID)
+                ->where('USU_E_PROPRIETARIO', 1)
+                ->exists();
 
-        if (!$eProprietario) {
-            return response()->json(['erro' => 'Apenas o proprietário pode editar a home'], 403);
+            if (!$eProprietario) {
+                return response()->json(['erro' => 'Apenas o proprietário pode editar a home'], 403);
+            }
         }
 
         $config = HomeConfig::updateOrCreate(
