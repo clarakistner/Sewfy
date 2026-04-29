@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
-        $middleware->encryptCookies(except: ['token']);
+        $middleware->encryptCookies(except: ['token', 'empresa_id']);
 
         $middleware->alias([
             'impersonate' => \App\Http\Middleware\ImpersonateEmpresa::class,
