@@ -8,21 +8,12 @@ use Illuminate\Http\Request;
 
 class ClienteFornecedorController extends Controller
 {
-
-    // Função para extrair o ID da empresa a partir das abilities do token de acesso do usuário
     private function getEmpresaId(Request $request): string
     {
-        $abilities = $request->user()->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-
-        if (!$ability) {
-            abort(403, 'Token sem empresa associada');
-        }
-
-        return str_replace('empresa_', '', $ability);
+        return (string) $request->empresa->EMP_ID;
     }
 
-    // GET /api/clifor?search=Clara - Listar clientes/fornecedores ativos, com busca por nome ou CPF/CNPJ
+    // GET /api/clifor?search=Clara
     public function index(Request $request)
     {
         $empresaId = $this->getEmpresaId($request);
@@ -52,7 +43,7 @@ class ClienteFornecedorController extends Controller
         return response()->json($clifor);
     }
 
-    // POST /api/clifor - Cadastrar um novo cliente/fornecedor
+    // POST /api/clifor
     public function store(Request $request)
     {
         $request->validate([
@@ -91,7 +82,7 @@ class ClienteFornecedorController extends Controller
         ], 201);
     }
 
-    // GET /api/clifor/{id} - Detalhes de um cliente/fornecedor específico
+    // GET /api/clifor/{id}
     public function show(Request $request, int $id)
     {
         $empresaId = $this->getEmpresaId($request);
@@ -110,7 +101,7 @@ class ClienteFornecedorController extends Controller
         ]);
     }
 
-    // PUT /api/clifor/{id} - Atualizar um cliente/fornecedor específico
+    // PUT /api/clifor/{id}
     public function update(Request $request, int $id)
     {
         $request->validate([
@@ -155,13 +146,13 @@ class ClienteFornecedorController extends Controller
         return response()->json(['mensagem' => 'Atualizado com sucesso']);
     }
 
-    // GET /api/clifor/todos - Retorna todos os clientes/fornecedores, incluindo os inativos, para uma empresa específica (usado para relatórios e exportação de dados)
+    // GET /api/clifor/todos
     public function todos(Request $request)
     {
         $empresaId = $this->getEmpresaId($request);
         $termo     = trim($request->get('search', ''));
 
-        $query = ClienteFornecedor::where('EMP_ID', $empresaId); // sem CLIFOR_ATIV
+        $query = ClienteFornecedor::where('EMP_ID', $empresaId);
 
         if ($termo !== '') {
             $query->where(function($q) use ($termo) {
@@ -184,7 +175,7 @@ class ClienteFornecedorController extends Controller
         return response()->json($clifor);
     }
 
-    // GET /api/clifor/fornecedores - Retorna apenas fornecedores e ambos ativos
+    // GET /api/clifor/fornecedores
     public function fornecedores(Request $request)
     {
         $empresaId = $this->getEmpresaId($request);

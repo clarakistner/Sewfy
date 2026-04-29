@@ -24,16 +24,12 @@ class CriacaoInsumoController extends Controller
             }
 
             $opinS     = $dados['insumosInseridos'];
-            $idUsuario = (int) $request->user()->USU_ID;
-            $user = $request->user();
-            $abilities = $user->currentAccessToken()->abilities;
-            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-            $empresaId = str_replace('empresa_', '', $ability);
+            $empresaId = $request->empresa->EMP_ID;
 
             if (!$opinS || count($opinS) === 0) {
                 return response()->json([
                     'sucesso' => false,
-                    'erro' => true,
+                    'erro'    => true,
                     'mensagem' => 'Lista Vazia!'
                 ]);
             }
@@ -41,22 +37,20 @@ class CriacaoInsumoController extends Controller
             foreach ($opinS as $opin) {
                 $idOP = $opin['opOPIN'] ?? null;
 
-                // Cria o insumo no banco
                 OPInsumo::create([
-                    'OPIN_UM'                => $opin['umOPIN'] ?? null,
-                    'OPIN_QTD'               => (int) ($opin['qtdOPIN'] ?? null),
-                    'OPIN_CUSTOU'            => (float) ($opin['custouOPIN'] ?? null),
-                    'OPIN_CUSTOT'            => (float) ($opin['custotOPIN'] ?? null),
-                    'PROD_ID'       => (int) ($opin['prodIdOPIN'] ?? null),
-                    'OP_ID'   => $idOP,
-                    'CLIFOR_ID' => is_numeric($opin['forOPIN'] ?? null) ? (int) $opin['forOPIN'] : null,
+                    'OPIN_UM'          => $opin['umOPIN']    ?? null,
+                    'OPIN_QTD'         => (int) ($opin['qtdOPIN']    ?? null),
+                    'OPIN_CUSTOU'      => (float) ($opin['custouOPIN'] ?? null),
+                    'OPIN_CUSTOT'      => (float) ($opin['custotOPIN'] ?? null),
+                    'PROD_ID'          => (int) ($opin['prodIdOPIN']  ?? null),
+                    'OP_ID'            => $idOP,
+                    'CLIFOR_ID'        => is_numeric($opin['forOPIN'] ?? null) ? (int) $opin['forOPIN'] : null,
                     'NECESSITA_CLIFOR' => FuncoesAuxiliares::retornaNecessitaCliFor((int) $opin['prodIdOPIN'], $empresaId)
                 ]);
 
-                // Recalcula e atualiza os custos da OP
                 $op = OrdemDeProducao::where('OP_ID', $idOP)
-                ->where('EMP_ID', $empresaId)
-                ->first();
+                    ->where('EMP_ID', $empresaId)
+                    ->first();
 
                 $custotOP = FuncoesAuxiliares::retornaCustotOP($idOP);
                 $custouOP = $custotOP / $op->OP_QTD;

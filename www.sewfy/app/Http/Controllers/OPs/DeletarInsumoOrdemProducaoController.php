@@ -24,31 +24,24 @@ class DeletarInsumoOrdemProducaoController extends Controller
             }
 
             $opinS     = $dados['insumosDeletados'] ?? null;
-            $user = $request->user();
-            $abilities = $user->currentAccessToken()->abilities;
-            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-            $empresaId = str_replace('empresa_', '', $ability);
-            $idUsuario = $user->USU_ID;
+            $empresaId = $request->empresa->EMP_ID;
 
             if (!$opinS || count($opinS) === 0) {
                 return;
             }
-            
 
             foreach ($opinS as $opin) {
-                if(!is_numeric($opin)) {
-                    continue; // Pula IDs inválidos
+                if (!is_numeric($opin)) {
+                    continue;
                 }
-                // Busca o insumo e a OP relacionada
+
                 $insumo = OPInsumo::find((int) $opin);
-                $op = OrdemDeProducao::where('OP_ID', $insumo->OP_ID)
+                $op     = OrdemDeProducao::where('OP_ID', $insumo->OP_ID)
                     ->where('EMP_ID', $empresaId)
                     ->first();
 
-                // Deleta o insumo
                 $insumo->delete();
 
-                // Recalcula e atualiza os custos da OP
                 $custotOP = FuncoesAuxiliares::retornaCustotOP($op->OP_ID);
                 $custouOP = $custotOP / $op->OP_QTD;
 

@@ -9,11 +9,10 @@ use App\Models\EmpresaUsuarios;
 use App\Models\SewfyAdm;
 use App\Models\UsuarioModulos;
 use App\Models\Modulo;
-use Psy\Command\WhereamiCommand;
 
 class EmpresaUsuariosController extends Controller
 {
-    // GET /api/empresa/usuario/proprietario - Verificar se o usuário é proprietário da empresa atual
+    // GET /api/empresa/usuario/proprietario
     public function usuarioEhProprietario(Request $request)
     {
         $user = $request->user();
@@ -23,10 +22,7 @@ class EmpresaUsuariosController extends Controller
             return response()->json(['proprietario' => true]);
         }
 
-        // Fluxo normal do usuário
-        $abilities = $user->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId = str_replace('empresa_', '', $ability);
+        $empresaId = $request->empresa->EMP_ID;
         $userId    = $user->USU_ID;
 
         $empresaUsuario = EmpresaUsuarios::where('EMP_ID', $empresaId)
@@ -45,14 +41,11 @@ class EmpresaUsuariosController extends Controller
         return response()->json(['proprietario' => $ehProprietario]);
     }
 
-
-    // GET /api/empresa/usuario/funcionarios - Listar funcionários da empresa atual (excluindo o próprio usuário)
+    // GET /api/empresa/usuario/funcionarios
     public function buscaFuncionariosEmpresa(Request $request)
     {
-        $user = $request->user();
-        $abilities = $user->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId = str_replace('empresa_', '', $ability);
+        $user      = $request->user();
+        $empresaId = $request->empresa->EMP_ID;
 
         $listaFuncionarios = User::whereIn(
             'USU_ID',
@@ -67,13 +60,10 @@ class EmpresaUsuariosController extends Controller
         ]);
     }
 
-    // GET /api/empresa/usuario/{id} - Detalhes de um funcionário específico da empresa atual
+    // GET /api/empresa/usuario/{id}
     public function buscaFuncionario(Request $request, $id)
     {
-        $user = $request->user();
-        $abilities = $user->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId = str_replace('empresa_', '', $ability);
+        $empresaId = $request->empresa->EMP_ID;
 
         $vinculo = EmpresaUsuarios::where('EMP_ID', $empresaId)
             ->where('USU_ID', $id)
@@ -103,13 +93,11 @@ class EmpresaUsuariosController extends Controller
         ]);
     }
 
-    // PUT /api/empresa/usuario/{id} - Atualizar dados de um funcionário específico da empresa atual
+    // PUT /api/empresa/usuario/{id}
     public function atualizarFuncionario(Request $request, $id)
     {
-        $user = $request->user();
-        $abilities = $user->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaId = str_replace('empresa_', '', $ability);
+        $user      = $request->user();
+        $empresaId = $request->empresa->EMP_ID;
 
         $vinculo = EmpresaUsuarios::where('EMP_ID', $empresaId)
             ->where('USU_ID', $id)
@@ -137,7 +125,6 @@ class EmpresaUsuariosController extends Controller
         $vinculo->USU_ATIV = $request->ativo ? 1 : 0;
         $vinculo->save();
 
-        // remove módulos antigos e insere os novos
         UsuarioModulos::where('USU_ID', $id)->where('EMP_ID', $empresaId)->delete();
 
         foreach ($request->modulos ?? [] as $nomeModulo) {
@@ -157,19 +144,17 @@ class EmpresaUsuariosController extends Controller
 
     public function getEmpresasUsuario(Request $request)
     {
-        
         $user = $request->user();
         if (!$user) {
             return response()->json(['erro' => 'Usuário não autenticado'], 401);
         }
-      
 
         $idEmpresas = EmpresaUsuarios::where('USU_ID', $user->USU_ID)
             ->pluck('EMP_ID');
 
         $empresas = Empresa::whereIn('EMP_ID', $idEmpresas)
             ->where('EMP_ATIV', 1)
-            ->pluck('EMP_NOME', 'EMP_ID') //no selecionar-empresa serão exibidos os nomes das empresas ao invés da razão
+            ->pluck('EMP_NOME', 'EMP_ID')
             ->toArray();
 
         return response()->json(['empresas' => $empresas]);

@@ -10,7 +10,6 @@ use App\Models\Produto;
 
 class ListarOrdensProducaoController extends Controller
 {
-
     public function retornaNome($id)
     {
         $prod = Produto::find($id);
@@ -20,10 +19,7 @@ class ListarOrdensProducaoController extends Controller
     public function listarOPs(Request $request)
     {
         try {
-            $user      = $request->user();
-            $abilities = $user->currentAccessToken()->abilities;
-            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-            $empresaId = str_replace('empresa_', '', $ability);
+            $empresaId = $request->empresa->EMP_ID;
 
             $ops = OrdemDeProducao::where('EMP_ID', $empresaId)
             ->when($request->filled('prod_id'), fn($q) =>
@@ -35,7 +31,7 @@ class ListarOrdensProducaoController extends Controller
             ->when($request->filled('status'), fn($q) =>
                 $q->where('OP_STATUS', $request->status)
             )
-            ->with('insumos') // <-- carrega os insumos junto
+            ->with('insumos')
             ->select('OP_ID', 'OP_DATAA', 'OP_DATAE', 'OP_STATUS', 'OP_CUSTOT', 'OP_CUSTOU', 'OP_CUSTOUR', 'OP_QTD', 'OP_QTDE', 'PROD_ID', 'OP_QUEBRA')
             ->get();
 

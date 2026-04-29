@@ -1,11 +1,11 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 
-// Rotas para Usuário
-Route::middleware('auth:sanctum')->group(function() {
-    Route::get('/funcionario/{id}', [UsuarioController::class, 'retornaFuncionario']);
-    Route::get('/funcionario/owner/resgatar',[UsuarioController::class,'retornaOwner']);
-    Route::put('/funcionario/owner/editar',[UsuarioController::class,'editarOwner']);
-    Route::put('/funcionario/editar/{id}', [UsuarioController::class, 'editarFuncionario']);
+Route::middleware(['auth:sanctum', 'impersonate'])->group(function () {
+    Route::get('/usuario/owner', [UsuarioController::class, 'retornaOwner']);
+    Route::put('/usuario/owner', [UsuarioController::class, 'editarOwner']);
+    Route::get('/usuario/{id}', [UsuarioController::class, 'retornaFuncionario']);
+    Route::put('/usuario/{id}', [UsuarioController::class, 'editarFuncionario']);
 });

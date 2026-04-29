@@ -3,23 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConviteController;
 
-// Confirmação pelo link do email (owner, funcionario, troca_owner, troca_email, redef_senha)
+Route::post('/auth/redefinir-senha', [ConviteController::class, 'redefinirSenha']);
+Route::get('/convites/verificar', [ConviteController::class, 'verificar']);
 Route::post('/convites/confirmar', [ConviteController::class, 'confirmar']);
 
-// Verificação do token
-Route::get('/convites/verificar', [ConviteController::class, 'verificar']);
+Route::middleware(['auth:sanctum', 'impersonate'])->group(function () {
+    Route::post('/convites', [ConviteController::class, 'store']);
+    Route::post('/auth/trocar-email', [ConviteController::class, 'trocarEmail']);
+});
 
-// Solicitação de redefinição de senha (iniciada no login)
-Route::post('/auth/redefinir-senha', [ConviteController::class, 'redefinirSenha']);
-
-// Rotas do admin Sewfy (auth:sanctum)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/adm/convites/owner', [ConviteController::class, 'storeOwner']);
     Route::post('/adm/convites/trocar-owner', [ConviteController::class, 'trocarOwner']);
-});
-
-// Rotas do owner/funcionário (auth:sanctum)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/convites', [ConviteController::class, 'store']);
-    Route::post('/convites/trocar-email', [ConviteController::class, 'trocarEmail']);
 });

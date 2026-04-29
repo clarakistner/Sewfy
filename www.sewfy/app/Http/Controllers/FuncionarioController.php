@@ -8,19 +8,9 @@ use Illuminate\Support\Facades\DB;
 class FuncionarioController extends Controller
 {
     // GET /api/funcionario/owner/empresas
-    // Retorna todas as empresas onde o usuário autenticado é proprietário, exceto a atual
     public function outrasEmpresasOwner(Request $request)
     {
-        $abilities  = $request->user()->currentAccessToken()->abilities;
-        $ability    = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-        $empresaAtualId = (int) str_replace('empresa_', '', $ability);
-
-        \Log::info('outrasEmpresasOwner', [
-            'abilities'      => $abilities,
-            'ability'        => $ability,
-            'empresaAtualId' => $empresaAtualId,
-            'usuarioId'      => $request->user()->USU_ID,
-        ]);
+        $empresaAtualId = $request->empresa->EMP_ID;
 
         $empresas = DB::table('EMPRESA_USUARIOS')
             ->join('EMPRESAS', 'EMPRESA_USUARIOS.EMP_ID', '=', 'EMPRESAS.EMP_ID')
@@ -35,10 +25,8 @@ class FuncionarioController extends Controller
     }
 
     // GET /api/empresa/{id}/modulos
-    // Retorna os módulos disponíveis de uma empresa específica
     public function modulosPorEmpresa(Request $request, int $id)
     {
-        // Verifica se o usuário autenticado é proprietário dessa empresa
         $eProprietario = DB::table('EMPRESA_USUARIOS')
             ->where('EMP_ID', $id)
             ->where('USU_ID', $request->user()->USU_ID)

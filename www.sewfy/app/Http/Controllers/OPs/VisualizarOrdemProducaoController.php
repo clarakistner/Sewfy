@@ -14,30 +14,18 @@ class VisualizarOrdemProducaoController extends Controller
         $prod = Produto::find($id);
         return $prod->PROD_NOME;
     }
+
     public function visualizarOP(Request $request, $id)
     {
         try {
-            $user      = $request->user();
-            $idUsuario = (int) $user->USU_ID;
-            $abilities = $user->currentAccessToken()->abilities;
-            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-
-            if (!$ability) {
-                return response()->json([
-                    'sucesso'          => false,
-                    'erro'             => true,
-                    'mensagem_de_erro' => 'Token inválido'
-                ], 403);
-            }
-
-            $empresaId = str_replace('empresa_', '', $ability);
+            $empresaId = $request->empresa->EMP_ID;
 
             $op = OrdemDeProducao::with(['insumos' => fn($q) => $q
                 ->select('OPIN_ID', 'CLIFOR_ID', 'OPIN_CUSTOT', 'OPIN_CUSTOU', 'OPIN_QTD', 'OPIN_UM', 'OP_ID', 'PROD_ID', 'NECESSITA_CLIFOR')
                 ->whereHas('produto', fn($q) => $q->where('PROD_ATIV', 1))
             ])
                 ->where('OP_ID', $id)
-                ->where('EMP_ID', $empresaId)  // ── removido USU_RESPONSAVEL
+                ->where('EMP_ID', $empresaId)
                 ->select('OP_ID', 'PROD_ID', 'OP_DATAA', 'OP_DATAE', 'OP_CUSTOT', 'OP_CUSTOU', 'OP_CUSTOUR', 'OP_QTD', 'OP_QTDE', 'USU_RESPONSAVEL', 'OP_STATUS', 'OP_QUEBRA')
                 ->first();
 
@@ -73,7 +61,7 @@ class VisualizarOrdemProducaoController extends Controller
                 'qtdOPIN'          => $opin->OPIN_QTD,
                 'umOPIN'           => $opin->OPIN_UM,
                 'opOPIN'           => $opin->OP_ID,
-                'nome_insumo'    => $this->retornaNome($opin->PROD_ID),
+                'nome_insumo'      => $this->retornaNome($opin->PROD_ID),
                 'prodIdOPIN'       => $opin->PROD_ID,
                 'necessita_clifor' => $opin->NECESSITA_CLIFOR === 1
             ]);

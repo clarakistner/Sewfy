@@ -13,14 +13,7 @@ class ContaPagarController extends Controller
 {
     private function getEmpresaId(Request $request): string
     {
-        $abilities = $request->user()->currentAccessToken()->abilities;
-        $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-
-        if (!$ability) {
-            abort(403, 'Token sem empresa associada');
-        }
-
-        return str_replace('empresa_', '', $ability);
+        return (string) $request->empresa->EMP_ID;
     }
 
     private function recalcularStatus(string $empId): void
@@ -173,7 +166,7 @@ class ContaPagarController extends Controller
             'historico'  => 'nullable|string|max:255',
             'ocorrencia' => 'nullable|in:semanal,quinzenal,mensal,bimestral,trimestral,semestral,anual',
             'parcelas'   => 'nullable|integer|min:2|max:360',
-            'pagamento' => 'nullable|date|before_or_equal:' . now()->toDateString(),
+            'pagamento'  => 'nullable|date|before_or_equal:' . now()->toDateString(),
         ]);
 
         $temOcorrencia = $request->filled('ocorrencia') && $request->filled('parcelas');
@@ -230,19 +223,16 @@ class ContaPagarController extends Controller
 
         $request->validate([
             'vencimento' => 'nullable|date|after_or_equal:' . $conta->CP_DATAE,
-            'pagamento' => 'nullable|date|after_or_equal:' . $conta->CP_DATAE . '|before_or_equal:' . now()->toDateString(),
+            'pagamento'  => 'nullable|date|after_or_equal:' . $conta->CP_DATAE . '|before_or_equal:' . now()->toDateString(),
             'valor'      => 'nullable|numeric|min:0.01',
             'clifor_id'  => 'nullable|integer',
             'historico'  => 'nullable|string|max:255',
             'modo'       => 'nullable|in:esta,esta_e_futuras',
         ]);
 
-        $modo = $request->modo ?? 'esta';
-
-        // Guarda vencimento anterior para detectar mudança
+        $modo               = $request->modo ?? 'esta';
         $vencimentoAnterior = $conta->CP_DATAV;
 
-        // Atualiza esta conta
         $conta->CP_DATAV     = $request->vencimento ?? $conta->CP_DATAV;
         $conta->CP_DATAP     = $request->pagamento  ?? null;
         $conta->CP_VALOR     = $request->valor       ?? $conta->CP_VALOR;
@@ -259,7 +249,6 @@ class ContaPagarController extends Controller
 
         $conta->save();
 
-        // Propaga para parcelas futuras não pagas do mesmo grupo
         if ($modo === 'esta_e_futuras' && $conta->CP_GRUPO_ID) {
             $parcelas = ContaPagar::where('CP_GRUPO_ID', $conta->CP_GRUPO_ID)
                 ->where('CP_PARCELA_NUM', '>', $conta->CP_PARCELA_NUM)
@@ -271,16 +260,13 @@ class ContaPagarController extends Controller
             $vencimentoMudou = $request->filled('vencimento') &&
                                $request->vencimento !== $vencimentoAnterior;
 
-            // Data base para recalcular: novo vencimento desta parcela
             $dataBase = $conta->CP_DATAV;
 
             foreach ($parcelas as $parcela) {
-                // Recalcula data de vencimento a partir da parcela anterior
                 if ($vencimentoMudou && $conta->CP_OCORRENCIA) {
                     $dataBase = $this->calcularProximaData($dataBase, $conta->CP_OCORRENCIA);
                     $parcela->CP_DATAV = $dataBase;
 
-                    // Recalcula status com nova data
                     if (now()->toDateString() > $dataBase) {
                         $parcela->CP_STATUS = 'atrasada';
                     } else {

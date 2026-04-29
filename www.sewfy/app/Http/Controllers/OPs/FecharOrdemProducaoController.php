@@ -15,23 +15,20 @@ class FecharOrdemProducaoController extends Controller
     {
         try {
             $request->validate([
-                'opID'  => 'required|string',
+                'opID'   => 'required|string',
                 'quebra' => 'required|numeric|min:0'
             ]);
 
-            $user      = $request->user();
-            $abilities = $user->currentAccessToken()->abilities;
-            $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
-            $empresaId = str_replace('empresa_', '', $ability);
+            $empresaId = $request->empresa->EMP_ID;
 
             $op = OrdemDeProducao::where('OP_ID', $request->opID)
-                ->where('EMP_ID', $empresaId)  // ── removido USU_RESPONSAVEL
+                ->where('EMP_ID', $empresaId)
                 ->first();
 
             if (!$op) {
                 return response()->json([
-                    'sucesso' => false,
-                    'erro'    => true,
+                    'sucesso'  => false,
+                    'erro'     => true,
                     'resposta' => 'Ordem de produção não encontrada'
                 ], 404);
             }
@@ -59,19 +56,19 @@ class FecharOrdemProducaoController extends Controller
                 'CP_DATAE'  => now(),
                 'CP_DATAV'  => Carbon::parse($opin->OPIN_DATAE)->addMonth()->toDateString(),
                 'CP_STATUS' => 'pendente',
-                'USU_ID'    => $user->USU_ID,
+                'USU_ID'    => $request->user()->USU_ID,
                 'CP_ID'     => 'CP' . $idOPNumero . '-' . str_pad($lastNumber + $index + 1, 6, '0', STR_PAD_LEFT)
             ])->toArray();
 
             ContaPagar::insert($dados);
 
             OrdemDeProducao::where('OP_ID', $request->opID)
-                ->where('EMP_ID', $empresaId)  // ── removido USU_RESPONSAVEL
+                ->where('EMP_ID', $empresaId)
                 ->update([
-                    'OP_DATAE'  => now(),
-                    'OP_STATUS' => 'fechada',
-                    'OP_QTDE'   => $qtde,
-                    'OP_QUEBRA' => (float) number_format(($quebra / (int) $op->OP_QTD) * 100, 2, '.', ''),
+                    'OP_DATAE'   => now(),
+                    'OP_STATUS'  => 'fechada',
+                    'OP_QTDE'    => $qtde,
+                    'OP_QUEBRA'  => (float) number_format(($quebra / (int) $op->OP_QTD) * 100, 2, '.', ''),
                     'OP_CUSTOUR' => $qtde > 0 ? $op->OP_CUSTOT / $qtde : 0,
                 ]);
 

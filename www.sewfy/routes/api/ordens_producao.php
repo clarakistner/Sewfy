@@ -8,7 +8,7 @@ use App\Http\Controllers\OPs\EditarOrdemProducaoController;
 use App\Http\Controllers\OPs\FecharOrdemProducaoController;
 use App\Http\Controllers\OPs\GerarGuiasImpressaoController;
 
-Route::middleware(['auth:sanctum'])->prefix('ordemdeproducao')->group(function () {
+Route::middleware(['auth:sanctum', 'impersonate'])->prefix('ordemdeproducao')->group(function () {
     Route::post('/criar', [CriacaoOrdemDeProducaoController::class, 'criarOP_OPIs']);
     Route::get('/listar', [ListarOrdensProducaoController::class, 'listarOPs']);
     Route::get('/detalhes/{id}', [VisualizarOrdemProducaoController::class, 'visualizarOP']);
