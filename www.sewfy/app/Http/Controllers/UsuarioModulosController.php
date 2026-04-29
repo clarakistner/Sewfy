@@ -17,8 +17,11 @@ class UsuarioModulosController extends Controller
         // Se for adm impersonando, retorna todos os módulos da empresa
         if ($user instanceof SewfyAdm) {
             $empresa = $request->empresa;
-            $modulos = $empresa->modulos->pluck('MOD_NOME')->toArray();
-            return response()->json(['modulos' => $modulos]);
+            $modulos = $empresa->modulos;
+            return response()->json([
+                'modulos'    => $modulos->pluck('MOD_NOME')->toArray(),
+                'idsModulos' => $modulos->pluck('MOD_ID')->toArray(),
+            ]);
         }
 
         // Fluxo normal do usuário

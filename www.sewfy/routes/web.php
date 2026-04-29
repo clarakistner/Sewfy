@@ -159,5 +159,5 @@ Route::get('/visualizar-produto',  function (){
     return view('visualizar-produto');
 });
 Route::get('/modal-modo-edicao', function () {
-    return view('modalModoEdicao');
+    return view('modalmodoedicao');
 });
