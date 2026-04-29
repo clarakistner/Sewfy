@@ -13,12 +13,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-       View::composer('layouts.app', function ($view) {
-        $tokenRaw = urldecode(request()->cookies->get('token') ?? '');
+        View::composer('layouts.app', function ($view) {
+            $tokenRaw = urldecode(request()->cookies->get('token') ?? '');
 
             if (!$tokenRaw) {
-                $view->with('modulosAtivos', []);
-                $view->with('nomeEmpresa', '');
+                $view->with('modulosAtivos', [])->with('nomeEmpresa', '');
                 return;
             }
 
@@ -27,8 +26,7 @@ class AppServiceProvider extends ServiceProvider
             $accessToken = \Laravel\Sanctum\PersonalAccessToken::where('token', $hash)->first();
 
             if (!$accessToken) {
-                $view->with('modulosAtivos', []);
-                $view->with('nomeEmpresa', '');
+                $view->with('modulosAtivos', [])->with('nomeEmpresa', '');
                 return;
             }
 
@@ -37,22 +35,33 @@ class AppServiceProvider extends ServiceProvider
             $ability   = collect($abilities)->first(fn($a) => str_starts_with($a, 'empresa_'));
             $empresaId = str_replace('empresa_', '', $ability ?? '');
 
+            // Se não achou empresa no token, tenta pelo cookie empresa_id (admin impersonando)
             if (!$empresaId) {
-                $view->with('modulosAtivos', []);
-                $view->with('nomeEmpresa', '');
+                $empresaId = urldecode(request()->cookies->get('empresa_id') ?? '');
+            }
+
+            if (!$empresaId) {
+                $view->with('modulosAtivos', [])->with('nomeEmpresa', '');
                 return;
             }
 
+            $empresa = Empresa::find($empresaId);
+
+            // Admin Sewfy — pega módulos direto da empresa
+            if ($user instanceof \App\Models\SewfyAdm) {
+                $modulos = $empresa?->modulos->pluck('MOD_NOME')->toArray() ?? [];
+                $view->with('modulosAtivos', $modulos)->with('nomeEmpresa', $empresa?->EMP_NOME ?? '');
+                return;
+            }
+
+            // Usuário comum
             $modulos = UsuarioModulos::join('MODULOS', 'USUARIO_MODULOS.MOD_ID', '=', 'MODULOS.MOD_ID')
                 ->where('USUARIO_MODULOS.USU_ID', $user->USU_ID)
                 ->where('USUARIO_MODULOS.EMP_ID', $empresaId)
                 ->pluck('MODULOS.MOD_NOME')
                 ->toArray();
 
-            $empresa = Empresa::find($empresaId);
-
-            $view->with('modulosAtivos', $modulos);
-            $view->with('nomeEmpresa', $empresa?->EMP_NOME ?? '');
+            $view->with('modulosAtivos', $modulos)->with('nomeEmpresa', $empresa?->EMP_NOME ?? '');
         });
     }
 }
